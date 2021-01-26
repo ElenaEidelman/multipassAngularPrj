@@ -1,1 +1,44 @@
 /* You can add global styles to this file, and also import other style files */
+* {
+    box-sizing: border-box;
+  }
+.wrapMain-Menu-View{
+    display: flex;
+    justify-content: space-between;
+    min-height: calc(100% - 110px);
+}
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+table {
+  width: 100%;
+}
+.app-main-view{
+  flex-grow: 1;
+}
+.wrap-main-table{
+  margin: 3rem;
+}
+.headerPage{
+  width: 100%;
+  text-align: center;
+  padding: 2rem;
+}
+.main-title{
+  font-size: 3rem;
+}
+.sub-title{
+  color: #BFBFBF; 
+}
+.main-page-element{
+
+}
+.element-page-title{
+
+}
+.element-page-body{
+
+}
+.page-element{
+  
+}

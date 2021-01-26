@@ -1,0 +1,5 @@
+.headerWrap{
+    width: 100%;
+    height: 110px;
+    background: linear-gradient(to right, rgba(38,113,144,1), rgba(48,183,177,1));
+}
