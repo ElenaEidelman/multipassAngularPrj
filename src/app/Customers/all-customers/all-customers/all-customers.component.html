@@ -1,0 +1,46 @@
+<div>
+    <div class="pageTitle main2-title">
+        רשימת לקוחות רשומים
+    </div>
+
+        <!--filter table-->
+        <div class="page-element width-block-auto">
+            <div class="formBorder formElement">
+                <form [formGroup]="filterCustomerForm">
+                    <div class="formWrap">
+                        <div>
+                            <mat-form-field>
+                                <mat-label>מזהה לקוח</mat-label>
+                                <input matInput placeholder = "שם לקוח, ח.פ" formControlName = "customerId">
+                                <mat-icon matPrefix>person</mat-icon>
+                            </mat-form-field>
+                        </div>
+                        <div>
+                            <mat-form-field>
+                                <mat-label>דוא''ל</mat-label>
+                                <input matInput placeholder = "exp@gmail.com" formControlName = "customerEmail">
+                                <mat-icon matPrefix>email</mat-icon>
+                            </mat-form-field>
+                        </div>
+                        <div>
+                            <mat-form-field class="selectedFormFieldWidth">
+                                <mat-label>סטטוס</mat-label>
+                                <mat-select formControlName="orderStatus" multiple>
+                                  <mat-option *ngFor="let status of statusList" [value]="status.value">{{status.viewValue}}</mat-option>
+                                </mat-select>
+                              </mat-form-field>
+                        </div>
+                        <div class="buttonWrap">
+                            <button mat-button class="addButton">שלח</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+            <!--table-->
+    <div class="page-element width-block-auto">
+        <div>
+        </div>
+    </div>
+</div>

@@ -8,16 +8,20 @@
     min-height: calc(100% - 110px);
 }
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-
+body { margin: 0; font-family: 'Assistant'; }
+.bgColorMainMenu{
+  background: #686866;
+}
 table {
   width: 100%;
 }
 .app-main-view{
   flex-grow: 1;
+  background: #eef0f2;
 }
-.wrap-main-table{
-  margin: 3rem;
+.page-wrap{
+  background: #eef0f2;
+  min-height: calc(100vh - 110px);
 }
 .headerPage{
   width: 100%;
@@ -26,19 +30,280 @@ table {
 }
 .main-title{
   font-size: 3rem;
+  color: #8FC636;
+  font-weight: bold;
+}
+.main2-title{
+  color: #8FC636;
+  font-size: 1.6rem;
+  text-align: right;
+  margin: 10px;
+  font-weight: bold;
 }
 .sub-title{
   color: #BFBFBF; 
 }
+.elementTitle{
+  text-align: center;
+  font-size: 1.5rem;
+}
 .main-page-element{
-
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
 }
 .element-page-title{
-
+  position: relative;
+  top: -42px;
+  color: #8FC636;
+  font-weight: 600;
 }
 .element-page-body{
 
 }
-.page-element{
-  
+.page-element-margin0{
+  margin: 0rem 6px !important;
 }
+.page-element{
+  width: 49%;
+  margin: 4rem 6px;
+  box-shadow: 0 3px 6px rgba(0,0,0,.29);
+  border-radius: 10px;
+  margin-bottom: 25px;
+  text-align: right;
+  background: #FFFFFF;
+  padding: 10px;
+}
+.width-block{
+  width: 100%;
+}
+.width-block-auto{
+  width: auto;
+}
+.flex-element{
+  display: flex;
+  justify-content: space-between;
+}
+.flex-element-child{
+  flex-grow: 1;
+  padding: 20px;
+}
+.top-19{
+  top: -19px;
+}
+.customer-flex{
+  display: flex;
+  width: fit-content;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+.customer-flex > div{
+  flex-grow: 1;
+  width: calc(100% / 3);
+}
+.customer-info-element{
+  margin: 10px 0;
+}
+.customerDataTitle{
+  color: #8989a4;
+}
+.primary-button{
+  background: #267491;
+  color: #fff;
+}
+div.formElement > div.formWrap mat-form-field{
+  width: 100%;
+}
+mat-form-field{
+  text-align: right !important;
+}
+.alertMessage{
+  margin: 10px 0;
+}
+.success{
+  color: #757590;
+}
+.error{
+  color: red;
+}
+.deleteButton{
+  background: #FF6347;
+  color: #fff;
+}
+.deleteIcon{
+  color: #FF6347;
+  cursor: pointer;
+}
+.addButton{
+  /* background: #267491; */
+  background: #8FC636;
+  color: #fff;
+}
+.linkButton{
+  background: transparent;
+  color: #8FC636;
+  border: 1px solid #8FC636 !important;
+}
+.mat-header-cell{
+  font-weight: 700;
+}
+.tableInsideElement{
+  table-layout: fixed;
+}
+
+form div.mat-form-field-infix{
+  width:100%;
+}
+table.tableView tr th{
+  background: #dde0e0 !important;
+  color: #686866 !important;
+  font-size: 0.9em !important;
+  text-align: center !important;
+}
+table.tableInsideElement tr > th:first-child, table.tableInsideElement tr > td:first-child{
+  padding-right: 0!important;
+}
+table.tableInsideElement tr th, tr td{
+  text-align: center !important;
+}
+
+.addToExecOrderForm{
+  display: flex;
+  flex-direction: row-reverse;
+}
+.addToExecOrderForm > div{
+
+}
+form.addToExecOrderForm > table > tbody > tr > td{
+  padding: 5px;
+}
+
+.datePickerPadding div.mat-form-field-flex{
+  padding: 0;
+  background: transparent;
+}
+.inputIncludeValue{
+position: relative;
+}
+.inputValue{
+  position: absolute;
+  right: 0;
+}
+
+.footer{
+  height: 100px;
+  background: #EEF0F2;
+}
+.flexPrePostFix{
+  display: flex;
+  flex-direction: row-reverse;
+
+}
+.marginTop-1{
+  margin-top: -1%;
+}
+.bgTransparent{
+  background: transparent;
+}
+
+.innerElement{
+  margin: 3rem 0;
+    background: #F7F7F7;
+    padding: 10px;
+    border-radius: 9px;
+    box-shadow: 0px 0px 7px rgba(0,0,0,0.1);
+}
+.flexElement{
+  display: flex;
+  justify-content: space-between;
+}
+.totalDataFlex{
+  display: flex;
+  flex-direction: column;
+}
+.totalDataFlex > div{
+  margin: 0.1rem 0;
+}
+.dataBolder{
+    font-size: 20px;
+    line-height: 24px;
+    margin: 0;
+    /* color: #818384; */
+}
+
+.flexButtonsElement{
+  display: flex;
+  flex-direction: column-reverse;
+}
+.flexButtonsElement > div{
+  margin: 5px;
+}
+.flexButtonsElement > div button{
+  width: -webkit-fill-available;
+}
+.flexData{
+  display: flex;
+  justify-content: space-around;
+  flex-direction: row-reverse;
+}
+.flexData > div > div{
+  margin: 5px 0;
+} 
+.elementTitleBolder{
+  font-weight: bolder;
+  color: #686866;
+}
+
+.tableOrderStatusView{
+  color: #fff;
+  padding: 7px;
+  border-radius: 5px;
+}
+.tableOrderStatusClose{
+  background: #88C43E;
+}
+.tableOrderStatusOpen{
+  background: #267491;
+}
+.tableOrderStatusWaiting{
+  background:#f7b32b;
+}
+
+.radioButton label.mat-radio-label  span.mat-radio-label-content{
+  margin: 0 15px;
+}
+.formBorder{
+  border: 1px solid #686866;
+  padding: 15px 15px 0;
+  border-radius: 10px;
+}
+.formWrapRow mat-form-field.datePickerPadding div.mat-form-field-wrapper{
+  margin-left: 83px;
+}
+.selectedFormFieldWidth{
+  width: 180px !important;
+}
+.mat-primary .mat-pseudo-checkbox-checked, .mat-primary .mat-pseudo-checkbox-indeterminate {
+  background: #8FC636;
+}
+mat-icon{
+  color: #8FC636;
+}
+
+/* rewrite */
+.mat-radio-button.mat-accent.mat-radio-checked .mat-radio-outer-circle {
+  border-color: #686866;
+}
+.mat-radio-button.mat-accent .mat-radio-inner-circle, .mat-radio-button.mat-accent .mat-radio-ripple .mat-ripple-element:not(.mat-radio-persistent-ripple), .mat-radio-button.mat-accent.mat-radio-checked .mat-radio-persistent-ripple, .mat-radio-button.mat-accent:active .mat-radio-persistent-ripple {
+  background-color: #686866;
+}
+.mat-select-arrow, .mat-form-field.mat-focused .mat-form-field-label,
+.mat-primary .mat-option.mat-selected:not(.mat-option-disabled),
+.mat-form-field.mat-focused.mat-primary .mat-select-arrow {
+  color: #8FC636;
+}
+.mat-form-field.mat-focused .mat-form-field-ripple,
+.mat-calendar-body-selected{
+  background-color: #8FC636 !important;
+}
+

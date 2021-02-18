@@ -1,0 +1,8 @@
+.formWrap{
+    display: flex;
+    justify-content: space-around;
+    flex-direction: row-reverse;
+}
+.buttonWrap{
+    margin: auto 0;
+}

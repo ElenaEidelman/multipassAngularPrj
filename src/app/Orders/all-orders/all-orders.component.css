@@ -1,0 +1,41 @@
+.formElement{
+    display: flex;
+    flex-direction: column;
+}
+.formWrap{
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+}
+.formWrap > div.formWrapRow{
+    flex-direction: row-reverse;
+    display: flex;
+    justify-content: space-between;
+}
+.formWrap > div.formWrapRow > div{
+    margin: 0 30px;
+    flex-grow: 1;
+    flex-basis: 0;
+}
+.buttonsWrap{
+    text-align: center;
+}
+.buttonsWrap button{
+    margin: 10px
+}
+.example-radio-group {
+    display: flex;
+    flex-direction: column;
+    margin: 15px 0;
+    direction: rtl;
+  }
+  
+  .example-radio-button {
+    margin: 5px;
+  }
+  .radioGroupWrap{
+    margin: 0 20px;
+  }
+  .radioButton{
+      margin-left:5px;
+  }
