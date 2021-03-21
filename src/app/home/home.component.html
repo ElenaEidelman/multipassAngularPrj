@@ -1,0 +1,74 @@
+
+<div class="pageTitle main2-title">
+    <div>דף הבית</div>
+    <div>
+        <button mat-button class="titleMenuButton" (click)="openDialogNewOrder()">הזמנה חדשה
+            <mat-icon>post_add</mat-icon>
+        </button>
+    </div>
+</div>
+<div class="page-wrap">
+
+    <!-- charts -->
+    <div class="page-element width-block-auto">
+        <div>
+            <div class="wrapGraphs">
+                <div class="page-element page-element-margin innerElement">
+                    <app-bar-chart
+                        chartTitle="הזמנות חדשות"
+                        [chartData]="newOrdersChartData"
+                        [chartLabels] = "newOrdersChartLabels"
+                        chartColor = ""
+                        >
+                    </app-bar-chart>
+                </div>
+                <div class="page-element page-element-margin innerElement">
+                    <app-bar-chart
+                            chartTitle="לקוחות חדשים"
+                            [chartData] = "newCustomersChartData"
+                            [chartLabels] = "newCustomersChartLabels"
+                            chartColor = "#88C43E">
+
+                    </app-bar-chart>
+                </div>
+                <div class="page-element page-element-margin innerElement">
+                    <app-bar-chart
+                             chartTitle="הזמנות חמות"
+                             [chartData] = "hotOrdersChartData"
+                             [chartLabels] = "hotOrdersChartLabels"
+                             chartColor = "#267491">
+                    </app-bar-chart>
+                </div>
+                <div class="page-element page-element-margin innerElement">
+                    <app-bar-chart
+                            chartTitle="לקוחות פעילים"
+                            [chartData] = "activeCustomersChartData"
+                            [chartLabels] = "activeCustomersChartLabels"
+                            chartColor = "#F7B32B">
+                    </app-bar-chart>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- tables -->
+    <div class="page-element width-block-auto">
+        <div class="wrapTables">
+            <div>
+                <div class="element-page-title">הזמנות חדשות</div>
+                <app-table
+                         [dataLabelsList]="newOrderLabelForTable"
+                         [data_Source]="newOrderDataSource"
+                ></app-table>
+            </div>
+            <div>
+                <div class="element-page-title">לקוחות אחרונים</div>
+                <app-table
+                         [dataLabelsList]="lastCustomersLabelForTable"
+                         [data_Source]="lastCustomersDataSource"
+                ></app-table>
+            </div>
+        </div>
+    </div>
+</div>
+

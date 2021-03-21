@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import {MatAccordion} from '@angular/material/expansion';
 
 @Component({
   selector: 'app-new-customer',
@@ -7,9 +9,43 @@ import { Component, OnInit } from '@angular/core';
 })
 export class NewCustomerComponent implements OnInit {
 
-  constructor() { }
+  constructor( private fb: FormBuilder) { }
 
+  @ViewChild(MatAccordion) accordion: MatAccordion;
+
+  newCustomerForm = this.fb.group({
+    customerData: this.fb.group({
+      companyName: (''),
+      email: (''),
+      phoneNumber: (''),
+      role: (''),
+      addPhoneNumber: (''),
+      userNumber: [{value: '', disabled: true}],
+    }),
+    address: this.fb.group({
+      street: (''),
+      city: (''),
+      houseNumber: (''),
+      appNumber: (''),
+
+    }),
+    comerData: this.fb.group({
+      status: (''),
+      customer: (''),
+      customerId: (''),
+      fixedDiscountPerc: (''),
+      uploadDocument: ('')
+    })
+
+
+  });
   ngOnInit(): void {
   }
 
+
+  saveForm(){
+    let data = this.newCustomerForm.value;
+    debugger
+    console.log(data);
+  }
 }

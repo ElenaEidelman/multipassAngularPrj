@@ -2,6 +2,9 @@
 * {
     box-sizing: border-box;
   }
+.wrapPage{
+  margin: 15px;
+}
 .wrapMain-Menu-View{
     display: flex;
     justify-content: space-between;
@@ -12,16 +15,23 @@ body { margin: 0; font-family: 'Assistant'; }
 .bgColorMainMenu{
   background: #686866;
 }
+
 table {
   width: 100%;
+}
+app-main-menu{
+  background: #686866;
 }
 .app-main-view{
   flex-grow: 1;
   background: #eef0f2;
+  margin: 15 5px;
+  
 }
 .page-wrap{
-  background: #eef0f2;
+  /* background: #eef0f2; */
   min-height: calc(100vh - 110px);
+  margin:0 30px;
 }
 .headerPage{
   width: 100%;
@@ -30,15 +40,21 @@ table {
 }
 .main-title{
   font-size: 3rem;
-  color: #8FC636;
+  color: #686866;
   font-weight: bold;
 }
 .main2-title{
-  color: #8FC636;
+  color: #686866;
   font-size: 1.6rem;
   text-align: right;
-  margin: 10px;
+  padding: 10px;
   font-weight: bold;
+  margin-bottom: 3rem;
+  box-shadow: 0px 5px 20px rgb(0 0 0 / 20%);
+  background: #fff;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row-reverse
 }
 .sub-title{
   color: #BFBFBF; 
@@ -53,20 +69,22 @@ table {
   flex-wrap: wrap;
 }
 .element-page-title{
-  position: relative;
-  top: -42px;
+  /* position: relative;
+  top: -42px; */
   color: #8FC636;
   font-weight: 600;
+  padding: 0px 0px 10px;
+  font-size: larger;
 }
-.element-page-body{
-
+.textAlignCenter{
+  text-align: center;
 }
 .page-element-margin0{
   margin: 0rem 6px !important;
 }
 .page-element{
   width: 49%;
-  margin: 4rem 6px;
+  margin: 1rem 6px;
   box-shadow: 0 3px 6px rgba(0,0,0,.29);
   border-radius: 10px;
   margin-bottom: 25px;
@@ -126,23 +144,67 @@ mat-form-field{
 .error{
   color: red;
 }
+.primaryButton{
+  background: #8FC636;
+  color: #fff;
+}
 .deleteButton{
   background: #FF6347;
   color: #fff;
+}
+.deleteButton:hover{
+  background: #ce391f;
 }
 .deleteIcon{
   color: #FF6347;
   cursor: pointer;
 }
+.deleteIcon:hover{
+  cursor: pointer;
+  color: #fc9481;
+}
 .addButton{
   /* background: #267491; */
-  background: #8FC636;
+  background: #686866;
   color: #fff;
 }
+.innerElement{
+  /* margin: 0 !important  order/id mobile problem*/
+}
+.titleMenuButton{
+  /* background: #51768D; */
+  background: #acbf9a;
+  text-shadow: 0px 0px 2px rgb(88 143 101);
+  color: #fff;
+}
+.titleMenuButton:hover{
+  background: #cadbba;
+}
+span.tableButton:hover{
+  background: #89BE34;
+  cursor: pointer;
+}
+.fixed-column-buttons{
+  position: sticky;
+  bottom: 0;
+  justify-content: center;
+  z-index: 999;
+  display: flex;
+  flex-direction: row;
+  background: rgba(255,255,255,0.8);
+  margin-top: 30px;
+}
+.fixed-column-buttons > button{
+  margin: 10px;
+}
 .linkButton{
-  background: transparent;
+  background: #fff;
   color: #8FC636;
   border: 1px solid #8FC636 !important;
+}
+button.linkButton:hover{
+  border: 1px solid #EDEDED !important;
+  background: #EDEDED;
 }
 .mat-header-cell{
   font-weight: 700;
@@ -159,6 +221,10 @@ table.tableView tr th{
   color: #686866 !important;
   font-size: 0.9em !important;
   text-align: center !important;
+  padding: 0 7px;
+}
+table.tableView tr th > div{
+  justify-content: center;
 }
 table.tableInsideElement tr > th:first-child, table.tableInsideElement tr > td:first-child{
   padding-right: 0!important;
@@ -181,7 +247,9 @@ form.addToExecOrderForm > table > tbody > tr > td{
 .datePickerPadding div.mat-form-field-flex{
   padding: 0;
   background: transparent;
+  color:#8FC636;
 }
+
 .inputIncludeValue{
 position: relative;
 }
@@ -192,7 +260,13 @@ position: relative;
 
 .footer{
   height: 100px;
-  background: #EEF0F2;
+  background: #686866;
+  display: flex;
+}
+.footer > div{
+  width: fit-content;
+  color: #fff;
+  margin: 4% auto;
 }
 .flexPrePostFix{
   display: flex;
@@ -208,10 +282,14 @@ position: relative;
 
 .innerElement{
   margin: 3rem 0;
-    background: #F7F7F7;
-    padding: 10px;
-    border-radius: 9px;
-    box-shadow: 0px 0px 7px rgba(0,0,0,0.1);
+  background: #F7F7F7;
+  padding: 10px;
+  border-radius: 9px;
+  box-shadow: 0px 0px 7px rgba(0,0,0,0.1);
+  border: 1px solid #DDE0E0;
+}
+dialog-content-example-dialog div.innerElement{
+  margin: 0;
 }
 .flexElement{
   display: flex;
@@ -242,6 +320,7 @@ position: relative;
   width: -webkit-fill-available;
 }
 .flexData{
+  width: 100%;
   display: flex;
   justify-content: space-around;
   flex-direction: row-reverse;
@@ -254,10 +333,10 @@ position: relative;
   color: #686866;
 }
 
-.tableOrderStatusView{
+.tableButton{
   color: #fff;
   padding: 7px;
-  border-radius: 5px;
+  border-radius: 4px;
 }
 .tableOrderStatusClose{
   background: #88C43E;
@@ -273,7 +352,7 @@ position: relative;
   margin: 0 15px;
 }
 .formBorder{
-  border: 1px solid #686866;
+  border: 1px solid #DDE0E0;
   padding: 15px 15px 0;
   border-radius: 10px;
 }
@@ -289,8 +368,183 @@ position: relative;
 mat-icon{
   color: #8FC636;
 }
+.wrapFlexTwoCol{
+  display: flex;
+  justify-content: space-between;  
+  margin: 2rem 0 0;
+  flex-direction: row-reverse;
+}
+.wrapFlexTwoCol > div.formWrapColumn{
+  display: flex;
+  flex-grow: 1;
+  flex-basis: 0;
+  flex-direction: column;
+  margin: 0 4rem;
+}
+.formWrapColumn > div.buttonAny{    
+  display: flex;
+  flex-direction: column;
+}
+.formWrapColumn > div.buttonAny > button{
+  width: 130px;
+  margin-left: auto;
+}
+.space-around{
+  justify-content: space-around;
+}
+.additionalCol{
+  width:100px;
+}
+button.additionalColButton{
+  margin: 0 5px;
+}
+.titleDesc{
+  padding-top: 10px;
+  padding-right: 10px;
+}
+
+.mat-dialog-title{
+  text-align: right;
+}
+.mat-dialog-container{
+  overflow: unset !important;
+}
+svg{
+  font-size: 24px  !important;
+  margin-bottom: -4px;
+}
+.mat-dialog-container{
+  background: rgba(255,255,255,0.8);
+}
+
+button.linkButton{
+  color: #686866;
+}
+
+.tab-label{
+  display: flex;
+}
+.tab-label > span{
+  margin-right: 8px;
+  font-size: 1em;
+  color: #000000;
+  font-weight: 600;
+}
+.tab-label > mat-icon{
+  color: #fff;
+}
+
+
+
+/* change scrollbar style */
+/* width */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #8FC636; 
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #77B613; 
+  border-radius: 10px;
+}
+.check-box-flex{
+  display: flex;
+  flex-direction: column;
+}
+.infoLabel{
+  display: flex;
+  font-size: 12px;
+  font-weight: bold;
+  color: #686866;
+  justify-content: space-between;
+}
+.infoLabel mat-icon{
+  font-size: 18px
+}
+.mat-card-header{
+  flex-direction: row-reverse !important;
+}
 
 /* rewrite */
+.mat-form-field-appearance-fill .mat-form-field-label{
+  /* margin-top: 0; */
+}
+.mat-checkbox-layout{
+  direction: rtl;
+}
+.mat-checkbox-inner-container{
+  margin-right: 0  !important;
+  margin-left: 8px !important;
+}
+.mat-checkbox-checked.mat-accent .mat-checkbox-background {
+  background-color: #686866;
+}
+.mat-checkbox-checked:not(.mat-checkbox-disabled).mat-accent .mat-ripple-element, .mat-checkbox:active:not(.mat-checkbox-disabled).mat-accent .mat-ripple-element {
+  background: #686866;
+}
+.ngx-mat-timepicker-table button span > mat-icon,
+ .ngx-mat-timepicker-table button span.mat-button-wrapper {
+  color: #8FC636;
+}
+.mat-datepicker-content div.actions > button{
+  background: #686866;
+}
+.mat-tab-header{
+  border-bottom: unset;
+}
+.mat-tab-labels{
+  display: flex;
+  justify-content: right;
+  flex-direction: row-reverse;
+}
+.mat-tab-labels > div{
+  margin: 0 2px;
+}
+.mat-tab-label{
+  background: #acbf9a;
+  border: 2px solid #8d977c;
+  border-radius: 5px;
+  color: #fff;
+  text-shadow: 0px 0px 2px rgb(88 143 101);
+}
+.mat-tab-group.mat-primary .mat-ink-bar, .mat-tab-nav-bar.mat-primary .mat-ink-bar {
+  background-color: #8FC636;
+}
+
+.mat-form-field:not(.mat-form-field-appearance-legacy) .mat-form-field-suffix .mat-icon-button .mat-datepicker-toggle-default-icon{
+  margin: -6px  !important;
+}
+.mat-form-field:not(.mat-form-field-appearance-legacy) .mat-form-field-suffix .mat-icon-button{
+  width: 1.8em !important;
+}
+.mat-form-field:not(.mat-form-field-appearance-legacy) .mat-form-field-suffix .mat-datepicker-toggle-default-icon{
+  width: 1em !important;
+  height: 1em !important;
+}
+.wrapGraphs canvas{
+  width: 100% !important
+}
+.mat-elevation-z8{
+  overflow-x: auto;
+}
+.mat-paginator-container{
+  justify-content: center !important;
+}
+.mat-paginator-page-size{
+  flex-direction: row-reverse;
+}
 .mat-radio-button.mat-accent.mat-radio-checked .mat-radio-outer-circle {
   border-color: #686866;
 }
@@ -299,11 +553,263 @@ mat-icon{
 }
 .mat-select-arrow, .mat-form-field.mat-focused .mat-form-field-label,
 .mat-primary .mat-option.mat-selected:not(.mat-option-disabled),
-.mat-form-field.mat-focused.mat-primary .mat-select-arrow {
+.mat-form-field.mat-focused.mat-primary .mat-select-arrow,
+button svg,
+button.linkButton mat-icon {
   color: #8FC636;
+}
+button.linkButton:hover, button.addButton:hover{
+  background: #b1e65c;
+  color: #fff;
+}
+button mat-icon{
+  color: #fff;
 }
 .mat-form-field.mat-focused .mat-form-field-ripple,
 .mat-calendar-body-selected{
   background-color: #8FC636 !important;
 }
 
+.mat-sort-header-pointer-middle,
+.mat-sort-header-pointer-right,
+.mat-sort-header-pointer-left,
+.mat-sort-header-stem{
+  color: #8FC636;
+}
+.mat-expansion-panel-header{
+  /* background: #DDE0E0; */
+  border-bottom: 1px solid #DDE0E0;
+  padding: 30px 24px !important;
+
+}
+.mat-expansion-panel-header.mat-expanded:focus, .mat-expansion-panel-header.mat-expanded:hover,
+.mat-expansion-panel:not(.mat-expanded) .mat-expansion-panel-header:hover{
+  /* background: #686866 !important; */
+}
+.mat-expansion-panel-header span.mat-content > *:hover{
+  /* color: #fff; */
+}
+mat-panel-description{
+  font-size: 1.2rem;
+}
+.mat-expansion-indicator{
+  display: none;
+}
+.absoluteIcon{
+  position: absolute;
+  right: 0;
+}
+
+.mat-expansion-panel{
+  background: inherit;
+  box-shadow: unset !important;
+}
+.mat-accordion .mat-expansion-panel{
+  margin-bottom: 3rem;
+}
+th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:first-of-type{
+  padding-left: 5px  !important;
+}
+
+.wrap-main-menu{
+  position: sticky;
+  top: 20px;
+  height: auto !important;
+  margin-top: -3px;
+  border-top: 3px solid #686866;
+}
+/* rewrite end */
+
+
+/* mobile */
+
+@media screen and (max-width: 1024px){
+
+  .mat-tab-header .mat-tab-labels{
+    flex-direction: column;
+  }
+  .mat-tab-header .mat-tab-labels > div{
+    margin: 10px;
+  }
+
+  svg {
+    font-size: 21px !important;
+}
+  table{
+    width: auto
+  }
+  .customer-flex > div{
+    width: 40%;
+    margin: 8px;
+  }
+  .flex-element{
+    flex-direction: column-reverse;
+  }
+  .wrapMain-Menu-View{
+    flex-direction: column-reverse;
+  }
+  .formWrapRow mat-form-field.datePickerPadding div.mat-form-field-wrapper{
+    margin-left: 0;
+  }
+  .element-page-title{
+    top: -11px;
+    font-size: 1.5rem;
+    width: fit-content;
+    margin: auto;
+  }
+  .width-block-auto{
+    /* overflow: auto; */
+  }
+  .page-wrap{
+    margin: 0;
+  }
+  .page-element{
+    margin: 1rem 6px;
+    padding: 5px;
+    width: 96%;
+  }
+  .formBorder{
+    padding: 15px 0 0;
+  }
+  .main2-title{
+    flex-direction: column;
+  }
+  .main2-title > div{
+    text-align: center;
+    margin: 5px 0;
+  }
+  .wrapFlexTwoCol{
+    flex-direction: column;
+  }
+  .wrapFlexTwoCol > div.formWrapColumn{
+    flex-direction: row-reverse;
+    margin: 0;
+  }
+  .wrapFlexTwoCol > div.formWrapColumn > mat-form-field{
+    margin: 6px;
+    flex-grow: 1;
+    flex-basis: 0;
+  }
+  .mat-expansion-panel-body{
+    padding: 0 5px 0px !important;
+  }
+  .flexData{
+    flex-wrap: wrap;
+    flex-direction: column;
+  }
+  .flexData > div{
+    margin: 10px 0;
+  }
+  .flexData > mat-form-field{
+    width: 46%;
+  }
+  .fixed-column-buttons{
+    border-radius: 10px;
+  }
+  .fixed-column-buttons > button{
+    margin: 6px;
+  }
+  .mat-form-field-appearance-legacy .mat-form-field-label{
+    font-size: 13px;
+    font-weight: 700;
+  }
+  table.tableView tr th{
+    padding: 0px 2rem;
+  }
+
+  .mat-accordion .mat-expansion-panel {
+    margin-bottom: 1.5rem;
+  }
+
+  /* rewrite mobile*/
+  .mat-elevation-z8{
+    border:3px solid #fff;
+  }
+  [dir=rtl] th.mat-header-cell:last-of-type:not(:only-of-type), [dir=rtl] td.mat-cell:last-of-type:not(:only-of-type), [dir=rtl] td.mat-footer-cell:last-of-type:not(:only-of-type){
+    padding-left: 0 !important;
+    padding: 5px !important;
+  }
+
+  .mat-button, .mat-raised-button, .mat-icon-button, .mat-stroked-button, .mat-flat-button, .mat-fab, .mat-mini-fab{
+    font-size: 12px;
+  }
+  .mat-button, .mat-icon-button, .mat-stroked-button, .mat-flat-button{
+    padding: 0 7px !important;
+    line-height: 29px !important;
+  }
+}
+
+
+.sticky {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  background: #fff;
+}
+
+
+
+
+
+/* filter table and table */
+.formElement{
+  display: flex;
+  flex-direction: column;
+}
+.formWrap{
+  display: flex;
+  justify-content: space-around;
+  flex-direction: column;
+}
+.formWrap > div.formWrapRow{
+  flex-direction: row-reverse;
+  display: flex;
+  justify-content: space-between;
+}
+.formWrap > div.formWrapRow > div{
+  margin: 0 30px;
+  flex-grow: 1;
+  flex-basis: 0;
+}
+.buttonsWrap{
+  text-align: center;
+}
+.buttonsWrap button{
+  margin: 10px
+}
+.example-radio-group {
+  display: flex;
+  flex-direction: column;
+  margin: 15px 0;
+  direction: rtl;
+}
+
+.example-radio-button {
+  margin: 5px;
+}
+.radioGroupWrap{
+  margin: 0 20px;
+}
+.radioButton{
+    margin-left:5px;
+}
+
+@media screen and (max-width: 1024px){
+  .formWrap{
+      flex-direction: row-reverse ;
+  }
+  .formWrap > div.formWrapRow{
+      flex-direction: column;
+      flex-grow: 1;
+      flex-basis: 0;
+  }
+  .formWrap > div.formWrapRow > div{
+      margin: 0px 9px;
+  }
+  div.formWrapRow mat-form-field{
+      width:99% !important;
+  }
+  .page-element {
+    /* width: unset;  order/id mobile problem*/ 
+}
+}

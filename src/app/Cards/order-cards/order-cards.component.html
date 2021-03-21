@@ -1,0 +1,69 @@
+<div class="pageTitle main2-title">
+    <div>הזמנת שוברים</div>
+</div>
+    <div class="page-element width-block-auto">
+        <div class="element-page-title">הזמנת שוברים</div>
+
+        <mat-tab-group mat-align-tabs="start" [selectedIndex]="indexId">
+            
+            <!-- excel card creating -->
+            <mat-tab >
+                <ng-template mat-tab-label >
+                    <div class="tab-label">
+                        <span>הזמנת שוברים דיגיטלים מאקסל</span>
+                        <fa-icon [icon]="faFileExcel"></fa-icon>
+                    </div>
+                </ng-template>
+                <div class="wrap-content">
+                    <div class="element-page-title">טעינת קובץ אקסל</div>
+                    <div class="formBorder formElement">
+                        <form [formGroup]="excelCardCreatingForm">
+                            <div class="formWrapRow">
+                                <div>
+                                    <mat-form-field class="marginSelectTop">
+                                        <mat-label>בחירת לקוח</mat-label>
+                                        <mat-select  formControlName="customer">
+                                            <ng-container *ngFor="let customer of customers; let i = index">
+                                                <mat-option [value]="customer">
+                                                    {{customer.customerName}}
+                                                    <!-- {{customer}} -->
+                                                  </mat-option>
+                                            </ng-container>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                                <div>
+                                    <mat-form-field class="example-full-width">
+                                        <mat-label>תאור הקובץ</mat-label>
+                                        <textarea  placeholder="נא להכניס תיאור של הקובץ" matInput formControlName="fileDesc"></textarea>
+                                    </mat-form-field>
+                                </div>
+                                <div class="buttonAny">
+                                    <span>בדיקה וטעינה של הקובץ</span>
+                                    <input [hidden]="true" name="uploadDoc" #uploadDoc type="file" formControlName="file">
+                                    <button  mat-button class="addButton" (click)="uploadDoc.click()">
+                                        <span>בחירת קובץ</span>
+                                        <mat-icon>attach_file</mat-icon>
+                                    </button>
+                                    <span *ngIf="uploadDoc.value">{{uploadDoc.value}}</span>
+                            </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </mat-tab>
+
+            <!-- manual card creating -->
+            <mat-tab>
+                <ng-template mat-tab-label >
+                    <div class="tab-label">
+                        <span>הזמנת שוברים דיגיטלים ידנית </span>
+                        <mat-icon> settings </mat-icon>
+                    </div>
+                </ng-template>
+                Content 2
+            </mat-tab>
+          </mat-tab-group>
+
+    </div>

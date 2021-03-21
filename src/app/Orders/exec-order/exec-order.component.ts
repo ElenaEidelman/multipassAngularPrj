@@ -6,7 +6,7 @@ import { throwMatDialogContentAlreadyAttachedError } from '@angular/material/dia
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { AlertMessage } from 'src/assets/alertMessage';
-import { Order } from 'src/assets/orderObj';
+import { OrderData } from '../../Classes/OrderData';
 
 
 
@@ -19,31 +19,26 @@ import { Order } from 'src/assets/orderObj';
 
 export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
+  Orders: MatTableDataSource<OrderData>;
+
   constructor(private activeRoute: ActivatedRoute, private fb: FormBuilder) { }
-  Orders:any = [
-    {orderId: 900000181, orderiDcrm: 12, companyName: 'מולטיפאס', comaxCustomerNumber: 12345, comaxFileId : 0, ticketCount: 4, dateCreation: '24/01/2021 13:23', dateIssue: '24-01-2021', dateActivation: '24/01/2021 13:44', orderValue: '400.00', orderStatus: 'הזמנה סגורה', orderStatusId: 2},
-    {orderId: 900000182, orderiDcrm: 13, companyName: 'test', comaxCustomerNumber: 123456, comaxFileId : 0, ticketCount: 4, dateCreation: '24/01/2021 13:24', dateIssue: '24-02-2021', dateActivation: '24/01/2021 13:45', orderValue: '401.00', orderStatus: 'נשלח לקומקס', orderStatusId: 1},
-    {orderId: 900000183, orderiDcrm: 14, companyName: 'test name', comaxCustomerNumber: 123458, comaxFileId : 0, ticketCount: 4, dateCreation: '24/01/2021 13:25', dateIssue: '24-03-2021', dateActivation: '24/01/2021 13:46', orderValue: '402.00', orderStatus: 'הזמנה סגורה', orderStatusId: 2},
-    {orderId: 900000184, orderiDcrm: 15, companyName: 'test company', comaxCustomerNumber: 123457, comaxFileId : 0, ticketCount: 4, dateCreation: '24/01/2021 13:26', dateIssue: '24-04-2021', dateActivation: '24/01/2021 13:47', orderValue: '403.00', orderStatus: 'נשלח לקומקס', orderStatusId: 1},
-    {orderId: 900000185, orderiDcrm: 16, companyName: 'title company', comaxCustomerNumber: 123459, comaxFileId : 0, ticketCount: 4, dateCreation: '24/01/2021 13:27', dateIssue: '24-05-2021', dateActivation: '24/01/2021 13:48', orderValue: '404.00', orderStatus: 'הזמנה סגורה', orderStatusId: 2},
-    {orderId: 900000186, orderiDcrm: 17, companyName: 'company name', comaxCustomerNumber: 123450, comaxFileId : 0, ticketCount: 4, dateCreation: '24/01/2021 13:28', dateIssue: '24-06-2021', dateActivation: '24/01/2021 13:49', orderValue: '405.00', orderStatus: 'הזמנה פתוחה' ,orderStatusId: 0},
-    {orderId: 900000187, orderiDcrm: 18, companyName: 'test', comaxCustomerNumber: 12345, comaxFileId : 0, ticketCount: 4, dateCreation: '24/01/2021 13:23', dateIssue: '24-07-2021', dateActivation: '24/01/2021 13:50', orderValue: '406.00', orderStatus: 'הזמנה פתוחה', orderStatusId: 0},
-    {orderId: 900000188, orderiDcrm: 12, companyName: 'מולטיפאס', comaxCustomerNumber: 12345, comaxFileId : 0, ticketCount: 4, dateCreation: '24/01/2021 13:23', dateIssue: '24-01-2021', dateActivation: '24/01/2021 13:44', orderValue: '400.00', orderStatus: 'הזמנה סגורה', orderStatusId: 2},
-    {orderId: 900000189, orderiDcrm: 13, companyName: 'test', comaxCustomerNumber: 123456, comaxFileId : 0, ticketCount: 4, dateCreation: '24/01/2021 13:24', dateIssue: '24-02-2021', dateActivation: '24/01/2021 13:45', orderValue: '401.00', orderStatus: 'נשלח לקומקס', orderStatusId: 1},
-    {orderId: 900000190, orderiDcrm: 14, companyName: 'test name', comaxCustomerNumber: 123458, comaxFileId : 0, ticketCount: 4, dateCreation: '24/01/2021 13:25', dateIssue: '24-03-2021', dateActivation: '24/01/2021 13:46', orderValue: '402.00', orderStatus: 'הזמנה סגורה', orderStatusId: 2},
-    {orderId: 900000191, orderiDcrm: 15, companyName: 'test company', comaxCustomerNumber: 123457, comaxFileId : 0, ticketCount: 4, dateCreation: '24/01/2021 13:26', dateIssue: '24-04-2021', dateActivation: '24/01/2021 13:47', orderValue: '403.00', orderStatus: 'נשלח לקומקס', orderStatusId: 1},
-    {orderId: 900000192, orderiDcrm: 16, companyName: 'title company', comaxCustomerNumber: 123459, comaxFileId : 0, ticketCount: 4, dateCreation: '24/01/2021 13:27', dateIssue: '24-05-2021', dateActivation: '24/01/2021 13:48', orderValue: '404.00', orderStatus: 'הזמנה סגורה', orderStatusId: 2},
-    {orderId: 900000193, orderiDcrm: 17, companyName: 'company name', comaxCustomerNumber: 123450, comaxFileId : 0, ticketCount: 4, dateCreation: '24/01/2021 13:28', dateIssue: '24-06-2021', dateActivation: '24/01/2021 13:49', orderValue: '405.00', orderStatus: 'הזמנה פתוחה' ,orderStatusId: 0},
-    {orderId: 900000194, orderiDcrm: 18, companyName: 'test', comaxCustomerNumber: 12345, comaxFileId : 0, ticketCount: 4, dateCreation: '24/01/2021 13:23', dateIssue: '24-07-2021', dateActivation: '24/01/2021 13:50', orderValue: '406.00', orderStatus: 'הזמנה פתוחה', orderStatusId: 0}
-  ];
+  
   Customer: any = {name: 'אלון מולטיפאס', id: '123456', kumkusNum:'abcdef', mail: '	alon@multipass.co.il', phone: '0521234567', addPhone: '052333333' }
 
-
+  CustomerLangObj = [
+    {value: 'name', viewValue: 'שם הלקוח'},
+    {value: 'id', viewValue: 'ח.פ'},
+    {value: 'kumkusNum', viewValue: 'מספר קומקס'},
+    {value: 'mail', viewValue: 'מייל'},
+    {value: 'phone', viewValue: 'טלפון'},
+    {value: 'addPhone', viewValue: 'טלפון נוסף'}
+  ];
 
   //order table 
   orderDetails = [
     {foundation:1, ticketCount: 2, chargeAmount: 500.00, validity: '31/01/2026', totalCharge : 1000.00},
-    {foundation:2, ticketCount: 2, chargeAmount: 500.00, validity: '31/01/2026', totalCharge : 1000.00}
+    {foundation:2, ticketCount: 2, chargeAmount: 500.00, validity: '31/01/2026', totalCharge : 1000.00},
+    {foundation:0, ticketCount: 0, chargeAmount: 0, validity: '', totalCharge : 0}
   ];
   displayedColumnsOrderDetails = ['foundation','ticketCount','chargeAmount','validity','totalCharge','additionalColumn'];
  
@@ -75,7 +70,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   addToExecOrderForm = this.fb.group({
     ticketCount: ['', [Validators.required, Validators.min(1), Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
     chargeAmount: ['', [Validators.required, Validators.min(1), Validators.max(1000), Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
-    validity: ['', Validators.required],
+    validity: [new Date(new Date().setDate(new Date().getDate() + 1)), Validators.required],
     totalCharge: [{value: '', disabled: true}]
   });
 
@@ -94,15 +89,39 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
   ngOnInit() {
     this.idUnsubscribe = this.activeRoute.params.subscribe( param => {
+      this.createDataSourceForTable();
       this.id = param['id'];
-      this.dataByPage = this.Orders.filter(el => el['orderId'] == this.id);
-      //debugger
-      this.CRMcontrol.setValue(this.dataByPage[0]['orderiDcrm']);
+      if(this.Orders != undefined){
+        this.dataByPage = this.Orders.data.filter(el => el['orderId'] == this.id);
+        //debugger
+        this.CRMcontrol.setValue(this.dataByPage[0]['orderiDcrm']);
+      }
     })
 
     this.totalData();
   }
 
+  createDataSourceForTable(){
+    this.Orders = new MatTableDataSource([
+      new OrderData('1', 12345, 'multipass','11111', 1122, 1122, 5, '24/01/2021 13:23', '24/01/2021 13:23', '24/01/2021 13:23', '400.00', 'הזמנה סגורה' ,2),
+      new OrderData('2',12345,'multipass','22222',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','הזמנה פתוחה',0),
+      new OrderData('3',12345,'multipass','33333',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','הזמנה פתוחה',0),
+      new OrderData('1',12345,'multipass','44444',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','נשלח לקומקס',1),
+      new OrderData('1',12345,'multipass','55555',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','נשלח לקומקס',1),
+      new OrderData('1',12345,'multipass','66666',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','הזמנה פתוחה',0),
+      new OrderData('1',12345,'multipass','77777',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','נשלח לקומקס',1),
+      new OrderData('1',12345,'multipass','88888',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','הזמנה פתוחה',0),
+      new OrderData('1',12345,'multipass','99999',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','הזמנה סגורה',2),
+      new OrderData('1',12345,'multipass','12121',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','הזמנה סגורה',2),
+      new OrderData('1',12345,'multipass','13131',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','הזמנה סגורה',2),
+      new OrderData('1',12345,'multipass','14141',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','הזמנה סגורה',2),
+      new OrderData('1',12345,'multipass','15151',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','הזמנה סגורה',2),
+      new OrderData('1',12345,'multipass','16161',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','הזמנה סגורה',2),
+      new OrderData('1',12345,'multipass','17171',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','הזמנה סגורה',2),
+      new OrderData('1',12345,'multipass','18181',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','הזמנה סגורה',2),
+
+    ]);
+  }
 
   totalData(){
     this.totalTicketCount = 0;
@@ -134,6 +153,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   }
   addRow(){
     if(this.addToExecOrderForm.valid){
+      debugger
       let ticketCount = +this.addToExecOrderForm.get('ticketCount').value;
       let chargeAmount = +this.addToExecOrderForm.get('chargeAmount').value;
       let validity = this.addToExecOrderForm.get('validity').value;
@@ -142,17 +162,22 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       let totalCharge = +this.addToExecOrderForm.get('totalCharge').value;
   
   
-      this.orderDetails.push({foundation: this.orderDetails.length + 1, ticketCount: ticketCount, chargeAmount: chargeAmount, validity: validityFormating, totalCharge : totalCharge});
+      this.orderDetails.splice(this.orderDetails.length-1,0,{foundation: this.orderDetails.length, ticketCount: ticketCount, chargeAmount: chargeAmount, validity: validityFormating, totalCharge : totalCharge});
+      
       this.orderDetailsTable = new MatTableDataSource(this.orderDetails);
 
       //reset form
       this.viewAddToExecOrderForm = false;
       setTimeout(()=>{
         this.addToExecOrderForm.reset();
+        this.addToExecOrderForm.get('validity').setValue(new Date(new Date().setDate(new Date().getDate() + 1)));
         this.viewAddToExecOrderForm = true;
       }, 0);
       //calculate new total data
       this.totalData();
+    }
+    else{
+      
     }
   }
 
@@ -162,6 +187,10 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
     this.addToExecOrderForm.get('totalCharge').setValue(ticketCount * chargeAmount);
     //debugger
+  }
+
+  returnHebTranslation(value){
+    return this.CustomerLangObj.filter(el => el.value == value)[0].viewValue;
   }
 
   

@@ -1,0 +1,22 @@
+.wrapReportForm{
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-around;
+}
+.wrap-content{
+    margin-top: 2em;
+}
+
+@media screen and (max-width: 1024px){
+    .wrapReportForm{
+        flex-direction:column;
+    }
+    .wrapReportForm > div{
+        flex-direction: row-reverse;
+        display: flex;
+        margin: 1em;
+    }
+    .wrapReportForm > div > div{
+        margin: 5px;
+    }
+}

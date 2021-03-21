@@ -1,0 +1,135 @@
+<div class="pageTitle main2-title">
+    <div>שוברים</div>
+    <div>
+        <a routerLink="/orderCards">
+            <button mat-raised-button class="titleMenuButton">הזמנת שוברים
+                <mat-icon>queue</mat-icon>
+            </button>
+        </a>
+    </div>
+</div>
+<div class="page-wrap">
+
+    <!-- filter table -->
+    <div class="page-element width-block-auto">
+        <div class="element-page-title">חיפוש שוברים </div>
+        <div class="formBorder formElement">
+            <form [formGroup]="cardsForm">
+                <div class="formWrap">
+                    <div class="formWrapRow">
+                        <div>
+                            <mat-form-field>
+                                <mat-label>מספר שובר</mat-label>
+                                <input matInput placeholder = "מספר שובר" formControlName="cardNumber">
+                            </mat-form-field>
+                        </div>
+                        <div>
+                            <mat-form-field>
+                                <mat-label>שם פרטי</mat-label>
+                                <input matInput placeholder = "שם פרטי" formControlName="fName">
+                            </mat-form-field>
+                        </div>
+                        <div>
+                            <mat-form-field>
+                                <mat-label>שם משפחה</mat-label>
+                                <input matInput placeholder = "שם משפחה" formControlName="lName">
+                            </mat-form-field>
+                        </div>
+                        <div>
+                            <mat-form-field>
+                                <mat-label>מספר טלפון נייד</mat-label>
+                                <input matInput placeholder = "מספר טלפון נייד" formControlName="phoneNumber">
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="formWrapRow">
+                        <div>
+                            <mat-form-field class="selectedFormFieldWidth">
+                                <mat-label>סטטוס שובר </mat-label>
+                                <mat-select formControlName="status">
+                                    <mat-option *ngFor="let status of statusList" [value]="status.value">
+                                        {{status.viewValue}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div>
+                            <mat-form-field>
+                                <mat-label>מספר הזמנה</mat-label>
+                                <input matInput placeholder = "מספר הזמנה" formControlName="orderId">
+                            </mat-form-field>
+                        </div>
+                        <div>
+                            <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
+                                <mat-label>מתאריך</mat-label>
+                                <input matInput [matDatepicker]="picker2" formControlName="fromDate">
+                                <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                                <mat-datepicker #picker2></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                        <div>
+                            <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
+                                <mat-label>עד תאריך</mat-label>
+                                <input matInput [matDatepicker]="picker" formControlName="untilDate">
+                                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                <mat-datepicker #picker></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </div>
+                <div class="mobileTwoCol">
+                    <div>
+                        <mat-form-field>
+                            <mat-label>חברה</mat-label>
+                            <input matInput placeholder = "שם חברה" formControlName="companyName">
+                        </mat-form-field>
+                    </div>
+                    <div>
+                        <mat-form-field>
+                            <mat-label>מזהה לקוח</mat-label>
+                            <input matInput placeholder = "מספר לקוח" formControlName="customerId">
+                        </mat-form-field>
+                    </div>
+                    <div>
+                        <mat-form-field>
+                            <mat-label>אסמכתא הנה"ח</mat-label>
+                            <input matInput placeholder='אסמכתא הנה"ח' formControlName="documentId">
+                        </mat-form-field>
+                    </div>
+                    <div>
+                        <div class="radioGroupWrap">
+                            <mat-radio-group
+                                    aria-labelledby="example-radio-group-label"
+                                    class="example-radio-group"
+                                    formControlName="byDate">
+                                    <mat-radio-button class="radioButton" value="dateIssue">
+                                        תאריך הנפקה
+                                    </mat-radio-button>
+                                    <!-- <mat-radio-button class="radioButton" value="dateActivation">
+                                        תאריך אקטיבציה
+                                    </mat-radio-button> -->
+                            </mat-radio-group>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+            <div class="buttonsWrap">
+                <button mat-button class="linkButton" (click) = "resetForm()">אפס</button>
+                <button mat-button class="addButton" (click) = "filterTable()">חפש</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- table -->
+    <div class="page-element width-block-auto" *ngIf="viewTable">
+        <div class="element-page-title">תוצאות חיפוש</div>
+        <div class="mat-elevation-z8">
+            <app-table
+                [dataLabelsList]="cardsLabelForTable"
+                [data_Source]="cardsDataSource"
+            ></app-table>
+        </div>
+    </div>
+</div>

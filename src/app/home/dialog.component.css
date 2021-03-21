@@ -1,0 +1,61 @@
+mat-label{
+    text-align: right;
+}
+.dialog-content-wrap{
+    display: flex;
+    flex-direction: row-reverse;
+}
+.dialog-content-wrap > div{
+    flex-grow: 1;
+    margin: 10px 15px;
+}
+.addButtonWrap{
+    margin: 42px 15px !important;
+}
+.actions-button{
+    justify-content: center;
+}
+.mat-dialog-title{
+
+}
+
+.close-icon-wrap{
+    position: relative;
+}
+.close-icon-wrap > mat-icon{
+    position: absolute;
+    right: -50px;
+    top: -50px;
+    font-size: 32px;
+    color: #fff;
+}
+.close-icon-wrap > mat-icon:hover{
+    color: #8FC636;
+}
+.close-icon-wrap:hover{
+    cursor: pointer;
+}
+
+mat-form-field{
+    width:100%;
+}
+.drop-down-title{
+    text-align: right;
+}
+@media screen and (max-width: 1024px){
+    .dialog-content-wrap
+    {
+        margin: auto;
+        flex-direction: column;
+    }
+    .addButtonWrap{
+        margin: auto !important;
+    }
+    .actions-button{
+        flex-wrap: nowrap !important;
+    }
+    .mat-dialog-content{
+        margin: 0;
+        margin-bottom: 40px;
+    }
+}

@@ -2,12 +2,26 @@
     width: 100%;
     height: 110px;
     display: flex;
+    border-bottom: 3px solid #8FC636;
     /* background: linear-gradient(to right, rgba(38,113,144,1), rgba(48,183,177,1)); */
+
 }
-.logo{
+.logo, .logo > a{
     display: flex;
 }
-.logo > img{
-    height: 80%;
+.logo > a > img{
+    height: 50%;
     margin: auto 0;
+    background: #fff;
+}
+
+@media screen and (max-width: 1024px){
+    .logo > a, .logo{
+        width: 100%;
+        justify-content: center;
+    }
+    .logo  img{
+        height: 50%;
+        margin: 7px;
+    }
 }

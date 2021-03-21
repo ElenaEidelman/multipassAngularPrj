@@ -1,0 +1,60 @@
+mat-panel-description{
+    direction: rtl;
+}
+mat-accordion mat-expansion-panel mat-expansion-panel-header .mat-icon{
+    width: unset !important;
+    font-size: 45px;
+    height: 45px !important;
+  }
+  .wrapData{
+      display: flex;
+      justify-content: space-between;
+      flex-direction: column-reverse;
+  }
+  .wrapData > div.buttonAny{
+    flex-grow: 1;
+    width: 130px;
+    margin: 0 auto;
+    flex-direction: column;
+  }
+  .example-action-buttons{
+    background: #EEF0F2;
+    border-radius: 4px;
+  }
+
+  .cards-wrap{
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  .cards-wrap > div{
+    width: 49%;
+  }
+  mat-form-field{
+      width: 100%;
+  }
+  .innerElement{
+    margin: 1.3em auto;
+  }
+  mat-icon{
+      margin-left: 5px;
+  }
+  .edit-buttons-wrap{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .edit-buttons-wrap > button{
+    margin: 7px;
+    flex-grow: 1;
+  }
+  .save-edit-button{
+    text-align: CENTER;
+    border-top: 1px solid #f0f0f0;
+  }
+  @media screen and (max-width: 1024px){
+    .flexData {
+      flex-direction: row-reverse;
+    }
+  }
+

@@ -1,10 +1,16 @@
+<div class="pageTitle main2-title">
+    <div style="text-align: center;">
+        <div>{{dataByPage[0].companyName}}</div>
+        <div>{{id}}</div>
+    </div>
+</div>
 <div class="page-wrap">
-    <div class="headerPage">
+    <!-- <div class="headerPage">
         <div class="main-title">{{dataByPage[0].companyName}}</div>
         <div class="sub-title">ID: {{id}}</div>
-    </div>
+    </div> -->
     <div class="main-page-element">
-        <div class="page-element width-block page-element-margin0">
+        <div class="page-element width-block">
             <div class="formBorder">
                 <div class="element-page-body flex-element">
                     <div class="flex-element-child">
@@ -12,12 +18,13 @@
                         <div class="element-page-body">
                             <form class="example-form">
                                 <mat-form-field class="smsSendInput">
-                                <mat-label>שליחת SMS</mat-label>
-                                <textarea matInput></textarea>
+                                    <mat-label>שליחת SMS</mat-label>
+                                    <textarea matInput></textarea>
                                 </mat-form-field>
                             </form>
                             <div>
-                                <div class="alertMessage" [class.success]="sendSuccess" [class.error]="!sendSuccess" >{{alertMessage}}</div>
+                                <div class="alertMessage" [class.success]="sendSuccess" [class.error]="!sendSuccess">
+                                    {{alertMessage}}</div>
                                 <button mat-flat-button class="addButton" (click)="sendMessageToCustomer()">שלח</button>
                             </div>
                         </div>
@@ -27,11 +34,129 @@
                         <div class="element-page-body customer-flex">
                             <div *ngFor="let customer of Customer | keyvalue; let i = index">
                                 <div class="customer-info-element">
-                                    <div class="customerDataTitle">{{customer.key}}</div>
+                                    <div class="customerDataTitle">{{returnHebTranslation(customer.key)}}</div>
                                     <div>{{customer.value}}</div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- table -->
+        <div class="page-element">
+            <div class="element-page-title"> פרוט הזמנה </div>
+                <div class="mat-elevation-z8">
+                    <table mat-table [dataSource]="orderDetailsTable"
+                        class="mat-elevation-z8 tableInsideElement tableView" dir="rtl">
+                        <ng-container *ngFor="let obj of displayedColumnsOrderDetails; let columnNum = index;">
+                            
+                            <ng-container *ngIf="obj != 'additionalColumn'" matColumnDef="{{obj}}">
+                                <!-- <table> -->
+                                <th mat-header-cell *matHeaderCellDef>{{columnsHeb[obj] | uppercase}}</th>
+                                <td mat-cell *matCellDef="let element; let rowNum = index">
+
+
+                                    <!-- all rows before last -->
+                                    <div *ngIf="rowNum != orderDetails.length-1">
+                                        {{element[obj]}}<ng-container *ngIf="obj == 'chargeAmount' || obj == 'totalCharge'">.00</ng-container>
+                                    </div>
+
+                                    <!-- last row -->
+                                    <div *ngIf="rowNum == orderDetails.length-1">
+                                        <form [formGroup]="addToExecOrderForm" class="addToExecOrderForm" *ngIf="viewAddToExecOrderForm" >
+                                            <ng-container *ngIf="obj == 'ticketCount'" >
+                                                <mat-form-field >
+                                                    <input matInput formControlName="ticketCount" #ticketCount placeholder="כמות כרטיסים" >
+                                                    <mat-error *ngIf="addToExecOrderForm.get('ticketCount').hasError('pattern')">
+                                                        *רק מספרים
+                                                    </mat-error>
+                                                </mat-form-field>
+                                            </ng-container>
+                                            <ng-container *ngIf="obj == 'chargeAmount'">
+                                                <mat-form-field>
+                                                    <mat-label>סכום טעינה</mat-label>
+                                                    <input matInput formControlName="chargeAmount" placeholder="1000 - 1.00"  #chargeAmount >
+                                                    <span matPrefix>00.</span>
+                                                    <mat-error *ngIf="addToExecOrderForm.get('chargeAmount').hasError('min')">
+                                                    * ערך מינימלי 1
+                                                    </mat-error>
+                                                    <mat-error *ngIf="addToExecOrderForm.get('chargeAmount').hasError('max')">
+                                                        * ערך מקסימלי 1000
+                                                    </mat-error>
+                                                    <mat-error *ngIf="addToExecOrderForm.get('chargeAmount').hasError('pattern')">
+                                                    *רק מספרים
+                                                    </mat-error>
+                                                </mat-form-field>
+                                            </ng-container>
+                                            <ng-container *ngIf="obj == 'validity'">
+                                                <mat-form-field class="datePicker datePickerPadding marginTop-1" appearance="fill" dir="ltr">
+                                                    <input matInput formControlName="validity" [matDatepickerFilter]="calendarFilter" [matDatepicker]="picker">
+                                                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                                    <mat-datepicker #picker></mat-datepicker>
+                                                </mat-form-field>
+                                            </ng-container>
+                                            <ng-container  *ngIf="obj == 'totalCharge'">
+                                                <mat-form-field class="inputIncludeValue marginTop-1">
+                                                    <input matInput formControlName="totalCharge">
+                                                    <span class="inputValue">
+                                                        {{this.addToExecOrderForm.get('ticketCount').value * this.addToExecOrderForm.get('chargeAmount').value}}
+                                                    </span>
+                                                    <span matPrefix>00.</span>
+                                                </mat-form-field>
+                                            </ng-container>
+                                            <!-- <ng-container *ngIf="obj != 'ticketCount' && obj != 'chargeAmount' && obj != 'validity' && obj != 'totalCharge'">
+                                                
+                                            </ng-container> -->
+                                        </form>
+                                    </div>
+                                </td>
+                            </ng-container>
+
+                            <ng-container *ngIf="obj == 'additionalColumn'" matColumnDef="{{obj}}">
+                                <th mat-header-cell *matHeaderCellDef></th>
+                                <td mat-cell *matCellDef="let element; let rowNum = index;">
+                                    <div *ngIf="rowNum != orderDetails.length-1">
+                                        <button mat-button class="deleteButton" (click)="deleteRow(rowNum)">מחק</button>
+                                    </div>
+                                    <div *ngIf="rowNum == orderDetails.length-1">
+                                        <button mat-button class="addButton" (click)="addRow()">הכנס</button>
+                                    </div>
+    
+                                </td>
+                            </ng-container>
+                        
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="displayedColumnsOrderDetails"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedColumnsOrderDetails;"></tr>
+
+                    </table>
+                </div>
+            <div class="innerElement flexElement">
+                <div class="viewCodeButton">
+                    <a href="#">
+                        <button mat-button class="linkButton">צפה בקודים
+                            <mat-icon>preview</mat-icon>
+                        </button>
+                    </a>
+                </div>
+                <div class="totalDataFlex">
+                    <div>
+                        <span class="customerDataTitle">כמות כרטיסים:</span>
+                        <span class="dataBolder"> {{totalTicketCount}}</span>
+                    </div>
+                    <div>
+                        <span> ₪ </span>
+                        <span class="customerDataTitle">סה"כ להזמנה:</span>
+                        <span class="dataBolder"> {{totalOrderSum}} </span>
+                    </div>
+                    <div>
+                        <span> ₪ </span>
+                        <span class="customerDataTitle">סה"כ יתרה:</span>
+                        <span class="dataBolder"> 0 </span>
                     </div>
                 </div>
             </div>
@@ -56,7 +181,7 @@
                     <div>
                         <mat-form-field>
                             <mat-label dir="rtl">*מספר הזמנה CRM - חובה</mat-label>
-                            <input matInput [formControl] = "CRMcontrol"> 
+                            <input matInput [formControl]="CRMcontrol">
                         </mat-form-field>
                     </div>
                 </div>
@@ -99,146 +224,6 @@
                         <div>
                             <span class="dataBolder"> --- </span>
                             <span class="customerDataTitle">:תאריך ביטול</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="page-element">  
-            <div class="element-page-title"> פרוט הזמנה </div>
-            <div class="element-page-body">
-                <div>
-                    <table mat-table [dataSource]="orderDetailsTable" class="mat-elevation-z8 tableInsideElement tableView" dir="rtl">
-                            <ng-container *ngFor="let obj of displayedColumnsOrderDetails; let columnNum = index;">
-                                <ng-container *ngIf="obj != 'additionalColumn'" matColumnDef="{{obj}}" >
-                                    <th mat-header-cell *matHeaderCellDef>{{columnsHeb[obj] | uppercase}}</th>
-                                    <td mat-cell *matCellDef="let element; let rowNum = index">
-                                        <div>
-                                            {{element[obj]}}<ng-container *ngIf="obj == 'chargeAmount' || obj == 'totalCharge'">.00</ng-container>
-
-                                        </div>
-                                    </td>
-                                </ng-container>
-                            </ng-container>
-
-                            <ng-container matColumnDef="additionalColumn">
-                                <th mat-header-cell *matHeaderCellDef></th>
-                                <td mat-cell *matCellDef="let element; let rowNum = index;">
-                                    <div>
-                                        <button mat-button class="deleteButton" (click)="deleteRow(rowNum)">מחק</button>
-                                    </div>
-
-                                </td>
-                            </ng-container>
-
-                        <tr mat-header-row *matHeaderRowDef="displayedColumnsOrderDetails"></tr>
-                        <tr mat-row *matRowDef="let row; columns: displayedColumnsOrderDetails;"></tr>
-                    
-                    </table>
-                    <form [formGroup]="addToExecOrderForm"  class="addToExecOrderForm" *ngIf="viewAddToExecOrderForm">
-                        <table [dataSource]="formTableForAddOrder" mat-table class="mat-elevation-z8 tableInsideElement" dir="rtl">
-                            <ng-container matColumnDef="foundation">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
-                                <td mat-cell *matCellDef="let element;">
-                                    <div></div>
-                                </td>
-                            </ng-container>
-                        
-                            <ng-container matColumnDef="ticketCount">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
-                                <td mat-cell *matCellDef="let element;">
-                                    <div>
-                                        <mat-form-field >
-                                            <input matInput formControlName="ticketCount" #ticketCount placeholder="כמות כרטיסים" >
-                                            <mat-error *ngIf="addToExecOrderForm.get('ticketCount').hasError('pattern')">
-                                                *רק מספרים
-                                             </mat-error>
-                                        </mat-form-field>
-                                    </div>
-                                </td>
-                            </ng-container>
-                            <ng-container matColumnDef="chargeAmount">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
-                                <td mat-cell *matCellDef="let element;">
-                                    <div>
-                                        <mat-form-field>
-                                            <mat-label>סכום טעינה</mat-label>
-                                            <input matInput placeholder="1000 - 1.00" value=".00" formControlName="chargeAmount" #chargeAmount >
-                                            <span matPrefix>00.</span>
-                                            <mat-error *ngIf="addToExecOrderForm.get('chargeAmount').hasError('min')">
-                                               * ערך מינימלי 1
-                                            </mat-error>
-                                            <mat-error *ngIf="addToExecOrderForm.get('chargeAmount').hasError('max')">
-                                                * ערך מקסימלי 1000
-                                            </mat-error>
-                                            <mat-error *ngIf="addToExecOrderForm.get('chargeAmount').hasError('pattern')">
-                                               *רק מספרים
-                                            </mat-error>
-                                        </mat-form-field>
-                                    </div>
-                                </td>
-                            </ng-container>
-                            
-                            <ng-container matColumnDef="validity">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
-                                <td mat-cell *matCellDef="let element;">
-                                    <div>
-                                        <mat-form-field class="datePicker datePickerPadding marginTop-1" appearance="fill" dir="ltr">
-                                            <input matInput formControlName="validity" [matDatepickerFilter]="calendarFilter" [matDatepicker]="picker">
-                                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                                            <mat-datepicker #picker></mat-datepicker>
-                                        </mat-form-field>
-                                    </div>
-                                </td>
-                            </ng-container>
-                            <ng-container matColumnDef="totalCharge">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
-                                <td mat-cell *matCellDef="let element;">
-                                    <div>
-                                        <mat-form-field class="inputIncludeValue marginTop-1">
-                                            <input matInput formControlName="totalCharge" >
-                                            <span class="inputValue">
-                                                {{this.addToExecOrderForm.get('ticketCount').value * this.addToExecOrderForm.get('chargeAmount').value}}
-                                            </span>
-                                            <span matPrefix>00.</span>
-                                        </mat-form-field>
-                                    </div>
-                                </td>
-                            </ng-container>
-                            <ng-container matColumnDef="additionalColumn">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
-                                <td mat-cell *matCellDef="let element;">
-                                    <div>
-                                        <button mat-button class="addButton" (click)="addRow()">הכנס</button>
-                                    </div>
-                                </td>
-                            </ng-container>
-                            <tr mat-row *matRowDef="let row; columns: displayedColumnsOrderDetails"></tr>
-                        </table>
-                    </form>
-                </div>
-                <div class="innerElement flexElement" >
-                    <div>
-                        <a href="#">
-                            <button mat-button class="linkButton">צפה בקודים
-                                <mat-icon>preview</mat-icon>
-                            </button>
-                        </a>
-                    </div>
-                    <div class="totalDataFlex">
-                        <div>
-                            <span class="customerDataTitle">כמות כרטיסים:</span>
-                            <span class="dataBolder"> {{totalTicketCount}}</span>
-                        </div>
-                        <div>
-                            <span> ₪ </span>
-                            <span class="customerDataTitle">סה"כ להזמנה:</span>
-                            <span class="dataBolder"> {{totalOrderSum}} </span>
-                        </div>
-                        <div>
-                            <span> ₪ </span>
-                            <span class="customerDataTitle">סה"כ יתרה:</span>
-                            <span class="dataBolder"> 0 </span>
                         </div>
                     </div>
                 </div>

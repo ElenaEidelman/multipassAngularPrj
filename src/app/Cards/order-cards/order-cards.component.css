@@ -1,0 +1,36 @@
+.formWrapRow{
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+}
+
+.formWrapRow > div{
+    flex-grow: 1;
+    margin: 1em 2em;
+
+}
+.formWrapRow > div > mat-form-field{
+    width:100%;
+}
+.buttonAny{
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    margin: auto;
+}
+.buttonAny > button{
+    width: fit-content;
+    margin: auto;
+}
+.wrap-content{
+    margin: 2em 0;
+}
+.marginSelectTop{
+    margin-top: 18px;
+}
+
+@media screen and (max-width: 1024px){
+    .formWrapRow{
+        flex-direction: column;
+    }
+}

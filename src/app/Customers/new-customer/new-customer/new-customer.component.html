@@ -1,1 +1,183 @@
-<p>new-customer works!</p>
+<div class="pageTitle main2-title">
+    <div>לקוח חדש</div>
+</div>
+<div class="page-wrap">
+    <div class="page-element width-block-auto">
+        <div class="wrapData formBorder">
+            <div class="fixed-column-buttons">
+                <button mat-button class="linkButton" (click)="accordion.closeAll()">
+                    <span>צמצם הכל</span>
+                    <mat-icon>compress</mat-icon>
+                </button>
+                <button mat-button class="linkButton" (click)="accordion.openAll()">
+                    <span>הרחב הכל</span>
+                    <mat-icon>expand</mat-icon>
+                </button>
+                <button mat-button class="addButton" (click)="saveForm()">
+                    <span>שמור</span>
+                    <mat-icon>save</mat-icon>
+                </button>
+            </div>
+            <div>
+                <form [formGroup]="newCustomerForm">
+                    <mat-accordion class="example-headers-align" multi>
+
+                        <!-- Customer -->
+                        <mat-expansion-panel [expanded]="true" #newCustomer>
+                            <mat-expansion-panel-header>
+                                <mat-panel-title></mat-panel-title>
+                                <mat-panel-description>
+                                    <div>
+                                        <mat-icon *ngIf="!newCustomer.expanded" class="absoluteIcon">arrow_circle_down
+                                        </mat-icon>
+                                    </div>
+                                    <div>
+                                        <mat-icon *ngIf="newCustomer.expanded" class="absoluteIcon">arrow_circle_up
+                                        </mat-icon>
+                                    </div>
+                                    <div class="titleDesc">
+                                        פרטי לקוח
+                                    </div>
+                                </mat-panel-description>
+                            </mat-expansion-panel-header>
+                            <div class="wrapFormElement">
+                                <div class="wrapFlexTwoCol" formGroupName="customerData">
+                                    <div class="formWrapColumn">
+                                        <mat-form-field>
+                                            <mat-label>שם חברה</mat-label>
+                                            <input matInput placeholder="שם חברה" formControlName="companyName">
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <mat-label>דוא"ל</mat-label>
+                                            <input matInput placeholder='דוא"ל' formControlName="email">
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="formWrapColumn">
+                                        <mat-form-field>
+                                            <mat-label>מספר טלפון</mat-label>
+                                            <input matInput placeholder="מספר טלפון" formControlName="phoneNumber">
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <mat-label>תפקיד</mat-label>
+                                            <input matInput placeholder="תפקיד" formControlName="role">
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="formWrapColumn">
+                                        <mat-form-field>
+                                            <mat-label>מספר טלפון נוסף</mat-label>
+                                            <input matInput placeholder="מספר טלפון נוסף"
+                                                formControlName="addPhoneNumber">
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <mat-label>מספר משתמש</mat-label>
+                                            <input matInput placeholder="מספר משתמש" formControlName="userNumber">
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-expansion-panel>
+
+                        <!-- address -->
+                        <mat-expansion-panel #address>
+                            <mat-expansion-panel-header>
+                                <mat-panel-title></mat-panel-title>
+                                <mat-panel-description>
+                                    <mat-icon *ngIf="!address.expanded" class="absoluteIcon">arrow_circle_down
+                                    </mat-icon>
+                                    <mat-icon *ngIf="address.expanded" class="absoluteIcon">arrow_circle_up</mat-icon>
+                                    <div class="titleDesc">
+                                        כתובת
+                                    </div>
+                                </mat-panel-description>
+                            </mat-expansion-panel-header>
+
+                            <div class="wrapFormElement">
+                                <div class="wrapFlexTwoCol">
+                                    <div class="flexData" formGroupName="address">
+                                        <mat-form-field>
+                                            <mat-label>עיר</mat-label>
+                                            <input matInput placeholder="עיר" formControlName="city">
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <mat-label>רחוב</mat-label>
+                                            <input matInput placeholder="רחוב" formControlName="street">
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <mat-label>מספר בית</mat-label>
+                                            <input matInput placeholder="מספר בית" formControlName="houseNumber">
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <mat-label>מספר דירה</mat-label>
+                                            <input matInput placeholder="מספר דירה" formControlName="appNumber">
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-expansion-panel>
+
+                        <!-- commercial Data -->
+                        <mat-expansion-panel #commercialData>
+                            <mat-expansion-panel-header>
+                                <mat-panel-title> </mat-panel-title>
+                                <mat-panel-description>
+                                    <mat-icon *ngIf="!commercialData.expanded" class="absoluteIcon">arrow_circle_down
+                                    </mat-icon>
+                                    <mat-icon *ngIf="commercialData.expanded" class="absoluteIcon">arrow_circle_up
+                                    </mat-icon>
+                                    <div class="titleDesc">
+                                        פרטים מסחריים
+                                    </div>
+                                </mat-panel-description>
+                            </mat-expansion-panel-header>
+
+                            <div class="wrapFormElement">
+                                <div class="wrapFlexTwoCol" formGroupName="comerData">
+                                    <div class="formWrapColumn">
+                                        <mat-form-field>
+                                            <mat-label>סטטוס</mat-label>
+                                            <input matInput placeholder="סטטוס" formControlName="status">
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <mat-label>מזה לקוח</mat-label>
+                                            <input matInput placeholder="מזה לקוח" formControlName="customer">
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="formWrapColumn">
+                                        <mat-form-field>
+                                            <mat-label>ח.פ</mat-label>
+                                            <input matInput placeholder="ח.פ" formControlName="customerId">
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <mat-label>אחוז הנחה קבוע</mat-label>
+                                            <input matInput placeholder="אחוז הנחה קבוע"
+                                                formControlName="fixedDiscountPerc">
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="formWrapColumn space-around">
+                                        <div class="buttonAny">
+                                            <button mat-button matTooltip="העתק תעודת מורשה" matTooltipPosition="above" class="linkButton" >
+                                                <span>לצפיה בתעודה</span>
+                                                <mat-icon>description</mat-icon>
+                                            </button>
+                                        </div>
+                                        <div class="buttonAny">
+                                                <input [hidden]="true" name="uploadDoc" #uploadDoc type="file">
+                                                <button  mat-button class="addButton" (click)="uploadDoc.click()">
+                                                    <span>בחירת קובץ</span>
+                                                    <mat-icon>attach_file</mat-icon>
+                                                </button>
+                                                <span *ngIf="uploadDoc.value">{{uploadDoc.value}}</span>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            <mat-datepicker #picker></mat-datepicker>
+                        </mat-expansion-panel>
+                    </mat-accordion>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>

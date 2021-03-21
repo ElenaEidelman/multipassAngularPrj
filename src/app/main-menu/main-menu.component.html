@@ -1,4 +1,10 @@
 <div class="wrap-main-menu bgColorMainMenu">
-    <a routerLink="/allOrders">orders</a><br>
-    <a routerLink="/allCustomers">customers</a>
+    <div><a mat-button routerLink="/allOrders" (click)="menuClicked(this)">הזמנות</a></div>
+    <div><a mat-button routerLink="/allCards" (click)="menuClicked(this)">שוברים</a></div>
+    <!-- <div><a mat-button routerLink="/orderCards" (click)="menuClicked(this)">הזמנת שוברים</a></div> -->
+    <div><a mat-button routerLink="/digitalFilesList">קבצים דיגיטלים</a></div>
+    <div><a mat-button routerLink="/allCustomers" (click)="menuClicked(this)">לקוחות</a></div>
+    <div><a mat-button routerLink="/reports" (click)="menuClicked(this)">דוחות</a></div>
+    <div><a mat-button routerLink="/allUsers" (click)="menuClicked(this)">משתמשים</a></div>
+    <div><a mat-button routerLink="/allSMStemplates" (click)="menuClicked(this)">SMS תבנית </a></div>
 </div>

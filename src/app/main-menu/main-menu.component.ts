@@ -12,4 +12,14 @@ export class MainMenuComponent implements OnInit {
   ngOnInit() {
   }
 
+  menuClicked(menu){
+    //debugger
+
+    // background: #EEF0F2;
+    // box-shadow: none;
+    // color: #504F51;
+    // margin-left: 0;
+  }
+
+
 }

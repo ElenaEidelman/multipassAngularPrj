@@ -1,0 +1,44 @@
+<div>
+    <div class="close-icon-wrap" (click)="dialogClose()" >
+        <mat-icon matTooltip="סגור" matTooltipPosition="right">cancel</mat-icon>
+    </div>
+    <div class="innerElement">
+        <h1 mat-dialog-title class="mat-dialog-title">הזמנה חדשה</h1>
+        <div mat-dialog-content class="mat-dialog-content">
+            <div class="dialog-content-wrap">
+                <div>
+                    <div class="drop-down-title">בחירת לקוח</div>
+                    <mat-form-field>
+                        <mat-label>שם משתמש</mat-label>
+                        <mat-select [(ngModel)]="selectedValue" name="name">
+                        <mat-option *ngFor="let name of data.data" [value]="name.customerId">
+                            {{name.companyName}}
+                        </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <!-- <div class="addButtonWrap">
+                    <button mat-button class="addButton">
+                        <span> הכנס לקוח </span>
+                        <mat-icon> person_add </mat-icon>
+                    </button>
+                </div> -->
+            </div>
+        </div>
+    </div>
+
+
+    <div mat-dialog-actions class="actions-button">
+        <!-- <button mat-button class="linkButton"> צור הזמנה מאקסל  
+            <fa-icon [icon]="faFileExcel"></fa-icon>
+        </button> -->
+        <a [routerLink]="['/orderCards',0,selectedValue]" mat-button class="linkButton" (click)="dialogRef.close()">
+            <span>צור הזמנה מאקסל </span>
+            <fa-icon [icon]="faFileExcel"></fa-icon>
+        </a>
+        <a [routerLink]="['/orderCards',1,selectedValue]" mat-button class="linkButton" (click)="dialogRef.close()">
+            <span>צור הזמנה ידנית </span>
+            <mat-icon> settings </mat-icon>
+        </a>
+    </div>
+</div>

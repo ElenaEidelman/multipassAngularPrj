@@ -1,5 +1,40 @@
+
 .wrap-main-menu{
     width: 150px;
     height: 100%;
+    display: flex;
+    flex-direction: column;
     /* background: linear-gradient(to bottom, rgba(48,183,177,1), rgba(38,113,144,1)); */
+}
+.wrap-main-menu > div > a{
+    color: #fff;
+    text-align: right;
+    font-weight: bold;
+    margin: 0 4px 5px;
+    box-shadow: inset 0px 0px 15px #444445;
+    width: -webkit-fill-available;
+}
+.wrap-main-menu > div > a:hover{
+    /* box-shadow: inset 0px 0px 15px #ACBF9A; */
+    background: #88C43E;
+    box-shadow: none;
+}
+
+@media screen and (max-width: 1024px){
+    .wrap-main-menu{
+        width: auto;
+        overflow: auto;
+        white-space: nowrap;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+    .wrap-main-menu > div > a{
+        display: inline-block;
+        color: white;
+        text-align: center;
+        padding: 14px;
+        text-decoration: none;
+        box-shadow: none;
+    }
 }

@@ -1,0 +1,30 @@
+mat-panel-description{
+    direction: rtl;
+}
+mat-accordion mat-expansion-panel mat-expansion-panel-header .mat-icon{
+    width: unset !important;
+    font-size: 45px;
+    height: 45px !important;
+  }
+  .wrapData{
+      display: flex;
+      justify-content: space-between;
+      flex-direction: column-reverse;
+  }
+  .wrapData > div.buttonAny{
+    flex-grow: 1;
+    width: 130px;
+    margin: 0 auto;
+    flex-direction: column;
+  }
+  .example-action-buttons{
+    background: #EEF0F2;
+    border-radius: 4px;
+  }
+
+  @media screen and (max-width: 1024px){
+    .flexData {
+      flex-direction: row-reverse;
+    }
+  }
+
