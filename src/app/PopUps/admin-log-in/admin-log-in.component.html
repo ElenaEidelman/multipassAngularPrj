@@ -1,0 +1,44 @@
+<div>
+    <div class="close-icon-wrap" (click)="dialogClose()" >
+        <mat-icon matTooltip="סגור" matTooltipPosition="right">cancel</mat-icon>
+    </div>
+
+
+
+    <div class="log-in">
+        <div class="wrap-form">
+          <h2>Admin Login</h2>
+          <form  class="logInForm" >
+            <p>
+              <mat-form-field>
+                <mat-label>מספר טלפון</mat-label>
+                <input type="phone" matInput placeholder="מספר טלפון">
+                <mat-icon matPrefix>phone</mat-icon>
+                <mat-hint>מספר טלפון</mat-hint>
+                <mat-error>
+                  נא להכניס את מספר טלפון
+                </mat-error>
+              </mat-form-field>
+            </p>
+            <p>
+              <mat-form-field>
+                <mat-label>מזהה</mat-label>
+                <input type="text" matInput placeholder="מזהה">
+                <mat-icon matPrefix>domain</mat-icon>
+                <mat-hint>מזהה</mat-hint>
+                <mat-error>
+                  נא להזין מזהה החברה
+                </mat-error>
+              </mat-form-field>
+            </p>
+            <div class="wrapSendButton">
+              <!-- <div *ngIf="msgAlert != ''" class="error msgAlert">{{msgAlert}}</div> -->
+              <button mat-button  class="addButton" (click)="toAdmin()">כניסה</button>
+              <!-- <span *ngIf="loginSpinner">
+                <mat-spinner></mat-spinner>
+              </span> -->
+            </div>
+          </form>
+        </div>
+      </div>
+</div>

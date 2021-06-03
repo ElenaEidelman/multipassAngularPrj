@@ -1,27 +1,190 @@
 .headerWrap{
     width: 100%;
-    height: 110px;
-    display: flex;
-    border-bottom: 3px solid #8FC636;
+    height: 100px;
+    z-index: 101;
     /* background: linear-gradient(to right, rgba(38,113,144,1), rgba(48,183,177,1)); */
 
 }
-.logo, .logo > a{
+.header{
+    height: 100%;
+    display: flex;
+    -ms-flex-direction: row;
+}
+.header > div{
+    display: flex;
+    flex-grow: 1;
+    flex-basis: 0;
+}
+.logo, .logo > a, .customerLogo, .customerLogo > a{
     display: flex;
 }
 .logo > a > img{
-    height: 50%;
+    height: 80px;
     margin: auto 0;
+    padding: 0px 20px 0px 6px;
+    /* background: #fff; */
+}
+.user-data-wrap{
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    text-align: right;
+    height: 100%;
+}
+.user-data-wrap > div{
+    color: #fff;
+    margin: auto 10px;
+    text-align: center;
+}
+.user-data-wrap mat-icon{
+    font-size: 3em;
+    width: fit-content;
+    height: auto;
+    text-align: center;
+}
+.aImg{
     background: #fff;
+    border-top-right-radius: 65px;
+    margin: 11px 11px 11px 0px;
+    border-bottom-right-radius: 65px;
+    border: 2px solid #8BC641;
+    border-left: 0;
+}
+.aImgCustomer{
+    background: #fff;
+    border: 2px solid #8BC641;
+    margin: 11px auto;
+    border-radius: 8px;
+}
+.aImgCustomer > img{
+    height: 96%;
+    margin: auto;
 }
 
+.user-logo-wrap{
+    display: flex;
+    flex-direction: row-reverse;
+    background: #fff;
+    border-top-left-radius: 65px;
+    margin: 11px 0px 11px 11px !important;
+    border-bottom-left-radius: 65px;
+    border: 2px solid #8BC641;
+    border-right: 0;
+}
+.icon-wrap{
+    width: fit-content;
+    margin: auto;
+    /* padding: 6px; */
+    border: 2px solid #88C43E;
+    background: #fff;
+}
+.user-logo-wrap > div.logoUserImg{
+    margin: auto 0;
+}
+.user-logo-wrap > div > img{
+    height: 70px;
+    padding: 0 5px;
+}
+/* .user-logo-wrap > div, .user-logo-wrap > img{
+    flex-grow: 1;
+} */
+.cus-name{
+    color: #6B6B6A;
+    font-size: 1.5em;
+    font-weight: bold;
+    margin: auto 11px;
+    display: flex;
+    flex-direction: row-reverse;
+}
+.addOpt{
+    height: 100%;
+}
+.addOpt mat-icon{
+    color: #6B6B6A;
+}
+
+button.mat-menu-item{
+    display: flex;
+    justify-content: space-between;
+}
 @media screen and (max-width: 1024px){
+    .header{
+        height: fit-content;
+    }
+    .header > div{
+        flex-wrap: wrap;
+        flex-grow: 1;
+        flex-basis: 0;
+        /* height: 44px; */
+    }
+    header > div.logo, .header > div.userData{
+        height: 44px !important;
+    }
+    .header > div.logo > a{
+        height: fit-content !important;
+    }
+
+    .icon-wrap > img{
+        height: 37px;
+    }
+    .customerLogo{
+        display: none !important;
+    }
+    .userData{
+        margin-left: 15px;
+    }
+    .user-data-wrap > div{
+        margin: auto 0px;
+        /* padding: 3px 0; */
+        height: 44px;
+    }
+    .logo{
+        margin-right: 15px ;
+    }
+
     .logo > a, .logo{
         width: 100%;
         justify-content: center;
     }
     .logo  img{
-        height: 50%;
-        margin: 7px;
+        height: 40px !important;
+        margin: 0 !important;
+        padding: 0px !important;
+    }
+    .user-logo-wrap{
+        width: 100%;
+    }
+    .user-logo-wrap > div > img{
+        height: 50px !important;
+    }
+    /* .header{
+        flex-wrap: wrap;
+    } */
+    .headerWrap{
+        height: fit-content;   
+    }
+    .user-logo-wrap{
+        margin: 5px 0 !important;
+    }
+    .user-data-wrap mat-icon{
+        font-size: 2em;
+    }
+    .cus-name{
+        font-size: 0.9em !important;
+        margin: 0;
+        width: 100%;
+    }
+    .cus-name > div{
+        flex-grow: 1;
+        margin: auto;
+    }
+    .customerName{
+        margin: 0;
+    }
+    .logoUserImg{
+        display: none;
+    }
+    .aImg{
+        margin: 5px 0;
     }
 }

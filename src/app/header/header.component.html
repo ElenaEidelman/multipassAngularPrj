@@ -1,8 +1,63 @@
-<div class="headerWrap bgColorMainMenu">
-    <div class="logo">
-        <a routerLink="/">
-            <img src="../../assets/img/multipassLOGO.png">
-        </a>
+<div class="headerWrap">
+    <div class="header bgColorMainMenu">
+        <div class="logo">
+            <a routerLink="/public/home" class="aImg">
+                <img src="../../assets/img/multitav.png">
+            </a>
+        </div>
+        <!-- <div class="customerLogo">
+            <a routerLink="/" class="aImgCustomer">
+                <img src="../../assets/img/logoAE.png">
+            </a>
+        </div> -->
+        <div class="userData">
+            <div class="user-data-wrap">
+
+                <div class="user-logo-wrap">
+                    <div class="logoUserImg">
+                        <img _ngcontent-akc-c243="" [src]="userLogo">
+                    </div>
+
+                    <div class="cus-name">
+                        <div class="customerName">
+                            {{NameUser}}
+                        </div>
+                        <div class="addOpt">
+                            <!-- <mat-icon matTooltip="יציאה מהמערכת" (click)="exitSystem()">exit_to_app</mat-icon> -->
+                            <button mat-icon-button #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="menu" matTooltip="הגדרות / יציאה">
+                                <mat-icon *ngIf="!menuTrigger.menuOpen">expand_more</mat-icon>
+                                <mat-icon *ngIf="menuTrigger.menuOpen">expand_less</mat-icon>
+                            </button>
+                            <mat-menu #menu="matMenu">
+                                <button mat-menu-item class="settingsMenu">
+                                    <div>
+                                        <span>הגדרות</span>
+                                    </div>
+                                    <div>
+                                        <mat-icon>settings</mat-icon>
+                                    </div>
+                                </button>
+                                <button mat-menu-item (click)="adminLogIn()" class="settingsMenu">
+                                    <div>
+                                        <span>Admin login</span>
+                                    </div>
+                                    <div>
+                                        <mat-icon>manage_accounts</mat-icon>
+                                    </div>
+                                </button>
+                                <button mat-menu-item (click)="exitSystem()" class="settingsMenu">
+                                    <div>
+                                        <span>יציאה</span>
+                                    </div>
+                                    <div>
+                                        <mat-icon>logout</mat-icon>
+                                    </div>
+                                </button>
+                            </mat-menu>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="userData"></div>
 </div>

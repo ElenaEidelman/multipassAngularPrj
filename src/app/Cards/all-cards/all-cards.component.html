@@ -1,7 +1,7 @@
 <div class="pageTitle main2-title">
     <div>שוברים</div>
     <div>
-        <a routerLink="/orderCards">
+        <a routerLink="/public/orderCards">
             <button mat-raised-button class="titleMenuButton">הזמנת שוברים
                 <mat-icon>queue</mat-icon>
             </button>
@@ -16,53 +16,62 @@
         <div class="formBorder formElement">
             <form [formGroup]="cardsForm">
                 <div class="formWrap">
-                    <div class="formWrapRow">
+                    <div class="formWrapRow idNumber">
                         <div>
                             <mat-form-field>
                                 <mat-label>מספר שובר</mat-label>
-                                <input matInput placeholder = "מספר שובר" formControlName="cardNumber">
+                                <input matInput placeholder = "מספר שובר" formControlName="CardId">
+                                <button class="clearButton" *ngIf="this.cardsForm.get('CardId').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.cardsForm.get('CardId').setValue('')">
+                                    <mat-icon>close</mat-icon>
+                                </button>
                             </mat-form-field>
                         </div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                    <div class="formWrapRow">
                         <div>
                             <mat-form-field>
                                 <mat-label>שם פרטי</mat-label>
-                                <input matInput placeholder = "שם פרטי" formControlName="fName">
+                                <input matInput placeholder = "שם פרטי" formControlName="Name">
+                                <button class="clearButton" *ngIf="this.cardsForm.get('Name').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.cardsForm.get('Name').setValue('')">
+                                    <mat-icon>close</mat-icon>
+                                </button>
                             </mat-form-field>
                         </div>
                         <div>
                             <mat-form-field>
-                                <mat-label>שם משפחה</mat-label>
-                                <input matInput placeholder = "שם משפחה" formControlName="lName">
+                                <mat-label>סטטוס</mat-label>
+                                <input matInput placeholder = "סטטוס" formControlName="Status">
+                                <button class="clearButton" *ngIf="this.cardsForm.get('Status').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.cardsForm.get('Status').setValue('')">
+                                    <mat-icon>close</mat-icon>
+                                </button>
                             </mat-form-field>
                         </div>
                         <div>
                             <mat-form-field>
                                 <mat-label>מספר טלפון נייד</mat-label>
-                                <input matInput placeholder = "מספר טלפון נייד" formControlName="phoneNumber">
+                                <input matInput placeholder = "מספר טלפון נייד" formControlName="PhoneNumber">
+                                <button class="clearButton" *ngIf="this.cardsForm.get('PhoneNumber').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.cardsForm.get('PhoneNumber').setValue('')">
+                                    <mat-icon>close</mat-icon>
+                                </button>
                             </mat-form-field>
                         </div>
                     </div>
                     <div class="formWrapRow">
                         <div>
-                            <mat-form-field class="selectedFormFieldWidth">
-                                <mat-label>סטטוס שובר </mat-label>
-                                <mat-select formControlName="status">
-                                    <mat-option *ngFor="let status of statusList" [value]="status.value">
-                                        {{status.viewValue}}
-                                    </mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </div>
-                        <div>
                             <mat-form-field>
                                 <mat-label>מספר הזמנה</mat-label>
-                                <input matInput placeholder = "מספר הזמנה" formControlName="orderId">
+                                <input matInput placeholder = "מספר הזמנה" formControlName="OrderId">
+                                <button class="clearButton" *ngIf="this.cardsForm.get('OrderId').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.cardsForm.get('OrderId').setValue('')">
+                                    <mat-icon>close</mat-icon>
+                                </button>
                             </mat-form-field>
                         </div>
                         <div>
                             <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
                                 <mat-label>מתאריך</mat-label>
-                                <input matInput [matDatepicker]="picker2" formControlName="fromDate">
+                                <input matInput [matDatepicker]="picker2" formControlName="FromDate">
                                 <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
                                 <mat-datepicker #picker2></mat-datepicker>
                             </mat-form-field>
@@ -70,54 +79,51 @@
                         <div>
                             <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
                                 <mat-label>עד תאריך</mat-label>
-                                <input matInput [matDatepicker]="picker" formControlName="untilDate">
+                                <input matInput [matDatepicker]="picker" formControlName="ToDate">
                                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                                 <mat-datepicker #picker></mat-datepicker>
                             </mat-form-field>
                         </div>
                     </div>
-                </div>
-                <div class="mobileTwoCol">
-                    <div>
-                        <mat-form-field>
-                            <mat-label>חברה</mat-label>
-                            <input matInput placeholder = "שם חברה" formControlName="companyName">
-                        </mat-form-field>
-                    </div>
-                    <div>
-                        <mat-form-field>
-                            <mat-label>מזהה לקוח</mat-label>
-                            <input matInput placeholder = "מספר לקוח" formControlName="customerId">
-                        </mat-form-field>
-                    </div>
-                    <div>
-                        <mat-form-field>
-                            <mat-label>אסמכתא הנה"ח</mat-label>
-                            <input matInput placeholder='אסמכתא הנה"ח' formControlName="documentId">
-                        </mat-form-field>
-                    </div>
-                    <div>
-                        <div class="radioGroupWrap">
-                            <mat-radio-group
-                                    aria-labelledby="example-radio-group-label"
-                                    class="example-radio-group"
-                                    formControlName="byDate">
-                                    <mat-radio-button class="radioButton" value="dateIssue">
-                                        תאריך הנפקה
-                                    </mat-radio-button>
-                                    <!-- <mat-radio-button class="radioButton" value="dateActivation">
-                                        תאריך אקטיבציה
-                                    </mat-radio-button> -->
-                            </mat-radio-group>
+                    <div class="formWrapRow">
+                        <div>
+                            <mat-form-field>
+                                <mat-label>שם לקוח</mat-label>
+                                <input matInput placeholder = "שם לקוח" formControlName="CompanyName">
+                                <button class="clearButton" *ngIf="this.cardsForm.get('CompanyName').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.cardsForm.get('CompanyName').setValue('')">
+                                    <mat-icon>close</mat-icon>
+                                </button>
+                            </mat-form-field>
+                        </div>
+                        <div>
+                            <mat-form-field>
+                                <mat-label>מזהה לקוח</mat-label>
+                                <input matInput placeholder = "מספר לקוח" formControlName="userid">
+                                <button class="clearButton" *ngIf="this.cardsForm.get('userid').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.cardsForm.get('userid').setValue('')">
+                                    <mat-icon>close</mat-icon>
+                                </button>
+                            </mat-form-field>
+                        </div>
+                        <div>
+                            <mat-form-field>
+                                <mat-label>tenant</mat-label>
+                                <input matInput placeholder = "מספר לקוח" formControlName="tenantid">
+                                <button class="clearButton" *ngIf="this.cardsForm.get('tenantid').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.cardsForm.get('tenantid').setValue('')">
+                                    <mat-icon>close</mat-icon>
+                                </button>
+                            </mat-form-field>
                         </div>
                     </div>
                 </div>
+                <div class="buttonsWrap">
+                    <button mat-button class="linkButton" (click) = "resetForm()">אפס</button>
+                    <!-- <button mat-button class="addButton" (click) = "filterTable()">חפש</button> -->
+                    <button mat-button class="addButton" (click) = "getFilteredCards()">חפש</button>
+                    <mat-spinner class="spinner" *ngIf="spinner"></mat-spinner>
+                    <mat-error *ngIf="formErrorMsg != ''">{{formErrorMsg}}</mat-error>
+                </div>
 
             </form>
-            <div class="buttonsWrap">
-                <button mat-button class="linkButton" (click) = "resetForm()">אפס</button>
-                <button mat-button class="addButton" (click) = "filterTable()">חפש</button>
-            </div>
         </div>
     </div>
 
@@ -129,6 +135,7 @@
             <app-table
                 [dataLabelsList]="cardsLabelForTable"
                 [data_Source]="cardsDataSource"
+                [linksListById]="linksListById"
             ></app-table>
         </div>
     </div>

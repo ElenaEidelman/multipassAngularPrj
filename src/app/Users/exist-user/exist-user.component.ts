@@ -57,6 +57,7 @@ export class ExistUserComponent implements OnInit {
 
 
   ngOnInit(): void {
+    window.scroll(0,0);
     //debugger
     this.idUnsubscribe = this.activeRoute.params.subscribe( param => {
       //debugger

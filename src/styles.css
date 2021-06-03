@@ -25,13 +25,19 @@ app-main-menu{
 .app-main-view{
   flex-grow: 1;
   background: #eef0f2;
-  margin: 15 5px;
-  
+  margin-top: 100px;
+  display: flex;
 }
 .page-wrap{
   /* background: #eef0f2; */
   min-height: calc(100vh - 110px);
   margin:0 30px;
+}
+.headerWrap{
+  /* position: sticky;
+  top: 0;*/
+  /* z-index: 9999;   */
+  position: fixed;
 }
 .headerPage{
   width: 100%;
@@ -44,17 +50,21 @@ app-main-menu{
   font-weight: bold;
 }
 .main2-title{
+  border-top: 0.15em solid #8FC636;
   color: #686866;
   font-size: 1.6rem;
   text-align: right;
-  padding: 10px;
+  padding: 10px 30px;
   font-weight: bold;
   margin-bottom: 3rem;
   box-shadow: 0px 5px 20px rgb(0 0 0 / 20%);
   background: #fff;
   display: flex;
-  justify-content: space-between;
+  justify-content: start;
   flex-direction: row-reverse
+}
+.main2-title > div{
+  margin: 0 8px;
 }
 .sub-title{
   color: #BFBFBF; 
@@ -86,7 +96,7 @@ app-main-menu{
   width: 49%;
   margin: 1rem 6px;
   box-shadow: 0 3px 6px rgba(0,0,0,.29);
-  border-radius: 10px;
+  border-radius: 4px;
   margin-bottom: 25px;
   text-align: right;
   background: #FFFFFF;
@@ -125,15 +135,15 @@ app-main-menu{
 .customerDataTitle{
   color: #8989a4;
 }
-.primary-button{
-  background: #267491;
-  color: #fff;
-}
+
 div.formElement > div.formWrap mat-form-field{
   width: 100%;
 }
 mat-form-field{
   text-align: right !important;
+}
+.mat-form-field-hint-wrapper{
+  flex-direction: row-reverse;
 }
 .alertMessage{
   margin: 10px 0;
@@ -141,11 +151,38 @@ mat-form-field{
 .success{
   color: #757590;
 }
+.mat-form-field-hint-wrapper{
+  flex-direction: column;
+}
 .error{
-  color: red;
+  color: red !important;
+}
+.alignRight{
+  text-align: right !important;
+}
+.marginRight{
+  margin-right: 0 !important
+}
+.settingsMenu mat-icon{
+  margin-right: 0 !important;
+  margin-left: 16px  !important;
+}
+
+.wrap-fab-button{
+  margin: 1em auto;
+}
+.primary-button{
+  background: #267491;
+  color: #fff;
 }
 .primaryButton{
-  background: #8FC636;
+  background: #88C43E;
+  background-color: #88C43E  !important;
+  color: #fff;
+}
+.primaryButton:hover{
+  background: #56910e;
+  background-color: #56910e  !important;
   color: #fff;
 }
 .deleteButton{
@@ -153,7 +190,7 @@ mat-form-field{
   color: #fff;
 }
 .deleteButton:hover{
-  background: #ce391f;
+  background: #fa401f;
 }
 .deleteIcon{
   color: #FF6347;
@@ -161,11 +198,15 @@ mat-form-field{
 }
 .deleteIcon:hover{
   cursor: pointer;
-  color: #fc9481;
+  color: #fa401f;
 }
 .addButton{
   /* background: #267491; */
-  background: #686866;
+  background: #88C43E;
+  color: #fff;
+}
+.addButton:hover{
+  background: #36362f;
   color: #fff;
 }
 .innerElement{
@@ -178,7 +219,7 @@ mat-form-field{
   color: #fff;
 }
 .titleMenuButton:hover{
-  background: #cadbba;
+  background: #89BE34;
 }
 span.tableButton:hover{
   background: #89BE34;
@@ -236,6 +277,7 @@ table.tableInsideElement tr th, tr td{
 .addToExecOrderForm{
   display: flex;
   flex-direction: row-reverse;
+  margin: 20px 0 0;
 }
 .addToExecOrderForm > div{
 
@@ -259,14 +301,14 @@ position: relative;
 }
 
 .footer{
-  height: 100px;
+  height: 50px;
   background: #686866;
   display: flex;
 }
 .footer > div{
   width: fit-content;
   color: #fff;
-  margin: 4% auto;
+  margin:auto;
 }
 .flexPrePostFix{
   display: flex;
@@ -284,7 +326,7 @@ position: relative;
   margin: 3rem 0;
   background: #F7F7F7;
   padding: 10px;
-  border-radius: 9px;
+  border-radius: 4px;
   box-shadow: 0px 0px 7px rgba(0,0,0,0.1);
   border: 1px solid #DDE0E0;
 }
@@ -337,27 +379,79 @@ dialog-content-example-dialog div.innerElement{
   color: #fff;
   padding: 7px;
   border-radius: 4px;
+  width: 105px;
 }
 .tableOrderStatusClose{
-  background: #88C43E;
+  display: flex;
+  color: #88C43E;
+  box-shadow: 0px 0px 3px #88C43E;
+  padding: 5px;
+  /* color:#fff; */
+}
+.tableEmptyMsg{
+  text-align: center;
+  margin: 1em auto;
+}
+.tableCageFlex{
+  display: flex;
+}
+.tableOrderStatusClose > div,
+.tableOrderStatusOpen > div,
+.tableOrderStatusFour > div,
+.tableOrderStatusFiftin > div{
+  padding-right: 5px;
+  margin: auto 0;
 }
 .tableOrderStatusOpen{
-  background: #267491;
+  padding: 5px;
+  display: flex;
+  color: #7F7F7F;
+  font-weight: bold;
+  box-shadow: 0px 0px 3px #7F7F7F;
+  /* color:#fff; */
 }
 .tableOrderStatusWaiting{
-  background:#f7b32b;
+  padding: 5px;
+  display: flex;
+  color:#F7B32B;
+  box-shadow: 0px 0px 3px #F7B32B;
+  /* color:#fff; */
 }
-
+.tableOrderStatusFour{
+  padding: 5px;
+  display: flex;
+  color:#267491;
+  box-shadow: 0px 0px 3px #267491;
+  /* color:#fff; */
+}
+.tableOrderStatusFiftin{
+  padding: 5px;
+  display: flex;
+  background:transparent;
+  color:#fff;
+  color:#FF6347  !important;
+  font-weight: bold;
+  box-shadow: 0px 0px 3px #FF6347;
+}
 .radioButton label.mat-radio-label  span.mat-radio-label-content{
   margin: 0 15px;
+}
+.align-center{
+  text-align: center;
 }
 .formBorder{
   border: 1px solid #DDE0E0;
   padding: 15px 15px 0;
   border-radius: 10px;
 }
+.mat-form-field.datePicker, .mat-select{
+  direction: rtl;
+}
+.mat-option {
+  text-align: right!important;
+}
 .formWrapRow mat-form-field.datePickerPadding div.mat-form-field-wrapper{
-  margin-left: 83px;
+  /* margin-left: 83px; */
 }
 .selectedFormFieldWidth{
   width: 180px !important;
@@ -365,7 +459,7 @@ dialog-content-example-dialog div.innerElement{
 .mat-primary .mat-pseudo-checkbox-checked, .mat-primary .mat-pseudo-checkbox-indeterminate {
   background: #8FC636;
 }
-mat-icon{
+mat-form-field mat-icon, mat-card mat-icon{
   color: #8FC636;
 }
 .wrapFlexTwoCol{
@@ -473,11 +567,51 @@ button.linkButton{
 .infoLabel mat-icon{
   font-size: 18px
 }
-.mat-card-header{
+/* .mat-card-header{
   flex-direction: row-reverse !important;
+} */
+.mat-card{
+  box-shadow: 0px 0px 7px rgb(0,0,0,0.1) !important;
+}
+textarea.templateTextArea + span > label{
+  padding: 10px;
+}
+.saveMessage{
+  color: #8FC636;
+  font-weight: bold;
+}
+.sms > div.mat-card-header-text{
+  margin: 0;
+}
+
+mat-form-field.Picker input.mat-datepicker-input ~ span.mat-form-field-label-wrapper{
+  top:0  !important;
+}
+
+.logInForm .mat-form-field-appearance-outline .mat-form-field-outline,
+.logInForm input,
+.logInForm label
+{
+    color: #676766 !important;
+}
+
+.mat-progress-spinner circle, .mat-spinner circle {
+  stroke: #8AC443;
 }
 
 /* rewrite */
+/* .mat-form-field-appearance-fill .mat-form-field-label{
+  margin-top: 0;
+} */
+/* .mat-form-field-flex{
+  direction: rtl;
+} */
+textarea.templateTextArea + span >  label.mat-form-field-label {
+  top: 1em !important;
+}
+textarea.mat-input-element{
+  direction: rtl;
+}
 .mat-form-field-appearance-fill .mat-form-field-label{
   /* margin-top: 0; */
 }
@@ -545,6 +679,11 @@ button.linkButton{
 .mat-paginator-page-size{
   flex-direction: row-reverse;
 }
+.actionButton{
+  display: flex;
+  background: #88C43E;
+  color: #fff;
+}
 .mat-radio-button.mat-accent.mat-radio-checked .mat-radio-outer-circle {
   border-color: #686866;
 }
@@ -558,7 +697,7 @@ button svg,
 button.linkButton mat-icon {
   color: #8FC636;
 }
-button.linkButton:hover, button.addButton:hover{
+button.linkButton:hover{
   background: #b1e65c;
   color: #fff;
 }
@@ -624,6 +763,20 @@ th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:
 /* mobile */
 
 @media screen and (max-width: 1024px){
+  .sticky{
+    z-index: 999 !important;
+  }
+  .mat-card>.mat-card-actions:last-child{
+    display: flex;
+    justify-content: center;
+  }
+  .app-main-view{
+    margin-top: 0;
+    flex-direction: column-reverse;
+  }
+  .headerWrap{
+    position: unset;
+  }
 
   .mat-tab-header .mat-tab-labels{
     flex-direction: column;
@@ -647,6 +800,7 @@ th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:
   }
   .wrapMain-Menu-View{
     flex-direction: column-reverse;
+    background: #686866;
   }
   .formWrapRow mat-form-field.datePickerPadding div.mat-form-field-wrapper{
     margin-left: 0;
@@ -724,6 +878,11 @@ th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:
   /* rewrite mobile*/
   .mat-elevation-z8{
     border:3px solid #fff;
+    direction: rtl;
+    
+  }
+  .mat-paginator-range-actions{
+    direction: ltr;
   }
   [dir=rtl] th.mat-header-cell:last-of-type:not(:only-of-type), [dir=rtl] td.mat-cell:last-of-type:not(:only-of-type), [dir=rtl] td.mat-footer-cell:last-of-type:not(:only-of-type){
     padding-left: 0 !important;
@@ -743,12 +902,14 @@ th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:
 .sticky {
   position: -webkit-sticky;
   position: sticky;
-  top: 0;
-  background: #fff;
+  top: 0px;
+  z-index: 2;
 }
 
 
-
+.bgMint{
+  background: #eff4ea  !important;
+}
 
 
 /* filter table and table */
@@ -771,8 +932,28 @@ th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:
   flex-grow: 1;
   flex-basis: 0;
 }
+.formWrap > div.formWrapRow > div > mat-form-field{
+  width: 100%;
+}
 .buttonsWrap{
   text-align: center;
+  margin: 3em 0 2em;
+}
+.darkGreyButton{
+  background: rgb(72 73 73) !important;
+  background-color: rgb(72 73 73) !important;
+  color:#fff;
+}
+button.darkGreyButton:hover{
+  background: #88C43E !important;
+}
+.routActive{
+  background: #88C43E !important;
+  box-shadow: none !important;
+}
+.routActiveImportantButton{
+  background: #56910e !important; 
+  box-shadow: none !important;
 }
 .buttonsWrap button{
   margin: 10px
@@ -793,8 +974,28 @@ th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:
 .radioButton{
     margin-left:5px;
 }
-
+.mat-paginator-range-label{
+  direction: rtl;
+}
+.clearButton mat-icon{
+  color: #8FC636;
+}
+.inputPadding{
+  padding-top: 1.1em;
+}
 @media screen and (max-width: 1024px){
+  .mat-select-panel{
+    min-width: 100% !important;
+  }
+  app-main-menu{
+    direction: rtl;
+  }
+  .mat-table{
+    /* direction: ltr; */
+  }
+  .main2-title{
+    border-top: 0;
+  }
   .formWrap{
       flex-direction: row-reverse ;
   }
@@ -813,3 +1014,8 @@ th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:
     /* width: unset;  order/id mobile problem*/ 
 }
 }
+
+
+
+
+

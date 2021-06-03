@@ -10,7 +10,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
-import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginatorIntl, MatPaginatorModule } from '@angular/material/paginator';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatDialogModule} from '@angular/material/dialog';
@@ -20,6 +20,10 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
 import { NgxMatDatetimePickerModule, NgxMatTimepickerModule, NgxMatNativeDateModule } from '@angular-material-components/datetime-picker';
 import { NgxMatMomentModule } from '@angular-material-components/moment-adapter';
 import {MatCardModule} from '@angular/material/card';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+
+
+
 
 
 
@@ -56,6 +60,16 @@ import { ExistUserComponent } from './Users/exist-user/exist-user.component';
 import { ExistCustomerComponent } from './Customers/exist-customer/exist-customer.component';
 import { AllSmsTemplatesComponent } from './SMSTemplate/all-sms-templates/all-sms-templates.component';
 import { NewSmsTemplateComponent } from './SMSTemplate/new-sms-template/new-sms-template.component';
+import { CardInfoComponent } from './Cards/card-info/card-info.component';
+import { LogInComponent } from './log-in/log-in.component';
+
+import { DataServiceService } from './data-service.service';
+
+import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
+import { PublicComponent } from './public/public.component';
+import { MatPaginatorIntlCro } from './Classes/MatPaginatorTranslate';
+import { AdminLogInComponent } from './PopUps/admin-log-in/admin-log-in.component';
+import { AdminComponent } from './Admin/admin/admin.component';
 
 
 
@@ -83,7 +97,12 @@ import { NewSmsTemplateComponent } from './SMSTemplate/new-sms-template/new-sms-
     ExistUserComponent,
     ExistCustomerComponent,
     AllSmsTemplatesComponent,
-    NewSmsTemplateComponent
+    NewSmsTemplateComponent,
+    CardInfoComponent,
+    LogInComponent,
+    PublicComponent,
+    AdminLogInComponent,
+    AdminComponent
   ],
   imports: [
     BrowserModule,
@@ -112,9 +131,11 @@ import { NewSmsTemplateComponent } from './SMSTemplate/new-sms-template/new-sms-
     NgxMatTimepickerModule,
     NgxMatDatetimePickerModule,
     NgxMatMomentModule,
-    MatCardModule
+    MatCardModule,
+    HttpClientModule,
+    MatProgressSpinnerModule
   ],
-  providers: [],
+  providers: [DataServiceService, { provide: MatPaginatorIntl, useClass: MatPaginatorIntlCro}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

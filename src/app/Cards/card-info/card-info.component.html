@@ -1,0 +1,143 @@
+<div class="pageTitle main2-title">
+    <div>נתוני שובר</div>
+</div>
+
+<div class="page-wrap">
+    <!--filter table-->
+    <div class="page-element width-block-auto wrapCardsFilter">
+
+        <!-- נתוני שובר -->
+        <div class="page-element innerElement">
+            <div class="element-page-title element-page-title2">נתוני שובר</div>
+            <div class="wrapInnerEl">
+                <div class="firstChild datePicker">
+                    <div>
+                        <mat-form-field appearance="fill" class="Picker datePicker datePickerPadding marginTop-1">
+                            <mat-label>תאריך פקיעת תוקף</mat-label>
+                            <input matInput [matDatepicker]="picker">
+                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                            <mat-datepicker #picker></mat-datepicker>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="secondChild">
+                    <div>
+                        <div class="customer-info-element">
+                            <div class="customerDataTitle"> מספר שובר </div>
+                            <div class="detailsRow">111111</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="customer-info-element">
+                            <div class="customerDataTitle">פין קוד</div>
+                            <div class="detailsRow">1234</div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="customer-info-element buttonCardFunc">
+                            <div class="customerDataTitle"></div>
+                            <div>
+                                <button mat-button class="primaryButton" *ngIf="!cardStatus">
+                                    הפעל שובר
+                                    <mat-icon class="mat-icon-rtl-mirror">touch_app</mat-icon>
+                                </button>
+                                <button mat-button class="deleteButton" *ngIf="cardStatus">
+                                    חסום שובר
+                                    <mat-icon class="mat-icon-rtl-mirror">highlight_off</mat-icon>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="customer-info-element">
+                            <div class="customerDataTitle">סטטוס שובר</div>
+                            <div class="detailsRow">חסום</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="customer-info-element">
+                            <div class="customerDataTitle">יתרה עכשווית</div>
+                            <div class="detailsRow">10</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="customer-info-element">
+                            <div class="customerDataTitle">סכום טעינה ראשוני</div>
+                            <div class="detailsRow">10</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- נתוני הזמנה -->
+        <div class="page-element innerElement">
+            <div class="element-page-title element-page-title2">נתוני הזמנה</div>
+            <!-- <div class="wrapInnerElCol"> -->
+                <div class="wrapData dataRow">
+                    <div class="customer-info-element">
+                        <div class="customerDataTitle">מספר הזמנה</div>
+                        <div class="detailsRow">900000347</div>
+                    </div>
+                    <div class="customer-info-element">
+                        <div class="customerDataTitle">חברה</div>
+                        <div class="detailsRow">רמי לוי</div>
+                    </div>
+                    <div class="customer-info-element">
+                        <div class="customerDataTitle">קוד קומקס</div>
+                        <div class="detailsRow">5646544</div>
+                    </div>
+                    <div class="customer-info-element">
+                        <div class="customerDataTitle">תאריך ההנפקה</div>
+                        <div class="detailsRow">17/03/2021</div>
+                    </div>
+                </div>
+            <!-- </div> -->
+        </div>
+
+        <!-- פרטים אישיים -->
+        <div class="page-element innerElement">
+            <div class="element-page-title element-page-title2">פרטים אישיים</div>
+            <div class="wrapData">
+                <div class="formWrap">
+                    <div class="formWrapRow">
+                        <div>
+                            <mat-form-field>
+                                <mat-label>שם מלא</mat-label>
+                                <input matInput placeholder="שם מלא של מחזיק השובר">
+                            </mat-form-field>
+                        </div>
+                        <div>
+                            <mat-form-field>
+                                <mat-label>מספר טלפון נייד</mat-label>
+                                <input matInput placeholder="מספר טלפון נייד">
+                            </mat-form-field>
+                        </div>
+
+
+                    </div>
+                </div>
+                <div class="buttonSave">
+                    <button mat-button class="addButton">
+                        <span>שמור עידכונים</span>
+                        <mat-icon>save</mat-icon>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- הערות -->
+        <div class="page-element innerElement">
+            <div class="element-page-title element-page-title2">הערות</div>
+            <mat-form-field class="templateTextArea">
+                <textarea matInput placeholder="הערות" class="templateTextArea"></textarea>
+            </mat-form-field>
+        </div>
+    </div>
+
+    <!--table-->
+
+    <div class="page-element width-block-auto">
+        <div class="element-page-title">הסטוריית פעילות</div>
+        <app-table [dataLabelsList]="newOrderLabelForTable" [data_Source]="newOrderDataSource"></app-table>
+    </div>
+</div>

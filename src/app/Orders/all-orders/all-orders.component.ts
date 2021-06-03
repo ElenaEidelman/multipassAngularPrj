@@ -3,50 +3,13 @@ import { FormBuilder } from '@angular/forms';
 import { formatDate } from '@angular/common';
 import { MatTableDataSource } from '@angular/material/table';
 import { OrderData } from '../../Classes/OrderData';
-// import { NativeDateAdapter, DateAdapter, MAT_DATE_FORMATS } from '@angular/material';
+import { DataServiceService } from 'src/app/data-service.service';
+import { MatSort } from '@angular/material/sort';
+import { MatPaginator } from '@angular/material/paginator';
+import { Route } from '@angular/compiler/src/core';
+import { Router } from '@angular/router';
+import { SharedService } from 'src/app/shared.service';
 
-// export class OrderData {
-//   orderId: string;
-//   orderiDcrm: number;
-//   companyName: string;
-//   comaxCustomerNumber: number;
-//   comaxFileId: number;
-//   ticketCount: number;
-//   dateCreation: string;
-//   dateIssue: string;
-//   dateActivation: string;
-//   orderValue: string;
-//   orderStatus:string;
-//   orderStatusId: number;
-
-
-//   constructor(orderId: string, 
-//               orderiDcrm: number, 
-//               companyName: string, 
-//               comaxCustomerNumber: number, 
-//               comaxFileId: number, 
-//               ticketCount: number, 
-//               dateCreation: string,
-//               dateIssue: string,
-//               dateActivation: string,
-//               orderValue: string,
-//               orderStatus: string,
-//               orderStatusId: number){
-//     this.orderId = orderId;
-//     this.orderiDcrm = orderiDcrm;
-//     this.companyName = companyName;
-//     this.comaxCustomerNumber = comaxCustomerNumber;
-//     this.comaxFileId = comaxFileId;
-//     this.ticketCount = ticketCount;
-//     this.dateCreation = dateCreation;
-//     this.dateIssue = dateIssue;
-//     this.dateActivation = dateActivation;
-//     this.orderValue = orderValue;
-//     this.orderStatus = orderStatus;
-//     this.orderStatusId = orderStatusId;
-
-//   }
-// }
 
 
 @Component({
@@ -54,50 +17,94 @@ import { OrderData } from '../../Classes/OrderData';
   templateUrl: './all-orders.component.html',
   styleUrls: ['./all-orders.component.css']
 })
-export class AllOrdersComponent implements OnInit {
+export class AllOrdersComponent implements OnInit, AfterViewInit {
 
   
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder, private dataService: DataServiceService, private router: Router, private sharedService: SharedService) { }
+
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+  
   //allOrders;
   displayedColumns: string[] = [];
-  dataSource: MatTableDataSource<OrderData>;
+
 
 
   favoriteSeason: string;
   filterTableGroup = this.fb.group({
-    companyName: (''),
-    orderId: (''),
-    fromData: (new Date()),
-    untilData: (new Date()),
+    OrganizationName: (''),
+    // customerId: (''),
+    idex: (''),
+    fromData: (''),
+    untilData: (''),
     initialChargeAmount: (''),
-    comaxCustomerNumber: (''),
-    comaxFileId: (''),
-    orderStatus: (''),
-    dateActIssGroup: ('dateIssue')
+    StatusDesc: (''),
+    // dateActIssGroup: ('dateIssue')
 
   });
 
-  orderLabelForTable = [
-    {value: 'orderId', viewValue: 'מספר הזמנה'},
-    {value: 'orderiDcrm', viewValue: 'מספר הזמנה CRM'},
-    {value: 'companyName', viewValue: 'שם חברה'},
-    {value: 'comaxCustomerNumber', viewValue: 'מספר לקוח קומקס'},
-    {value: 'comaxFileId', viewValue: 'מספר מסמך קומקס'},
-    {value: 'ticketCount', viewValue: 'כמות כרטיסים בהזמנה'},
-    {value: 'dateCreation', viewValue: 'תאריך יצירת הזמנה'},
-    {value: 'dateIssue', viewValue: 'תאריך הנפקה'},
-    {value: 'dateActivation', viewValue: 'תאריך אקטיבציה'},
-    {value: 'orderValue', viewValue: 'שווי ההזמנה'},
-    {value: 'orderStatus', viewValue: 'סטטוס הזמנה'},
+   dataSource = new MatTableDataSource([]);
+   dataSourceSpare = new MatTableDataSource([]);
+   statusList = new Set();
+
+    orderLabelForTable = [
+    {value: 'idex', viewValue: 'מספר הזמנה'},
+    {value: 'OrganizationName', viewValue: 'שם הלקוח'},
+    {value: 'Total', viewValue: 'שווי ההזמנה'},
+    {value: 'ticketCount', viewValue: 'כמות שוברים בהזמנה'},
+    {value: 'CreationDate', viewValue: 'תאריך יצירת הזמנה'},
+    {value: 'ApproveDate', viewValue: 'תאריך שליחה'},
+    {value: 'UserId', viewValue: 'מספר לקוח בהנה"ח'},
+    {value: 'StatusDesc', viewValue: 'סטטוס הזמנה'},
   ];
+  
 
   ngOnInit() {
+    window.scroll(0,0);
     //this.allOrders = this.Orders;
-
+    debugger
+    this.getOrdersList();
     this.createDisplayedColumns(this.orderLabelForTable);
-    this.createDataSourceForTable();
+    //this.createDataSourceForTable();
+
+
   }
 
+  getOrdersList(){
+    let userToken = JSON.parse(localStorage.getItem('user')).Token;
+    let dataArray = [];
+
+    let objToApi = {
+      Token: userToken
+    }
+    this.dataService.getAllOrders(objToApi).subscribe(result => {
+      debugger
+      if(result['Token'] != undefined){
+
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user',JSON.stringify(tempObjUser));
+
+        JSON.parse(localStorage.getItem('user'))
+        this.dataSourceSpare.data = result['obj'];
+        this.dataSource.data = result['obj'];
+      }
+      else{
+        this.sharedService.exitSystemEvent();
+      }
+    })
+  }
+  returnStatusList(){
+    this.dataSource.data.forEach(data => {
+      for(let el in data){
+        if(el == 'StatusDesc'){
+          this.statusList.add(data[el]);
+        }
+      }
+    });
+    return this.statusList;
+  }
   createDisplayedColumns(columns){
     columns.forEach( el => {
       this.displayedColumns.push(el.value);
@@ -107,27 +114,25 @@ export class AllOrdersComponent implements OnInit {
     this.displayedColumns.push('delC');
     //debugger
   }
-  createDataSourceForTable(){
-    this.dataSource = new MatTableDataSource([
-      new OrderData('1', 12345, 'multipass','11111', 1122, 1122, 5, '24/01/2021 13:23', '24/01/2021 13:23', '24/01/2021 13:23', '400.00', 'הזמנה סגורה' ,2),
-      new OrderData('2',12345,'multipass2','22222',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','הזמנה פתוחה',0),
-      new OrderData('3',12345,'multipass3','33333',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','הזמנה פתוחה',0),
-      new OrderData('1',12345,'multipass4','44444',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','נשלח לקומקס',1),
-      new OrderData('1',12345,'multipass5','55555',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','נשלח לקומקס',1),
-      new OrderData('1',12345,'multipass6','66666',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','הזמנה פתוחה',0),
-      new OrderData('1',12345,'multipass7','77777',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','נשלח לקומקס',1),
-      new OrderData('1',12345,'multipass8','88888',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','הזמנה פתוחה',0),
-      new OrderData('1',12345,'multipass9','99999',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','הזמנה סגורה',2),
-      new OrderData('1',12345,'multipass12','12121',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','הזמנה סגורה',2),
-      new OrderData('1',12345,'multipass13','13131',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','הזמנה סגורה',2),
-      new OrderData('1',12345,'multipass14','14141',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','הזמנה סגורה',2),
-      new OrderData('1',12345,'multipass15','15151',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','הזמנה סגורה',2),
-      new OrderData('1',12345,'multipass16','16161',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','הזמנה סגורה',2),
-      new OrderData('1',12345,'multipass17','17171',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','הזמנה סגורה',2),
-      new OrderData('1',12345,'multipass18','18181',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','הזמנה סגורה',2),
+  // createDataSourceForTable(){
+  //   this.dataSource = new MatTableDataSource([
+  //     // new OrderData('900000025', 12345, 'multipass','11111',1122, 5, '24/01/2021', '24/01/2021', '400.00', 'הזמנה סגורה' ,2),
+  //     // new OrderData('900000026',12345,'multipass2','22222',1122,5,'24/01/2021','24/01/2021','400.00','הזמנה פתוחה',0),
+  //     // new OrderData('900000027',12345,'multipass3','33333',1122,5,'24/01/2021','24/01/2021','400.00','הזמנה פתוחה',0),
+  //     // new OrderData('900000028',12345,'multipass4','44444',1122,5,'24/01/2021','24/01/2021','400.00','מבוטלת',1),
+  //     // new OrderData('900000029',12345,'multipass5','55555',1122,5,'24/01/2021','24/01/2021','400.00','מבוטלת',1),
+  //     // new OrderData('900000030',12345,'multipass6','66666',1122,5,'24/01/2021','24/01/2021','400.00','הזמנה פתוחה',0),
+  //     // new OrderData('900000031',12345,'multipass7','77777',1122,5,'24/01/2021','24/01/2021','400.00','מבוטלת',1),
+  //     // new OrderData('900000032',12345,'multipass8','88888',1122,5,'24/01/2021','24/01/2021','400.00','הזמנה פתוחה',0),
+  //     // new OrderData('900000033',12345,'multipass9','99999',1122,5,'24/01/2021','24/01/2021','400.00','הזמנה סגורה',2),
+  //     // new OrderData('900000034',12345,'multipass12','12121',1122,5,'24/01/2021','24/01/2021','400.00','הזמנה סגורה',2),
+  //     // new OrderData('900000035',12345,'multipass13','13131',1122,5,'24/01/2021','24/01/2021','400.00','הזמנה סגורה',2),
+  //     // new OrderData('900000036',12345,'multipass14','14141',1122,5,'24/01/2021','24/01/2021','400.00','הזמנה סגורה',2),
+  //     // new OrderData('900000037',12345,'multipass15','15151',1122,5,'24/01/2021','24/01/2021','400.00','הזמנה סגורה',2),
+  //     // new OrderData('900000038',12345,'multipass15','15151',1122,5,'24/01/2021','24/01/2021','400.00','הזמנה סגורה',2)
 
-    ]);
-  }
+  //   ]);
+  // }
   deleteOrder(order){
     //this.dataSource = this.dataSource.filter(el => el['orderId'] != order.orderId);
     //this.allOrders = this.Orders;
@@ -136,10 +141,37 @@ export class AllOrdersComponent implements OnInit {
   returnHebTranslation(obj,value){
     return obj.filter(el => el.value == value)[0].viewValue;
   }
-  resetForm(){}
+  resetForm(){
+    this.dataSource.data = this.dataSourceSpare.data;
+  }
   filterTable(){
+    let filterList = this.filterTableGroup.value;
     //debugger
-    console.log(this.filterTableGroup.value);
+    this.dataSource.data = this.dataSourceSpare.data;
+
+    let checkIfNumber;
+    Object.keys(filterList).forEach(element => {
+      if(filterList[element] != ''){
+        checkIfNumber = +filterList[element] != NaN ? filterList[element] : +filterList[element];
+        this.dataSource.data = this.dataSource.data.filter(data => data[element] == checkIfNumber);
+      }
+    });
+  }
+
+  // translateTitles(){
+  //   document.querySelectorAll('.mat-paginator-page-size-label').forEach(title => {
+  //     //title.innerHTML = 'פריטים פר עמוד';
+  //   });
+  //   document.querySelectorAll('.mat-paginator-range-label').forEach(title => {
+  //     //debugger
+  //     //title.innerHTML = title.innerHTML.replace('of','מ');
+  //   });
+  // }
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+    //this.translateTitles();
   }
 
 }

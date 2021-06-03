@@ -5,6 +5,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table/';
 import { CustomerData } from 'src/app/Classes/customerData';
+import { DataServiceService } from 'src/app/data-service.service';
 
 @Component({
   selector: 'app-all-users',
@@ -19,7 +20,7 @@ export class AllUsersComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder, private dataService: DataServiceService) { }
 
   filterCustomerForm = this.fb.group({
     customerId: (''),
@@ -47,6 +48,7 @@ export class AllUsersComponent implements OnInit {
     {value: 'id', viewValue: 'Id'},
     {value: 'fullName', viewValue: 'שם מלא'},
     {value: 'empNumber', viewValue: 'מספר עובד'},
+    {value: 'permisLvl', viewValue: 'רמת הרשאה'},
     {value: 'email', viewValue: 'דוא"ל'},
     {value: 'phone', viewValue: 'טלפון'},
     {value: 'status', viewValue: 'סטטוס'},
@@ -54,8 +56,18 @@ export class AllUsersComponent implements OnInit {
   ];
 
   ngOnInit(): void {
+    window.scroll(0,0);
     this.createDisplayedColumns(this.userLabelForTable);
     this.createDataSourceForTable();
+
+    this.getAllUsers();
+  }
+
+  getAllUsers(){
+    let token = JSON.parse(localStorage.getItem('user'))['Token'];
+    this.dataService.GetAllUsers(token).subscribe(result => {
+      debugger
+    });
   }
 
   createDisplayedColumns(columns){
@@ -69,12 +81,12 @@ export class AllUsersComponent implements OnInit {
   }
   createDataSourceForTable(){
     this.dataSource = new MatTableDataSource([
-      {id: '2523', fullName: 'fName lName 1', empNumber: '1578569', email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: ''},
-      {id: '2524', fullName: 'fName lName 2', empNumber: '1578569', email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: ''},
-      {id: '2525', fullName: 'fName lName 3', empNumber: '1578569', email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: ''},
-      {id: '2526', fullName: 'fName lName 4', empNumber: '1578569', email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: ''},
-      {id: '2527', fullName: 'fName lName 5', empNumber: '1578569', email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: ''},
-      {id: '2528', fullName: 'fName lName 6', empNumber: '1578569', email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: ''}
+      {id: '2523', fullName: 'fName lName 1', empNumber: '1578569', permisLvl: 'lvl1' ,email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: ''},
+      {id: '2524', fullName: 'fName lName 2', empNumber: '1578569', permisLvl: 'lvl1' ,email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: ''},
+      {id: '2525', fullName: 'fName lName 3', empNumber: '1578569', permisLvl: 'lvl1' ,email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: ''},
+      {id: '2526', fullName: 'fName lName 4', empNumber: '1578569', permisLvl: 'lvl1' ,email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: ''},
+      {id: '2527', fullName: 'fName lName 5', empNumber: '1578569', permisLvl: 'lvl1' ,email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: ''},
+      {id: '2528', fullName: 'fName lName 6', empNumber: '1578569', permisLvl: 'lvl1' ,email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: ''}
     ]);
   }
 

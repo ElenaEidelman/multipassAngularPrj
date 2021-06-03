@@ -14,10 +14,12 @@ export class TableComponent implements OnInit {
   @Input() dataLabelsList;
   @Input() data_Source;
   @Input() linksList;
+  @Input() linksListById;
 
   displayedColumns: string[] = [];
   dataSource;
   links;
+  linksById;
 
   
   linkURL: string = ''
@@ -34,7 +36,8 @@ export class TableComponent implements OnInit {
   ngOnInit(): void {
 
     this.links = this.linksList;
-    //debugger
+    this.linksById = this.linksListById;
+
     if(this.dataLabelsList != undefined){
       this.createDisplayedColumns(this.dataLabelsList);
     }
@@ -69,10 +72,21 @@ export class TableComponent implements OnInit {
   }
 
   checkIfLink(rowData){
+    //debugger
     let ifLink = false;
     //debugger
+
+    //if table have column with links
     if(this.links != undefined){
       this.links.forEach(element => {
+        //debugger
+        if(element.linkName == rowData){
+          ifLink = true;
+        }
+      });
+    }
+    if(this.linksById != undefined){
+        this.linksById.forEach(element => {
         if(element.linkName == rowData){
           ifLink = true;
         }
@@ -83,6 +97,10 @@ export class TableComponent implements OnInit {
 
   returnUrl(url){
     return this.links.filter(el => el.linkName == url)[0].linkSrc;
+  }
+  returnUrlById(url, obj){
+    let urlData = this.linksById.filter(el => el.linkName == url)[0];
+    return '/public/' + urlData.linkSrc + '/' + obj[urlData.linkIdName];
   }
   checkIfDownload(data){
     return this.links.filter(el => el.linkName == data)[0].downloadFile;

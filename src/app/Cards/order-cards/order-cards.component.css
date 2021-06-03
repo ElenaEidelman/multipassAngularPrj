@@ -7,16 +7,50 @@
 .formWrapRow > div{
     flex-grow: 1;
     margin: 1em 2em;
+    justify-content: center;
+    flex-basis: 0;
 
 }
 .formWrapRow > div > mat-form-field{
     width:100%;
+}
+.wrapSelectUser{
+    display: flex;
+    flex-direction: row-reverse;
+}
+.wrapSelectUser > div{
+    margin: 10px;
+}
+.wrapSelectUser > div.wrapUserButton{
+    margin: auto 2em;
+}
+.wrapUserButton{
+    text-align-last: end;
+}
+.bWrap{
+    margin: 0 30px;
+}
+.loadB > button{
+    /* width: 100%;
+    margin: 0; */
+}
+.buttonsWrap{
+    display: flex;
+    justify-content: center;
+    /* flex-direction: column; */
+}
+.linkButton  mat-icon{
+    color: #686866;
+}
+mat-hint{
+    display: block;
 }
 .buttonAny{
     display: flex;
     flex-direction: column;
     text-align: center;
     margin: auto;
+    
 }
 .buttonAny > button{
     width: fit-content;
@@ -28,9 +62,18 @@
 .marginSelectTop{
     margin-top: 18px;
 }
+.hiddenLoadingCardContent{
+    padding-bottom: 1em;
+}
 
 @media screen and (max-width: 1024px){
     .formWrapRow{
         flex-direction: column;
+    }
+    .wrapSelectUser{
+        justify-content: space-between;
+    }
+    .wrapSelectUser > div.wrapUserButton{
+        margin: auto 10px;
     }
 }

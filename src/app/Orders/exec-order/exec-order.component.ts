@@ -4,7 +4,9 @@ import { tick } from '@angular/core/testing';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { throwMatDialogContentAlreadyAttachedError } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Data, RouterModule } from '@angular/router';
+import { DataServiceService } from 'src/app/data-service.service';
+import { SharedService } from 'src/app/shared.service';
 import { AlertMessage } from 'src/assets/alertMessage';
 import { OrderData } from '../../Classes/OrderData';
 
@@ -18,20 +20,22 @@ import { OrderData } from '../../Classes/OrderData';
 
 
 export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
-
-  Orders: MatTableDataSource<OrderData>;
-
-  constructor(private activeRoute: ActivatedRoute, private fb: FormBuilder) { }
   
-  Customer: any = {name: 'אלון מולטיפאס', id: '123456', kumkusNum:'abcdef', mail: '	alon@multipass.co.il', phone: '0521234567', addPhone: '052333333' }
 
+  
+
+  // OrderData;
+
+  constructor(private activeRoute: ActivatedRoute, private fb: FormBuilder, private dataService: DataServiceService, private sharedService: SharedService) { }
+  
+  //translate customer data value to hebrew
   CustomerLangObj = [
-    {value: 'name', viewValue: 'שם הלקוח'},
-    {value: 'id', viewValue: 'ח.פ'},
-    {value: 'kumkusNum', viewValue: 'מספר קומקס'},
-    {value: 'mail', viewValue: 'מייל'},
-    {value: 'phone', viewValue: 'טלפון'},
-    {value: 'addPhone', viewValue: 'טלפון נוסף'}
+    {value: 'Fname', viewValue: 'שם'},
+    {value: 'Lname', viewValue: 'שם משפחה'},
+    {value: 'Id', viewValue: 'ח.פ'},
+    {value: 'Email', viewValue: 'מייל'},
+    {value: 'Phone', viewValue: 'טלפון'},
+    {value: 'Phone1', viewValue: 'טלפון נוסף'}
   ];
 
   //order table 
@@ -42,6 +46,9 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   ];
   displayedColumnsOrderDetails = ['foundation','ticketCount','chargeAmount','validity','totalCharge','additionalColumn'];
  
+  //additional row on table for add order
+  formTableForAddOrder = new MatTableDataSource([{foundation:0, ticketCount: 0, chargeAmount: 0, validity: '', totalCharge : 0}]);
+
   columnsHeb = {
     'foundation' : "מס''ד",
     'ticketCount' : 'כמות כרטיסים	',
@@ -50,11 +57,15 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     'totalCharge' : "סה''כ סכום טעינה",
   }
 
+  Orders: MatTableDataSource<any>;
+  Customer;
   dataByPage;
   id;
+  customerId;
   idUnsubscribe;
 
   alertMessage: string = '';
+  orderTitle = '';
 
   sendSuccess: boolean = false; 
   viewAddToExecOrderForm: boolean = true;
@@ -65,7 +76,6 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   orderDetailsTable = new MatTableDataSource(this.orderDetails);
 
   //for additional empty row foraddToExecOrderForm
-  formTableForAddOrder = new MatTableDataSource([{foundation:0, ticketCount: 0, chargeAmount: 0, validity: '', totalCharge : 0}]);
 
   addToExecOrderForm = this.fb.group({
     ticketCount: ['', [Validators.required, Validators.min(1), Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
@@ -74,7 +84,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     totalCharge: [{value: '', disabled: true}]
   });
 
-  CRMcontrol = new FormControl('');
+  RefControl = new FormControl('');
 
   //disable all days before current data
   calendarFilter = (d: Date | null): boolean => {
@@ -88,45 +98,87 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnInit() {
+    window.scroll(0,0);
     this.idUnsubscribe = this.activeRoute.params.subscribe( param => {
-      this.createDataSourceForTable();
+      //debugger
       this.id = param['id'];
-      if(this.Orders != undefined){
-        this.dataByPage = this.Orders.data.filter(el => el['orderId'] == this.id);
+      this.customerId = param['customerId'];
+      let userToken = JSON.parse(localStorage.getItem('user')).Token;
+      this.dataService.GetOrderDetails({Token: userToken, Id: this.id}).subscribe(result => {
         //debugger
-        this.CRMcontrol.setValue(this.dataByPage[0]['orderiDcrm']);
-      }
+        if(result['Token'] != undefined){
+
+          //set new token
+          let tempObjUser = JSON.parse(localStorage.getItem('user'));
+          tempObjUser['Token'] = result['Token'];
+          localStorage.setItem('user',JSON.stringify(tempObjUser));
+
+          this.dataByPage = result['obj'];;
+              
+          //get customer data
+          this.Customer = this.dataByPage['PrimaryUser'];
+
+          this.Orders = new MatTableDataSource(result['obj']);
+          this.fillDataSourceToTable();
+        }
+        else{
+          this.sharedService.exitSystemEvent();
+        }
+      })
+       
     })
+    
 
     this.totalData();
   }
 
-  createDataSourceForTable(){
-    this.Orders = new MatTableDataSource([
-      new OrderData('1', 12345, 'multipass','11111', 1122, 1122, 5, '24/01/2021 13:23', '24/01/2021 13:23', '24/01/2021 13:23', '400.00', 'הזמנה סגורה' ,2),
-      new OrderData('2',12345,'multipass','22222',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','הזמנה פתוחה',0),
-      new OrderData('3',12345,'multipass','33333',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','הזמנה פתוחה',0),
-      new OrderData('1',12345,'multipass','44444',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','נשלח לקומקס',1),
-      new OrderData('1',12345,'multipass','55555',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','נשלח לקומקס',1),
-      new OrderData('1',12345,'multipass','66666',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','הזמנה פתוחה',0),
-      new OrderData('1',12345,'multipass','77777',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','נשלח לקומקס',1),
-      new OrderData('1',12345,'multipass','88888',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','הזמנה פתוחה',0),
-      new OrderData('1',12345,'multipass','99999',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','הזמנה סגורה',2),
-      new OrderData('1',12345,'multipass','12121',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','הזמנה סגורה',2),
-      new OrderData('1',12345,'multipass','13131',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','הזמנה סגורה',2),
-      new OrderData('1',12345,'multipass','14141',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','הזמנה סגורה',2),
-      new OrderData('1',12345,'multipass','15151',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','הזמנה סגורה',2),
-      new OrderData('1',12345,'multipass','16161',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','הזמנה סגורה',2),
-      new OrderData('1',12345,'multipass','17171',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','הזמנה סגורה',2),
-      new OrderData('1',12345,'multipass','18181',1122,1122,5,'24/01/2021 13:23','24/01/2021 13:23','24/01/2021 13:23','400.00','הזמנה סגורה',2),
+  // createDataSourceForTable(){
+  //   // this.Orders = new MatTableDataSource([
+  //   //   // new OrderData('900000025', 12345, 'multipass','11111',1122, 5, '24/01/2021', '24/01/2021', '400.00', 'הזמנה סגורה' ,2),
+  //   //   // new OrderData('900000026',12345,'multipass2','22222',1122,5,'24/01/2021','24/01/2021','400.00','הזמנה פתוחה',0),
+  //   //   // new OrderData('900000027',12345,'multipass3','33333',1122,5,'24/01/2021','24/01/2021','400.00','הזמנה פתוחה',0),
+  //   //   // new OrderData('900000028',12345,'multipass4','44444',1122,5,'24/01/2021','24/01/2021','400.00','מבוטלת',1),
+  //   //   // new OrderData('900000029',12345,'multipass5','55555',1122,5,'24/01/2021','24/01/2021','400.00','מבוטלת',1),
+  //   //   // new OrderData('900000030',12345,'multipass6','66666',1122,5,'24/01/2021','24/01/2021','400.00','הזמנה פתוחה',0),
+  //   //   // new OrderData('900000031',12345,'multipass7','77777',1122,5,'24/01/2021','24/01/2021','400.00','מבוטלת',1),
+  //   //   // new OrderData('900000032',12345,'multipass8','88888',1122,5,'24/01/2021','24/01/2021','400.00','הזמנה פתוחה',0),
+  //   //   // new OrderData('900000033',12345,'multipass9','99999',1122,5,'24/01/2021','24/01/2021','400.00','הזמנה סגורה',2),
+  //   //   // new OrderData('900000034',12345,'multipass12','12121',1122,5,'24/01/2021','24/01/2021','400.00','הזמנה סגורה',2),
+  //   //   // new OrderData('900000035',12345,'multipass13','13131',1122,5,'24/01/2021','24/01/2021','400.00','הזמנה סגורה',2),
+  //   //   // new OrderData('900000036',12345,'multipass14','14141',1122,5,'24/01/2021','24/01/2021','400.00','הזמנה סגורה',2),
+  //   //   // new OrderData('900000037',12345,'multipass15','15151',1122,5,'24/01/2021','24/01/2021','400.00','הזמנה סגורה',2),
+  //   //   // new OrderData('900000038',12345,'multipass15','15151',1122,5,'24/01/2021','24/01/2021','400.00','הזמנה סגורה',2)
 
-    ]);
+  //   // ]);
+  // }
+
+  fillDataSourceToTable(){
+    if(this.Orders != undefined){
+      //debugger
+      if(this.id != undefined){
+        //debugger
+        this.orderTitle = 'פרוט הזמנה';
+        //this.dataByPage = this.Orders.data.filter(el => el['orderid'] == this.id);
+      }
+      if(this.customerId != undefined){
+        this.orderTitle = 'הזמנה חדשה';
+        //this.dataByPage = this.Orders.data.filter(el => el['userId'] == this.customerId);
+
+        this.orderDetails = [{foundation:0, ticketCount: 0, chargeAmount: 0, validity: '', totalCharge : 0}];
+        this.orderDetailsTable = new MatTableDataSource(this.orderDetails);
+      }
+      this.RefControl.setValue(this.id);
+    }
+    else{
+      alert('this.Orders == ' + this.Orders);
+    }
   }
 
   totalData(){
     this.totalTicketCount = 0;
     this.totalOrderSum = 0;
     //debugger
+    
     this.orderDetails.forEach(el => {
         //debugger
           this.totalTicketCount += el.ticketCount;
@@ -153,7 +205,6 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   }
   addRow(){
     if(this.addToExecOrderForm.valid){
-      debugger
       let ticketCount = +this.addToExecOrderForm.get('ticketCount').value;
       let chargeAmount = +this.addToExecOrderForm.get('chargeAmount').value;
       let validity = this.addToExecOrderForm.get('validity').value;

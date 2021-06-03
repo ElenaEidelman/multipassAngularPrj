@@ -1,0 +1,134 @@
+mat-label{
+    text-align: right;
+}
+.dialog-content-wrap{
+    display: flex;
+    flex-direction: row-reverse;
+}
+.mat-dialog-container{
+    display: contents;
+}
+.dialog-content-wrap > div{
+    flex-grow: 1;
+    margin: 10px 15px;
+}
+.addButtonWrap{
+    margin: 42px 15px !important;
+}
+.actions-button{
+    justify-content: center;
+}
+.mat-dialog-title{
+
+}
+
+.close-icon-wrap{
+    position: relative;
+}
+.close-icon-wrap > mat-icon{
+    position: absolute;
+    right: -20px;
+    top: -25px;
+    font-size: 32px;
+    color: #fff;
+}
+.close-icon-wrap > mat-icon:hover{
+    color: #8FC636;
+}
+.close-icon-wrap:hover{
+    cursor: pointer;
+}
+
+mat-form-field{
+    width:100%;
+}
+.drop-down-title{
+    text-align: right;
+}
+
+.wrap-form{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    /* margin-top:10vh; */
+    }
+    .wrap-button-login{
+    text-align: center;
+    position: relative;
+    }
+    .wrap-button-login span{
+    position: absolute;
+    right: 27%;
+    top:-50%;
+    }
+    /* .wrap-button-login > button{
+    background: lightgray;
+    color: #404040;
+    } */
+    .sub-title{
+    width: 100%;
+    text-align: center;
+    }
+    .log-in{
+    width: 450px;
+    margin: auto;
+    padding: 25px;
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.8);
+    border-radius: 10px;
+    position: relative;
+    background: rgba(255,255,255,0.9);
+    color: #676766;
+    }
+    .footer{
+        background: rgba(0,0,0,0.3) !important;
+    }
+    input, mat-icon{
+    color:#404040;
+    }
+    
+    .logoHeader{
+        width: 100%;
+        /* background: #e9e9e5; */
+        height: 100px;
+        position: absolute;
+        text-align: center;
+        box-shadow: 0px 5px 20px rgba(0,0,0,0.2);
+    }
+    .logoHeader img{
+        height: 100%;
+    }
+    mat-icon{
+     /* color: #8FC636;     */
+    }
+    .msgAlert{
+        direction: rtl;
+        font-weight: 600;
+        margin: 5px 0;
+    }
+    .wrapSendButton{
+        text-align: center;
+    }
+
+@media screen and (max-width: 1024px){
+    .dialog-content-wrap
+    {
+        margin: auto;
+        flex-direction: column;
+    }
+    .addButtonWrap{
+        margin: auto !important;
+    }
+    .actions-button{
+        flex-wrap: nowrap !important;
+    }
+    .mat-dialog-content{
+        margin: 0;
+        margin-bottom: 40px;
+    }
+    .log-in{
+        width: auto;
+        margin: auto 10px;
+    }
+
+}

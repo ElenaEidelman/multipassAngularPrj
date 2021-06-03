@@ -1,16 +1,70 @@
-.customer-flex{
+.customer-data{
     display: flex;
+    justify-content: space-between;
+    flex-direction: row-reverse;
+    flex-wrap: wrap;
+}
+mat-spinner{
+    margin: auto;
 }
 .smsSendInput{
     width: 100%;
 }
 .viewCodeButton{
-    margin: auto 0;
+    margin: 2rem 0 0rem 0;
+    text-align: center;
 }
 .addToExecOrderForm  > mat-form-field{
     padding: 0 3px;
 }
-
+.customerDataTitle{
+    text-align: right;
+}
+.margin0{
+    margin: 0 auto;
+}
+.flexData{
+    justify-content: space-between;
+}
+.flexDataChild{
+    flex-grow: 1;
+    flex-basis: 0;
+}
+.flexDataChild > div{
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: row;
+}
+.flexDataChild > div > div{
+    flex-grow: 1;
+    flex-basis: 0;
+}
+.refBlock{
+    flex-grow: 2;
+}
+.refBlock > mat-form-field{
+    width: 88%;
+}
+.subTitle{
+    margin-left: 10px;
+    font-size: 1.3rem;
+    color: #8989a4;
+}
 @media screen and (max-width: 1024px){
-
+    /* .customer-data{
+        flex-direction: column;
+    } */
+    .customer-data > div{
+        width: 50%;
+        padding: 0 10px;
+    }
+    .flex-element-child{
+        padding: 0;
+    }
+    .flexData{
+        display: unset;
+    }
+    .flexData > div{
+        margin: 15px 0;
+    }
 }

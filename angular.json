@@ -22,6 +22,9 @@
               "src/favicon.ico",
               "src/assets"
             ],
+            "allowedCommonJsDependencies": [
+              "lodash"
+           ],
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/custom-theme.scss",
@@ -51,7 +54,7 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "2mb",
+                  "maximumWarning": "4mb",
                   "maximumError": "5mb"
                 },
                 {

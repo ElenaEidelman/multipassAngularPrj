@@ -8,89 +8,189 @@
 </div>
 
 <div class="page-wrap">
+
+
     <!-- new template -->
     <div *ngIf="openNewTemplate" class="page-element width-block-auto">
-        new template sms
+        <div class="element-page-title">יצירת תבנית</div>
+        <div class="card-wrap-new">
+
+            <!-- template text area-->
+            <div class="innerElement bgMint">
+                <form [formGroup]="newTemplateForm">
+                    <mat-card class="bgMint">
+                        <mat-card-header class="sms">
+                            <!-- <div mat-card-avatar class="smsIconNewTemplate">
+                                <mat-icon>sms</mat-icon>
+                            </div> -->
+                            <mat-card-title class="mat-card-sms">
+                                <div mat-card-avatar class="smsIconNewTemplate">
+                                    <mat-icon>sms</mat-icon>
+                                </div>
+                                <mat-form-field>
+                                    <input matInput value=""  placeholder="שם תבנית" formControlName="name">
+                                </mat-form-field>
+                                <mat-form-field>
+                                    <input matInput value=""  placeholder="שם שולח" formControlName="senderName">
+                                </mat-form-field>
+                            </mat-card-title>
+                            <mat-card-subtitle></mat-card-subtitle>
+                        </mat-card-header>
+                            <mat-card-content>
+                                <mat-form-field class="smsTA">
+                                    <textarea matInput #newTemplate  placeholder="SMS תבנית" class="templateTextArea" formControlName="template"></textarea>
+                                </mat-form-field>
+                            </mat-card-content> 
+
+                        <!-- action buttons -->
+                        <mat-card-actions>
+                        <button mat-button class="primaryButton">
+                            <span>שלח לדוגמא</span>
+                            <mat-icon>send</mat-icon>
+                        </button>
+                        </mat-card-actions>
+                    </mat-card>
+                </form>
+            </div>
+
+            <!-- template buttons -->
+            <div class="innerElement bgMint">
+                <mat-card>
+                    <!-- edit template -->
+                    <div>
+                        <mat-card-actions class="edit-buttons-wrap">
+                            <button mat-button class="linkButton" (click)="editButtonClicked('','שם פרטי')">
+                                <span><שם פרטי></span>
+                            </button>
+                            <button mat-button class="linkButton" (click)="editButtonClicked('','שם משפחה')">
+                                <span><שם משפחה></span>
+                            </button>
+                            <button mat-button class="linkButton" (click)="editButtonClicked('','שם חברה')">
+                                <span><שם חברה></span>
+                            </button>
+                            <button mat-button class="linkButton" (click)="editButtonClicked('','סכום טעינה')">
+                                <span><סכום טעינה></span>
+                            </button>
+                            <button mat-button class="linkButton" (click)="editButtonClicked('','מספר שובר')">
+                                <span><מספר שובר></span>
+                            </button>
+                            <button mat-button class="linkButton" (click)="editButtonClicked('','פין קוד')">
+                                <span><פין קוד></span>
+                            </button>
+                            <button mat-button class="linkButton" (click)="editButtonClicked('','תוקף')">
+                                <span><תוקף></span>
+                            </button>
+                            <button mat-button class="linkButton" (click)="editButtonClicked('','לינק לברקוד')">
+                                <span><לינק לברקוד></span>
+                            </button>
+                        </mat-card-actions>
+                        <div class="save-edit-button">
+                            <button mat-button class="primaryButton" (click)="saveTemplate('newTemplate')">
+                                <span>שמור</span>
+                                <mat-icon>save</mat-icon>
+                            </button>
+                            <div class="saveMessage">{{saveMessage}}</div>
+                        </div>
+                    </div>
+                </mat-card>
+            </div>
+        </div>
     </div>
+
+
+    <!-- templates list -->
     <div class="page-element width-block-auto">
         <div class="element-page-title">רשימת תבניות</div>
 
-        <div class="wrapData formBorder">
+        <div class="wrapData">
 
-            <div class="cards-wrap">
+            <form [formGroup]="SMSForm" *ngIf="SMSForm">
 
-                    <div *ngFor="let temp of templatesSMS; let i = index;" class="innerElement">
-                        <mat-card>
-                            <mat-card-header>
-                              <div mat-card-avatar class="example-header-image">
-                                  <mat-icon>sms</mat-icon>
-                              </div>
-                              <mat-card-title>{{temp.tempName}}</mat-card-title>
-                              <mat-card-subtitle></mat-card-subtitle>
-                            </mat-card-header>
-                            <mat-card-content>
-                                <mat-form-field class="example-full-width">
-                                    <mat-label>test</mat-label>
-                                    <textarea matInput></textarea>
-                                  </mat-form-field>
-                            </mat-card-content>
+                <div class="cards-wrap" >
+                        <div *ngFor="let temp of templatesSMS; let i = index;">
+                            <mat-card class="innerElement bgMint" formGroupName=id-{{temp.id}}>
+                                <mat-card-header class="sms">
+                                    <!-- <div mat-card-avatar class="example-header-image">
+                                        <mat-icon>sms</mat-icon>
+                                    </div> -->
+                                    <mat-card-title class="mat-card-sms">
+                                        <div mat-card-avatar class="example-header-image">
+                                            <mat-icon>sms</mat-icon>
+                                        </div>
+                                        <mat-form-field>
+                                            <input matInput value="{{temp.tempName}}"  placeholder="שם תבנית" formControlName="name{{temp.id}}">
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <input matInput value="{{temp.tempName}}"  placeholder="שם שולח" formControlName="senderName{{temp.id}}">
+                                        </mat-form-field>
+                                    </mat-card-title>
+                                    <mat-card-subtitle></mat-card-subtitle>
+                                </mat-card-header>
+                                    <mat-card-content>
+                                        <mat-form-field>
+                                            <textarea matInput #txtArea formControlName="template{{temp.id}}" placeholder="SMS תבנית" class="templateTextArea"></textarea>
+                                        </mat-form-field>
+                                    </mat-card-content> 
 
-
-                            <!-- action buttons -->
-                            <mat-card-actions *ngIf="temp.id != editingTempId || !edit">
-                              <button mat-button class="linkButton">
-                                  <span>שלח לדוגמא</span>
-                                  <mat-icon>edit</mat-icon>
-                              </button>
-                              <button mat-button class="deleteButton">
-                                <span>מחק</span>
-                                <mat-icon>delete</mat-icon>
-                              </button>
-                              <button mat-button class="addButton" (click)="editTemplate($event,temp)">
-                                <span>ערוך</span>
-                                <mat-icon>edit</mat-icon>
-                              </button>
-                            </mat-card-actions>
-
-                            <!-- edit template -->
-                            <div *ngIf="temp.id == editingTempId && edit">
-                                <mat-card-actions class="edit-buttons-wrap">
-                                    <button mat-button class="addButton">
-                                        <span>שם פרטי</span>
+                                <!-- action buttons -->
+                                <mat-card-actions class="actionWrapB" *ngIf="temp.id != editingTempId || !edit">
+                                    <button mat-button class="primaryButton">
+                                        <span>שלח לדוגמא</span>
+                                        <mat-icon>send</mat-icon>
                                     </button>
-                                    <button mat-button class="addButton">
-                                    <span>שפ משפחה</span>
+                                    <button mat-button class="deleteButton">
+                                        <span>מחק</span>
+                                        <mat-icon>delete</mat-icon>
                                     </button>
-                                    <button mat-button class="addButton">
-                                    <span>שם חברה</span>
-                                    </button>
-                                    <button mat-button class="addButton">
-                                        <span>סכום טעינה</span>
-                                    </button>
-                                    <button mat-button class="addButton">
-                                        <span>מספר שובר</span>
-                                    </button>
-                                    <button mat-button class="addButton">
-                                        <span>פין קוד</span>
-                                    </button>
-                                    <button mat-button class="addButton">
-                                        <span>תוקף</span>
-                                    </button>
-                                    <button mat-button class="addButton">
-                                        <span>לינק לברקוד</span>
+                                    <button mat-button class="addButton" (click)="editTemplate(temp)">
+                                        <span>ערוך</span>
+                                        <mat-icon>edit</mat-icon>
                                     </button>
                                 </mat-card-actions>
-                                <div class="save-edit-button">
-                                    <button mat-button class="primaryButton">
-                                        <span>שמור</span>
-                                        <mat-icon>save</mat-icon>
-                                    </button>
-                                </div>
-                            </div>
-                          </mat-card>
-                    </div>
 
-            </div>
+                                <!-- edit template -->
+                                <div *ngIf="temp.id == editingTempId && edit">
+                                    <mat-card-actions class="edit-buttons-wrap">
+                                        <button mat-button class="linkButton" (click)="editButtonClicked(temp,'שם פרטי')">
+                                            <span><שם פרטי></span>
+                                        </button>
+                                        <button mat-button class="linkButton" (click)="editButtonClicked(temp,'שם משפחה')">
+                                            <span><שם משפחה></span>
+                                        </button>
+                                        <button mat-button class="linkButton" (click)="editButtonClicked(temp,'שם חברה')">
+                                            <span><שם חברה></span>
+                                        </button>
+                                        <button mat-button class="linkButton" (click)="editButtonClicked(temp,'סכום טעינה')">
+                                            <span><סכום טעינה></span>
+                                        </button>
+                                        <button mat-button class="linkButton" (click)="editButtonClicked(temp,'מספר שובר')">
+                                            <span><מספר שובר></span>
+                                        </button>
+                                        <button mat-button class="linkButton" (click)="editButtonClicked(temp,'פין קוד')">
+                                            <span><פין קוד></span>
+                                        </button>
+                                        <button mat-button class="linkButton" (click)="editButtonClicked(temp,'תוקף')">
+                                            <span><תוקף></span>
+                                        </button>
+                                        <button mat-button class="linkButton" (click)="editButtonClicked(temp,'לינק לברקוד')">
+                                            <span><לינק לברקוד></span>
+                                        </button>
+                                    </mat-card-actions>
+                                    <div class="save-edit-button">
+                                        <button mat-button class="addButton" (click)="saveTemplate(temp)">
+                                            <span>בטל</span>
+                                            <mat-icon>close</mat-icon>
+                                        </button>
+                                        <button mat-button class="primaryButton" (click)="saveTemplate(temp)">
+                                            <span>שמור</span>
+                                            <mat-icon>save</mat-icon>
+                                        </button>
+                                    </div>
+                                </div>
+                            </mat-card>
+                        </div>
+                </div>
+            </form>
         </div>
     </div>
 </div>

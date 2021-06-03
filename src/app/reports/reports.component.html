@@ -17,66 +17,77 @@
                     <div class="element-page-title">הפקת דוח מימושים</div>
                     <div class="formBorder formElement">
                         <form [formGroup]="Report1Form">
-                            <div class="wrapReportForm">
-                                <div>
-                                    <div>
-                                        <mat-form-field>
-                                            <mat-label>שם לקוח</mat-label>
-                                            <input matInput placeholder = "שם לקוח">
-                                        </mat-form-field>
+                            <div class="wrapReportForm formWrap">
+                                <div class="formWrapRow">
+                                    <div >
+                                        <div>
+                                            <mat-form-field>
+                                                <mat-label>שם לקוח</mat-label>
+                                                <input matInput placeholder = "שם לקוח">
+                                                
+                                            </mat-form-field>
+                                        </div>
+                                        <div>
+                                            <mat-form-field>
+                                                <mat-label>מייל לשליחה</mat-label>
+                                                <input matInput placeholder = " mail@gmail.com :לדוגמא">
+                                            </mat-form-field>
+                                        </div>
                                     </div>
                                     <div>
-                                        <mat-form-field>
-                                            <mat-label>מייל לשליחה</mat-label>
-                                            <input matInput placeholder = " mail@gmail.com :לדוגמא">
-                                        </mat-form-field>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div>
-                                        <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
-                                            <mat-label>מתאריך</mat-label>
-                                            <input matInput [matDatepicker]="picker">
-                                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                                            <mat-datepicker #picker></mat-datepicker>
-                                        </mat-form-field>
-                                    </div>
-                                    <div>
-                                        <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
-                                            <mat-label>עד תאריך</mat-label>
-                                            <input matInput [matDatepicker]="picker2">
-                                            <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
-                                            <mat-datepicker #picker2></mat-datepicker>
-                                        </mat-form-field>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div>
-                                        <mat-form-field class="mat-icon-no-white">
-                                            <mat-label>תאריך ושעת שליחה</mat-label>
-                                            <input matInput 
-                                                   [ngxMatDatetimePicker]="pickerTest" 
-                                                   placeholder="תאריך ושעת שליחה"
-                                                   disabled="false">
-                                            <mat-datepicker-toggle matSuffix [for]="pickerTest"></mat-datepicker-toggle>
-                                            <ngx-mat-datetime-picker #pickerTest 
-                                                                     [showSpinners]="true" 
-                                                                     [showSeconds]="false"
-                                                                     [stepHour]="1" 
-                                                                     [stepMinute]="1" 
-                                                                     [touchUi]="false" 
-                                                                     color="primary" 
-                                                                     [enableMeridian]="true" 
-                                                                     [disableMinute]="false" 
-                                                                     [hideTime]="false">
-                                            </ngx-mat-datetime-picker>
-                                         </mat-form-field>
+                                        <div>
+                                            <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
+                                                <mat-label>מתאריך</mat-label>
+                                                <input matInput [matDatepicker]="picker">
+                                                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                                <mat-datepicker #picker></mat-datepicker>
+                                            </mat-form-field>
+                                        </div>
+                                        <div>
+                                            <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
+                                                <mat-label>עד תאריך</mat-label>
+                                                <input matInput [matDatepicker]="picker2">
+                                                <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                                                <mat-datepicker #picker2></mat-datepicker>
+                                            </mat-form-field>
+                                        </div>
                                     </div>
                                     <div>
-                                        <section class="check-box-flex">
-                                            <mat-checkbox class="example-margin" formControlName="canceledCheckB">כולל מבוטלים</mat-checkbox>
-                                            <mat-checkbox class="example-margin" formControlName="sendImmedCheckB">שלח מייד</mat-checkbox>
-                                        </section>
+                                        <div dir="rtl" class="fullWidth">
+                                            <mat-form-field class="mat-icon-no-white">
+                                                <mat-label>תאריך ושעת שליחה</mat-label>
+                                                <input matInput 
+                                                    [ngxMatDatetimePicker]="pickerTest" 
+                                                    placeholder="תאריך ושעת שליחה"
+                                                    disabled="false">
+                                                <mat-datepicker-toggle matSuffix [for]="pickerTest"></mat-datepicker-toggle>
+                                                <ngx-mat-datetime-picker #pickerTest 
+                                                                        [showSpinners]="true" 
+                                                                        [showSeconds]="false"
+                                                                        [stepHour]="1" 
+                                                                        [stepMinute]="1" 
+                                                                        [touchUi]="false" 
+                                                                        color="primary" 
+                                                                        [enableMeridian]="true" 
+                                                                        [disableMinute]="false" 
+                                                                        [hideTime]="false">
+                                                </ngx-mat-datetime-picker>
+                                            </mat-form-field>
+                                        </div>
+                                        
+                                        <!-- <div>
+                                            <section class="check-box-flex">
+                                                <mat-checkbox class="example-margin" formControlName="canceledCheckB">כולל מבוטלים</mat-checkbox>
+                                            </section>
+                                        </div> -->
+                                    </div>
+                                    <div>
+                                        <div class="checkBoxWrap">
+                                            <section class="check-box-flex">
+                                                <mat-checkbox class="example-margin" formControlName="canceledCheckB">כולל מבוטלים</mat-checkbox>
+                                                <!-- <mat-checkbox class="example-margin" formControlName="sendImmedCheckB">שלח מייד</mat-checkbox> -->
+                                            </section>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -100,66 +111,68 @@
                     <div class="element-page-title">הפקת דוח יתרות</div>
                     <div class="formBorder formElement">
                         <form [formGroup]="Report1Form">
-                            <div class="wrapReportForm">
-                                <div>
+                            <div class="wrapReportForm formWrap">
+                                <div class="formWrapRow">
                                     <div>
-                                        <mat-form-field>
-                                            <mat-label>שם לקוח</mat-label>
-                                            <input matInput placeholder = "שם לקוח">
-                                        </mat-form-field>
+                                        <div>
+                                            <mat-form-field>
+                                                <mat-label>שם לקוח</mat-label>
+                                                <input matInput placeholder = "שם לקוח">
+                                            </mat-form-field>
+                                        </div>
+                                        <div>
+                                            <mat-form-field>
+                                                <mat-label>מייל לשליחה</mat-label>
+                                                <input matInput placeholder = " mail@gmail.com :לדוגמא">
+                                            </mat-form-field>
+                                        </div>
                                     </div>
                                     <div>
-                                        <mat-form-field>
-                                            <mat-label>מייל לשליחה</mat-label>
-                                            <input matInput placeholder = " mail@gmail.com :לדוגמא">
-                                        </mat-form-field>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div>
-                                        <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
-                                            <mat-label>מתאריך</mat-label>
-                                            <input matInput [matDatepicker]="picker3">
-                                            <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
-                                            <mat-datepicker #picker3></mat-datepicker>
-                                        </mat-form-field>
-                                    </div>
-                                    <div>
-                                        <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
-                                            <mat-label>עד תאריך</mat-label>
-                                            <input matInput [matDatepicker]="picker4">
-                                            <mat-datepicker-toggle matSuffix [for]="picker4"></mat-datepicker-toggle>
-                                            <mat-datepicker #picker4></mat-datepicker>
-                                        </mat-form-field>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div>
-                                        <mat-form-field class="mat-icon-no-white">
-                                            <mat-label>תאריך ושעת שליחה</mat-label>
-                                            <input matInput 
-                                                   [ngxMatDatetimePicker]="picker5" 
-                                                   placeholder="תאריך ושעת שליחה"
-                                                   disabled="false">
-                                            <mat-datepicker-toggle matSuffix [for]="picker5"></mat-datepicker-toggle>
-                                            <ngx-mat-datetime-picker #picker5 
-                                                                     [showSpinners]="true" 
-                                                                     [showSeconds]="false"
-                                                                     [stepHour]="1" 
-                                                                     [stepMinute]="1" 
-                                                                     [touchUi]="false" 
-                                                                     color="primary" 
-                                                                     [enableMeridian]="true" 
-                                                                     [disableMinute]="false" 
-                                                                     [hideTime]="false">
-                                            </ngx-mat-datetime-picker>
-                                         </mat-form-field>
+                                        <div>
+                                            <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
+                                                <mat-label>מתאריך</mat-label>
+                                                <input matInput [matDatepicker]="picker3">
+                                                <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
+                                                <mat-datepicker #picker3></mat-datepicker>
+                                            </mat-form-field>
+                                        </div>
+                                        <div>
+                                            <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
+                                                <mat-label>עד תאריך</mat-label>
+                                                <input matInput [matDatepicker]="picker4">
+                                                <mat-datepicker-toggle matSuffix [for]="picker4"></mat-datepicker-toggle>
+                                                <mat-datepicker #picker4></mat-datepicker>
+                                            </mat-form-field>
+                                        </div>
                                     </div>
                                     <div>
-                                        <section class="check-box-flex">
-                                            <!-- <mat-checkbox class="example-margin" formControlName="canceledCheckB">כולל מבוטלים</mat-checkbox> -->
-                                            <mat-checkbox class="example-margin" formControlName="sendImmedCheckB">שלח מייד</mat-checkbox>
-                                        </section>
+                                        <div dir="rtl" class="fullWidth">
+                                            <mat-form-field class="mat-icon-no-white">
+                                                <mat-label>תאריך ושעת שליחה</mat-label>
+                                                <input matInput 
+                                                    [ngxMatDatetimePicker]="picker5" 
+                                                    placeholder="תאריך ושעת שליחה"
+                                                    disabled="false">
+                                                <mat-datepicker-toggle matSuffix [for]="picker5"></mat-datepicker-toggle>
+                                                <ngx-mat-datetime-picker #picker5 
+                                                                        [showSpinners]="true" 
+                                                                        [showSeconds]="false"
+                                                                        [stepHour]="1" 
+                                                                        [stepMinute]="1" 
+                                                                        [touchUi]="false" 
+                                                                        color="primary" 
+                                                                        [enableMeridian]="true" 
+                                                                        [disableMinute]="false" 
+                                                                        [hideTime]="false">
+                                                </ngx-mat-datetime-picker>
+                                            </mat-form-field>
+                                        </div>
+                                        <div>
+                                            <section class="check-box-flex">
+                                                <!-- <mat-checkbox class="example-margin" formControlName="canceledCheckB">כולל מבוטלים</mat-checkbox> -->
+                                                <!-- <mat-checkbox class="example-margin" formControlName="sendImmedCheckB">שלח מייד</mat-checkbox> -->
+                                            </section>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -182,66 +195,68 @@
                     <div class="element-page-title">הפקת דוח הנפקות</div>
                     <div class="formBorder formElement">
                         <form [formGroup]="Report1Form">
-                            <div class="wrapReportForm">
-                                <div>
+                            <div class="wrapReportForm formWrap">
+                                <div class="formWrapRow">
                                     <div>
-                                        <mat-form-field>
-                                            <mat-label>שם לקוח</mat-label>
-                                            <input matInput placeholder = "שם לקוח">
-                                        </mat-form-field>
+                                        <div>
+                                            <mat-form-field>
+                                                <mat-label>שם לקוח</mat-label>
+                                                <input matInput placeholder = "שם לקוח">
+                                            </mat-form-field>
+                                        </div>
+                                        <div>
+                                            <mat-form-field>
+                                                <mat-label>מייל לשליחה</mat-label>
+                                                <input matInput placeholder = " mail@gmail.com :לדוגמא">
+                                            </mat-form-field>
+                                        </div>
                                     </div>
                                     <div>
-                                        <mat-form-field>
-                                            <mat-label>מייל לשליחה</mat-label>
-                                            <input matInput placeholder = " mail@gmail.com :לדוגמא">
-                                        </mat-form-field>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div>
-                                        <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
-                                            <mat-label>מתאריך</mat-label>
-                                            <input matInput [matDatepicker]="picker6">
-                                            <mat-datepicker-toggle matSuffix [for]="picker6"></mat-datepicker-toggle>
-                                            <mat-datepicker #picker6></mat-datepicker>
-                                        </mat-form-field>
-                                    </div>
-                                    <div>
-                                        <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
-                                            <mat-label>עד תאריך</mat-label>
-                                            <input matInput [matDatepicker]="picker7">
-                                            <mat-datepicker-toggle matSuffix [for]="picker7"></mat-datepicker-toggle>
-                                            <mat-datepicker #picker7></mat-datepicker>
-                                        </mat-form-field>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div>
-                                        <mat-form-field class="mat-icon-no-white">
-                                            <mat-label>תאריך ושעת שליחה</mat-label>
-                                            <input matInput 
-                                                   [ngxMatDatetimePicker]="picker8" 
-                                                   placeholder="תאריך ושעת שליחה"
-                                                   disabled="false">
-                                            <mat-datepicker-toggle matSuffix [for]="picker8"></mat-datepicker-toggle>
-                                            <ngx-mat-datetime-picker #picker8 
-                                                                     [showSpinners]="true" 
-                                                                     [showSeconds]="false"
-                                                                     [stepHour]="1" 
-                                                                     [stepMinute]="1" 
-                                                                     [touchUi]="false" 
-                                                                     color="primary" 
-                                                                     [enableMeridian]="true" 
-                                                                     [disableMinute]="false" 
-                                                                     [hideTime]="false">
-                                            </ngx-mat-datetime-picker>
-                                         </mat-form-field>
+                                        <div>
+                                            <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
+                                                <mat-label>מתאריך</mat-label>
+                                                <input matInput [matDatepicker]="picker6">
+                                                <mat-datepicker-toggle matSuffix [for]="picker6"></mat-datepicker-toggle>
+                                                <mat-datepicker #picker6></mat-datepicker>
+                                            </mat-form-field>
+                                        </div>
+                                        <div>
+                                            <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
+                                                <mat-label>עד תאריך</mat-label>
+                                                <input matInput [matDatepicker]="picker7">
+                                                <mat-datepicker-toggle matSuffix [for]="picker7"></mat-datepicker-toggle>
+                                                <mat-datepicker #picker7></mat-datepicker>
+                                            </mat-form-field>
+                                        </div>
                                     </div>
                                     <div>
-                                        <section class="check-box-flex">
-                                            <!-- <mat-checkbox class="example-margin" formControlName="canceledCheckB">כולל מבוטלים</mat-checkbox> -->
-                                            <mat-checkbox class="example-margin" formControlName="sendImmedCheckB">שלח מייד</mat-checkbox>
-                                        </section>
+                                        <div dir="rtl">
+                                            <mat-form-field class="mat-icon-no-white">
+                                                <mat-label>תאריך ושעת שליחה</mat-label>
+                                                <input matInput 
+                                                    [ngxMatDatetimePicker]="picker8" 
+                                                    placeholder="תאריך ושעת שליחה"
+                                                    disabled="false">
+                                                <mat-datepicker-toggle matSuffix [for]="picker8"></mat-datepicker-toggle>
+                                                <ngx-mat-datetime-picker #picker8 
+                                                                        [showSpinners]="true" 
+                                                                        [showSeconds]="false"
+                                                                        [stepHour]="1" 
+                                                                        [stepMinute]="1" 
+                                                                        [touchUi]="false" 
+                                                                        color="primary" 
+                                                                        [enableMeridian]="true" 
+                                                                        [disableMinute]="false" 
+                                                                        [hideTime]="false">
+                                                </ngx-mat-datetime-picker>
+                                            </mat-form-field>
+                                        </div>
+                                        <div>
+                                            <section class="check-box-flex">
+                                                <!-- <mat-checkbox class="example-margin" formControlName="canceledCheckB">כולל מבוטלים</mat-checkbox> -->
+                                                <!-- <mat-checkbox class="example-margin" formControlName="sendImmedCheckB">שלח מייד</mat-checkbox> -->
+                                            </section>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

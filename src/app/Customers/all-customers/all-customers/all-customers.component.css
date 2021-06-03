@@ -19,6 +19,9 @@
     .buttonWrap{
         margin: auto;
     }
+    table{
+        direction: ltr;
+    }
 }
 
 

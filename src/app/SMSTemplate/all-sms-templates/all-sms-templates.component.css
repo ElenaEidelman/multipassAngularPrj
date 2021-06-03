@@ -21,20 +21,47 @@ mat-accordion mat-expansion-panel mat-expansion-panel-header .mat-icon{
     background: #EEF0F2;
     border-radius: 4px;
   }
-
+  .actionWrapB{
+    text-align: center;
+  }
   .cards-wrap{
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
+    flex-direction: row-reverse;
   }
   .cards-wrap > div{
+    flex-grow: 2;
+    margin: 0 6px;
     width: 49%;
   }
+
   mat-form-field{
       width: 100%;
   }
+
+  .mat-card-sms{
+    display: flex;
+    justify-content: space-between;
+  }
+  .mat-card-sms > mat-form-field{
+    width: auto;
+  }
+  .card-wrap-new{
+    display: flex;
+    flex-direction: row-reverse;
+  }
+  .card-wrap-new > div{
+    flex-basis: 0;
+    flex-grow: 1;
+    margin: 0 6px;
+  }
+  .card-wrap-new mat-card{
+    box-shadow: unset;
+  }
+
   .innerElement{
-    margin: 1.3em auto;
+    margin: 10px auto;
   }
   mat-icon{
       margin-left: 5px;
@@ -42,19 +69,50 @@ mat-accordion mat-expansion-panel mat-expansion-panel-header .mat-icon{
   .edit-buttons-wrap{
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: flex-end;
   }
   .edit-buttons-wrap > button{
     margin: 7px;
-    flex-grow: 1;
+    width: 30%;
   }
   .save-edit-button{
     text-align: CENTER;
     border-top: 1px solid #f0f0f0;
+    padding: 10px;
   }
+  .save-edit-button > button{
+    margin: 0 10px;
+  }
+  textarea{
+    min-height: 8em;
+    padding: 10px !important;
+    border: 1px solid #DDE0E0;
+    border-radius: 10px;
+    background: #fff;
+  }
+  .mat-card-header {
+    direction: rtl;
+    flex-direction: column !important;
+}
   @media screen and (max-width: 1024px){
+    .edit-buttons-wrap > button{
+      width: 29%;
+    }
+    .edit-buttons-wrap > button{
+      margin: 5px;
+    }
     .flexData {
       flex-direction: row-reverse;
     }
+    .cards-wrap, .card-wrap-new{
+      flex-direction: column;
+    }
+    .cards-wrap > div, .card-wrap-new > div{
+      width: 100%;
+    }
+    .cards-wrap > div, .card-wrap-new > div{
+      margin: 0;
+    }
+
   }
 

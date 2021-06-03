@@ -42,6 +42,7 @@ export class ExistCustomerComponent implements OnInit {
 
 
   ngOnInit() {
+    window.scroll(0,0);
     this.idUnsubscribe = this.activeRoute.params.subscribe( param => {
       this.id = param['id'];
 

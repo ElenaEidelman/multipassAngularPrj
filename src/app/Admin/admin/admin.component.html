@@ -1,0 +1,22 @@
+<div class="pageTitle main2-title">
+    <div>Admin</div>
+    <div class="menuWrap">
+        <a routerLink="/public/admin/createNewUser" routerLinkActive="routActive">
+            <button mat-raised-button class="titleMenuButton">משתמש חדש
+                <mat-icon>person_add_alt_1</mat-icon>
+            </button>
+        </a>
+        <a routerLink="/public/admin/createNewCard" routerLinkActive="routActive">
+            <button mat-raised-button class="titleMenuButton">יצירת תו
+                <mat-icon>card_giftcard</mat-icon>
+            </button>
+        </a>
+    </div>
+</div>
+<div class="page-wrap">
+
+    <div class="page-element width-block-auto">
+        <div class="element-page-title">רשימת משתמשים</div>
+        <router-outlet></router-outlet>
+    </div>
+</div>

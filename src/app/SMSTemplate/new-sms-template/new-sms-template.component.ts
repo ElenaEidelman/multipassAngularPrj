@@ -10,6 +10,7 @@ export class NewSmsTemplateComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+    
   }
 
 }

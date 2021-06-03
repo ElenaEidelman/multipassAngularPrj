@@ -1,0 +1,14 @@
+.menuWrap{
+    display: flex;
+    flex-direction: row-reverse;
+}
+.menuWrap > a{
+    margin: 0 5px;
+}
+
+.routActive{
+    background: transparent !important;
+}
+.routActive > button{
+    background: #88C43E !important;
+}

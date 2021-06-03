@@ -8,10 +8,24 @@
     flex-grow: 1;
 }
 
+.spinner{
+    position: absolute;
+    margin: auto;
+    right: 0;
+    left: 0;
+    top: -18px;
+}
+
+.buttonsWrap{
+    position: relative;
+}
 
 
 
 @media screen and (max-width: 1024px){
+    .idNumber{
+        width: 100% !important;
+    }
     .formWrap {
         flex-wrap: wrap;
     }

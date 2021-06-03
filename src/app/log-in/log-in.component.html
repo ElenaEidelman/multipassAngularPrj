@@ -1,0 +1,75 @@
+<div>
+  <div class="page-wrap wrap-login">
+
+    <div class="logoHeader">
+      <img src="../../assets/img/multitav.png">
+    </div>
+
+    <div class="log-in">
+      <div class="wrap-form">
+        <h2>כניסה למערכת</h2>
+        <form [formGroup]="loginForm" class="logInForm" (ngSubmit)="SendOtp()" *ngIf="validKind == 'SendOtp'">
+          <p>
+            <mat-form-field>
+              <mat-label>מספר טלפון</mat-label>
+              <input type="phone" matInput placeholder="מספר טלפון" formControlName="PhoneNumber">
+              <mat-icon matPrefix>phone</mat-icon>
+              <mat-hint>מספר טלפון</mat-hint>
+              <mat-error *ngIf="loginForm.get('PhoneNumber').hasError('required')">
+                נא להכניס את מספר טלפון
+              </mat-error>
+            </mat-form-field>
+          </p>
+          <p>
+            <mat-form-field>
+              <mat-label>מזהה</mat-label>
+              <input type="text" matInput placeholder="מזהה" formControlName="CompanyId">
+              <mat-icon matPrefix>domain</mat-icon>
+              <mat-hint>מזהה</mat-hint>
+              <mat-error *ngIf="loginForm.get('CompanyId').hasError('required')">
+                נא להזין מזהה החברה
+              </mat-error>
+            </mat-form-field>
+          </p>
+          <div class="wrap-button-login">
+            <div *ngIf="msgAlert != ''" class="error msgAlert">{{msgAlert}}</div>
+            <button mat-button type="submit" class="addButton">כניסה</button>
+            <span *ngIf="loginSpinner">
+              <mat-spinner></mat-spinner>
+            </span>
+          </div>
+        </form>
+
+        <form [formGroup]="loginForm" *ngIf="validKind == 'ValidateOtp'" class="logInForm" (ngSubmit)="ValidateOtp()">
+          <p>
+            <mat-form-field>
+              <mat-label>קוד אימות</mat-label>
+              <input type="text" matInput placeholder="קוד אימות" formControlName="OtpKey">
+              <mat-icon matPrefix>domain</mat-icon>
+              <mat-hint>ברגעים אלא נשלח אליך קוד אימות</mat-hint>
+              <mat-error *ngIf="loginForm.get('OtpKey').hasError('required')">
+                נא להזין קוד אימות
+              </mat-error>
+            </mat-form-field>
+          </p>
+          <div class="wrap-button-login">
+            <!-- <div *ngIf="msgAlert != ''" class="error msgAlert">{{msgAlert}}</div> -->
+            <button mat-button type="submit" class="addButton">לאמת</button>
+            <mat-error *ngIf="validateOtpErrorAlert != ''">{{validateOtpErrorAlert}}</mat-error>
+            <span *ngIf="loginSpinner">
+              <mat-spinner></mat-spinner>
+            </span>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div>MultiTav BackOffice © 2021</div>
+    </div>
+  </div>
+
+
+
+</div>
+

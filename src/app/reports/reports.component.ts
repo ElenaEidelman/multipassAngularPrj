@@ -26,6 +26,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
     //debugger
   }
   ngOnInit(): void {
+    window.scroll(0,0);
   }
 
   ngAfterViewInit(){

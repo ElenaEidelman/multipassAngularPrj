@@ -1,69 +1,218 @@
 <div class="pageTitle main2-title">
     <div>הזמנת שוברים</div>
 </div>
-    <div class="page-element width-block-auto">
-        <div class="element-page-title">הזמנת שוברים</div>
+<div class="page-element width-block-auto">
+    <div class="element-page-title">הזמנת שוברים</div>
 
-        <mat-tab-group mat-align-tabs="start" [selectedIndex]="indexId">
-            
-            <!-- excel card creating -->
-            <mat-tab >
-                <ng-template mat-tab-label >
-                    <div class="tab-label">
-                        <span>הזמנת שוברים דיגיטלים מאקסל</span>
-                        <fa-icon [icon]="faFileExcel"></fa-icon>
-                    </div>
-                </ng-template>
-                <div class="wrap-content">
-                    <div class="element-page-title">טעינת קובץ אקסל</div>
-                    <div class="formBorder formElement">
-                        <form [formGroup]="excelCardCreatingForm">
-                            <div class="formWrapRow">
-                                <div>
-                                    <mat-form-field class="marginSelectTop">
-                                        <mat-label>בחירת לקוח</mat-label>
-                                        <mat-select  formControlName="customer">
-                                            <ng-container *ngFor="let customer of customers; let i = index">
-                                                <mat-option [value]="customer">
-                                                    {{customer.customerName}}
-                                                    <!-- {{customer}} -->
-                                                  </mat-option>
-                                            </ng-container>
-                                        </mat-select>
-                                    </mat-form-field>
-                                </div>
-                                <div>
-                                    <mat-form-field class="example-full-width">
-                                        <mat-label>תאור הקובץ</mat-label>
-                                        <textarea  placeholder="נא להכניס תיאור של הקובץ" matInput formControlName="fileDesc"></textarea>
-                                    </mat-form-field>
-                                </div>
-                                <div class="buttonAny">
-                                    <span>בדיקה וטעינה של הקובץ</span>
-                                    <input [hidden]="true" name="uploadDoc" #uploadDoc type="file" formControlName="file">
-                                    <button  mat-button class="addButton" (click)="uploadDoc.click()">
+    <mat-tab-group mat-align-tabs="start" [selectedIndex]="indexId">
+
+        <!-- excel card creating -->
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <div class="tab-label">
+                    <span>יצירת שוברים דיגיטלים מאקסל</span>
+                    <fa-icon [icon]="faFileExcel"></fa-icon>
+                </div>
+            </ng-template>
+            <div class="wrap-content">
+                <div class="element-page-title">טעינת קובץ אקסל</div>
+                <div class="formBorder formElement">
+                    <form [formGroup]="excelCardCreatingForm">
+                        <div class="formWrapRow">
+                            <div>
+                                <mat-form-field class="marginSelectTop">
+                                    <mat-label>בחירת לקוח</mat-label>
+                                    <mat-select formControlName="customer">
+                                        <ng-container *ngFor="let customer of customers; let i = index">
+                                            <mat-option [value]="customer">
+                                                {{customer.customerName}}
+                                                <!-- {{customer}} -->
+                                            </mat-option>
+                                        </ng-container>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                            <div>
+                                <mat-form-field class="example-full-width">
+                                    <mat-label>תאור הקובץ</mat-label>
+                                    <textarea placeholder="נא להכניס תיאור של הקובץ" matInput
+                                        formControlName="fileDesc"></textarea>
+                                </mat-form-field>
+                            </div>
+                            <div class="alignRight">
+                                <mat-hint>בדיקה וטעינה של הקובץ</mat-hint>
+                                <input [hidden]="true" name="uploadDoc" #uploadDoc type="file" formControlName="file">
+                                <div class="wrapUserButton">
+                                    <button mat-button class="addButton marginRight" (click)="uploadDoc.click()">
                                         <span>בחירת קובץ</span>
                                         <mat-icon>attach_file</mat-icon>
                                     </button>
-                                    <span *ngIf="uploadDoc.value">{{uploadDoc.value}}</span>
+                                </div>
+                                <span *ngIf="uploadDoc.value">{{uploadDoc.value}}</span>
                             </div>
-                            </div>
-                        </form>
-                    </div>
+                        </div>
+                    </form>
                 </div>
+            </div>
 
-            </mat-tab>
+        </mat-tab>
 
-            <!-- manual card creating -->
-            <mat-tab>
-                <ng-template mat-tab-label >
-                    <div class="tab-label">
-                        <span>הזמנת שוברים דיגיטלים ידנית </span>
-                        <mat-icon> settings </mat-icon>
-                    </div>
-                </ng-template>
-                Content 2
-            </mat-tab>
-          </mat-tab-group>
+        <!-- manual card creating -->
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <div class="tab-label">
+                    <span>יצירת שוברים דיגיטלים ידנית </span>
+                    <mat-icon> app_registration </mat-icon>
+                </div>
+            </ng-template>
+            <div class="wrap-content">
+                <div class="element-page-title">הזמנה ידנית</div>
+                <div class="formBorder formElement">
+                    <form [formGroup]="manualCardgroup">
+                        <div class="formWrapRow">
+                            <div>
+                                <mat-form-field class="marginSelectTop">
+                                    <mat-label>בחירת לקוח</mat-label>
+                                    <mat-select formControlName="selectedCustomerControl">
+                                        <ng-container *ngFor="let customer of customers; let i = index">
+                                            <mat-option [value]="customer">
+                                                {{customer.customerName}}
+                                                <!-- {{customer}} -->
+                                            </mat-option>
+                                        </ng-container>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                            <div class="buttonAny alignRight">
+                                <div class="wrapUserButton">
+                                    <button mat-button class="addButton" (click)="test()"
+                                        [routerLink]="['/public/newOrder', manualCardgroup.get('selectedCustomerControl').value != undefined ?  manualCardgroup.get('selectedCustomerControl').value : '-1' ]">הכנס</button>
+                                </div>
+                            </div>
+                            <div></div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </mat-tab>
 
-    </div>
+        <!--loading card -->
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <div class="tab-label">
+                    <span>טעינת שוברים</span>
+                    <mat-icon> file_upload</mat-icon>
+                </div>
+            </ng-template>
+            <div class="wrap-content">
+                <div class="element-page-title">טעינת שוברים</div>
+                <div class="formBorder formElement">
+                    <form [formGroup]="loadingCardGroup">
+                        <div class="formWrapRow">
+                            <div>
+                                <mat-form-field class="marginSelectTop">
+                                    <mat-label>בחירת לקוח</mat-label>
+                                    <mat-select formControlName="selectedCustomerControl"
+                                        (selectionChange)="optionChange()">
+                                        <ng-container *ngFor="let customer of customers; let i = index">
+                                            <mat-option [value]="customer">
+                                                {{customer.customerName}}
+                                                <!-- {{customer}} -->
+                                            </mat-option>
+                                        </ng-container>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                            <div></div>
+                            <div></div>
+                            <!-- <div>
+                                <mat-form-field class="example-full-width inputPadding">
+                                    <mat-label>מספר לקוח *</mat-label>
+                                    <input placeholder="הזדהות המשתמש" matInput formControlName="userId" pattern="^[0-9]*$">
+                                    <button class="clearButton" *ngIf="this.loadingCardGroup.get('userId').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.loadingCardGroup.get('userId').setValue('')">
+                                        <mat-icon>close</mat-icon>
+                                    </button>
+     
+                                    <mat-error *ngIf="loadingCardGroup.get('userId').hasError('pattern')">
+                                        נא להזין רק מספרים*
+                                    </mat-error>
+                                    <mat-error *ngIf="loadingCardGroup.get('userId').hasError('required')">
+                                        נא להזין מספר לקוח *
+                                    </mat-error>
+                                </mat-form-field>
+                            </div>
+                            <div class="buttonAny alignRight">
+                                <div class="wrapUserButton">
+                                    <button mat-button class="addButton" (click)="indentityUser()">הכנס</button><br>
+                                </div>
+                                <mat-error *ngIf="loadingCardUserExist" [class.error]="loadingCardUserExist">תקלה בהזנת נתונים</mat-error>
+                            </div> -->
+                        </div>
+  
+                        <div *ngIf="showHiddenLoadingCardContent"  class="hiddenLoadingCardContent">
+                            <div class="formWrapRow">
+                                <div>
+                                    <mat-form-field>
+                                        <mat-label>ממספר שובר</mat-label>
+                                        <input matInput formControlName="fromCardNumber" pattern="^[0-9]*$">
+                                        <mat-hint *ngIf="fromCardCheckedOrderNumber">  מספר הזמנה:  {{fromCardCheckedOrderNumber}}</mat-hint>
+                                        <mat-hint *ngIf="fromCardError != ''" class="error">{{fromCardError}}</mat-hint>
+                                        <button class="clearButton" *ngIf="this.loadingCardGroup.get('fromCardNumber').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.loadingCardGroup.get('fromCardNumber').setValue('')">
+                                            <mat-icon>close</mat-icon>
+                                        </button>
+                                        <mat-error *ngIf="loadingCardGroup.get('fromCardNumber').hasError('pattern')">
+                                            נא להזין רק מספרים*
+                                        </mat-error>
+                                    </mat-form-field>
+                                </div>
+                                <div>
+                                    <mat-form-field>
+                                        <mat-label>עד מספר שובר</mat-label>
+                                        <input matInput formControlName="toCardNumber" pattern="^[0-9]*$">
+                                        <mat-hint *ngIf="toCardCheckedOrderNumber"> מספר הזמנה: {{toCardCheckedOrderNumber}}</mat-hint>
+                                        <mat-hint *ngIf=" toCardError != ''" class="error">{{toCardError}}</mat-hint>
+                                        <button class="clearButton" *ngIf="this.loadingCardGroup.get('toCardNumber').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.loadingCardGroup.get('toCardNumber').setValue('')">
+                                            <mat-icon>close</mat-icon>
+                                        </button>
+                                        <mat-error *ngIf="loadingCardGroup.get('toCardNumber').hasError('pattern')">
+                                            נא להזין רק מספרים*
+                                        </mat-error>
+                                    </mat-form-field>
+                                </div>
+                                <div>
+                                    <mat-form-field>
+                                        <mat-label>סכום</mat-label>
+                                        <input matInput placeholder="סכום" formControlName="sum" pattern="^[0-9]*$">
+                                        <button class="clearButton" *ngIf="this.loadingCardGroup.get('sum').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.loadingCardGroup.get('sum').setValue('')">
+                                            <mat-icon>close</mat-icon>
+                                        </button>
+                                        <!-- <mat-hint>Errors appear instantly!</mat-hint> -->
+                                        <mat-error *ngIf="loadingCardGroup.get('sum').hasError('pattern')">
+                                            נא להזין רק מספרים*
+                                        </mat-error>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                            <div class="buttonsWrap ">
+                                <div class="bWrap">
+                                    <button mat-button class="linkButton" (click)="cancelLoadCard()">
+                                        בטל
+                                        <mat-icon> cancel</mat-icon>
+                                    </button>
+                                </div>
+                                <div class="bWrap loadB">
+                                    <button mat-button class="primaryButton" (click)="loadCard()">
+                                        טען
+                                        <mat-icon> file_upload</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </mat-tab>
+    </mat-tab-group>
+
+</div>
