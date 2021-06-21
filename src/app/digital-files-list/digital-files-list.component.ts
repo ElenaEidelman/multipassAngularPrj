@@ -49,4 +49,6 @@ export class DigitalFilesListComponent implements OnInit {
       {chargingNumber: '210310113133', fileDesc: 'תאור הקובץ 16', dateOfAbs: '10/03/2021 11:31:22', fileName: 'file name', fileSrc: 'NewdigitalOrderonevalue_210310113133.xls'},
     ]);
   }
+
+  
 }

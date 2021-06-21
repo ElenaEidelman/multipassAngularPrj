@@ -134,15 +134,16 @@
 
                                 <!-- action buttons -->
                                 <mat-card-actions class="actionWrapB" *ngIf="temp.id != editingTempId || !edit">
-                                    <button mat-button class="primaryButton">
-                                        <span>שלח לדוגמא</span>
-                                        <mat-icon>send</mat-icon>
-                                    </button>
+
                                     <button mat-button class="deleteButton">
                                         <span>מחק</span>
                                         <mat-icon>delete</mat-icon>
                                     </button>
-                                    <button mat-button class="addButton" (click)="editTemplate(temp)">
+                                    <button mat-button class="linkButton">
+                                        <span>שלח לדוגמא</span>
+                                        <mat-icon>send</mat-icon>
+                                    </button>
+                                    <button mat-button class="linkButton" (click)="editTemplate(temp)">
                                         <span>ערוך</span>
                                         <mat-icon>edit</mat-icon>
                                     </button>

@@ -25,7 +25,7 @@
                                     <mat-select formControlName="customer">
                                         <ng-container *ngFor="let customer of customers; let i = index">
                                             <mat-option [value]="customer">
-                                                {{customer.customerName}}
+                                                {{customer.organizationName}}
                                                 <!-- {{customer}} -->
                                             </mat-option>
                                         </ng-container>
@@ -43,13 +43,16 @@
                                 <mat-hint>בדיקה וטעינה של הקובץ</mat-hint>
                                 <input [hidden]="true" name="uploadDoc" #uploadDoc type="file" formControlName="file">
                                 <div class="wrapUserButton">
-                                    <button mat-button class="addButton marginRight" (click)="uploadDoc.click()">
+                                    <button mat-button class="sendButton marginRight" (click)="uploadDoc.click()">
                                         <span>בחירת קובץ</span>
                                         <mat-icon>attach_file</mat-icon>
                                     </button>
                                 </div>
                                 <span *ngIf="uploadDoc.value">{{uploadDoc.value}}</span>
                             </div>
+                        </div>
+                        <div class="sendButtonWrap">
+                            <button mat-button class="addButton">שלח</button>
                         </div>
                     </form>
                 </div>
@@ -76,7 +79,7 @@
                                     <mat-select formControlName="selectedCustomerControl">
                                         <ng-container *ngFor="let customer of customers; let i = index">
                                             <mat-option [value]="customer">
-                                                {{customer.customerName}}
+                                                {{customer.organizationName}}
                                                 <!-- {{customer}} -->
                                             </mat-option>
                                         </ng-container>
@@ -86,7 +89,11 @@
                             <div class="buttonAny alignRight">
                                 <div class="wrapUserButton">
                                     <button mat-button class="addButton" (click)="test()"
-                                        [routerLink]="['/public/newOrder', manualCardgroup.get('selectedCustomerControl').value != undefined ?  manualCardgroup.get('selectedCustomerControl').value : '-1' ]">הכנס</button>
+                                        [routerLink]="['/public/newOrder', manualCardgroup.get('selectedCustomerControl').value != undefined ?  manualCardgroup.get('selectedCustomerControl').value['id'] : '-1' ]">הכנס
+                                    </button>
+                                    <!-- <button mat-button class="addButton" (click)="test()"
+                                        [routerLink]="'/public/newOrder'" [state]="{data: manualCardgroup.get('selectedCustomerControl').value}">הכנס
+                                    </button> -->
                                 </div>
                             </div>
                             <div></div>
@@ -116,7 +123,7 @@
                                         (selectionChange)="optionChange()">
                                         <ng-container *ngFor="let customer of customers; let i = index">
                                             <mat-option [value]="customer">
-                                                {{customer.customerName}}
+                                                {{customer.organizationName}}
                                                 <!-- {{customer}} -->
                                             </mat-option>
                                         </ng-container>
@@ -149,7 +156,7 @@
                             </div> -->
                         </div>
   
-                        <div *ngIf="showHiddenLoadingCardContent"  class="hiddenLoadingCardContent">
+                        <div *ngIf="showHiddenLoadingCardContent || loadingCardGroup.get('selectedCustomerControl').value != ''"  class="hiddenLoadingCardContent">
                             <div class="formWrapRow">
                                 <div>
                                     <mat-form-field>

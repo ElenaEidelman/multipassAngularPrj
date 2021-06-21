@@ -5,19 +5,24 @@
     <div class="page-element width-block-auto">
         <div class="wrapData formBorder">
             <div class="fixed-column-buttons">
-                <button mat-button class="linkButton" (click)="accordion.closeAll()">
-                    <span>צמצם הכל</span>
-                    <mat-icon>compress</mat-icon>
-                </button>
-                <button mat-button class="linkButton" (click)="accordion.openAll()">
-                    <span>הרחב הכל</span>
-                    <mat-icon>expand</mat-icon>
-                </button>
-                <button mat-button class="addButton" (click)="saveForm()">
-                    <span>שמור</span>
-                    <mat-icon>save</mat-icon>
-                </button>
+                <div class="wrapStickyButtons">
+                    <button mat-button class="linkButton" (click)="accordion.closeAll()">
+                        <span>צמצם הכל</span>
+                        <mat-icon>compress</mat-icon>
+                    </button>
+                    <button mat-button class="linkButton" (click)="accordion.openAll()">
+                        <span>הרחב הכל</span>
+                        <mat-icon>expand</mat-icon>
+                    </button>
+                    <button mat-button class="addButton" (click)="saveForm()">
+                        <span>שמור</span>
+                        <mat-icon>save</mat-icon>
+                    </button>
+                </div>
+                <div class="error" *ngIf="errorActionButtons">{{errorActionButtons}}</div>
             </div>
+
+            
             <div>
                 <form [formGroup]="newCustomerForm">
                     <mat-accordion class="example-headers-align" multi>
@@ -41,32 +46,32 @@
                                 </mat-panel-description>
                             </mat-expansion-panel-header>
                             <div class="wrapFormElement">
-                                <div class="wrapFlexTwoCol" formGroupName="customerData">
+                                <div class="wrapFlexTwoCol">
                                     <div class="formWrapColumn">
                                         <mat-form-field>
-                                            <mat-label>שם חברה</mat-label>
-                                            <input matInput placeholder="שם חברה" formControlName="companyName">
+                                            <mat-label>שם חברה*</mat-label>
+                                            <input matInput placeholder="שם חברה*" formControlName="OrganizationName">
                                         </mat-form-field>
                                         <mat-form-field>
-                                            <mat-label>דוא"ל</mat-label>
-                                            <input matInput placeholder='דוא"ל' formControlName="email">
+                                            <mat-label>דוא"ל*</mat-label>
+                                            <input matInput placeholder='דוא"ל*' formControlName="Email">
                                         </mat-form-field>
                                     </div>
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>מספר טלפון</mat-label>
-                                            <input matInput placeholder="מספר טלפון" formControlName="phoneNumber">
+                                            <input matInput placeholder="מספר טלפון" formControlName="Phone">
                                         </mat-form-field>
                                         <mat-form-field>
-                                            <mat-label>תפקיד</mat-label>
-                                            <input matInput placeholder="תפקיד" formControlName="role">
+                                            <mat-label>תפקיד*</mat-label>
+                                            <input matInput placeholder="תפקיד*" formControlName="Permission">
                                         </mat-form-field>
                                     </div>
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>מספר טלפון נוסף</mat-label>
                                             <input matInput placeholder="מספר טלפון נוסף"
-                                                formControlName="addPhoneNumber">
+                                                formControlName="Phone1">
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>מספר משתמש</mat-label>
@@ -93,22 +98,22 @@
 
                             <div class="wrapFormElement">
                                 <div class="wrapFlexTwoCol">
-                                    <div class="flexData" formGroupName="address">
+                                    <div class="flexData">
                                         <mat-form-field>
                                             <mat-label>עיר</mat-label>
-                                            <input matInput placeholder="עיר" formControlName="city">
+                                            <input matInput placeholder="עיר" formControlName="CityName">
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>רחוב</mat-label>
-                                            <input matInput placeholder="רחוב" formControlName="street">
+                                            <input matInput placeholder="רחוב" formControlName="Streetno">
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>מספר בית</mat-label>
-                                            <input matInput placeholder="מספר בית" formControlName="houseNumber">
+                                            <input matInput placeholder="מספר בית" formControlName="Entrance">
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>מספר דירה</mat-label>
-                                            <input matInput placeholder="מספר דירה" formControlName="appNumber">
+                                            <input matInput placeholder="מספר דירה" formControlName="ApartmentNo">
                                         </mat-form-field>
                                     </div>
                                 </div>
@@ -131,26 +136,26 @@
                             </mat-expansion-panel-header>
 
                             <div class="wrapFormElement">
-                                <div class="wrapFlexTwoCol" formGroupName="comerData">
+                                <div class="wrapFlexTwoCol">
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>סטטוס</mat-label>
-                                            <input matInput placeholder="סטטוס" formControlName="status">
+                                            <input matInput placeholder="סטטוס" formControlName="StatusId">
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>מזה לקוח</mat-label>
-                                            <input matInput placeholder="מזה לקוח" formControlName="customer">
+                                            <input matInput placeholder="מזה לקוח" formControlName="MultipassIclientID">
                                         </mat-form-field>
                                     </div>
                                     <div class="formWrapColumn">
                                         <mat-form-field>
-                                            <mat-label>ח.פ</mat-label>
-                                            <input matInput placeholder="ח.פ" formControlName="customerId">
+                                            <mat-label>ח.פ*</mat-label>
+                                            <input matInput placeholder="ח.פ*" formControlName="Tz">
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>אחוז הנחה קבוע</mat-label>
                                             <input matInput placeholder="אחוז הנחה קבוע"
-                                                formControlName="fixedDiscountPerc">
+                                                formControlName="DealerDiscountPercent">
                                         </mat-form-field>
                                     </div>
                                     <div class="formWrapColumn space-around">

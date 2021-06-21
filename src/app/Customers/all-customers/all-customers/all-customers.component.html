@@ -16,42 +16,51 @@
             <form [formGroup]="filterCustomerForm">
                 <div class="formWrap">
                     <div class="formWrapRow">
-                        <mat-form-field>
-                            <mat-label>מזהה לקוח</mat-label>
-                            <input matInput placeholder="שם לקוח, ח.פ" formControlName="customerId">
-                            <mat-icon matPrefix *ngIf="this.filterCustomerForm.get('customerId').value == ''">person</mat-icon>
-                            <button class="clearButton" *ngIf="this.filterCustomerForm.get('customerId').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.filterCustomerForm.get('customerId').setValue('')">
-                                <mat-icon>close</mat-icon>
-                            </button>
-                        </mat-form-field>
+                        <div>
+                            <mat-form-field>
+                                <mat-label>מזהה לקוח</mat-label>
+                                <input matInput placeholder="שם לקוח, ח.פ" formControlName="customerId">
+                                <mat-icon matPrefix *ngIf="this.filterCustomerForm.get('customerId').value == ''">person</mat-icon>
+                                <button class="clearButton" *ngIf="this.filterCustomerForm.get('customerId').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.filterCustomerForm.get('customerId').setValue('')">
+                                    <mat-icon>close</mat-icon>
+                                </button>
+                            </mat-form-field>
+                        </div>
                     </div>
                     <div class="formWrapRow">
-                        <mat-form-field dir="ltr">
-                            <mat-label>דוא''ל</mat-label>
-                            <input matInput placeholder="exp@gmail.com" formControlName="customerEmail">
-                            <mat-icon matPrefix *ngIf="this.filterCustomerForm.get('customerEmail').value == ''">email</mat-icon>
-                            <button class="clearButton" *ngIf="this.filterCustomerForm.get('customerEmail').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.filterCustomerForm.get('customerEmail').setValue('')">
-                                <mat-icon>close</mat-icon>
-                            </button>
-                            <mat-error *ngIf="this.filterCustomerForm.get('customerEmail').hasError('email')">
-                             כתובת דוא"ל לא תקין*
-                              </mat-error>
-                        </mat-form-field>
+                        <div>
+                            <mat-form-field dir="ltr">
+                                <mat-label>דוא''ל</mat-label>
+                                <input matInput placeholder="exp@gmail.com" formControlName="customerEmail">
+                                <mat-icon matPrefix *ngIf="this.filterCustomerForm.get('customerEmail').value == ''">email</mat-icon>
+                                <button class="clearButton" *ngIf="this.filterCustomerForm.get('customerEmail').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.filterCustomerForm.get('customerEmail').setValue('')">
+                                    <mat-icon>close</mat-icon>
+                                </button>
+                                <mat-error *ngIf="this.filterCustomerForm.get('customerEmail').hasError('email')">
+                                 כתובת דוא"ל לא תקין*
+                                  </mat-error>
+                            </mat-form-field>
+                        </div>
                     </div>
                     <div class="formWrapRow">
-                        <mat-form-field class="selectedFormFieldWidth">
-                            <mat-label>סטטוס</mat-label>
-                            <mat-select formControlName="orderStatus" multiple>
-                                <mat-option *ngFor="let status of returnStatusList()" [value]="status">
-                                    {{status}}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                    </div>
-                    <div class="buttonWrap">
-                        <button mat-button class="addButton" (click)="filterTable()">חפש</button>
+                        <div>
+                            <mat-form-field class="selectedFormFieldWidth">
+                                <mat-label>סטטוס</mat-label>
+                                <mat-select formControlName="OrderStatus" multiple>
+                                    <mat-option *ngFor="let status of returnStatusList()" [value]="status">
+                                        {{status}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
                     </div>
                 </div>
+                <div class="buttonsWrap actionsButton">
+                    <button mat-button class="linkButton" (click)="recoverTable()">אפס</button>
+                    <button mat-button class="addButton" (click)="filterTable()">חפש</button>
+                    <mat-spinner *ngIf="filterSpinner" class="filterSpinner"></mat-spinner>
+                </div>
+                <div class="error" *ngIf="filterMsg != ''">{{filterMsg}}</div>
             </form>
         </div>
     </div>
@@ -81,13 +90,13 @@
                         <ng-container matColumnDef="{{column}}" *ngIf="column == 'newOrder'" style="width:100px">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
                             <td mat-cell *matCellDef="let row">
-                                <button mat-button class="addButton tableButton">הזמנה חדשה</button>
+                                <button mat-button class="addButton tableButton" [routerLink]="['/public/orderCards',0,row['id']]">הזמנה חדשה</button>
                             </td>
                         </ng-container>
                     </ng-container>
 
 
-                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
                     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
                     <!-- Row shown when there is no matching data. -->
@@ -96,7 +105,7 @@
                     </tr>
                 </table>
                 <div *ngIf="errorMsg != ''" style="color: red; text-align: center">{{errorMsg}}</div>
-                <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+                <mat-paginator [pageSizeOptions]="[25, 50, 100]" class="mat-paginator-sticky"></mat-paginator>
             </div>
 
 

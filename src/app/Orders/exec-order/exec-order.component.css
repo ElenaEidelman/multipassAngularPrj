@@ -6,6 +6,23 @@
 }
 mat-spinner{
     margin: auto;
+    position: absolute !important;
+    top: 0;
+    right: 0;
+    left: 0;
+    width: 50px !important;
+    height: 50px !important;
+}
+mat-spinner >  svg{
+    width: 50px !important;
+    height: 50px !important;
+}
+.spinner{
+
+}
+
+.tableButton {
+    position: relative;
 }
 .smsSendInput{
     width: 100%;
@@ -50,6 +67,30 @@ mat-spinner{
     font-size: 1.3rem;
     color: #8989a4;
 }
+
+.dataRows .mat-form-field{
+    width: 100%;
+}
+.dataRows .mat-form-field input{
+    text-align: center;
+}
+.dataRows .mat-form-field-appearance-legacy .mat-form-field-underline{
+    background-color: unset;
+}
+
+
+
+
+tr.example-element-row:not(.example-expanded-row):hover {
+    background: whitesmoke;
+  }
+  
+  tr.example-element-row:not(.example-expanded-row):active {
+    background: #efefef;
+  }
+
+
+
 @media screen and (max-width: 1024px){
     /* .customer-data{
         flex-direction: column;

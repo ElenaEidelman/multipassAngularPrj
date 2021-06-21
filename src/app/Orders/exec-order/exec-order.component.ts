@@ -1,66 +1,81 @@
 import { Route } from '@angular/compiler/src/core';
-import { Component, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
+import { Component, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChildren, ViewEncapsulation } from '@angular/core';
 import { tick } from '@angular/core/testing';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { ControlContainer, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { throwMatDialogContentAlreadyAttachedError } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute, Data, RouterModule } from '@angular/router';
+import { ActivatedRoute, Data, Router, RouterModule } from '@angular/router';
+import { resourceUsage } from 'process';
+import { elementAt } from 'rxjs/operators';
 import { DataServiceService } from 'src/app/data-service.service';
 import { SharedService } from 'src/app/shared.service';
 import { AlertMessage } from 'src/assets/alertMessage';
-import { OrderData } from '../../Classes/OrderData';
-
-
 
 @Component({
   selector: 'app-exec-order',
   templateUrl: './exec-order.component.html',
-  styleUrls: ['./exec-order.component.css']
+  styleUrls: ['./exec-order.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
 
 
 export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
-  
-
+    @ViewChildren('orderLinesChildren') orderLinesChildren;
   
 
   // OrderData;
 
-  constructor(private activeRoute: ActivatedRoute, private fb: FormBuilder, private dataService: DataServiceService, private sharedService: SharedService) { }
+  constructor(
+                private activeRoute: ActivatedRoute, 
+                private fb: FormBuilder, 
+                private dataService: DataServiceService, 
+                private sharedService: SharedService,
+                private router: Router) { }
   
+  insertOrderLineSpinner: boolean = false;
+  createCardsSpinner: boolean = false;
+  deleteCardsSpinner: boolean = false;
+
+
+  errorMsg: string = '';
+  orderMsg: string = '';
+  addOrderLineErrMsg: string = '';
+
+  newOrder: boolean = false;
   //translate customer data value to hebrew
   CustomerLangObj = [
     {value: 'Fname', viewValue: 'שם'},
     {value: 'Lname', viewValue: 'שם משפחה'},
-    {value: 'Id', viewValue: 'ח.פ'},
+    {value: 'Tz', viewValue: 'ח.פ'},
     {value: 'Email', viewValue: 'מייל'},
     {value: 'Phone', viewValue: 'טלפון'},
     {value: 'Phone1', viewValue: 'טלפון נוסף'}
   ];
 
-  //order table 
+  Customer;
+
+//orderDetail must contain one row with empty data
   orderDetails = [
-    {foundation:1, ticketCount: 2, chargeAmount: 500.00, validity: '31/01/2026', totalCharge : 1000.00},
-    {foundation:2, ticketCount: 2, chargeAmount: 500.00, validity: '31/01/2026', totalCharge : 1000.00},
-    {foundation:0, ticketCount: 0, chargeAmount: 0, validity: '', totalCharge : 0}
+    {id:0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem : 0}
   ];
-  displayedColumnsOrderDetails = ['foundation','ticketCount','chargeAmount','validity','totalCharge','additionalColumn'];
  
-  //additional row on table for add order
-  formTableForAddOrder = new MatTableDataSource([{foundation:0, ticketCount: 0, chargeAmount: 0, validity: '', totalCharge : 0}]);
+  displayedColumnsOrderDetails = ['id','QTY','LoadSum','ValidationDate','TotalForItem','additionalColumn'];
+
+  orderDetailsUpdateForm = this.fb.group({});
 
   columnsHeb = {
-    'foundation' : "מס''ד",
-    'ticketCount' : 'כמות כרטיסים	',
-    'chargeAmount' : 'סכום טעינה',
-    'validity' : 'תוקף',
-    'totalCharge' : "סה''כ סכום טעינה",
+    'id' : "מס''ד",
+    'QTY' : 'כמות כרטיסים	',
+    'LoadSum' : 'סכום טעינה',
+    'ValidationDate' : 'תוקף',
+    'TotalForItem' : "סה''כ סכום טעינה",
   }
 
   Orders: MatTableDataSource<any>;
-  Customer;
+
   dataByPage;
-  id;
+
+  orderId;
   customerId;
   idUnsubscribe;
 
@@ -73,17 +88,19 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   totalTicketCount: number = 0;
   totalOrderSum: number = 0;
 
-  orderDetailsTable = new MatTableDataSource(this.orderDetails);
+  userToken : string;
+
+  orderDetailsTable;
 
   //for additional empty row foraddToExecOrderForm
-
   addToExecOrderForm = this.fb.group({
     ticketCount: ['', [Validators.required, Validators.min(1), Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
     chargeAmount: ['', [Validators.required, Validators.min(1), Validators.max(1000), Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
     validity: [new Date(new Date().setDate(new Date().getDate() + 1)), Validators.required],
-    totalCharge: [{value: '', disabled: true}]
+    TotalForItem: [{value: '', disabled: true}]
   });
 
+  //מספר אסמכתה
   RefControl = new FormControl('');
 
   //disable all days before current data
@@ -99,75 +116,103 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
   ngOnInit() {
     window.scroll(0,0);
+
+    let url = this.router.url;
     this.idUnsubscribe = this.activeRoute.params.subscribe( param => {
-      //debugger
-      this.id = param['id'];
-      this.customerId = param['customerId'];
-      let userToken = JSON.parse(localStorage.getItem('user')).Token;
-      this.dataService.GetOrderDetails({Token: userToken, Id: this.id}).subscribe(result => {
-        //debugger
-        if(result['Token'] != undefined){
+      this.userToken = JSON.parse(localStorage.getItem('user')).Token;
 
-          //set new token
-          let tempObjUser = JSON.parse(localStorage.getItem('user'));
-          tempObjUser['Token'] = result['Token'];
-          localStorage.setItem('user',JSON.stringify(tempObjUser));
+      let objToApi = {
+        Token : this.userToken
+      }
 
-          this.dataByPage = result['obj'];;
+      //if order id received
+      if(url.includes('order')){
+        this.orderId = param['id'];
+        this.customerId = param['customerId'];
+        this.newOrder = false;
+        objToApi['CoreOrderID'] = this.orderId;
+
+        debugger
+        this.dataService.GetOrderDetails(objToApi).subscribe(result => {
+         debugger
+          if(typeof result == 'string'){
+            alert(result);
+          }
+          else{
+            if(result['Token'] != undefined){
+  
+              //set new token
+              // let tempObjUser = JSON.parse(localStorage.getItem('user'));
+              // tempObjUser['Token'] = result['Token'];
+              // localStorage.setItem('user',JSON.stringify(tempObjUser));
+    
               
-          //get customer data
-          this.Customer = this.dataByPage['PrimaryUser'];
+              //
+             // debugger
+              this.dataByPage = result['obj'][0];
+                  
+              //get customer data
+              this.Customer = result['obj'][0]['User'];
+    
+              //debugger
+              this.Orders = new MatTableDataSource(result['obj'][0]['Lines']);
 
-          this.Orders = new MatTableDataSource(result['obj']);
-          this.fillDataSourceToTable();
+              this.Orders.data.forEach((element, index) => {
+                debugger
+                this.orderDetails.unshift(element);
+              });
+  
+              this.orderDetailsTable = new MatTableDataSource(this.orderDetails);
+              this.setTitles();
+              this.totalData();
+            }
+            else{
+              alert(JSON.stringify(result));
+              // this.sharedService.exitSystemEvent();
+            }
+          }
+        })
+      }
+
+      //if customer id recevied for new order
+      if(url.includes('newOrder')){
+        this.customerId = param['customerId'];
+        this.newOrder = true;
+
+        let objToApi  = {
+          Token: this.userToken,
+          CustomerId: param['customerId']
         }
-        else{
-          this.sharedService.exitSystemEvent();
-        }
-      })
-       
+        debugger
+        this.dataService.GetCustomersByFilter(objToApi).subscribe(result => {
+          debugger
+          this.Customer = result.obj[0];
+        });
+        
+        let orderDetails = [{id:0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem : 0}];
+        this.orderDetailsTable = new MatTableDataSource(orderDetails);
+      }
     })
     
-
+    this.RefControl.setValue(this.orderId);
     this.totalData();
   }
 
-  // createDataSourceForTable(){
-  //   // this.Orders = new MatTableDataSource([
-  //   //   // new OrderData('900000025', 12345, 'multipass','11111',1122, 5, '24/01/2021', '24/01/2021', '400.00', 'הזמנה סגורה' ,2),
-  //   //   // new OrderData('900000026',12345,'multipass2','22222',1122,5,'24/01/2021','24/01/2021','400.00','הזמנה פתוחה',0),
-  //   //   // new OrderData('900000027',12345,'multipass3','33333',1122,5,'24/01/2021','24/01/2021','400.00','הזמנה פתוחה',0),
-  //   //   // new OrderData('900000028',12345,'multipass4','44444',1122,5,'24/01/2021','24/01/2021','400.00','מבוטלת',1),
-  //   //   // new OrderData('900000029',12345,'multipass5','55555',1122,5,'24/01/2021','24/01/2021','400.00','מבוטלת',1),
-  //   //   // new OrderData('900000030',12345,'multipass6','66666',1122,5,'24/01/2021','24/01/2021','400.00','הזמנה פתוחה',0),
-  //   //   // new OrderData('900000031',12345,'multipass7','77777',1122,5,'24/01/2021','24/01/2021','400.00','מבוטלת',1),
-  //   //   // new OrderData('900000032',12345,'multipass8','88888',1122,5,'24/01/2021','24/01/2021','400.00','הזמנה פתוחה',0),
-  //   //   // new OrderData('900000033',12345,'multipass9','99999',1122,5,'24/01/2021','24/01/2021','400.00','הזמנה סגורה',2),
-  //   //   // new OrderData('900000034',12345,'multipass12','12121',1122,5,'24/01/2021','24/01/2021','400.00','הזמנה סגורה',2),
-  //   //   // new OrderData('900000035',12345,'multipass13','13131',1122,5,'24/01/2021','24/01/2021','400.00','הזמנה סגורה',2),
-  //   //   // new OrderData('900000036',12345,'multipass14','14141',1122,5,'24/01/2021','24/01/2021','400.00','הזמנה סגורה',2),
-  //   //   // new OrderData('900000037',12345,'multipass15','15151',1122,5,'24/01/2021','24/01/2021','400.00','הזמנה סגורה',2),
-  //   //   // new OrderData('900000038',12345,'multipass15','15151',1122,5,'24/01/2021','24/01/2021','400.00','הזמנה סגורה',2)
-
-  //   // ]);
-  // }
-
-  fillDataSourceToTable(){
+  setTitles(){
+    //debugger
     if(this.Orders != undefined){
       //debugger
-      if(this.id != undefined){
+      if(this.orderId != undefined){
         //debugger
         this.orderTitle = 'פרוט הזמנה';
-        //this.dataByPage = this.Orders.data.filter(el => el['orderid'] == this.id);
       }
       if(this.customerId != undefined){
         this.orderTitle = 'הזמנה חדשה';
-        //this.dataByPage = this.Orders.data.filter(el => el['userId'] == this.customerId);
 
-        this.orderDetails = [{foundation:0, ticketCount: 0, chargeAmount: 0, validity: '', totalCharge : 0}];
-        this.orderDetailsTable = new MatTableDataSource(this.orderDetails);
+        // let orderDetails = [{id:0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem : 0}];
+        // this.orderDetailsTable = new MatTableDataSource(orderDetails);
+        //debugger
       }
-      this.RefControl.setValue(this.id);
     }
     else{
       alert('this.Orders == ' + this.Orders);
@@ -180,9 +225,8 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     //debugger
     
     this.orderDetails.forEach(el => {
-        //debugger
-          this.totalTicketCount += el.ticketCount;
-          this.totalOrderSum += el.totalCharge;
+          this.totalTicketCount += el.QTY;
+          this.totalOrderSum += el.TotalForItem;
         }
     )}
   
@@ -195,48 +239,230 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     }, 3000);
   }
 
-  deleteRow(row){
-     let filteringObj = this.orderDetails.filter((el, indexRow) => {
-        return indexRow != row;
-     });
-     this.orderDetailsTable = new MatTableDataSource(filteringObj);
-     this.orderDetails = filteringObj;
+  deleteRow(element,row){
+
+    let date = element.ValidationDate.split('/');
+    let dateForApi = date[1] + '-' + date[0] + '-' + date[2];
+    //format date for api by mm/dd/yy
+
+    let objToApi = {
+      Token: this.userToken,
+      OrderId:this.orderId.toString(),
+      UserID:this.customerId,
+      ChargeAmount: element.LoadSum,
+      Validity: dateForApi,
+      OpCode:"delete"
+    }
+
+    
+    //chow spinner of order line by id
+    this.orderLinesChildren._results.forEach(el => {
+      let spinner = (el.nativeElement.children['spinnerDelete' + element.id] as HTMLBodyElement);
+      if(spinner != undefined){
+        (el.nativeElement.children['spinnerDelete' + element.id] as HTMLBodyElement).classList.remove('disableSpinner');
+        (el.nativeElement.children['spinnerDelete' + element.id] as HTMLBodyElement).classList.add('enableSpinner');
+      }
+    })
+    debugger
+    this.dataService.InsertUpdateLines(objToApi).subscribe(result => {
+      debugger
+      this.orderDetails = [
+        {id:0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem : 0}
+      ];
+      if(result['obj'][0]['Lines'].length > 0){
+        this.orderDetails.unshift(... result['obj'][0]['Lines']);
+      }
+
+
+
+
+      // let filteringObj = this.orderDetails.filter((el, indexRow) => {
+      //    return indexRow != row;
+      // });
+      this.orderDetailsTable.data = this.orderDetails;
+      // this.orderDetails = filteringObj;
+      
+    });
 
   }
-  addRow(){
-    if(this.addToExecOrderForm.valid){
-      let ticketCount = +this.addToExecOrderForm.get('ticketCount').value;
-      let chargeAmount = +this.addToExecOrderForm.get('chargeAmount').value;
-      let validity = this.addToExecOrderForm.get('validity').value;
-      let validityFormating = (new Date(validity).getDate() < 10 ? '0' + new Date(validity).getDate() : new Date(validity).getDate() )  + '/' + ((new Date(validity).getMonth() + 1) < 10 ? '0' + (new Date(validity).getMonth() + 1) : new Date(validity).getMonth() + 1) + '/' + new Date(validity).getFullYear();
-      this.addToExecOrderForm.get('totalCharge').setValue(ticketCount * chargeAmount);
-      let totalCharge = +this.addToExecOrderForm.get('totalCharge').value;
+  addOrderLine(){
+    if(this.newOrder){
+      if(this.addToExecOrderForm.valid){
+        this.insertOrderLineSpinner = true;
+        let ticketCount = +this.addToExecOrderForm.get('ticketCount').value;
+        let chargeAmount = +this.addToExecOrderForm.get('chargeAmount').value;
+        let validity = this.addToExecOrderForm.get('validity').value;
+        let validityFormating = (new Date(validity).getDate() < 10 ? '0' + new Date(validity).getDate() : new Date(validity).getDate() )  + '/' + ((new Date(validity).getMonth() + 1) < 10 ? '0' + (new Date(validity).getMonth() + 1) : new Date(validity).getMonth() + 1) + '/' + new Date(validity).getFullYear();
+        this.addToExecOrderForm.get('TotalForItem').setValue(ticketCount * chargeAmount);
+        let TotalForItem = +this.addToExecOrderForm.get('TotalForItem').value;
   
+        let objToApi = {
+          Token: this.userToken,
+          UserId: this.customerId,
+          ChargeAmount: chargeAmount,
+          TicketCount: ticketCount,
+          Validity: validity,
+          OpCode:"insert"
+        }
   
-      this.orderDetails.splice(this.orderDetails.length-1,0,{foundation: this.orderDetails.length, ticketCount: ticketCount, chargeAmount: chargeAmount, validity: validityFormating, totalCharge : totalCharge});
-      
-      this.orderDetailsTable = new MatTableDataSource(this.orderDetails);
+        //query for insert update order lines, but not for the first line
+        if(this.orderDetailsTable.data.length > 1){
+  
+          objToApi['OrderId'] = this.orderId;
+  
+          debugger
+          this.dataService.InsertUpdateLines(objToApi).subscribe(result => {
+            debugger
+            this.insertOrderLineSpinner = false;
+            if(result['obj'] != undefined){
+  
+              this.orderDetails = [
+                {id:0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem : 0}
+              ];
+  
+              this.orderDetails.unshift(...result['obj'][0]['Lines']);
+              this.orderDetailsTable = new MatTableDataSource(this.orderDetails);
+              //calculate new total dat
+              this.totalData();
+            }
+          });
+        }
+  
+         //insert first line, create new order
+        else{
+          this.dataService.InsertUpdateOrder(objToApi).subscribe(result => {
+            this.insertOrderLineSpinner = false;
+  
+            if(result['obj'][0]['Lines'].length > 0){
+              this.orderDetails = [
+                {id:0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem : 0}
+              ];
+          
+              this.orderDetails.unshift(result['obj'][0]['Lines'][0]);
+  
+              this.orderDetailsTable = new MatTableDataSource(this.orderDetails);
+  
+              //after created new order, set order id
+              this.orderId = result['obj'][0]['orderid'];
+  
+              //calculate new total dat
+              this.totalData();
+            }
+          });
+        }
+  
+        //reset form
+        this.viewAddToExecOrderForm = false;
+        setTimeout(()=>{
+          this.addToExecOrderForm.reset();
+          this.addToExecOrderForm.get('validity').setValue(new Date(new Date().setDate(new Date().getDate() + 1)));
+          this.viewAddToExecOrderForm = true;
+        }, 0);
+  
+      }
+      else{
+        this.addOrderLineErrMsg = 'נא למלא את כל השדות';
 
-      //reset form
-      this.viewAddToExecOrderForm = false;
-      setTimeout(()=>{
-        this.addToExecOrderForm.reset();
-        this.addToExecOrderForm.get('validity').setValue(new Date(new Date().setDate(new Date().getDate() + 1)));
-        this.viewAddToExecOrderForm = true;
-      }, 0);
-      //calculate new total data
-      this.totalData();
+        setTimeout(()=>{
+          this.addOrderLineErrMsg = '';
+        }, 3000);
+      }
+    }
+
+    //not new order
+    else{
+      alert('not new order');
+    }
+  }
+
+  ApproveOrder(){
+
+    if(this.orderDetails.length > 1){
+      this.createCardsSpinner = true;
+      let objToApi = {
+        Token: this.userToken,
+        OrderId: this.orderId,
+        UserID: this.customerId
+      }
+      this.dataService.ApproveOrder(objToApi).subscribe(result => {
+        this.createCardsSpinner = false;
+        if(typeof result == 'object' && result.obj != null && result.obj.length > 0){
+          this.orderMsg = 'הזמנה נקלטה בהצלחה';
+          setTimeout(()=> {
+            this.orderMsg = '';
+          }, 3000);
+
+          setTimeout(() => {
+            this.router.navigate(['/public/order/', result.obj[0]['orderid'], this.customerId]);
+          }, 3000);
+          
+        }
+        if(result.obj == null){
+          alert('order already created => orderId: ' + this.orderId);
+        }
+        else{
+          this.errorMsg = result;
+
+          setTimeout(()=>{
+            this.errorMsg = '';
+          }, 3000)
+        }
+      })
     }
     else{
-      
+      this.errorMsg = 'נא ליצור לפחות הזמנה אחת';
+
+      setTimeout(()=>{
+        this.errorMsg = '';
+      }, 3000)
     }
+  }
+  deleteOrder(){
+
+    ///api/InsertUpdateOrder/InsertUpdateOrder
+
+    /**
+     * {
+    "Token":"IX_XFPHFaSg_B49tuiJwaUP3LQcHs3CfIBqTqkUuMek1",   "UserID":"2700",
+    "TicketCount":3,
+    "ChargeAmount":"600",    
+     "OpCode":"insert",
+     "Validity":"1-1-2023"
+}
+     */
+
+    // let date = element.ValidationDate.split('/');
+    // let dateForApi = date[1] + '-' + date[0] + '-' + date[2];
+    // //format date for api by mm/dd/yy
+
+    // let objToApi = {
+    //   Token: this.userToken,
+    //   OrderId:this.orderId,
+    //   UserID:this.customerId,
+    //   ChargeAmount: element.LoadSum,
+    //   Validity: dateForApi,
+    //   OpCode:"delete"
+    // }
+
+    let objToApi = {
+      Token: this.userToken,
+      TicketCount:3, // miss
+      ChargeAmount:  this.dataByPage.Total,    
+      OpCode:"delete",
+      Validity:"1-1-2023" //miss
+    }
+
+    debugger
+    this.dataService.InsertUpdateOrder(objToApi).subscribe(result => {
+     alert(result);
+    });
   }
 
   calculateTotalCharge(){
     let ticketCount = this.addToExecOrderForm.get('ticketCount').value;
     let chargeAmount = this.addToExecOrderForm.get('chargeAmount').value;
 
-    this.addToExecOrderForm.get('totalCharge').setValue(ticketCount * chargeAmount);
+    this.addToExecOrderForm.get('TotalForItem').setValue(ticketCount * chargeAmount);
     //debugger
   }
 

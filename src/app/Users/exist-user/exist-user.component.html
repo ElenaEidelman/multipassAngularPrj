@@ -1,12 +1,12 @@
 <div class="pageTitle main2-title">
     <div *ngIf="userData">
-        {{userData.fullName}}
+        {{userData.FullName}}
     </div>
     <div *ngIf="!userData">
         משתמש חדש
     </div>
     <div *ngIf="userData">
-        <a routerLink="/newUser">
+        <a routerLink="/public/newUser">
             <button mat-raised-button class="titleMenuButton">משתמש חדש
                 <mat-icon>person_add_alt_1</mat-icon>
             </button>
@@ -25,7 +25,7 @@
                     <span>הרחב הכל</span>
                     <mat-icon>expand</mat-icon>
                 </button>
-                <button mat-button class="addButton">
+                <button mat-button class="addButton" (click)="saveData()">
                     <span>שמור</span>
                     <mat-icon>save</mat-icon>
                 </button>
@@ -59,7 +59,7 @@
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>שם מלא*</mat-label>
-                                            <input matInput placeholder="שם מלא*" formControlName="fullName">
+                                            <input matInput placeholder="שם מלא*" formControlName="FullName">
                                         </mat-form-field>
                                         <mat-form-field class="selectedFormFieldWidth">
                                             <mat-label>סטטוס</mat-label>
@@ -73,21 +73,21 @@
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>דוא"ל</mat-label>
-                                            <input matInput placeholder='דוא"ל' formControlName="email">
+                                            <input matInput placeholder='דוא"ל' formControlName="Email">
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>מספר משתמש של המערכת</mat-label>
-                                            <input matInput placeholder="מספר משתמש של המערכת" formControlName="systemUserId">
+                                            <input matInput placeholder="מספר משתמש של המערכת" formControlName="UserType">
                                         </mat-form-field>
                                     </div>
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>סיסמה*</mat-label>
-                                            <input matInput placeholder="סיסמה*" formControlName="password">
+                                            <input matInput placeholder="סיסמה*" formControlName="Password">
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>מספר עובד</mat-label>
-                                            <input matInput placeholder="מספר עובד" formControlName="empNumber">
+                                            <input matInput placeholder="מספר עובד" formControlName="Id">
                                         </mat-form-field>
                                     </div>
                                 </div>
@@ -115,44 +115,44 @@
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>מספר טלפון</mat-label>
-                                            <input matInput placeholder="מספר טלפון" formControlName="phoneNumber">
+                                            <input matInput placeholder="מספר טלפון" formControlName="Phone">
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>עיר</mat-label>
-                                            <input matInput placeholder="עיר" formControlName="city">
+                                            <input matInput placeholder="עיר" formControlName="CityName">
                                         </mat-form-field>
                                     </div>
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>מספר טלפון נוסף</mat-label>
-                                            <input matInput placeholder="מספר טלפון נוסף" formControlName="additionalPhoneNumber">
+                                            <input matInput placeholder="מספר טלפון נוסף" formControlName="Phone1">
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>רחוב</mat-label>
-                                            <input matInput placeholder="רחוב" formControlName="street">
+                                            <input matInput placeholder="רחוב" formControlName="Streetno">
                                         </mat-form-field>
                                     </div>
                                     <div class="formWrapColumn">
                                         <mat-form-field class="selectedFormFieldWidth">
                                             <mat-label>סוג משתמש</mat-label>
-                                            <mat-select multiple formControlName="userStat">
+                                            <mat-select multiple formControlName="Role">
                                                 <mat-option *ngFor="let status of userStat" [value]="status.value">
                                                     {{status.viewValue}}</mat-option>
                                             </mat-select>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>מיקוד</mat-label>
-                                            <input matInput placeholder="מיקוד" formControlName="Zcode">
+                                            <input matInput placeholder="מיקוד" formControlName="ZIP">
                                         </mat-form-field>
                                     </div>
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>הרשאות</mat-label>
-                                            <input matInput placeholder="הרשאות" formControlName="permiss">
+                                            <input matInput placeholder="הרשאות" formControlName="Permission">
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>מספר בית</mat-label>
-                                            <input matInput placeholder="מספר בית" formControlName="appNumber">
+                                            <input matInput placeholder="מספר בית" formControlName="ApartmentNo">
                                         </mat-form-field>
                                     </div>
                                 </div>

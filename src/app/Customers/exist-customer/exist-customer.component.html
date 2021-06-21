@@ -1,29 +1,33 @@
 <div class="pageTitle main2-title">
     <div>
-        {{customerDetails.companyName}} :לקוח
+        {{customerData.OrganizationName}} :לקוח
     </div>
 </div>
 <div class="page-wrap">
     <div class="page-element width-block-auto">
         <div class="wrapData formBorder">
+
             <div class="fixed-column-buttons">
-                <button mat-button class="linkButton" (click)="accordion.closeAll()">
-                    <span>צמצם הכל</span>
-                    <mat-icon>compress</mat-icon>
-                </button>
-                <button mat-button class="linkButton" (click)="accordion.openAll()">
-                    <span>הרחב הכל</span>
-                    <mat-icon>expand</mat-icon>
-                </button>
-                <button mat-button class="addButton">
-                    <span>שמור</span>
-                    <mat-icon>save</mat-icon>
-                </button>
+                <div class="wrapStickyButtons">
+                    <button mat-button class="linkButton" (click)="accordion.closeAll()">
+                        <span>צמצם הכל</span>
+                        <mat-icon>compress</mat-icon>
+                    </button>
+                    <button mat-button class="linkButton" (click)="accordion.openAll()">
+                        <span>הרחב הכל</span>
+                        <mat-icon>expand</mat-icon>
+                    </button>
+                    <button mat-button class="addButton" (click)="saveForm()">
+                        <span>שמור</span>
+                        <mat-icon>save</mat-icon>
+                    </button>
+                </div>
+                <div class="error">error</div>
             </div>
 
             <!-- user data -->
             <div>
-                <form>
+                <form [formGroup]="CustomerForm">
                     <mat-accordion class="example-headers-align" multi>
 
                         <!-- Recent orders -->
@@ -56,15 +60,21 @@
                                 </div>
                                 <div class="buttonInElement innerElement">
                                     <div>
-                                        <a [routerLink]="['/orderCards',0,customerDetails['customerId']]" mat-button class="addButton">
+                                        <a [routerLink]="['/public/orderCards',0,customerData.id]" mat-button class="addButton">
                                             <span>הזמנת שוברים דיגיטלים מאקסל  </span>
                                             <fa-icon [icon]="faFileExcel"></fa-icon>
                                         </a>
                                     </div>
                                     <div>
-                                        <a [routerLink]="['/orderCards',1,customerDetails['customerId']]" mat-button class="addButton">
+                                        <a [routerLink]="['/public/orderCards',1,customerData.id]" mat-button class="addButton">
                                             <span>הזמנת שוברים דיגיטלים ידנית </span>
                                             <mat-icon> settings </mat-icon>
+                                        </a>
+                                    </div>
+                                    <div>
+                                        <a [routerLink]="['/public/orderCards',2,customerData.id]" mat-button class="addButton">
+                                            <span>טעינת שוברים</span>
+                                            <mat-icon> file_upload</mat-icon>
                                         </a>
                                     </div>
                                 </div>
@@ -95,32 +105,32 @@
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>שם חברה</mat-label>
-                                            <input matInput placeholder="שם חברה">
+                                            <input matInput placeholder="שם חברה" formControlName="OrganizationName">
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>מספר טלפון</mat-label>
-                                            <input matInput placeholder="מספר טלפון">
+                                            <input matInput placeholder="מספר טלפון" formControlName="Phone">
                                         </mat-form-field>
 
                                     </div>
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>דוא"ל</mat-label>
-                                            <input matInput placeholder='דוא"ל'>
+                                            <input matInput placeholder='דוא"ל' formControlName="Email">
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>מספר טלפון נוסף</mat-label>
-                                            <input matInput placeholder="מספר טלפון נוסף">
+                                            <input matInput placeholder="מספר טלפון נוסף" formControlName="Phone1">
                                         </mat-form-field>
                                     </div>
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>תפקיד</mat-label>
-                                            <input matInput placeholder="תפקיד">
+                                            <input matInput placeholder="תפקיד" formControlName="Permission">
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>מספר משתמש</mat-label>
-                                            <input matInput placeholder="מספר משתמש">
+                                            <input matInput placeholder="מספר משתמש" formControlName="userNumber">
                                         </mat-form-field>
                                     </div>
                                 </div>
@@ -147,17 +157,17 @@
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>עיר</mat-label>
-                                            <input matInput placeholder="עיר">
+                                            <input matInput placeholder="עיר" formControlName="CityName">
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>כניסה</mat-label>
-                                            <input matInput placeholder="כניסה">
+                                            <input matInput placeholder="כניסה" formControlName="Entrance">
                                         </mat-form-field>
                                     </div>
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>רחוב</mat-label>
-                                            <input matInput placeholder="רחוב">
+                                            <input matInput placeholder="רחוב" formControlName="Streetno">
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>קומה</mat-label>
@@ -177,7 +187,7 @@
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>מספר דירה</mat-label>
-                                            <input matInput placeholder="מספר דירה">
+                                            <input matInput placeholder="מספר דירה" formControlName="ApartmentNo">
                                         </mat-form-field>
 
                                     </div>
@@ -209,7 +219,7 @@
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>סטטוס</mat-label>
-                                            <mat-select multiple>
+                                            <mat-select>
                                                 <mat-option>test</mat-option>
                                                 <mat-option>test</mat-option>
                                                 <mat-option>test</mat-option>
@@ -220,13 +230,13 @@
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>ח.פ.</mat-label>
-                                            <input matInput placeholder="ח.פ.">
+                                            <input matInput placeholder="ח.פ." formControlName="Tz">
                                         </mat-form-field>
                                     </div>
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>אחוז הנחה קבועה</mat-label>
-                                            <input matInput placeholder="אחוז הנחה קבועה">
+                                            <input matInput placeholder="אחוז הנחה קבועה" formControlName="DealerDiscountPercent">
                                             <mat-icon matPrefix>%</mat-icon>
                                         </mat-form-field>
                                     </div>

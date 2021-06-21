@@ -156,6 +156,8 @@ mat-form-field{
 }
 .error{
   color: red !important;
+  text-align: center;
+  padding: 10px;
 }
 .alignRight{
   text-align: right !important;
@@ -200,6 +202,14 @@ mat-form-field{
   cursor: pointer;
   color: #fa401f;
 }
+.updateIcon{
+  color: rgba(0, 0, 0, 0.54);
+  cursor: pointer;
+}
+.updateIcon:hover{
+  cursor: pointer;
+  color: rgba(0, 0, 0, 0.54);
+}
 .addButton{
   /* background: #267491; */
   background: #88C43E;
@@ -209,6 +219,17 @@ mat-form-field{
   background: #36362f;
   color: #fff;
 }
+
+.sendButton{
+  /* background: #267491; */
+  background: #36362f;
+  color: #fff;
+}
+.sendButton:hover{
+  background: #88C43E;
+  color: #fff;
+}
+
 .innerElement{
   /* margin: 0 !important  order/id mobile problem*/
 }
@@ -227,17 +248,21 @@ span.tableButton:hover{
 }
 .fixed-column-buttons{
   position: sticky;
-  bottom: 0;
-  justify-content: center;
   z-index: 999;
-  display: flex;
-  flex-direction: row;
+  bottom: 0;
   background: rgba(255,255,255,0.8);
   margin-top: 30px;
 }
-.fixed-column-buttons > button{
+.fixed-column-buttons  button{
   margin: 10px;
 }
+.wrapStickyButtons{
+  justify-content: center;
+  display: flex;
+  flex-direction: row;
+}
+
+
 .linkButton{
   background: #fff;
   color: #8FC636;
@@ -387,6 +412,13 @@ dialog-content-example-dialog div.innerElement{
   box-shadow: 0px 0px 3px #88C43E;
   padding: 5px;
   /* color:#fff; */
+}
+.tableOrderStatusPending{
+  padding: 5px;
+  display: flex;
+  color: yellow;
+  font-weight: bold;
+  box-shadow: 0px 0px 3px yellow;
 }
 .tableEmptyMsg{
   text-align: center;
@@ -598,7 +630,16 @@ mat-form-field.Picker input.mat-datepicker-input ~ span.mat-form-field-label-wra
 .mat-progress-spinner circle, .mat-spinner circle {
   stroke: #8AC443;
 }
+mat-spinner.orangeSp > svg > circle {
+  stroke: #FF6347;
+}
 
+.disableSpinner{
+  display: none !important;
+}
+.enableSpinner{
+  display: block;
+}
 /* rewrite */
 /* .mat-form-field-appearance-fill .mat-form-field-label{
   margin-top: 0;
@@ -911,6 +952,17 @@ th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:
   background: #eff4ea  !important;
 }
 
+.actionsButton{
+  text-align: center;
+  margin: 1em 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.filterSpinner{
+  position: absolute !important;
+}
+
 
 /* filter table and table */
 .formElement{
@@ -926,6 +978,8 @@ th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:
   flex-direction: row-reverse;
   display: flex;
   justify-content: space-between;
+  flex-grow: 1;
+  flex-basis: 0;
 }
 .formWrap > div.formWrapRow > div{
   margin: 0 30px;
@@ -937,7 +991,7 @@ th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:
 }
 .buttonsWrap{
   text-align: center;
-  margin: 3em 0 2em;
+  margin: 1em 0;
 }
 .darkGreyButton{
   background: rgb(72 73 73) !important;
@@ -983,6 +1037,19 @@ button.darkGreyButton:hover{
 .inputPadding{
   padding-top: 1.1em;
 }
+
+.displayNone{
+  display: none;
+}
+fa-icon > svg{
+  color: #fff;
+}
+
+
+
+
+
+
 @media screen and (max-width: 1024px){
   .mat-select-panel{
     min-width: 100% !important;

@@ -1,6 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import {MatAccordion} from '@angular/material/expansion';
+import { Router } from '@angular/router';
+import { DataServiceService } from 'src/app/data-service.service';
 
 @Component({
   selector: 'app-new-customer',
@@ -9,44 +11,74 @@ import {MatAccordion} from '@angular/material/expansion';
 })
 export class NewCustomerComponent implements OnInit {
 
-  constructor( private fb: FormBuilder) { }
+  constructor( private fb: FormBuilder, private dataService: DataServiceService, private router: Router) { }
 
   @ViewChild(MatAccordion) accordion: MatAccordion;
 
+  userToken: string;
+  errorActionButtons: string = '';
+
   newCustomerForm = this.fb.group({
-    customerData: this.fb.group({
-      companyName: (''),
-      email: (''),
-      phoneNumber: (''),
-      role: (''),
-      addPhoneNumber: (''),
-      userNumber: [{value: '', disabled: true}],
-    }),
-    address: this.fb.group({
-      street: (''),
-      city: (''),
-      houseNumber: (''),
-      appNumber: (''),
-
-    }),
-    comerData: this.fb.group({
-      status: (''),
-      customer: (''),
-      customerId: (''),
-      fixedDiscountPerc: (''),
-      uploadDocument: ('')
-    })
-
-
+      OrganizationName: [''], //Validators.required
+      Email: ['',  Validators.email], //Validators.required,
+      Phone: (''),
+      Permission: [''], // Validators.required
+      Phone1: (''),
+      userNumber: [{value: '', disabled: true}], //?
+      Streetno: (''),
+      CityName: (''),
+      Entrance: (''),
+      ApartmentNo: (''),
+      StatusId: ('1'),
+      MultipassIclientID: (''),
+      Tz: [''], //, Validators.required
+      DealerDiscountPercent: (''),
+      BusinessFile: ('/test.txt') //must to be required Validators.required
   });
+
+  
   ngOnInit(): void {
     window.scroll(0,0);
+
+    this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
   }
 
 
   saveForm(){
-    let data = this.newCustomerForm.value;
     debugger
-    console.log(data);
+    if(this.newCustomerForm.valid){
+      let data = this.newCustomerForm.value;
+      debugger
+  
+      let objToApi = {
+        Token: this.userToken, //req
+      }
+  
+      Object.keys(data).forEach(key => {
+        if(data[key] != ''){
+          objToApi[key] = data[key]
+        }
+      })
+  
+      this.dataService.InsertUpdateUser(objToApi).subscribe(result => {
+        if(typeof result == 'object' && result.obj != null){
+          alert('done');
+          this.router.navigate(['/public/customer/', result.obj[0].id]);
+        }
+        if(typeof result == 'string'){
+          this.errorActionButtons = result;
+
+          setTimeout(() => {
+            this.errorActionButtons = '';
+          }, 3000);
+        }
+        else{
+          alert(result);
+        }
+      });
+    }
+    else{
+      alert('form error');
+    }
   }
 }

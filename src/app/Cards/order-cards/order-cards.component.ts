@@ -1,10 +1,12 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { MatTableDataSource } from '@angular/material/table';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute } from '@angular/router';
 import { faFileExcel } from '@fortawesome/free-solid-svg-icons';
 import { debounceTime } from 'rxjs/operators';
 import { CustomerData } from 'src/app/Classes/customerData';
+import { DataServiceService } from 'src/app/data-service.service';
 
 @Component({
   selector: 'app-order-cards',
@@ -60,28 +62,63 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
   });
 
 
-
-  constructor(private fb: FormBuilder, private activeRoute: ActivatedRoute) { }
+  constructor(private fb: FormBuilder, private activeRoute: ActivatedRoute, private dataService: DataServiceService) { }
 
 
   ngOnInit(): void {
     //debugger
     window.scroll(0,0);
-    this.getCustomersData();
+    //this.getCustomersData();
+    this.getAllCustomers();
     this.userDataUnsubscribe = this.activeRoute.params.subscribe(param => {
-      // debugger
       this.userId = param['userId'];
       this.indexId = param['indexId'];
-      if(this.userId != undefined && this.indexId != undefined){
-        this.excelCardCreatingForm.controls['customer'].setValue(this.fillteringUserData(this.userId));
-      }
-      else{
-        this.indexId = 0;
-      }
+      // if(this.userId != undefined && this.indexId != undefined){
+      //   this.excelCardCreatingForm.controls['customer'].setValue(this.fillteringUserData(this.userId));
+      // }
+      // else{
+      //   this.indexId = 0;
+      // }
     });
 
     this.loadingCardGroupChange();
 
+  }
+  getAllCustomers(){
+    let token = JSON.parse(localStorage.getItem('user'))['Token'];
+    let objToApi = {
+      Token: token
+    }
+    this.dataService.GetAllCustomers(objToApi).subscribe(result => {
+
+      if(typeof result == 'string'){
+        // this.errorMsg = result;
+        setTimeout(()=>{
+          // this.errorMsg = '';
+        },5000)
+      }
+      else{
+        if(typeof result == 'object' &&  result['obj'] != null && result['obj'].length > 0){
+          debugger
+          this.customers = result['obj'];
+            if(this.userId != undefined && this.indexId != undefined){
+              debugger
+              this.excelCardCreatingForm.controls['customer'].setValue(this.fillteringUserData(this.userId));
+              this.manualCardgroup.controls['selectedCustomerControl'].setValue(this.fillteringUserData(this.userId));
+              this.loadingCardGroup.controls['selectedCustomerControl'].setValue(this.fillteringUserData(this.userId));
+            }
+            else{
+              this.indexId = 0;
+            }
+        }
+        if(typeof result == 'object' &&  result['obj'] == null){
+          // this.errorMsg = 'No Data Found';
+          setTimeout(()=>{
+            // this.errorMsg = '';
+          },3000);
+        }
+      }
+    });
   }
 
   getCustomersData(){
@@ -104,7 +141,8 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
   }
 
   fillteringUserData(userId){
-    return this.customers.filter(customer => customer.customerId == userId)[0];
+    debugger
+    return this.customers.filter(customer => customer.id == userId)[0];
   }
 
   test(){
@@ -222,6 +260,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
     debugger
     return typeof val === 'number'; 
   }
+  
   ngOnDestroy(){
     this.userDataUnsubscribe.unsubscribe();
   }

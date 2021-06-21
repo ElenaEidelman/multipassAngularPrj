@@ -18,6 +18,8 @@ import { HomeComponent } from './home/home.component';
 import { LogInComponent } from './log-in/log-in.component';
 import { AllOrdersComponent } from './Orders/all-orders/all-orders.component';
 import { ExecOrderComponent } from './Orders/exec-order/exec-order.component';
+import { OrderLinesComponent } from './Orders/order-lines/order-lines.component';
+import { TestExpandingTableComponent } from './Orders/test-expanding-table/test-expanding-table.component';
 import { PublicComponent } from './public/public.component';
 import { ReportsComponent } from './reports/reports.component';
 import { AllSmsTemplatesComponent } from './SMSTemplate/all-sms-templates/all-sms-templates.component';
@@ -34,6 +36,7 @@ const routes: Routes = [
     {path: 'home', component: HomeComponent},
     {path: 'order', component: ExecOrderComponent},
     {path: 'order/:id', component: ExecOrderComponent},
+    {path: 'order/:id/:customerId', component: ExecOrderComponent},
     {path: 'newOrder/:customerId', component: ExecOrderComponent},
     {path: 'allOrders', component: AllOrdersComponent},
     {path: 'allCustomers', component: AllCustomersComponent},
@@ -42,6 +45,7 @@ const routes: Routes = [
     {path: 'allCards', component: AllCardsComponent},
     {path: 'orderCards', component: OrderCardsComponent},
     {path: 'cardInfo/:id', component: CardInfoComponent},
+    {path: 'orderLines/:orderId/:userId', component: OrderLinesComponent},
     {path: 'orderCards/:indexId/:userId', component: OrderCardsComponent},
     {path: 'digitalFilesList', component: DigitalFilesListComponent},
     {path: 'reports', component: ReportsComponent},
@@ -50,6 +54,7 @@ const routes: Routes = [
     {path: 'user/:id', component: ExistUserComponent},
     {path: 'newUser', component: ExistUserComponent},
     {path: 'allSMStemplates', component: AllSmsTemplatesComponent},
+    {path: 'testExpandingTable', component: TestExpandingTableComponent},
     {path: 'admin', component: AdminComponent, children: [
       {path: 'createNewUser', component: AdminNewUserComponent},
       {path: 'createNewCard', component: AdminNewCardComponent},

@@ -14,8 +14,8 @@
                         <div>
                             <mat-form-field>
                                 <mat-label>מספר הזמנה</mat-label>
-                                <input matInput placeholder = "" formControlName = "idex">
-                                <button class="clearButton" *ngIf="this.filterTableGroup.get('idex').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.filterTableGroup.get('idex').setValue('')">
+                                <input matInput placeholder = "" formControlName = "CoreOrderId">
+                                <button class="clearButton" *ngIf="this.filterTableGroup.get('CoreOrderId').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.filterTableGroup.get('CoreOrderId').setValue('')">
                                     <mat-icon>close</mat-icon>
                                 </button>
                             </mat-form-field>
@@ -32,7 +32,7 @@
                         <div>
                             <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
                                 <mat-label>מתאריך</mat-label>
-                                <input matInput [matDatepicker]="picker" formControlName = "fromData">
+                                <input matInput [matDatepicker]="picker" formControlName = "FromDate">
                                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                                 <mat-datepicker #picker></mat-datepicker>
                             </mat-form-field>
@@ -43,8 +43,8 @@
                         <div>
                             <mat-form-field>
                                 <mat-label>סכום טעינה ראשוני</mat-label>
-                                <input matInput placeholder = "" formControlName = "initialChargeAmount">
-                                <button class="clearButton" *ngIf="this.filterTableGroup.get('initialChargeAmount').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.filterTableGroup.get('initialChargeAmount').setValue('')">
+                                <input matInput placeholder = "" formControlName = "InitialAmount">
+                                <button class="clearButton" *ngIf="this.filterTableGroup.get('InitialAmount').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.filterTableGroup.get('InitialAmount').setValue('')">
                                     <mat-icon>close</mat-icon>
                                 </button>
                             </mat-form-field>
@@ -52,9 +52,9 @@
                         <div>
                             <mat-form-field class="selectedFormFieldWidth">
                                 <mat-label>סטטוס</mat-label>
-                                <mat-select formControlName="StatusDesc">
-                                    <mat-option *ngFor="let status of returnStatusList()" [value]="status">
-                                        {{status}}
+                                <mat-select formControlName="Status">
+                                    <mat-option *ngFor="let status of statusListArr" [value]="status.StatusId">
+                                        {{status.Description}}
                                     </mat-option>
                                 </mat-select>
                             </mat-form-field>
@@ -62,7 +62,7 @@
                         <div>
                             <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
                                 <mat-label>עד תאריך</mat-label>
-                                <input matInput [matDatepicker]="picker2" formControlName = "untilData">
+                                <input matInput [matDatepicker]="picker2" formControlName = "ToDate">
                                 <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
                                 <mat-datepicker #picker2></mat-datepicker>
                             </mat-form-field>
@@ -70,9 +70,12 @@
                     </div>
                 </div>
             </form>
-            <div class="buttonsWrap">
+            <div class="buttonsWrap actionsButton">
                 <button mat-button class="linkButton" (click) = "resetForm()">אפס</button>
+                <mat-spinner *ngIf="filterActionButtonSpinner" class="filterActionButton"></mat-spinner>
                 <button mat-button class="addButton" (click) = "filterTable()">חפש</button>
+                <div class="error" *ngIf="errorMsg != ''">{{errorMsg}}</div>
+                <div *ngIf="filterActionButtonSpinner">searching...</div>
             </div>
         </div>
     </div>
@@ -81,28 +84,30 @@
     <div class="page-element width-block-auto">
         <div class="element-page-title">רשימת הזמנות</div>
         <div class="mat-elevation-z8">
-            <table mat-table [dataSource]="dataSource" class=" tableView" dir="rtl" matSort>
+            <table mat-table [dataSource]="dataSource" class="tableView" dir="rtl" matSort>
                 <ng-container *ngFor="let obj of displayedColumns; let i = index;">
                     <ng-container  matColumnDef="{{obj}}" *ngIf="obj != 'delC'">
                         <th mat-header-cell *matHeaderCellDef> {{returnHebTranslation(orderLabelForTable,obj)}}</th>
                         <td mat-cell  *matCellDef="let element">
                             <span *ngIf="obj == 'idex'">
-                                <a [routerLink]="['/public/order',element[obj]]">{{element[obj]}}</a><br>
+                                <a [routerLink]="['/public/order',element['id'], element['UserId']]">{{element[obj]}}</a><br>
                             </span>
                             <span *ngIf="obj == 'OrganizationName'">
                                 <a [routerLink]="['/public/customer',element['UserId']]">{{element[obj]}}</a><br>
                             </span>
-                            <div mat-button *ngIf="obj == 'StatusDesc'"
-                                [class.tableOrderStatusClose] = "element['StatusId'] == 3"
+                            <div mat-button *ngIf="obj == 'Status'"
                                 [class.tableOrderStatusOpen] ="element['StatusId'] == 1"
-                                [class.tableOrderStatusWaiting] = "element['StatusId'] == 2"
+                                [class.tableOrderStatusWaiting] = "element['StatusId'] == 2 || element['StatusId'] == 0"
+                                [class.tableOrderStatusClose] = "element['StatusId'] == 3"
                                 [class.tableOrderStatusFour] = "element['StatusId'] == 4"
                                 [class.tableOrderStatusFiftin] = "element['StatusId'] == 50">
-                                <div class="tableCageFlex" *ngIf="element['StatusId'] == 1"><mat-icon>watch_later</mat-icon></div>
-                                <div class="tableCageFlex" *ngIf="element['StatusId'] == 2"><mat-icon>pending_actions</mat-icon></div>
-                                <div class="tableCageFlex" *ngIf="element['StatusId'] == 3"><mat-icon>local_printshop</mat-icon></div>
-                                <div class="tableCageFlex" *ngIf="element['StatusId'] == 4"><mat-icon>delivery_dining</mat-icon></div>
-                                <div class="tableCageFlex" *ngIf="element['StatusId'] == 50"><mat-icon>cancel</mat-icon></div>
+
+                                <div class="tableCageFlex" *ngIf="element['StatusId'] == 0"><mat-icon>hourglass_empty</mat-icon>{{element['Description']}}</div>
+                                <div class="tableCageFlex" *ngIf="element['StatusId'] == 1"><mat-icon>watch_later</mat-icon> {{element['Description']}}</div>
+                                <div class="tableCageFlex" *ngIf="element['StatusId'] == 2"><mat-icon>pending_actions</mat-icon>{{element['Description']}}</div>
+                                <div class="tableCageFlex" *ngIf="element['StatusId'] == 3"><mat-icon>local_printshop</mat-icon>{{element['Description']}}</div>
+                                <div class="tableCageFlex" *ngIf="element['StatusId'] == 4"><mat-icon>delivery_dining</mat-icon>{{element['Description']}}</div>
+                                <div class="tableCageFlex" *ngIf="element['StatusId'] == 50"><mat-icon>cancel</mat-icon>{{element['Description']}}</div>
                                 <div>{{element[obj]}}</div>
                             </div>
                             <span *ngIf="obj != 'idex' && obj != 'OrganizationName' && obj != 'StatusDesc'">{{element[obj]}}</span>
@@ -125,9 +130,9 @@
                 <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
                 
               </table>
-              <div *ngIf="dataSource.filteredData.length === 0" class="tableEmptyMsg">אין נתונים</div>
+              <div *ngIf="dataSource.filteredData.length === 0 || noTableData" class="tableEmptyMsg">אין נתונים</div>
 
-              <mat-paginator [pageSizeOptions]="[10, 25, 100]" class="mat-paginator-sticky"></mat-paginator>
+              <mat-paginator [pageSizeOptions]="[25, 50, 100]" class="mat-paginator-sticky"></mat-paginator>
         </div>
     </div>
 </div>

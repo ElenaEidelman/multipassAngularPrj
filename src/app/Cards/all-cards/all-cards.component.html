@@ -33,17 +33,17 @@
                         <div>
                             <mat-form-field>
                                 <mat-label>שם פרטי</mat-label>
-                                <input matInput placeholder = "שם פרטי" formControlName="Name">
-                                <button class="clearButton" *ngIf="this.cardsForm.get('Name').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.cardsForm.get('Name').setValue('')">
+                                <input matInput placeholder = "שם פרטי" formControlName="FName">
+                                <button class="clearButton" *ngIf="this.cardsForm.get('FName').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.cardsForm.get('FName').setValue('')">
                                     <mat-icon>close</mat-icon>
                                 </button>
                             </mat-form-field>
                         </div>
                         <div>
                             <mat-form-field>
-                                <mat-label>סטטוס</mat-label>
-                                <input matInput placeholder = "סטטוס" formControlName="Status">
-                                <button class="clearButton" *ngIf="this.cardsForm.get('Status').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.cardsForm.get('Status').setValue('')">
+                                <mat-label>שם משפחה</mat-label>
+                                <input matInput placeholder = "שם משפחה" formControlName="LName">
+                                <button class="clearButton" *ngIf="this.cardsForm.get('LName').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.cardsForm.get('LName').setValue('')">
                                     <mat-icon>close</mat-icon>
                                 </button>
                             </mat-form-field>
@@ -51,8 +51,8 @@
                         <div>
                             <mat-form-field>
                                 <mat-label>מספר טלפון נייד</mat-label>
-                                <input matInput placeholder = "מספר טלפון נייד" formControlName="PhoneNumber">
-                                <button class="clearButton" *ngIf="this.cardsForm.get('PhoneNumber').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.cardsForm.get('PhoneNumber').setValue('')">
+                                <input matInput placeholder = "מספר טלפון נייד" formControlName="PhoneNo">
+                                <button class="clearButton" *ngIf="this.cardsForm.get('PhoneNo').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.cardsForm.get('PhoneNo').setValue('')">
                                     <mat-icon>close</mat-icon>
                                 </button>
                             </mat-form-field>
@@ -88,30 +88,30 @@
                     <div class="formWrapRow">
                         <div>
                             <mat-form-field>
-                                <mat-label>שם לקוח</mat-label>
-                                <input matInput placeholder = "שם לקוח" formControlName="CompanyName">
-                                <button class="clearButton" *ngIf="this.cardsForm.get('CompanyName').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.cardsForm.get('CompanyName').setValue('')">
+                                <mat-label>ח"פ לקוח</mat-label>
+                                <input matInput placeholder = "שם לקוח" formControlName="CustomerId">
+                                <button class="clearButton" *ngIf="cardsForm.get('CustomerId').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.cardsForm.get('CustomerId').setValue('')">
                                     <mat-icon>close</mat-icon>
                                 </button>
                             </mat-form-field>
                         </div>
                         <div>
-                            <mat-form-field>
+                            <!-- <mat-form-field>
                                 <mat-label>מזהה לקוח</mat-label>
                                 <input matInput placeholder = "מספר לקוח" formControlName="userid">
                                 <button class="clearButton" *ngIf="this.cardsForm.get('userid').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.cardsForm.get('userid').setValue('')">
                                     <mat-icon>close</mat-icon>
                                 </button>
-                            </mat-form-field>
+                            </mat-form-field> -->
                         </div>
                         <div>
-                            <mat-form-field>
+                            <!-- <mat-form-field>
                                 <mat-label>tenant</mat-label>
                                 <input matInput placeholder = "מספר לקוח" formControlName="tenantid">
                                 <button class="clearButton" *ngIf="this.cardsForm.get('tenantid').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.cardsForm.get('tenantid').setValue('')">
                                     <mat-icon>close</mat-icon>
                                 </button>
-                            </mat-form-field>
+                            </mat-form-field> -->
                         </div>
                     </div>
                 </div>

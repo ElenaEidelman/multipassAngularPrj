@@ -49,6 +49,18 @@
     width:100% !important;
 }
 
+
+.actionsButton{
+    text-align: center;
+    margin: 1em 0;
+    display: flex;
+    /* margin: auto; */
+    justify-content: center;
+    align-items: center;
+}
+.filterActionButton{
+    position: absolute;
+}
   @media screen and (max-width: 1024px){
     .formWrap{
         flex-direction: row-reverse ;

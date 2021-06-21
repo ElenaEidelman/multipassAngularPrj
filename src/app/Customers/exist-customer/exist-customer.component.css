@@ -78,7 +78,7 @@ mat-accordion mat-expansion-panel mat-expansion-panel-header .mat-icon{
     display: flex;
     position: absolute;
     top: -25px;
-    z-index: 999999999;
+    /* z-index: 999999999; */
     right: 0;
   }
   /* .infoForButton > span.infoTitle{

@@ -18,7 +18,7 @@ export class TableComponent implements OnInit {
 
   displayedColumns: string[] = [];
   dataSource;
-  links;
+  links;  //[{linkName: '', linkSrc: '', downloadFile: false}]
   linksById;
 
   

@@ -10,6 +10,9 @@ export class CustomerData {
   id: string;
   OrdersCount: string;
   StatusDescription: string;
+  filterMsg: string = '';
+
+  filterSpinner: boolean = false;
   constructor(organizationName: string, id: string, OrdersCount: string, StatusDescription: string){
     this.organizationName = organizationName;
     this.id = id;
@@ -28,7 +31,7 @@ export class CustomerData {
 export class AllCustomersComponent implements OnInit, AfterViewInit {
 
   displayedColumns: string[] = [];
-  dataSource: MatTableDataSource<CustomerData>;
+  dataSource = new MatTableDataSource([]);
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -37,11 +40,13 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
   constructor(private fb: FormBuilder, private dataService: DataServiceService) {}
 
   errorMsg: string = '';
+  filterMsg: string = '';
+  filterSpinner: boolean = false;
 
   filterCustomerForm = this.fb.group({
     customerId: (''),
     customerEmail: ['', Validators.email],
-    orderStatus: ('')
+    OrderStatus: ('')
   });
 
   //filter table by customer status
@@ -53,6 +58,7 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
   //   {value: 'refused', viewValue: 'מסורב'}
   // ];
   statusList = new Set();
+  allCustomersDataSpare;
 
   customerLabelForTable = [
     {value: 'organizationName', viewValue: 'שם לקוח'},
@@ -70,12 +76,14 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
   }
 
   getAllCustomers(){
+    this.filterSpinner = true;
     let token = JSON.parse(localStorage.getItem('user'))['Token'];
     let objToApi = {
       Token: token
     }
-    //debugger
     this.dataService.GetAllCustomers(objToApi).subscribe(result => {
+      this.filterSpinner = false;
+      debugger
       if(typeof result == 'string'){
         this.errorMsg = result;
         setTimeout(()=>{
@@ -84,10 +92,11 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
       }
       else{
         if(typeof result == 'object' &&  result['obj'] != null && result['obj'].length > 0){
-          this.dataSource = new MatTableDataSource(result['obj']);
+          this.allCustomersDataSpare = result['obj'];
+          this.dataSource.data = result['obj'];
         }
         if(typeof result == 'object' &&  result['obj'] == null){
-          this.errorMsg = 'No Data Found';
+          // this.errorMsg = 'No Data Found';
           setTimeout(()=>{
             this.errorMsg = '';
           },3000);
@@ -104,22 +113,7 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
     //add additional column
     this.displayedColumns.unshift('newOrder');
   }
-  // createDataSourceForTable(){
-  //   this.dataSource = new MatTableDataSource([
-  //     new CustomerData('multipass1','11111','26','פעיל'),
-  //     new CustomerData('multipass2','22222','2','ליד'),
-  //     new CustomerData('multipass3','33333','3','ממתין לאישור'),
-  //     new CustomerData('multipass4','44444','4','מסורב'),
-  //     new CustomerData('multipass5','55555','5','מושהה'),
-  //     new CustomerData('multipass6','66666','6','מושהה'),
-  //     new CustomerData('multipass7','77777','26','פעיל'),
-  //     new CustomerData('multipass8','88888','2','ליד'),
-  //     new CustomerData('multipass9','99999','3','ממתין לאישור'),
-  //     new CustomerData('multipass12','12121','4','מסורב'),
-  //     new CustomerData('multipass13','13131','4','מושהה'),
-  //     new CustomerData('multipass14','14141','6','מושהה'),
-  //   ]);
-  // }
+
 
 
   returnHebTranslation(obj,value){
@@ -136,11 +130,51 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
   }
 
   filterTable(){
-    console.log(this.filterCustomerForm.value);
+    let fieldFilled: boolean = false;
+    let token = JSON.parse(localStorage.getItem('user'))['Token'];
+    let objToApi = {
+      Token : token,
+    };
+    Object.keys(this.filterCustomerForm.value).forEach(key => {
+      if(this.filterCustomerForm.get(key).value != '' && this.filterCustomerForm.get(key).value != null){
+        fieldFilled = true;
+        objToApi[key] = this.filterCustomerForm.get(key).value;
+      }
+    })
+
+
+    if(fieldFilled){
+      this.filterSpinner = true;
+
+      debugger
+      this.dataService.GetCustomersByFilter(objToApi).subscribe(result => {
+        this.filterSpinner = false;
+        if(typeof result == 'string'){
+          alert (result);
+        }
+        else{
+          if(typeof result == 'object' &&  result['obj'] != null && result['obj'].length > 0){
+            this.dataSource = new MatTableDataSource(result['obj']);
+          }
+          if(typeof result == 'object' &&  result['obj'] == null){
+            this.dataSource.data = [];
+            // this.errorMsg = 'No Data Found';
+            setTimeout(()=>{
+              this.errorMsg = '';
+            },3000);
+          }
+        }
+      });
+    }
+    else{
+      this.filterMsg = 'נא למלא לפחות אחד מהשדות';
+      setTimeout(() => {
+        this.filterMsg = '';
+      }, 3000);
+    }
   }
 
   returnStatusList(){
-    debugger
     if(this.dataSource != undefined){
       this.dataSource.data.forEach(data => {
         for(let el in data){
@@ -151,10 +185,15 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
       });
     }
     else{
-      debugger
+      //debugger
     }
 
     return this.statusList;
+  }
+
+  recoverTable(){
+    this.filterCustomerForm.reset();
+    this.dataSource.data = this.allCustomersDataSpare;
   }
 
   ngAfterViewInit() {

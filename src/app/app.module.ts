@@ -29,6 +29,7 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 
 
+
 import { ChartsModule } from 'ng2-charts';
 
 
@@ -70,7 +71,10 @@ import { PublicComponent } from './public/public.component';
 import { MatPaginatorIntlCro } from './Classes/MatPaginatorTranslate';
 import { AdminLogInComponent } from './PopUps/admin-log-in/admin-log-in.component';
 import { AdminComponent } from './Admin/admin/admin.component';
-
+import { AdminNewUserComponent } from './Admin/admin-new-user/admin-new-user.component';
+import { AdminNewCardComponent } from './Admin/admin-new-card/admin-new-card.component';
+import { TestExpandingTableComponent } from './Orders/test-expanding-table/test-expanding-table.component';
+import { OrderLinesComponent } from './Orders/order-lines/order-lines.component';
 
 
 @NgModule({
@@ -102,7 +106,11 @@ import { AdminComponent } from './Admin/admin/admin.component';
     LogInComponent,
     PublicComponent,
     AdminLogInComponent,
-    AdminComponent
+    AdminComponent,
+    AdminNewUserComponent,
+    AdminNewCardComponent,
+    TestExpandingTableComponent,
+    OrderLinesComponent
   ],
   imports: [
     BrowserModule,

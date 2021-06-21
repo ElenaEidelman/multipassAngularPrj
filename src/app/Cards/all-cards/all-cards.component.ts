@@ -24,23 +24,24 @@ export class AllCardsComponent implements OnInit {
 
   cardsForm = this.fb.group({
     CardId: (''),
-    PhoneNumber: (''),
-    Name: (''),
-    CompanyName: (''),
-    Status: (''),
-    OrderId: (''),
-    FromDate: (''),
-    ToDate: (''),
-    userid: (''),
-    tenantid: (''),
-    // FName: (''),
-    // LName: (''),
-    // // status: (''),
+    PhoneNo: (''),
+    // Name: (''),
+    // CompanyName: (''),
+    // Status: (''),
     // OrderId: (''),
     // FromDate: (''),
     // ToDate: (''),
+    // userid: (''),
+    // tenantid: (''),
+
+    FName: (''),
+    LName: (''),
+    // // status: (''),
+    OrderId: (''),
+    FromDate: (''),
+    ToDate: (''),
     // CompanyName: (''),
-    // customerId: (''),
+    CustomerId: (''),
     // documentId: (''),
     // byDate: ('dateIssue')
   });
@@ -78,7 +79,6 @@ export class AllCardsComponent implements OnInit {
     if(formSearchFiled){
       this.spinner = true;
       this.dataService.GetAllCards(objToApi).subscribe(result => {
-        debugger
         this.spinner = false;
         if(typeof result == 'object' &&  result['obj'] != null && result['obj'].length > 0){
           this.createTableData(result['obj']);
@@ -109,15 +109,19 @@ export class AllCardsComponent implements OnInit {
 
 
   createTableData(obj){
+
+    //if table have links, need to fill this parameter
     this.linksListById = [
-      {linkName: 'CardId', linkSrc: '/cardInfo',linkIdName:'cardId'},
-      {linkName: 'CompanyName', linkSrc: '/customer', linkIdName:'customerId'},
+      {linkName: 'CardId', linkSrc: '/cardInfo',linkIdName:'CardId'},
+      {linkName: 'CompanyName', linkSrc: '/customer', linkIdName:'CustomerId'},
       {linkName: 'OrderId', linkSrc: '/order', linkIdName:'OrderId'}
     ];
+
+    
     this.cardsLabelForTable = [
       {value: 'CardId', viewValue: 'מספר שובר'},
       {value: 'CompanyName', viewValue: 'שם לקוח'},
-      {value: 'PhoneNumber', viewValue: 'מספר טלפון'},
+      {value: 'PhoneNo', viewValue: 'מספר טלפון'},
       {value: 'balance', viewValue: 'יתרה'},// no data !!!!
       {value: 'OrderId', viewValue: 'מספר הזמנה'},
       {value: 'CreationDate', viewValue: 'תאריך הנפקה'},
@@ -140,7 +144,7 @@ export class AllCardsComponent implements OnInit {
   //   this.cardsLabelForTable = [
   //     {value: 'CardId', viewValue: 'מספר שובר'},
   //     {value: 'CompanyName', viewValue: 'שם לקוח'},
-  //     {value: 'PhoneNumber', viewValue: 'מספר טלפון'},
+  //     {value: 'PhoneNo', viewValue: 'מספר טלפון'},
   //     {value: 'balance', viewValue: 'יתרה'},// no data !!!!
   //     {value: 'OrderId', viewValue: 'מספר הזמנה'},
   //     {value: 'CreationDate', viewValue: 'תאריך הנפקה'},

@@ -65,7 +65,12 @@ export class AllUsersComponent implements OnInit {
 
   getAllUsers(){
     let token = JSON.parse(localStorage.getItem('user'))['Token'];
-    this.dataService.GetAllUsers(token).subscribe(result => {
+
+    let objToApi = {
+      Token: token
+    }
+    debugger
+    this.dataService.GetAllUsers(objToApi).subscribe(result => {
       debugger
     });
   }

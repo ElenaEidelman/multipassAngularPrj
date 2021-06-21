@@ -1,0 +1,15 @@
+.mat-progress-spinner{
+    margin: auto;
+}
+.tableActions{
+    display: flex;
+    flex-direction: row-reverse;
+    margin: 2em 0;
+}
+.tableActions > div{
+    margin-left: 10px;
+}
+
+.main2-title{
+    flex-direction: column;
+}
