@@ -154,6 +154,17 @@ export class DataServiceService implements OnInit {
     );
   }
 
+  DeleteVoidOrder(objToApi){
+    return this.http.post(`${this.baseUrl}/api/InsertUpdateOrder/DeleteVoidOrder`, objToApi).pipe(
+      map(result => {
+        return result;
+      }),
+      catchError(error => {
+        return of(error.message);
+      })
+    );
+  }
+
   
   GetAllCustomers(objToApi){
     //debugger

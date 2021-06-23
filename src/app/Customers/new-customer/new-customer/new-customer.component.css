@@ -21,7 +21,6 @@ mat-accordion mat-expansion-panel mat-expansion-panel-header .mat-icon{
     background: #EEF0F2;
     border-radius: 4px;
   }
-
   @media screen and (max-width: 1024px){
     .flexData {
       flex-direction: row-reverse;

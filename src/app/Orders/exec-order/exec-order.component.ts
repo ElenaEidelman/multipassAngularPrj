@@ -1,4 +1,5 @@
 import { Route } from '@angular/compiler/src/core';
+import { typeWithParameters } from '@angular/compiler/src/render3/util';
 import { Component, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChildren, ViewEncapsulation } from '@angular/core';
 import { tick } from '@angular/core/testing';
 import { ControlContainer, FormBuilder, FormControl, Validators } from '@angular/forms';
@@ -39,6 +40,8 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
   errorMsg: string = '';
   orderMsg: string = '';
+  orderMsgDelete: string = '';
+  errorMsgDelete: string = '';
   addOrderLineErrMsg: string = '';
 
   newOrder: boolean = false;
@@ -183,10 +186,10 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
           Token: this.userToken,
           CustomerId: param['customerId']
         }
-        debugger
         this.dataService.GetCustomersByFilter(objToApi).subscribe(result => {
           debugger
           this.Customer = result.obj[0];
+          this.dataByPage = result.obj[0];
         });
         
         let orderDetails = [{id:0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem : 0}];
@@ -256,13 +259,13 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
     
     //chow spinner of order line by id
-    this.orderLinesChildren._results.forEach(el => {
-      let spinner = (el.nativeElement.children['spinnerDelete' + element.id] as HTMLBodyElement);
-      if(spinner != undefined){
-        (el.nativeElement.children['spinnerDelete' + element.id] as HTMLBodyElement).classList.remove('disableSpinner');
-        (el.nativeElement.children['spinnerDelete' + element.id] as HTMLBodyElement).classList.add('enableSpinner');
-      }
-    })
+    // this.orderLinesChildren._results.forEach(el => {
+    //   let spinner = (el.nativeElement.children['spinnerDelete' + element.id] as HTMLBodyElement);
+    //   if(spinner != undefined){
+    //     (el.nativeElement.children['spinnerDelete' + element.id] as HTMLBodyElement).classList.remove('disableSpinner');
+    //     (el.nativeElement.children['spinnerDelete' + element.id] as HTMLBodyElement).classList.add('enableSpinner');
+    //   }
+    // })
     debugger
     this.dataService.InsertUpdateLines(objToApi).subscribe(result => {
       debugger
@@ -280,6 +283,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       //    return indexRow != row;
       // });
       this.orderDetailsTable.data = this.orderDetails;
+      this.totalData();
       // this.orderDetails = filteringObj;
       
     });
@@ -419,42 +423,28 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   }
   deleteOrder(){
 
-    ///api/InsertUpdateOrder/InsertUpdateOrder
-
-    /**
-     * {
-    "Token":"IX_XFPHFaSg_B49tuiJwaUP3LQcHs3CfIBqTqkUuMek1",   "UserID":"2700",
-    "TicketCount":3,
-    "ChargeAmount":"600",    
-     "OpCode":"insert",
-     "Validity":"1-1-2023"
-}
-     */
-
-    // let date = element.ValidationDate.split('/');
-    // let dateForApi = date[1] + '-' + date[0] + '-' + date[2];
-    // //format date for api by mm/dd/yy
-
-    // let objToApi = {
-    //   Token: this.userToken,
-    //   OrderId:this.orderId,
-    //   UserID:this.customerId,
-    //   ChargeAmount: element.LoadSum,
-    //   Validity: dateForApi,
-    //   OpCode:"delete"
-    // }
-
+    ///api/InsertUpdateOrder/DeleteVoidOrder
     let objToApi = {
       Token: this.userToken,
-      TicketCount:3, // miss
-      ChargeAmount:  this.dataByPage.Total,    
-      OpCode:"delete",
-      Validity:"1-1-2023" //miss
+      OrderId:this.orderId,
+      UserID:this.customerId,       
+       OpCode:"delete"
+  
     }
-
-    debugger
-    this.dataService.InsertUpdateOrder(objToApi).subscribe(result => {
-     alert(result);
+    this.dataService.DeleteVoidOrder(objToApi).subscribe(result => {
+     if(typeof result == 'object' && Object.values(result.obj[0]).includes('Order is deleted Successfully')){
+      this.orderMsgDelete = 'ההזמנה נמחקה בהצלחה';
+      setTimeout(() => {
+        this.orderMsgDelete = '';
+        this.router.navigate(['/public/allOrders']);
+      }, 2000);
+     }
+     if(typeof result == 'string'){
+       this.errorMsgDelete = result;
+       setTimeout(()=> {
+         this.errorMsgDelete = '';
+       }, 3000);
+     }
     });
   }
 

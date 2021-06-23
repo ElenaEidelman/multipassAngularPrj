@@ -19,20 +19,26 @@ export class NewCustomerComponent implements OnInit {
   errorActionButtons: string = '';
 
   newCustomerForm = this.fb.group({
-      OrganizationName: [''], //Validators.required
-      Email: ['',  Validators.email], //Validators.required,
+      OrganizationName: ['', Validators.required], //Validators.required
+      Fname: (''),
+      Lname: (''),
+      Email: ['',  [Validators.email, Validators.required]], //Validators.required,
       Phone: (''),
-      Permission: [''], // Validators.required
+      Permission: ['', Validators.required], // Validators.required
       Phone1: (''),
       userNumber: [{value: '', disabled: true}], //?
-      Streetno: (''),
-      CityName: (''),
-      Entrance: (''),
-      ApartmentNo: (''),
-      StatusId: ('1'),
+      CityName: (''),//v
+      Streetno: (''),//v
+      HouseNumber: (''), //-------------------------
+      Entrance: (''),//v
+      floor: (''), // -------------------------
+      ApartmentNo: (''),//v
+      ZIP: (''), // -----------------------
+      StatusId: [{value: '1', disabled: true}],
       MultipassIclientID: (''),
-      Tz: [''], //, Validators.required
+      Tz: ['', Validators.required], //, Validators.required
       DealerDiscountPercent: (''),
+      ValidateDate: (''), // --------------------
       BusinessFile: ('/test.txt') //must to be required Validators.required
   });
 
@@ -45,10 +51,9 @@ export class NewCustomerComponent implements OnInit {
 
 
   saveForm(){
-    debugger
     if(this.newCustomerForm.valid){
       let data = this.newCustomerForm.value;
-      debugger
+
   
       let objToApi = {
         Token: this.userToken, //req
@@ -73,12 +78,12 @@ export class NewCustomerComponent implements OnInit {
           }, 3000);
         }
         else{
-          alert(result);
+          alert(JSON.stringify(result));
         }
       });
     }
     else{
-      alert('form error');
+      alert('form validation error');
     }
   }
 }

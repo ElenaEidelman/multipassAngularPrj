@@ -7,8 +7,10 @@ import { DataServiceService } from 'src/app/data-service.service';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
 import { Route } from '@angular/compiler/src/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { SharedService } from 'src/app/shared.service';
+import { element } from 'protractor';
+
 
 
 
@@ -20,7 +22,12 @@ import { SharedService } from 'src/app/shared.service';
 export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
 
   
-  constructor(private fb: FormBuilder, private dataService: DataServiceService, private router: Router, private sharedService: SharedService) { }
+  constructor(
+              private fb: FormBuilder, 
+              private dataService: DataServiceService, 
+              private router: Router, 
+              private acivatedRoute: ActivatedRoute,
+              private sharedService: SharedService) { }
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -32,6 +39,8 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
 
   filterActionButtonSpinner: boolean = true;
   noTableData: boolean = false;
+
+  activeRouteUnsubscribe;
 
   statusListArr = [];
 
@@ -65,15 +74,21 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     window.scroll(0,0);
-    debugger
+
     this.filterActionButtonSpinner = true;
     this.userToken = JSON.parse(localStorage.getItem('user')).Token
-    this.getOrdersList();
     this.getStatusList();
-
-   // debugger
-    this.getOrdersList();
     this.createDisplayedColumns(this.orderLabelForTable);
+
+    this.activeRouteUnsubscribe = this.acivatedRoute.params.subscribe(param => {
+      if(param['customerName'] != undefined){
+        this.filterTableGroup.get('OrganizationName').setValue(param['customerName']);
+        this.filterTable();
+      }
+      else{
+        this.getOrdersList();    
+      }
+    })
 
   }
 
@@ -153,9 +168,27 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   deleteOrder(order){
-    //this.dataSource = this.dataSource.filter(el => el['CoreOrderId'] != order.CoreOrderId);
-    //this.allOrders = this.Orders;
-    //alert(order.CoreOrderId);
+
+    debugger
+
+        ///api/InsertUpdateOrder/DeleteVoidOrder
+        let objToApi = {
+          Token: this.userToken,
+          OrderId: order.id,
+          UserID: order.UserId,       
+           OpCode:"delete"
+      
+        }
+        this.dataService.DeleteVoidOrder(objToApi).subscribe(result => {
+         if(typeof result == 'object' && Object.values(result.obj[0]).includes('Order is deleted Successfully')){
+
+          alert(result.obj[0]);
+          this.getOrdersList();
+         }
+         if(typeof result == 'string'){
+
+         }
+        });
   }
 
   returnHebTranslation(obj,value){
@@ -163,8 +196,24 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   resetForm(){
-    this.filterTableGroup.reset();
-    this.dataSource.data = this.dataSourceSpare.data;
+
+    this.acivatedRoute.params.subscribe(param => {
+      this.filterTableGroup.reset();
+      if(Object.keys(param).length > 0){
+ 
+        //for clear params from url
+        this.router.navigate(['/public/allOrders']);
+      }
+      else{
+        if(this.dataSourceSpare.data.length > 0){
+          this.dataSource.data = this.dataSourceSpare.data;
+        }
+        else{
+          this.getOrdersList();
+        }
+      }
+    });
+
   }
   filterTable(){
 
@@ -208,8 +257,12 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
           this.noTableData = true;
           this.dataSource.data = [];
         }
-        else{
-          // alert(JSON.stringify(result));
+        if(typeof result == 'string'){
+          this.errorMsg = result;
+
+          setTimeout(() => {
+            this.errorMsg = '';
+          }, 3000);
         }
       })
     }
@@ -221,7 +274,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(){
-
+    this.activeRouteUnsubscribe.unsubscribe();
   }
 
 }

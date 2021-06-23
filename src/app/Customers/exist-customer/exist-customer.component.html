@@ -1,33 +1,41 @@
 <div class="pageTitle main2-title">
-    <div>
-        {{customerData.OrganizationName}} :לקוח
+    <div *ngIf="customerData" class="headerData">
+        <div class="data"> {{customerData.OrganizationName}} </div>
+        <div> :לקוח</div>
     </div>
 </div>
-<div class="page-wrap">
+<div class="page-wrap" *ngIf="customerData">
     <div class="page-element width-block-auto">
-        <div class="wrapData formBorder">
+        <form [formGroup]="CustomerForm" (submit)="saveForm()">
 
-            <div class="fixed-column-buttons">
-                <div class="wrapStickyButtons">
-                    <button mat-button class="linkButton" (click)="accordion.closeAll()">
-                        <span>צמצם הכל</span>
-                        <mat-icon>compress</mat-icon>
-                    </button>
-                    <button mat-button class="linkButton" (click)="accordion.openAll()">
-                        <span>הרחב הכל</span>
-                        <mat-icon>expand</mat-icon>
-                    </button>
-                    <button mat-button class="addButton" (click)="saveForm()">
-                        <span>שמור</span>
-                        <mat-icon>save</mat-icon>
-                    </button>
+            <div class="wrapData formBorder">
+
+                <div class="fixed-column-buttons">
+                    <div class="wrapStickyButtons">
+                        <div>
+                            <a mat-button class="linkButton" (click)="accordion.closeAll()">
+                                <span>צמצם הכל</span>
+                                <mat-icon>compress</mat-icon>
+                            </a>
+                        </div>
+                        <div>
+                            <a mat-button class="linkButton" (click)="accordion.openAll()">
+                                <span>הרחב הכל</span>
+                                <mat-icon>expand</mat-icon>
+                            </a>
+                        </div>
+                        <button mat-button class="addButton">
+                            <span>שמור</span>
+                            <mat-icon>save</mat-icon>
+                            <mat-spinner *ngIf="saveFormSpinner" class="saveFormSpinner"></mat-spinner>
+                        </button>
+                    </div>
+                    <div class="error" *ngIf="errorActionButtons != ''">{{errorActionButtons}}</div>
+                    <div class="msg" *ngIf="msgActionButtons != ''">{{msgActionButtons}}</div>
                 </div>
-                <div class="error">error</div>
-            </div>
 
-            <!-- user data -->
-            <div>
-                <form [formGroup]="CustomerForm">
+                <!-- user data -->
+                <div>
                     <mat-accordion class="example-headers-align" multi>
 
                         <!-- Recent orders -->
@@ -44,46 +52,55 @@
                                         </mat-icon>
                                     </div>
                                     <div class="titleDesc">
-                                         הזמנות אחרונות וזימון שוברים
+                                        הזמנות אחרונות וזימון שוברים
                                     </div>
                                 </mat-panel-description>
                             </mat-expansion-panel-header>
+
                             <div class="graph-buttons-wrap">
-                                <div class="page-element page-element-margin innerElement">
-                                    <app-bar-chart
-                                            chartTitle="הזמנות אחרונות"
-                                            [chartData] = "recOrdersChartData"
-                                            [chartLabels] = "recOrdersChartLabels"
-                                            chartColor = "#88C43E">
-                
-                                    </app-bar-chart>
-                                </div>
-                                <div class="buttonInElement innerElement">
-                                    <div>
-                                        <a [routerLink]="['/public/orderCards',0,customerData.id]" mat-button class="addButton">
-                                            <span>הזמנת שוברים דיגיטלים מאקסל  </span>
-                                            <fa-icon [icon]="faFileExcel"></fa-icon>
-                                        </a>
-                                    </div>
-                                    <div>
-                                        <a [routerLink]="['/public/orderCards',1,customerData.id]" mat-button class="addButton">
-                                            <span>הזמנת שוברים דיגיטלים ידנית </span>
-                                            <mat-icon> settings </mat-icon>
-                                        </a>
-                                    </div>
-                                    <div>
-                                        <a [routerLink]="['/public/orderCards',2,customerData.id]" mat-button class="addButton">
-                                            <span>טעינת שוברים</span>
-                                            <mat-icon> file_upload</mat-icon>
-                                        </a>
-                                    </div>
-                                </div>
+                                <div class="element-page-title">הזמנות אחרונות</div>
+                                <div class="element-page-title">זימון שוברים</div>
+
                             </div>
-                            
+                            <div class="graph-buttons-wrap">
+
+                                    <div class="innerElement graphWrap">
+                                        <app-bar-chart *ngIf="customerOrders != undefined" chartTitle="הזמנות אחרונות" [chartData]="recOrdersChartData"
+                                            [chartLabels]="recOrdersChartLabels" chartColor="#88C43E">
+
+                                        </app-bar-chart>
+                                    </div>
+
+                                    <div class="buttonInElement innerElement createOrdersButtonsWrap">
+
+                                        <div>
+                                            <a [routerLink]="['/public/orderCards',0,customerData.id]" mat-button
+                                                class="addButton">
+                                                <span>הזמנת שוברים דיגיטלים מאקסל </span>
+                                                <fa-icon [icon]="faFileExcel"></fa-icon>
+                                            </a>
+                                        </div>
+                                        <div>
+                                            <a [routerLink]="['/public/orderCards',1,customerData.id]" mat-button
+                                                class="addButton">
+                                                <span>הזמנת שוברים דיגיטלים ידנית </span>
+                                                <mat-icon> settings </mat-icon>
+                                            </a>
+                                        </div>
+                                        <div>
+                                            <a [routerLink]="['/public/orderCards',2,customerData.id]" mat-button
+                                                class="addButton">
+                                                <span>טעינת שוברים</span>
+                                                <mat-icon> file_upload</mat-icon>
+                                            </a>
+                                        </div>
+                                    </div>
+                            </div>
+
                         </mat-expansion-panel>
 
                         <!-- User -->
-                        <mat-expansion-panel #newUser selectedIndex="1">
+                        <mat-expansion-panel  #newUser selectedIndex="1">
                             <mat-expansion-panel-header>
                                 <mat-panel-title></mat-panel-title>
                                 <mat-panel-description>
@@ -102,35 +119,74 @@
                             </mat-expansion-panel-header>
                             <div class="wrapFormElement">
                                 <div class="wrapFlexTwoCol">
+
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>שם חברה</mat-label>
                                             <input matInput placeholder="שם חברה" formControlName="OrganizationName">
+                                            <button class="clearButton" *ngIf="this.CustomerForm.get('OrganizationName').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('OrganizationName').setValue('')">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>מספר טלפון</mat-label>
                                             <input matInput placeholder="מספר טלפון" formControlName="Phone">
+                                            <button class="clearButton" *ngIf="this.CustomerForm.get('Phone').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('Phone').setValue('')">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
                                         </mat-form-field>
 
                                     </div>
                                     <div class="formWrapColumn">
                                         <mat-form-field>
-                                            <mat-label>דוא"ל</mat-label>
-                                            <input matInput placeholder='דוא"ל' formControlName="Email">
+                                            <mat-label>שם פרטי</mat-label>
+                                            <input matInput placeholder="שם פרטי" formControlName="Fname">
+                                            <button class="clearButton" *ngIf="this.CustomerForm.get('Fname').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('Fname').setValue('')">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>מספר טלפון נוסף</mat-label>
                                             <input matInput placeholder="מספר טלפון נוסף" formControlName="Phone1">
+                                            <button class="clearButton" *ngIf="this.CustomerForm.get('Phone1').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('Phone1').setValue('')">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        </mat-form-field>
+
+                                    </div>
+                                    <div class="formWrapColumn">
+                                        <mat-form-field>
+                                            <mat-label>שם משפחה</mat-label>
+                                            <input matInput placeholder="שם משפחה" formControlName="Lname">
+                                            <button class="clearButton" *ngIf="this.CustomerForm.get('Lname').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('Lname').setValue('')">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <mat-label>תפקיד</mat-label>
+                                            <input matInput placeholder="תפקיד" formControlName="Permission">
+                                            <button class="clearButton" *ngIf="this.CustomerForm.get('Permission').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('Permission').setValue('')">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
                                         </mat-form-field>
                                     </div>
                                     <div class="formWrapColumn">
                                         <mat-form-field>
-                                            <mat-label>תפקיד</mat-label>
-                                            <input matInput placeholder="תפקיד" formControlName="Permission">
+                                            <mat-label>דוא"ל</mat-label>
+                                            <input matInput type="email" placeholder='דוא"ל' formControlName="Email">
+                                            <button class="clearButton" *ngIf="this.CustomerForm.get('Email').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('Email').setValue('')">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                            <mat-error
+                                                *ngIf="newCustomerForm != undefined && newCustomerForm.get('Email').hasError('email')">
+                                                email not valid</mat-error>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>מספר משתמש</mat-label>
                                             <input matInput placeholder="מספר משתמש" formControlName="userNumber">
+                                            <button class="clearButton" *ngIf="this.CustomerForm.get('userNumber').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('userNumber').setValue('')">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
                                         </mat-form-field>
                                     </div>
                                 </div>
@@ -158,36 +214,57 @@
                                         <mat-form-field>
                                             <mat-label>עיר</mat-label>
                                             <input matInput placeholder="עיר" formControlName="CityName">
+                                            <button class="clearButton" *ngIf="this.CustomerForm.get('CityName').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('CityName').setValue('')">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
                                         </mat-form-field>
                                         <mat-form-field>
-                                            <mat-label>כניסה</mat-label>
-                                            <input matInput placeholder="כניסה" formControlName="Entrance">
+                                            <mat-label>מספר דירה</mat-label>
+                                            <input matInput placeholder="מספר דירה" formControlName="ApartmentNo">
+                                            <button class="clearButton" *ngIf="this.CustomerForm.get('ApartmentNo').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('ApartmentNo').setValue('')">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
                                         </mat-form-field>
                                     </div>
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>רחוב</mat-label>
                                             <input matInput placeholder="רחוב" formControlName="Streetno">
+                                            <button class="clearButton" *ngIf="this.CustomerForm.get('Streetno').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('Streetno').setValue('')">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>קומה</mat-label>
-                                            <input matInput placeholder="קומה">
+                                            <input matInput placeholder="קומה" formControlName="floor">
+                                            <button class="clearButton" *ngIf="this.CustomerForm.get('floor').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('floor').setValue('')">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
                                         </mat-form-field>
                                     </div>
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>מספר בית</mat-label>
-                                            <input matInput placeholder="מספר בית">
+                                            <input matInput placeholder="מספר בית" formControlName="HouseNumber">
+                                            <button class="clearButton" *ngIf="this.CustomerForm.get('HouseNumber').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('HouseNumber').setValue('')">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>מיקוד</mat-label>
-                                            <input matInput placeholder="מיקוד">
+                                            <input matInput placeholder="מיקוד" formControlName="ZIP">
+                                            <button class="clearButton" *ngIf="this.CustomerForm.get('ZIP').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('ZIP').setValue('')">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
                                         </mat-form-field>
                                     </div>
                                     <div class="formWrapColumn">
                                         <mat-form-field>
-                                            <mat-label>מספר דירה</mat-label>
-                                            <input matInput placeholder="מספר דירה" formControlName="ApartmentNo">
+                                            <mat-label>כניסה</mat-label>
+                                            <input matInput placeholder="כניסה" formControlName="Entrance">
+                                            <button class="clearButton" *ngIf="this.CustomerForm.get('Entrance').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('Entrance').setValue('')">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
                                         </mat-form-field>
 
                                     </div>
@@ -208,42 +285,50 @@
                                     <mat-icon *ngIf="settings.expanded" class="absoluteIcon">arrow_circle_up
                                     </mat-icon>
                                     <div class="titleDesc">
-                                       הגדרות
+                                        הגדרות
                                     </div>
                                 </mat-panel-description>
                             </mat-expansion-panel-header>
 
                             <div class="wrapFormElement">
                                 <div class="wrapFlexTwoCol">
-                                    
+
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>סטטוס</mat-label>
-                                            <mat-select>
-                                                <mat-option>test</mat-option>
-                                                <mat-option>test</mat-option>
-                                                <mat-option>test</mat-option>
-                                                <mat-option>test</mat-option>
-                                            </mat-select>
+                                            <input matInput placeholder="סטטוס" formControlName="StatusId">
+                                            <button class="clearButton" *ngIf="this.CustomerForm.get('StatusId').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('StatusId').setValue('')">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
                                         </mat-form-field>
                                     </div>
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>ח.פ.</mat-label>
                                             <input matInput placeholder="ח.פ." formControlName="Tz">
+                                            <button class="clearButton" *ngIf="this.CustomerForm.get('Tz').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('Tz').setValue('')">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
                                         </mat-form-field>
                                     </div>
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>אחוז הנחה קבועה</mat-label>
                                             <input matInput placeholder="אחוז הנחה קבועה" formControlName="DealerDiscountPercent">
-                                            <mat-icon matPrefix>%</mat-icon>
+                                            <mat-icon matPrefix *ngIf="CustomerForm.get('DealerDiscountPercent').value == ''">%</mat-icon>
+                                            <button class="clearButton" *ngIf="this.CustomerForm.get('DealerDiscountPercent').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('DealerDiscountPercent').setValue('')">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
                                         </mat-form-field>
                                     </div>
                                     <div class="formWrapColumn">
-                                        <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
+                                        <mat-form-field appearance="fill"
+                                            class="datePicker datePickerPadding marginTop-1">
                                             <mat-label>תאריך תוקף לקוח</mat-label>
-                                            <input matInput [matDatepicker]="picker">
+                                            <input matInput [matDatepicker]="picker" formControlName="ValidateDate">
+                                            <button class="clearButton" *ngIf="this.CustomerForm.get('ValidateDate').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('ValidateDate').setValue('')">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
                                             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                                             <mat-datepicker #picker></mat-datepicker>
                                         </mat-form-field>
@@ -260,7 +345,7 @@
                                             </div>
                                         </div> -->
                                         <input [hidden]="true" name="uploadDoc" #uploadDoc type="file">
-                                        <button  mat-button class="addButton" (click)="uploadDoc.click()">
+                                        <button mat-button class="addButton" (click)="uploadDoc.click()">
                                             <span>לצפיה בתעודה</span>
                                             <mat-icon>preview</mat-icon>
                                         </button>
@@ -273,14 +358,15 @@
                                                 <mat-icon>info</mat-icon>
                                             </span>
                                         </div>
-                                        <button  mat-button class="addButton">
-                                            <span>תעינת תעודה חדשה</span>
+                                        <button mat-button class="addButton">
+                                            <span>טעינת תעודה חדשה</span>
                                             <mat-icon>post_add</mat-icon>
                                         </button>
 
                                     </div>
                                     <div class="buttonAny">
-                                        <button  mat-button class="addButton">
+                                        <button mat-button class="addButton"
+                                            [routerLink]="['/public/allOrders',customerData.OrganizationName]">
                                             <span>לכל הזמנות הלקוח</span>
                                             <mat-icon>list</mat-icon>
                                         </button>
@@ -291,9 +377,10 @@
                             <!-- <mat-datepicker #picker></mat-datepicker> -->
                         </mat-expansion-panel>
                     </mat-accordion>
-                </form>
+
+                </div>
             </div>
-        </div>
+        </form>
     </div>
 
 </div>

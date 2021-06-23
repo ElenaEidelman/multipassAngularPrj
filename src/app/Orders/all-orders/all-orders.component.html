@@ -33,6 +33,9 @@
                             <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
                                 <mat-label>מתאריך</mat-label>
                                 <input matInput [matDatepicker]="picker" formControlName = "FromDate">
+                                <button class="clearButton" *ngIf="this.filterTableGroup.get('FromDate').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.filterTableGroup.get('FromDate').setValue('')">
+                                    <mat-icon>close</mat-icon>
+                                </button>
                                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                                 <mat-datepicker #picker></mat-datepicker>
                             </mat-form-field>
@@ -63,6 +66,9 @@
                             <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
                                 <mat-label>עד תאריך</mat-label>
                                 <input matInput [matDatepicker]="picker2" formControlName = "ToDate">
+                                <button class="clearButton" *ngIf="this.filterTableGroup.get('ToDate').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.filterTableGroup.get('ToDate').setValue('')">
+                                    <mat-icon>close</mat-icon>
+                                </button>
                                 <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
                                 <mat-datepicker #picker2></mat-datepicker>
                             </mat-form-field>
@@ -74,9 +80,9 @@
                 <button mat-button class="linkButton" (click) = "resetForm()">אפס</button>
                 <mat-spinner *ngIf="filterActionButtonSpinner" class="filterActionButton"></mat-spinner>
                 <button mat-button class="addButton" (click) = "filterTable()">חפש</button>
-                <div class="error" *ngIf="errorMsg != ''">{{errorMsg}}</div>
                 <div *ngIf="filterActionButtonSpinner">searching...</div>
             </div>
+            <div class="error" *ngIf="errorMsg != ''">{{errorMsg}}</div>
         </div>
     </div>
 

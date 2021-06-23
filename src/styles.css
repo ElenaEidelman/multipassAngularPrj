@@ -39,6 +39,12 @@ app-main-menu{
   /* z-index: 9999;   */
   position: fixed;
 }
+.headerData{
+  display: flex;
+}
+.headerData > div.data{
+  margin: 0 10px;
+}
 .headerPage{
   width: 100%;
   text-align: center;
@@ -253,8 +259,13 @@ span.tableButton:hover{
   background: rgba(255,255,255,0.8);
   margin-top: 30px;
 }
-.fixed-column-buttons  button{
+.fixed-column-buttons  button, .fixed-column-buttons a{
   margin: 10px;
+}
+div.wrapStickyButtons > div > a:hover{
+  color: #fff;
+  background: #88C43E;
+  text-decoration: unset;
 }
 .wrapStickyButtons{
   justify-content: center;
@@ -424,6 +435,7 @@ dialog-content-example-dialog div.innerElement{
   text-align: center;
   margin: 1em auto;
 }
+
 .tableCageFlex{
   display: flex;
 }
@@ -693,6 +705,11 @@ textarea.mat-input-element{
   border-radius: 5px;
   color: #fff;
   text-shadow: 0px 0px 2px rgb(88 143 101);
+}
+
+.msg{
+  text-align: center;
+  padding: 6px;
 }
 .mat-tab-group.mat-primary .mat-ink-bar, .mat-tab-nav-bar.mat-primary .mat-ink-bar {
   background-color: #8FC636;

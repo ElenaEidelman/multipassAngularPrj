@@ -41,21 +41,28 @@ mat-accordion mat-expansion-panel mat-expansion-panel-header .mat-icon{
   .graph-buttons-wrap{
     display: flex;
     flex-direction: row-reverse;
-    margin: 2em 0;
   }
   .graph-buttons-wrap > div{
       flex-grow: 1;
       flex-basis: 0;
-      margin: 10px;
       justify-content: center;
+      margin: 10px 10px 0 10px;
   }
   .buttonInElement{
-    display: flex;
-    justify-content: flex-end;
-    flex-direction: column-reverse;
+    /* display: flex;
+    justify-content: center;
+    flex-direction: column-reverse; */
+
+    display: inline;
   }
+  
   .buttonInElement > div{
-      margin: 10px auto;
+    display: table-cell;
+    width: 50%;
+    padding-left: 10px;
+  }
+  .buttonInElement > div > a{
+    width: 100%;
   }
   .buttonInElement mat-icon, .buttonInElement fa-icon{
     color: #fff;
@@ -88,6 +95,24 @@ mat-accordion mat-expansion-panel mat-expansion-panel-header .mat-icon{
   font-size: 20px;
   }
 
+  .saveFormSpinner{
+    position: absolute;
+    top: -20px;
+    right: -5px;
+  }
+  .createOrdersButtonsWrap{
+    /* height: 100%; */
+    margin-top: 0;
+  }
+  .graphWrap {
+    /* height: 100%; */
+    width: 100%;
+    margin-top: 0;
+  }
+
+  .element-page-title{
+    padding: 0;
+  }
   @media screen and (max-width: 1024px){
     .flexData {
       flex-direction: row-reverse;

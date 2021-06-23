@@ -5,7 +5,7 @@ import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { throwMatDialogContentAlreadyAttachedError } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ChartDataSets } from 'chart.js';
 import { Label } from 'ng2-charts';
 import { AlertMessage } from 'src/assets/alertMessage';
@@ -30,35 +30,45 @@ export class ExistCustomerComponent implements OnInit {
     public recOrdersChartLabels:Label[];
 
     userToken: string;
+    userId;
+    errorActionButtons: string = '';
+    msgActionButtons: string = '';
     customerData;
+    customerOrders;
+
+    saveFormSpinner: boolean = false;
 
 
     customerDetails;
     customerAddress;
     customerSettings;
 
-  constructor(private activeRoute: ActivatedRoute, private fb: FormBuilder, private dataService: DataServiceService) { }
+  constructor(private activeRoute: ActivatedRoute, private router: Router, private fb: FormBuilder, private dataService: DataServiceService) { }
   
   CustomerForm = this.fb.group({
     OrganizationName: ['', Validators.required],//v
-    Email: ['', Validators.required], //v
+    Fname: (''),
+    Lname: (''),
+    Email: ['', [Validators.required, Validators.email]], //v
     Phone: (''), //v
     Permission: ['', Validators.required],//v
     Phone1: (''), //v
     userNumber: [{value: '', disabled: true}], //v
-    Streetno: (''),//v
     CityName: (''),//v
+    Streetno: (''),//v
+    HouseNumber: (''), //new
     Entrance: (''),//v
+    floor: (''), // new
     ApartmentNo: (''),//v
-    StatusId: ('1'),
+    ZIP: (''), // ------------
+    StatusId: [{value: '', disabled: true}],
     MultipassIclientID: (''),
     Tz: ['', Validators.required],//v
     DealerDiscountPercent: (''), //v
+    ValidateDate: (''), //new
     BusinessFile: ('/test.txt') //must to be required Validators.required
 });
 
-
-  id;
   idUnsubscribe;
 
 
@@ -67,7 +77,7 @@ export class ExistCustomerComponent implements OnInit {
     this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
 
     this.idUnsubscribe = this.activeRoute.params.subscribe( param => {
-      this.id = param['id'];
+      this.userId = param['id'];
 
       let objToApi={
         Token: this.userToken,
@@ -76,30 +86,28 @@ export class ExistCustomerComponent implements OnInit {
       
 
       this.dataService.GetCustomersByFilter(objToApi).subscribe(result => {
-        debugger
         if(typeof result == 'object' && result.obj != null){
-
           this.customerData = result.obj[0];
+
           Object.keys(result.obj[0]).forEach(el => {
             if(this.CustomerForm.get(el) != null){
               this.CustomerForm.get(el).setValue(result.obj[0][el]);
             }
           });
+      this.getChartData();
         }
       });
 
 
 
 
-      this.customerDetails = {customerId: this.id, companyName: 'multipass', email: 'test@gmail.com', phone: '0504454325', addPhoneNum: '', role: 'עובד', userNum: '1481'};
-      this.customerAddress = {city: '', street: '', houseNum: '', appNumber: '', entranceNum: '', floor: '', zCode: ''};
-      this.customerSettings = {status: '', idNum: '', comaxCode: '', discount: '', custValDate: ''};
+      // this.customerDetails = {customerId: this.id, companyName: 'multipass', email: 'test@gmail.com', phone: '0504454325', addPhoneNum: '', role: 'עובד', userNum: '1481'};
+      // this.customerAddress = {city: '', street: '', houseNum: '', appNumber: '', entranceNum: '', floor: '', zCode: ''};
+      // this.customerSettings = {status: '', idNum: '', comaxCode: '', discount: '', custValDate: ''};
 
-      this.getChartData();
     })
 
   }
-
 
   
   ngOnChanges(changes: SimpleChanges){
@@ -107,14 +115,103 @@ export class ExistCustomerComponent implements OnInit {
   }
 
   getChartData(){
-    this.recOrdersChartData = [
-      { data: [1500,2000,1750,9000,500, 250], label: 'ערך הזמנה' }
-    ];
-    this.recOrdersChartLabels = ['16:12:23 16/03/2021','15:12:23 14/03/2021','13:12:23 13/03/2021','12:12:23 11/03/2021','16:12:23 9/03/2021','16:12:23 6/03/2021'];
+    // this.recOrdersChartData = [
+    //   { data: [1500,2000,1750,9000,500, 250], label: 'ערך הזמנה' }
+    // ];
+
+    
+    // this.recOrdersChartLabels = ['16:12:23 16/03/2021','15:12:23 14/03/2021','13:12:23 13/03/2021','12:12:23 11/03/2021','16:12:23 9/03/2021','16:12:23 6/03/2021'];
+  
+
+    let objToApi = {
+      Token: this.userToken,
+      UserID: this.userId
+    }
+    this.dataService.GetOrdersByFilter(objToApi).subscribe(result => {
+      if(typeof result == 'object' && result['obj'] != undefined && result['obj'].length > 0){
+        this.customerOrders = result.obj;
+        let totalOrder = 0;
+        let totalByOrder = [];
+        let createDateByOrder = [];
+
+        result['obj'].forEach(element => {
+          totalOrder += element.Total;
+          totalByOrder.push(element.Total);
+          createDateByOrder.push(element.MDate);
+        });
+
+        this.recOrdersChartData = [
+          { data: totalByOrder, label: 'ערך הזמנה' }
+        ];
+
+        this.recOrdersChartLabels = createDateByOrder;
+      }
+    });
+  
   }
 
   saveForm(){
+    if(this.CustomerForm.valid){
+      this.saveFormSpinner = true;
 
+      let date = new Date(this.CustomerForm.get('ValidateDate').value);
+      let day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
+      let month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
+      let year = date.getFullYear();
+      let formattingDate = month + '-' + day + '-' + year;
+      this.CustomerForm.get('ValidateDate').setValue(formattingDate);
+
+      let data = this.CustomerForm.value;
+
+      let objToApi = {
+        Token: this.userToken, //req
+        Id: this.customerData.id
+      }
+  
+      Object.keys(data).forEach(key => {
+        if(data[key] != ''){
+          objToApi[key] = data[key]
+        }
+      })
+
+      //change to numeric
+      objToApi['Tz']= +objToApi['Tz'];
+      debugger
+      this.dataService.InsertUpdateUser(objToApi).subscribe(result => {
+        debugger
+        this.saveFormSpinner = false;
+        if(typeof result == 'object' && result.obj != null){
+
+          this.msgActionButtons = 'נשמר בהצלחה';
+          setTimeout(()=>{
+            this.msgActionButtons = '';
+          }, 3000);
+          
+          this.customerData = result.obj[0];
+          this.customerData.ValidateDate = result.obj[0]['businessValidDate'];
+          
+          Object.keys(result.obj[0]).forEach(el => {
+            if(this.CustomerForm.get(el) != null){
+              this.CustomerForm.get(el).setValue(result.obj[0][el]);
+            }
+          });
+
+        }
+        if(typeof result == 'string'){
+          this.errorActionButtons = result;
+
+          setTimeout(() => {
+            this.errorActionButtons = '';
+          }, 3000);
+        }
+        // else{
+        //   alert(JSON.stringify(result));
+        // }
+      });
+    }
+    else{
+      alert('form validation error');
+    }
   }
 
   ngOnDestroy(){

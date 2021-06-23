@@ -3,6 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { ActivatedRoute } from '@angular/router';
 import { DataServiceService } from 'src/app/data-service.service';
 
 export class CustomerData {
@@ -37,11 +38,17 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort: MatSort;
 
 
-  constructor(private fb: FormBuilder, private dataService: DataServiceService) {}
+  constructor(private fb: FormBuilder, private dataService: DataServiceService, private activeRoute: ActivatedRoute) {}
+
+  @ViewChild('closeSelect') closeSelect:any;  
+  
+ 
 
   errorMsg: string = '';
   filterMsg: string = '';
   filterSpinner: boolean = false;
+
+  idUnsubscribe;
 
   filterCustomerForm = this.fb.group({
     customerId: (''),
@@ -49,14 +56,6 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
     OrderStatus: ('')
   });
 
-  //filter table by customer status
-  // statusList = [
-  //   {value: 'nextTo', viewValue: 'ליד'},
-  //   {value: 'pending', viewValue: 'ממתין לאישור'},
-  //   {value: 'active', viewValue: 'פעיל'},
-  //   {value: 'delayed', viewValue: 'מושהה'},
-  //   {value: 'refused', viewValue: 'מסורב'}
-  // ];
   statusList = new Set();
   allCustomersDataSpare;
 
@@ -70,9 +69,18 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     window.scroll(0,0);
-    this.createDisplayedColumns(this.customerLabelForTable);
-    //this.createDataSourceForTable();
-    this.getAllCustomers();
+
+    this.idUnsubscribe = this.activeRoute.params.subscribe(param => {
+      if(param['id'] != undefined){
+        this.filterCustomerForm.get('customerId').setValue(param['id']);
+        this.filterTable();
+      }
+      else{
+        this.createDisplayedColumns(this.customerLabelForTable);
+        //this.createDataSourceForTable();
+        this.getAllCustomers();
+      }
+    });
   }
 
   getAllCustomers(){
@@ -194,6 +202,19 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
   recoverTable(){
     this.filterCustomerForm.reset();
     this.dataSource.data = this.allCustomersDataSpare;
+  }
+
+  resetStatusField(obj){
+    debugger
+    this.filterCustomerForm.get('OrderStatus').setValue('');
+
+  }
+
+  closeMatSelect(){
+    debugger
+    // this.closeSelect.open();  //to open the list  
+    
+    this.closeSelect.close();  //to close the list  
   }
 
   ngAfterViewInit() {

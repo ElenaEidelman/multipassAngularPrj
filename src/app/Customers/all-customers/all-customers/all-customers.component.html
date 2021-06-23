@@ -47,6 +47,9 @@
                             <mat-form-field class="selectedFormFieldWidth">
                                 <mat-label>סטטוס</mat-label>
                                 <mat-select formControlName="OrderStatus" multiple>
+                                    <!-- <mat-option #closeSelect>
+                                        <button mat-button (click)="resetStatusField(this); closeMatSelect()"></button>
+                                    </mat-option> -->
                                     <mat-option *ngFor="let status of returnStatusList()" [value]="status">
                                         {{status}}
                                     </mat-option>
