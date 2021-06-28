@@ -3,12 +3,13 @@ import { typeWithParameters } from '@angular/compiler/src/render3/util';
 import { Component, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChildren, ViewEncapsulation } from '@angular/core';
 import { tick } from '@angular/core/testing';
 import { ControlContainer, FormBuilder, FormControl, Validators } from '@angular/forms';
-import { throwMatDialogContentAlreadyAttachedError } from '@angular/material/dialog';
+import { MatDialog, throwMatDialogContentAlreadyAttachedError } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Data, Router, RouterModule } from '@angular/router';
 import { resourceUsage } from 'process';
 import { elementAt } from 'rxjs/operators';
 import { DataServiceService } from 'src/app/data-service.service';
+import { DialogConfirmComponent } from 'src/app/PopUps/dialog-confirm/dialog-confirm.component';
 import { SharedService } from 'src/app/shared.service';
 import { AlertMessage } from 'src/assets/alertMessage';
 
@@ -31,7 +32,8 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
                 private fb: FormBuilder, 
                 private dataService: DataServiceService, 
                 private sharedService: SharedService,
-                private router: Router) { }
+                private router: Router,
+                private dialog: MatDialog) { }
   
   insertOrderLineSpinner: boolean = false;
   createCardsSpinner: boolean = false;
@@ -385,10 +387,12 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       this.createCardsSpinner = true;
       let objToApi = {
         Token: this.userToken,
-        OrderId: this.orderId,
+        OrderId: this.orderId.toString(),
         UserID: this.customerId
       }
+      debugger
       this.dataService.ApproveOrder(objToApi).subscribe(result => {
+        debugger
         this.createCardsSpinner = false;
         if(typeof result == 'object' && result.obj != null && result.obj.length > 0){
           this.orderMsg = 'הזמנה נקלטה בהצלחה';
@@ -422,30 +426,43 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
   deleteOrder(){
+    
+    this.dialog.open(DialogConfirmComponent,{
+      data: {message: 'האם למחוק הזמנה מספר: ' + ' ' + this.orderId}
+    }).afterClosed().subscribe(response =>  {
+      if(response.result == 'yes'){
+        let objToApi = {
+          Token: this.userToken,
+          OrderId:this.orderId,
+          UserID:this.customerId,       
+           OpCode:"delete"
+      
+        }
+        this.deleteCardsSpinner = true;
+        this.dataService.DeleteVoidOrder(objToApi).subscribe(result => {
+          debugger
+          this.deleteCardsSpinner = false;
 
-    ///api/InsertUpdateOrder/DeleteVoidOrder
-    let objToApi = {
-      Token: this.userToken,
-      OrderId:this.orderId,
-      UserID:this.customerId,       
-       OpCode:"delete"
-  
-    }
-    this.dataService.DeleteVoidOrder(objToApi).subscribe(result => {
-     if(typeof result == 'object' && Object.values(result.obj[0]).includes('Order is deleted Successfully')){
-      this.orderMsgDelete = 'ההזמנה נמחקה בהצלחה';
-      setTimeout(() => {
-        this.orderMsgDelete = '';
-        this.router.navigate(['/public/allOrders']);
-      }, 2000);
-     }
-     if(typeof result == 'string'){
-       this.errorMsgDelete = result;
-       setTimeout(()=> {
-         this.errorMsgDelete = '';
-       }, 3000);
-     }
-    });
+         if(typeof result == 'object' && Object.values(result.obj[0]).includes('Order is deleted Successfully')){
+          this.orderMsgDelete = 'ההזמנה נמחקה בהצלחה';
+          setTimeout(() => {
+            this.orderMsgDelete = '';
+            this.router.navigate(['/public/allOrders']);
+          }, 2000);
+         }
+         if(typeof result == 'string'){
+           this.errorMsgDelete = result;
+           setTimeout(()=> {
+             this.errorMsgDelete = '';
+           }, 3000);
+         }
+         else{
+          alert(JSON.stringify(result));
+         }
+        });
+      }
+    })
+
   }
 
   calculateTotalCharge(){

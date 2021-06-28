@@ -78,10 +78,11 @@
             </form>
             <div class="buttonsWrap actionsButton">
                 <button mat-button class="linkButton" (click) = "resetForm()">אפס</button>
-                <mat-spinner *ngIf="filterActionButtonSpinner" class="filterActionButton"></mat-spinner>
+                <!-- <mat-spinner *ngIf="filterActionButtonSpinner" class="filterActionButton"></mat-spinner> -->
                 <button mat-button class="addButton" (click) = "filterTable()">חפש</button>
-                <div *ngIf="filterActionButtonSpinner">searching...</div>
+                <mat-spinner *ngIf="filterActionButtonSpinner" class="filterActionButton"></mat-spinner>
             </div>
+            <div *ngIf="filterActionButtonSpinner" style="text-align: center;">searching...</div>
             <div class="error" *ngIf="errorMsg != ''">{{errorMsg}}</div>
         </div>
     </div>
@@ -124,9 +125,9 @@
                 <ng-container matColumnDef="delC">
                     <th mat-header-cell *matHeaderCellDef></th>
                     <td mat-cell *matCellDef="let element; let rowNum = index;">
-                        <div *ngIf="element['StatusId'] == 1">
+                        <div *ngIf="element['StatusId'] == 1 || element['StatusId'] == 0">
                             <!-- <button mat-icon-button class="deleteButton" (click)="deleteOrder(element)">מחק -->
-                                <mat-icon class="deleteIcon" (click)="deleteOrder(element)">delete</mat-icon>
+                                <mat-icon class="deleteIcon" (click)="deleteOrder(element)" matTooltip="מחק הזמנה">delete</mat-icon>
                             <!-- </button> -->
                         </div>
                     </td>

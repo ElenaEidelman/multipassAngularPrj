@@ -73,26 +73,26 @@
 
                                     <div class="buttonInElement innerElement createOrdersButtonsWrap">
 
-                                        <div>
-                                            <a [routerLink]="['/public/orderCards',0,customerData.id]" mat-button
-                                                class="addButton">
+                                        <div [routerLink]="['/public/orderCards',0,customerData.id]" mat-button
+                                        class="addButton">
                                                 <span>הזמנת שוברים דיגיטלים מאקסל </span>
                                                 <fa-icon [icon]="faFileExcel"></fa-icon>
-                                            </a>
+          
                                         </div>
-                                        <div>
-                                            <a [routerLink]="['/public/orderCards',1,customerData.id]" mat-button
-                                                class="addButton">
+                                        <div [routerLink]="['/public/orderCards',1,customerData.id]" mat-button
+                                        class="addButton">
                                                 <span>הזמנת שוברים דיגיטלים ידנית </span>
                                                 <mat-icon> settings </mat-icon>
-                                            </a>
                                         </div>
-                                        <div>
-                                            <a [routerLink]="['/public/orderCards',2,customerData.id]" mat-button
-                                                class="addButton">
+                                        <div [routerLink]="['/public/orderCards',2,customerData.id]" mat-button
+                                        class="addButton">
                                                 <span>טעינת שוברים</span>
                                                 <mat-icon> file_upload</mat-icon>
-                                            </a>
+                                        </div>
+                                        <div mat-button class="addButton"
+                                        [routerLink]="['/public/allOrders',customerData.OrganizationName]">
+                                                <span>לכל הזמנות הלקוח</span>
+                                                <mat-icon>list</mat-icon>
                                         </div>
                                     </div>
                             </div>
@@ -140,8 +140,8 @@
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>שם פרטי</mat-label>
-                                            <input matInput placeholder="שם פרטי" formControlName="Fname">
-                                            <button class="clearButton" *ngIf="this.CustomerForm.get('Fname').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('Fname').setValue('')">
+                                            <input matInput placeholder="שם פרטי" formControlName="FName">
+                                            <button class="clearButton" *ngIf="this.CustomerForm.get('FName').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('FName').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
                                         </mat-form-field>
@@ -157,8 +157,8 @@
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>שם משפחה</mat-label>
-                                            <input matInput placeholder="שם משפחה" formControlName="Lname">
-                                            <button class="clearButton" *ngIf="this.CustomerForm.get('Lname').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('Lname').setValue('')">
+                                            <input matInput placeholder="שם משפחה" formControlName="LName">
+                                            <button class="clearButton" *ngIf="this.CustomerForm.get('LName').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('LName').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
                                         </mat-form-field>
@@ -276,7 +276,7 @@
 
 
                         <!-- settings -->
-                        <mat-expansion-panel [expanded]="true" #settings selectedIndex="1 ">
+                        <mat-expansion-panel #settings selectedIndex="1 ">
                             <mat-expansion-panel-header>
                                 <mat-panel-title> </mat-panel-title>
                                 <mat-panel-description>
@@ -364,13 +364,6 @@
                                         </button>
 
                                     </div>
-                                    <div class="buttonAny">
-                                        <button mat-button class="addButton"
-                                            [routerLink]="['/public/allOrders',customerData.OrganizationName]">
-                                            <span>לכל הזמנות הלקוח</span>
-                                            <mat-icon>list</mat-icon>
-                                        </button>
-                                    </div>
                                 </div>
                             </div>
 
@@ -379,8 +372,15 @@
                     </mat-accordion>
 
                 </div>
+                
             </div>
         </form>
+        
+        <div class="delCustButtonWrap">
+            <button mat-button class="deleteButton" (click)="deleteCustomer()">מחק לקוח
+                <mat-icon>delete</mat-icon>
+                <mat-spinner class="spinner" *ngIf="deleteCardsSpinner"></mat-spinner>
+            </button>
+        </div>
     </div>
-
 </div>

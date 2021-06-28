@@ -30,6 +30,7 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 
 
+
 import { ChartsModule } from 'ng2-charts';
 
 
@@ -41,7 +42,7 @@ import { MainViewComponent } from './main-view/main-view.component';
 import { ExecOrderComponent } from './Orders/exec-order/exec-order.component';
 import { AllOrdersComponent } from './Orders/all-orders/all-orders.component';
 import { MatNativeDateModule } from '@angular/material/core';
-import { DialogConfirmComponent } from './Dialogs/dialogConfirm/dialog-confirm/dialog-confirm.component';
+import { DialogConfirmComponent } from './PopUps/dialog-confirm/dialog-confirm.component';
 import { AllCustomersComponent } from './Customers/all-customers/all-customers/all-customers.component';
 import { NewCustomerComponent } from './Customers/new-customer/new-customer/new-customer.component';
 import { MatSortModule } from '@angular/material/sort';
@@ -75,6 +76,7 @@ import { AdminNewUserComponent } from './Admin/admin-new-user/admin-new-user.com
 import { AdminNewCardComponent } from './Admin/admin-new-card/admin-new-card.component';
 import { TestExpandingTableComponent } from './Orders/test-expanding-table/test-expanding-table.component';
 import { OrderLinesComponent } from './Orders/order-lines/order-lines.component';
+import { DialogComponent } from './PopUps/dialog/dialog.component';
 
 
 @NgModule({
@@ -110,7 +112,8 @@ import { OrderLinesComponent } from './Orders/order-lines/order-lines.component'
     AdminNewUserComponent,
     AdminNewCardComponent,
     TestExpandingTableComponent,
-    OrderLinesComponent
+    OrderLinesComponent,
+    DialogComponent
   ],
   imports: [
     BrowserModule,

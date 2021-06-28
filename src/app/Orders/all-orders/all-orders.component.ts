@@ -10,6 +10,9 @@ import { Route } from '@angular/compiler/src/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SharedService } from 'src/app/shared.service';
 import { element } from 'protractor';
+import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogConfirmComponent } from 'src/app/PopUps/dialog-confirm/dialog-confirm.component';
 
 
 
@@ -27,7 +30,8 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
               private dataService: DataServiceService, 
               private router: Router, 
               private acivatedRoute: ActivatedRoute,
-              private sharedService: SharedService) { }
+              private sharedService: SharedService,
+              private dialog: MatDialog) { }
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -101,7 +105,6 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.dataService.GetOrdersStatus(objToApi).subscribe(result => {
-      debugger
       if(typeof result == 'object' && result.obj != null){
         this.statusListArr = [...result.obj];
       }
@@ -119,7 +122,6 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     //GetOrdersByFilter
     this.filterActionButtonSpinner = true;
     this.dataService.GetOrdersByFilter(objToApi).subscribe(result => {
-      debugger
 
       this.filterActionButtonSpinner = false;
       if(result['Token'] != undefined){
@@ -140,22 +142,11 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
 
       }
       else{
-        alert(result);
+        alert(JSON.stringify(result));
         // this.sharedService.exitSystemEvent();
       }
     })
   }
-  // returnStatusList(){
-  //   this.dataSource.data.forEach(data => {
-  //     debugger
-  //     for(let el in data){
-  //       if(el == 'StatusDesc'){
-  //         this.statusList.add(el);
-  //       }
-  //     }
-  //   });
-  //   return this.statusList;
-  // }
 
   createDisplayedColumns(columns){
     columns.forEach( el => {
@@ -169,26 +160,36 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
 
   deleteOrder(order){
 
-    debugger
+    this.dialog.open(DialogConfirmComponent, {
+      data: {message: 'האם למחוק? '}
+    }). afterClosed().subscribe(response => {
 
-        ///api/InsertUpdateOrder/DeleteVoidOrder
-        let objToApi = {
-          Token: this.userToken,
-          OrderId: order.id,
-          UserID: order.UserId,       
-           OpCode:"delete"
-      
-        }
-        this.dataService.DeleteVoidOrder(objToApi).subscribe(result => {
-         if(typeof result == 'object' && Object.values(result.obj[0]).includes('Order is deleted Successfully')){
+      if(response.result == 'yes'){
 
-          alert(result.obj[0]);
-          this.getOrdersList();
-         }
-         if(typeof result == 'string'){
-
-         }
-        });
+                ///api/InsertUpdateOrder/DeleteVoidOrder
+                let objToApi = {
+                  Token: this.userToken,
+                  OrderId: order.id,
+                  UserID: order.UserId,       
+                   OpCode:"delete"
+              
+                }
+                this.dataService.DeleteVoidOrder(objToApi).subscribe(result => {
+                  debugger
+                 if(typeof result == 'object' && Object.values(result.obj[0]).includes('Order is deleted Successfully')){
+        
+                  this.dialog.open(DialogComponent, {
+                    data: {message: JSON.stringify(result.obj[0]['Order Status'])}
+                    });
+        
+                  this.getOrdersList();
+                 }
+                 if(typeof result == 'string'){
+        
+                 }
+                });
+      }
+    })
   }
 
   returnHebTranslation(obj,value){
@@ -198,7 +199,10 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   resetForm(){
 
     this.acivatedRoute.params.subscribe(param => {
-      this.filterTableGroup.reset();
+      Object.keys(this.filterTableGroup.controls).forEach(control => {
+        this.filterTableGroup.get(control).setValue('');
+      });
+      // this.filterTableGroup.reset();
       if(Object.keys(param).length > 0){
  
         //for clear params from url
@@ -244,8 +248,6 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     else{
 
       this.filterActionButtonSpinner = true;
-
-      debugger
       this.dataService.GetOrdersByFilter(objToApi).subscribe(result => {
         debugger
         this.filterActionButtonSpinner = false;
@@ -269,8 +271,10 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    if(this.dataSource != undefined){
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    }
   }
 
   ngOnDestroy(){

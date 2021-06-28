@@ -1,0 +1,21 @@
+<div>
+    <div class="close-icon-wrap" (click)="dialogClose()" >
+        <mat-icon matTooltip="סגור" matTooltipPosition="right">cancel</mat-icon>
+    </div>
+
+
+
+    <div class="log-in">
+        <div class="wrap-form">
+          <div class="dialogMessage">{{data.message}}</div>
+            <div class="wrapSendButton">
+                <div>
+                    <button mat-button class="addButton" (click)="no()">סגור</button>
+                </div>
+                <div>
+                    <button mat-button class="deleteButton" (click)="yes()" cdkFocusInitial>למחוק</button>
+                </div>
+            </div>
+        </div>
+      </div>
+</div>

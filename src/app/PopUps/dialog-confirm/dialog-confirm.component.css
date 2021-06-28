@@ -108,6 +108,17 @@ mat-form-field{
     }
     .wrapSendButton{
         text-align: center;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+        width: 100%;
+    }
+
+    .dialogMessage{
+        font-size: 2em;
+        margin: 1em;
+        direction: rtl;
+        text-align: center;
     }
 
 @media screen and (max-width: 1024px){

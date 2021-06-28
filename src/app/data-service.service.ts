@@ -29,20 +29,6 @@ export class DataServiceService implements OnInit {
 
   }
 
-  // checkUser(objToOtp){
-  //   return this.http.post(`${this.baseUrl}/Users/login`, objToOtp).pipe(
-  //     map(result => {
-  //         return result;
-  //     })
-  //   );
-
-  //   // return this.http.post(`${this.logInUrl}/SendOtp`,{},httpOptions).pipe(
-  //   //   map(result => {
-  //   //     debugger
-  //   //   })
-  //   // );
-  // }
-
   SendOtp(obj){
       return this.http.post(`${this.baseUrl}/api/Users/SendOtp`,obj).pipe(
         map(result => {
@@ -228,4 +214,14 @@ export class DataServiceService implements OnInit {
     );
   }
 
+  DeleteSuspendUsers(objToApi){
+    return this.http.post(`${this.baseUrl}/api/InsertUpdateUser/DeleteSuspendUsers`,objToApi).pipe(
+      map(result => {
+        return result;
+      }),
+      catchError(error => {
+        return of(error.message);
+      })
+    );
+  }
 }

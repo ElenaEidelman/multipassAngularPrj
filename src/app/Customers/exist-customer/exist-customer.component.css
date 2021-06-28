@@ -49,29 +49,35 @@ mat-accordion mat-expansion-panel mat-expansion-panel-header .mat-icon{
       margin: 10px 10px 0 10px;
   }
   .buttonInElement{
-    /* display: flex;
-    justify-content: center;
-    flex-direction: column-reverse; */
-
-    display: inline;
+    display: flex;
+    flex-direction: column;
   }
   
   .buttonInElement > div{
-    display: table-cell;
-    width: 50%;
-    padding-left: 10px;
+    flex-grow: 1;
+    flex-basis: 0;
+    margin: 1.4em 4em;
+    border-radius: 4px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
   }
-  .buttonInElement > div > a{
-    width: 100%;
+  .buttonInElement > div:hover{
+    cursor: pointer;
   }
+  .buttonInElement > div >*{
+    margin: auto 0;
+    padding: 0 5px;
+  }
+
   .buttonInElement mat-icon, .buttonInElement fa-icon{
     color: #fff;
   }
-  .buttonInElement a:hover{
+  /* .buttonInElement a:hover{
     text-decoration: none;
     background: #88C43E;
     color: #fff;
-  }
+  } */
   .wrap-setting-form{
     display: flex;
     justify-content: space-around;
@@ -112,6 +118,10 @@ mat-accordion mat-expansion-panel mat-expansion-panel-header .mat-icon{
 
   .element-page-title{
     padding: 0;
+  }
+  .delCustButtonWrap{
+    text-align: left;
+    padding: 1em 0;
   }
   @media screen and (max-width: 1024px){
     .flexData {

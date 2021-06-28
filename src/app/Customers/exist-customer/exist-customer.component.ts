@@ -2,7 +2,7 @@ import { Route } from '@angular/compiler/src/core';
 import { Component, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { tick } from '@angular/core/testing';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
-import { throwMatDialogContentAlreadyAttachedError } from '@angular/material/dialog';
+import { MatDialog, throwMatDialogContentAlreadyAttachedError } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -12,6 +12,8 @@ import { AlertMessage } from 'src/assets/alertMessage';
 import { OrderData } from '../../Classes/OrderData';
 import { faFileExcel } from '@fortawesome/free-solid-svg-icons';
 import { DataServiceService } from 'src/app/data-service.service';
+import { DialogConfirmComponent} from 'src/app/PopUps/dialog-confirm/dialog-confirm.component';
+import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
 
 
 
@@ -43,12 +45,17 @@ export class ExistCustomerComponent implements OnInit {
     customerAddress;
     customerSettings;
 
-  constructor(private activeRoute: ActivatedRoute, private router: Router, private fb: FormBuilder, private dataService: DataServiceService) { }
+  constructor(
+              private activeRoute: ActivatedRoute, 
+              private router: Router, 
+              private fb: FormBuilder, 
+              private dataService: DataServiceService,
+              public dialog: MatDialog) { }
   
   CustomerForm = this.fb.group({
     OrganizationName: ['', Validators.required],//v
-    Fname: (''),
-    Lname: (''),
+    FName: (''),
+    LName: (''),
     Email: ['', [Validators.required, Validators.email]], //v
     Phone: (''), //v
     Permission: ['', Validators.required],//v
@@ -141,8 +148,10 @@ export class ExistCustomerComponent implements OnInit {
         });
 
         this.recOrdersChartData = [
-          { data: totalByOrder, label: 'ערך הזמנה' }
+          { data: totalByOrder, label: 'הזמנות אחרונות' }
+          // { data: totalByOrder, label: 'הזמנות אחרונות' }
         ];
+
 
         this.recOrdersChartLabels = createDateByOrder;
       }
@@ -159,7 +168,7 @@ export class ExistCustomerComponent implements OnInit {
       let month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
       let year = date.getFullYear();
       let formattingDate = month + '-' + day + '-' + year;
-      this.CustomerForm.get('ValidateDate').setValue(formattingDate);
+      // this.CustomerForm.get('ValidateDate').setValue(formattingDate);
 
       let data = this.CustomerForm.value;
 
@@ -176,9 +185,9 @@ export class ExistCustomerComponent implements OnInit {
 
       //change to numeric
       objToApi['Tz']= +objToApi['Tz'];
-      debugger
+      objToApi['ValidateDate'] = formattingDate;
+
       this.dataService.InsertUpdateUser(objToApi).subscribe(result => {
-        debugger
         this.saveFormSpinner = false;
         if(typeof result == 'object' && result.obj != null){
 
@@ -214,6 +223,46 @@ export class ExistCustomerComponent implements OnInit {
     }
   }
 
+  deleteCustomer(){
+
+    const dialogRef = this.dialog.open(DialogConfirmComponent,{
+      data: {message: 'האם למחוק ' + this.customerData.OrganizationName + '?'}
+    }).afterClosed().subscribe(response => {
+      if(response.result == 'yes'){
+
+        let objToApi = {
+          Token: this.userToken,
+          UserId: this.userId
+        }
+  
+        this.dataService.DeleteSuspendUsers(objToApi).subscribe(result => {
+          if(result != undefined){
+            if(result.obj != null){
+              this.dialog.open(DialogComponent,{
+                data: {message: 'נמחק בהצלחה'}
+              });
+            }
+            if(result.errdesc != ''){
+              this.dialog.open(DialogComponent,{
+                data: {message: '--' + result.errdesc + '--'}
+              });
+            }
+          }
+        });
+      }
+    });
+
+    // dialogRef.afterClosed().subscribe(result => {
+    //   debugger
+    //   console.log(`Dialog result: ${result}`);
+    // });
+
+  }
+
+
+  openDialog(){
+
+  }
   ngOnDestroy(){
     this.idUnsubscribe.unsubscribe();
   }

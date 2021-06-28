@@ -239,14 +239,18 @@ mat-form-field{
 .innerElement{
   /* margin: 0 !important  order/id mobile problem*/
 }
-.titleMenuButton{
+button:hover, a:hover{
+  cursor: pointer;
+}
+button.titleMenuButton{
   /* background: #51768D; */
-  background: #acbf9a;
-  text-shadow: 0px 0px 2px rgb(88 143 101);
+  background: #444445;
+  /* text-shadow: 0px 0px 2px rgb(88 143 101); */
   color: #fff;
 }
-.titleMenuButton:hover{
+button.titleMenuButton:hover{
   background: #89BE34;
+  cursor: pointer;
 }
 span.tableButton:hover{
   background: #89BE34;
@@ -488,7 +492,7 @@ dialog-content-example-dialog div.innerElement{
   padding: 15px 15px 0;
   border-radius: 10px;
 }
-.mat-form-field.datePicker, .mat-select{
+ .mat-select{/*.mat-form-field.datePicker*/
   direction: rtl;
 }
 .mat-option {

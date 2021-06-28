@@ -1,11 +1,9 @@
 <div class="pageTitle main2-title">
     <div>רשימת לקוחות רשומים</div>
     <div>
-        <a routerLink="/public/newCustomer">
-            <button mat-raised-button class="titleMenuButton">לקוח חדש
+            <button mat-raised-button class="titleMenuButton" routerLink="/public/newCustomer">לקוח חדש
                 <mat-icon>person_add_alt_1</mat-icon>
             </button>
-        </a>
     </div>
 </div>
 <div class="page-wrap">
@@ -93,7 +91,14 @@
                         <ng-container matColumnDef="{{column}}" *ngIf="column == 'newOrder'" style="width:100px">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
                             <td mat-cell *matCellDef="let row">
-                                <button mat-button class="addButton tableButton" [routerLink]="['/public/orderCards',0,row['id']]">הזמנה חדשה</button>
+                                <div class="flexTD">
+                                    <div>
+                                        <button mat-button class="addButton tableButton" [routerLink]="['/public/orderCards',0,row['id']]">הזמנה חדשה</button>
+                                    </div>
+                                    <div>
+                                        <mat-icon class="deleteIcon" matTooltip="מחק" (click)="deleteCustomer(row)">delete</mat-icon>
+                                    </div>
+                                </div>
                             </td>
                         </ng-container>
                     </ng-container>

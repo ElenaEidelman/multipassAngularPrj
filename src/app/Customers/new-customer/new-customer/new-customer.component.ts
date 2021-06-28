@@ -20,8 +20,8 @@ export class NewCustomerComponent implements OnInit {
 
   newCustomerForm = this.fb.group({
       OrganizationName: ['', Validators.required], //Validators.required
-      Fname: (''),
-      Lname: (''),
+      FName: (''),
+      LName: (''),
       Email: ['',  [Validators.email, Validators.required]], //Validators.required,
       Phone: (''),
       Permission: ['', Validators.required], // Validators.required
@@ -65,10 +65,16 @@ export class NewCustomerComponent implements OnInit {
         }
       })
   
+      debugger
       this.dataService.InsertUpdateUser(objToApi).subscribe(result => {
+        debugger
         if(typeof result == 'object' && result.obj != null){
-          alert('done');
-          this.router.navigate(['/public/customer/', result.obj[0].id]);
+          this.errorActionButtons = 'לקוח חדש נשמר בהצלחה';
+
+          setTimeout(() => {
+            this.errorActionButtons = '';
+            this.router.navigate(['/public/customer/', result.obj[0].id]);
+          }, 2000);
         }
         if(typeof result == 'string'){
           this.errorActionButtons = result;
@@ -83,7 +89,11 @@ export class NewCustomerComponent implements OnInit {
       });
     }
     else{
-      alert('form validation error');
+      this.errorActionButtons = 'אנא מלא שדות חובה';
+
+      setTimeout(() => {
+        this.errorActionButtons = '';
+      }, 3000);
     }
   }
 }

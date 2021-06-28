@@ -18,14 +18,29 @@ export class BarChartComponent implements OnInit {
 
   public barChartOptions: ChartOptions = {
     responsive: true,
+
+    // maintainAspectRatio: false,
     // We use these empty structures as placeholders for dynamic theming.
-    scales: { xAxes: [{}], yAxes: [{}] },
+    scales: { xAxes: [{
+                        // barPercentage: 0.2,
+                        gridLines: {
+                          display: false
+                        }
+                      }], 
+              yAxes: [{
+                        ticks: {
+                          beginAtZero: true,
+                          
+                          },
+                }] 
+              },
     plugins: {
       datalabels: {
-        anchor: 'end',
+        anchor: 'start',
         align: 'end',
       }
     }
+    
   };
 
   barChartColors: Color[];
@@ -62,17 +77,5 @@ export class BarChartComponent implements OnInit {
   public chartHovered({ event, active }: { event: MouseEvent, active: {}[] }): void {
     console.log(event, active);
   }
-
-  // public randomize(): void {
-  //   // Only Change 3 values
-  //   this.barChartData[0].data = [
-  //     Math.round(Math.random() * 100),
-  //     59,
-  //     80,
-  //     (Math.random() * 100),
-  //     56,
-  //     (Math.random() * 100),
-  //     40 ];
-  // }
 
 }

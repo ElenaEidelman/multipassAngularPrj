@@ -1,10 +1,13 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
 import { DataServiceService } from 'src/app/data-service.service';
+import { DialogConfirmComponent } from 'src/app/PopUps/dialog-confirm/dialog-confirm.component';
+import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
 
 export class CustomerData {
   organizationName: string;
@@ -13,7 +16,7 @@ export class CustomerData {
   StatusDescription: string;
   filterMsg: string = '';
 
-  filterSpinner: boolean = false;
+  filterSpinner: boolean = true;
   constructor(organizationName: string, id: string, OrdersCount: string, StatusDescription: string){
     this.organizationName = organizationName;
     this.id = id;
@@ -38,11 +41,15 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort: MatSort;
 
 
-  constructor(private fb: FormBuilder, private dataService: DataServiceService, private activeRoute: ActivatedRoute) {}
+  constructor(
+              private fb: FormBuilder, 
+              private dataService: DataServiceService, 
+              private activeRoute: ActivatedRoute,
+              public dialog: MatDialog) {}
 
   @ViewChild('closeSelect') closeSelect:any;  
   
- 
+  userToken;
 
   errorMsg: string = '';
   filterMsg: string = '';
@@ -69,6 +76,7 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     window.scroll(0,0);
+    this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
 
     this.idUnsubscribe = this.activeRoute.params.subscribe(param => {
       if(param['id'] != undefined){
@@ -91,7 +99,6 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
     }
     this.dataService.GetAllCustomers(objToApi).subscribe(result => {
       this.filterSpinner = false;
-      debugger
       if(typeof result == 'string'){
         this.errorMsg = result;
         setTimeout(()=>{
@@ -153,8 +160,6 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
 
     if(fieldFilled){
       this.filterSpinner = true;
-
-      debugger
       this.dataService.GetCustomersByFilter(objToApi).subscribe(result => {
         this.filterSpinner = false;
         if(typeof result == 'string'){
@@ -200,27 +205,67 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
   }
 
   recoverTable(){
-    this.filterCustomerForm.reset();
+
+    Object.keys(this.filterCustomerForm.controls).forEach(control => {
+      this.filterCustomerForm.get(control).setValue('');
+    });
     this.dataSource.data = this.allCustomersDataSpare;
   }
 
   resetStatusField(obj){
-    debugger
+    // debugger
     this.filterCustomerForm.get('OrderStatus').setValue('');
 
   }
 
   closeMatSelect(){
-    debugger
+    // debugger
     // this.closeSelect.open();  //to open the list  
     
     this.closeSelect.close();  //to close the list  
   }
 
+  deleteCustomer(element){
+
+    let oName = element.organizationName != undefined ? element.organizationName : element.OrganizationName;
+    const dialogRef = this.dialog.open(DialogConfirmComponent,{
+      data: {message: 'האם למחוק ' + oName + '?'}
+    }).afterClosed().subscribe(response => {
+      if(response.result == 'yes'){
+
+        let objToApi = {
+          Token: this.userToken,
+          UserId: element.id.toString()
+        }
+  
+        this.dataService.DeleteSuspendUsers(objToApi).subscribe(result => {
+          if(result != undefined){
+            if(result.obj != null){
+              this.dialog.open(DialogComponent,{
+                data: {message: 'נמחק בהצלחה'}
+              });
+            }
+            if(result.errdesc != ''){
+              this.dialog.open(DialogComponent,{
+                data: {message: '--' + result.errdesc + '--'}
+              });
+            }
+          }
+        });
+      }
+    });
+
+    // dialogRef.afterClosed().subscribe(result => {
+    //   debugger
+    //   console.log(`Dialog result: ${result}`);
+    // });
+
+  }
   ngAfterViewInit() {
     if(this.dataSource != undefined){
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
+      debugger
     }
 
     // this.translateTitles();
