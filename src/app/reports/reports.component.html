@@ -39,6 +39,9 @@
                                             <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
                                                 <mat-label>מתאריך</mat-label>
                                                 <input matInput [matDatepicker]="picker">
+                                                <!-- <button class="clearButton" *ngIf="Report1Form.get('ValidateDate').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('ValidateDate').setValue('')">
+                                                    <mat-icon>close</mat-icon>
+                                                </button> -->
                                                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                                                 <mat-datepicker #picker></mat-datepicker>
                                             </mat-form-field>
@@ -53,8 +56,8 @@
                                         </div>
                                     </div>
                                     <div>
-                                        <div dir="rtl" class="fullWidth">
-                                            <mat-form-field class="mat-icon-no-white">
+                                        <div dir="rtl"  class="fullWidth">
+                                            <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
                                                 <mat-label>תאריך ושעת שליחה</mat-label>
                                                 <input matInput 
                                                     [ngxMatDatetimePicker]="pickerTest" 
@@ -147,7 +150,7 @@
                                     </div>
                                     <div>
                                         <div dir="rtl" class="fullWidth">
-                                            <mat-form-field class="mat-icon-no-white">
+                                            <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
                                                 <mat-label>תאריך ושעת שליחה</mat-label>
                                                 <input matInput 
                                                     [ngxMatDatetimePicker]="picker5" 
@@ -231,7 +234,7 @@
                                     </div>
                                     <div>
                                         <div dir="rtl">
-                                            <mat-form-field class="mat-icon-no-white">
+                                            <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
                                                 <mat-label>תאריך ושעת שליחה</mat-label>
                                                 <input matInput 
                                                     [ngxMatDatetimePicker]="picker8" 

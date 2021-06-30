@@ -121,24 +121,24 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
     });
   }
 
-  getCustomersData(){
-    //debugger
-    this.customers = [
-      new CustomerData('multipass1','11111','26','פעיל'),
-      new CustomerData('multipass2','22222','2','ליד'),
-      new CustomerData('multipass3','33333','3','ממתין לאישור'),
-      new CustomerData('multipass4','44444','4','מסורב'),
-      new CustomerData('multipass5','55555','5','מושהה'),
-      new CustomerData('multipass6','66666','6','מושהה'),
-      new CustomerData('multipass7','77777','26','פעיל'),
-      new CustomerData('multipass8','88888','2','ליד'),
-      new CustomerData('multipass9','99999','3','ממתין לאישור'),
-      new CustomerData('multipass12','12121','4','מסורב'),
-      new CustomerData('multipass13','13131','4','מושהה'),
-      new CustomerData('multipass14','14141','6','מושהה'),
+  // getCustomersData(){
+  //   //debugger
+  //   this.customers = [
+  //     new CustomerData('multipass1','11111','26','פעיל'),
+  //     new CustomerData('multipass2','22222','2','ליד'),
+  //     new CustomerData('multipass3','33333','3','ממתין לאישור'),
+  //     new CustomerData('multipass4','44444','4','מסורב'),
+  //     new CustomerData('multipass5','55555','5','מושהה'),
+  //     new CustomerData('multipass6','66666','6','מושהה'),
+  //     new CustomerData('multipass7','77777','26','פעיל'),
+  //     new CustomerData('multipass8','88888','2','ליד'),
+  //     new CustomerData('multipass9','99999','3','ממתין לאישור'),
+  //     new CustomerData('multipass12','12121','4','מסורב'),
+  //     new CustomerData('multipass13','13131','4','מושהה'),
+  //     new CustomerData('multipass14','14141','6','מושהה'),
       
-    ]
-  }
+  //   ]
+  // }
 
   fillteringUserData(userId){
     debugger
@@ -167,7 +167,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
   optionChange(){
       if(this.loadingCardGroup.get('selectedCustomerControl').value){
         this.showHiddenLoadingCardContent = true;
-        this.getCardsData();
+        // this.getCardsData();
         // this.loadingCardGroup.get('userId').enable();
       }
   }
@@ -230,23 +230,23 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
       }
     });
   }
-  getCardsData(){
-    this.cardsData = [
-      {customerName:'multipass1', customerId: '11111', cardId: '15245814', dataIssues: '03/01/2021', orderId: '900000025', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום'},
-      {customerName:'multipass2', customerId: '22222', cardId: '15245815', dataIssues: '03/02/2021', orderId: '900000025', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום'},
-      {customerName:'multipass3', customerId: '33333', cardId: '15245816', dataIssues: '03/03/2021', orderId: '900000025', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום'},
-      {customerName:'multipass4', customerId: '44444', cardId: '15245817', dataIssues: '03/04/2021', orderId: '900000028', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום'},
-      {customerName:'multipass5', customerId: '55555', cardId: '15245818', dataIssues: '03/05/2021', orderId: '900000029', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום'},
-      {customerName:'multipass6', customerId: '66666', cardId: '15245819', dataIssues: '03/06/2021', orderId: '900000030', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום'},
-      {customerName:'multipass7', customerId: '77777', cardId: '152458110', dataIssues: '03/07/2021', orderId: '900000031', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום'},
-      {customerName:'multipass8', customerId: '88888', cardId: '152458111', dataIssues: '03/08/2021', orderId: '900000032', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום'},
-      {customerName:'multipass9', customerId: '99999', cardId: '152458112', dataIssues: '03/09/2021', orderId: '900000033', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום'},
-      {customerName:'multipass12', customerId: '12121', cardId: '152458113', dataIssues: '04/01/2021', orderId: '900000034', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום'},
-      {customerName:'multipass13', customerId: '13131', cardId: '152458114', dataIssues: '05/01/2021', orderId: '900000035', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום'},
-      {customerName:'multipass14', customerId: '14141', cardId: '15245815', dataIssues: '06/01/2021', orderId: '900000036', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום'},
-      {customerName:'multipass15', customerId: '15151', cardId: '152458116', dataIssues: '07/01/2021', orderId: '900000037', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום'},
-    ];
-  }
+  // getCardsData(){
+  //   this.cardsData = [
+  //     {customerName:'multipass1', customerId: '11111', cardId: '15245814', dataIssues: '03/01/2021', orderId: '900000025', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום'},
+  //     {customerName:'multipass2', customerId: '22222', cardId: '15245815', dataIssues: '03/02/2021', orderId: '900000025', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום'},
+  //     {customerName:'multipass3', customerId: '33333', cardId: '15245816', dataIssues: '03/03/2021', orderId: '900000025', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום'},
+  //     {customerName:'multipass4', customerId: '44444', cardId: '15245817', dataIssues: '03/04/2021', orderId: '900000028', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום'},
+  //     {customerName:'multipass5', customerId: '55555', cardId: '15245818', dataIssues: '03/05/2021', orderId: '900000029', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום'},
+  //     {customerName:'multipass6', customerId: '66666', cardId: '15245819', dataIssues: '03/06/2021', orderId: '900000030', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום'},
+  //     {customerName:'multipass7', customerId: '77777', cardId: '152458110', dataIssues: '03/07/2021', orderId: '900000031', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום'},
+  //     {customerName:'multipass8', customerId: '88888', cardId: '152458111', dataIssues: '03/08/2021', orderId: '900000032', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום'},
+  //     {customerName:'multipass9', customerId: '99999', cardId: '152458112', dataIssues: '03/09/2021', orderId: '900000033', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום'},
+  //     {customerName:'multipass12', customerId: '12121', cardId: '152458113', dataIssues: '04/01/2021', orderId: '900000034', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום'},
+  //     {customerName:'multipass13', customerId: '13131', cardId: '152458114', dataIssues: '05/01/2021', orderId: '900000035', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום'},
+  //     {customerName:'multipass14', customerId: '14141', cardId: '15245815', dataIssues: '06/01/2021', orderId: '900000036', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום'},
+  //     {customerName:'multipass15', customerId: '15151', cardId: '152458116', dataIssues: '07/01/2021', orderId: '900000037', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום'},
+  //   ];
+  // }
   loadCard(){
     this.showHiddenLoadingCardContent = false;
   }

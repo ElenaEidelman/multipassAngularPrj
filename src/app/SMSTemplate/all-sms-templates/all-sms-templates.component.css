@@ -94,6 +94,25 @@ mat-accordion mat-expansion-panel mat-expansion-panel-header .mat-icon{
     direction: rtl;
     flex-direction: column !important;
 }
+mat-card-title{
+  display: flex;
+  /* display: table !important; 
+  width: 100%; */
+}
+mat-card-title > div{
+  /* display: table-cell;  */
+}
+.newSMSActionButtons{
+  display: flex;
+  flex-direction: row-reverse;
+  margin: 0;
+}
+.newSMSActionButtons > div{
+  margin-left: 10px;
+}
+.mat-card>.mat-card-actions{
+  text-align: right;
+}
   @media screen and (max-width: 1024px){
     .edit-buttons-wrap > button{
       width: 29%;

@@ -77,6 +77,7 @@ import { AdminNewCardComponent } from './Admin/admin-new-card/admin-new-card.com
 import { TestExpandingTableComponent } from './Orders/test-expanding-table/test-expanding-table.component';
 import { OrderLinesComponent } from './Orders/order-lines/order-lines.component';
 import { DialogComponent } from './PopUps/dialog/dialog.component';
+import { FormatDatePipe } from './Pipes/format-date.pipe';
 
 
 @NgModule({
@@ -113,7 +114,8 @@ import { DialogComponent } from './PopUps/dialog/dialog.component';
     AdminNewCardComponent,
     TestExpandingTableComponent,
     OrderLinesComponent,
-    DialogComponent
+    DialogComponent,
+    FormatDatePipe
   ],
   imports: [
     BrowserModule,

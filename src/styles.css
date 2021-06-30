@@ -5,6 +5,9 @@
 .wrapPage{
   margin: 15px;
 }
+button:hover{
+  cursor: pointer;
+}
 .wrapMain-Menu-View{
     display: flex;
     justify-content: space-between;
@@ -325,6 +328,9 @@ table.tableInsideElement tr th, tr td{
 form.addToExecOrderForm > table > tbody > tr > td{
   padding: 5px;
 }
+.mat-form-field-flex{
+  direction: ltr;
+}
 
 .datePickerPadding div.mat-form-field-flex{
   padding: 0;
@@ -442,6 +448,15 @@ dialog-content-example-dialog div.innerElement{
 
 .tableCageFlex{
   display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
+.tableCageFlex > div.iconB{
+ /* margin-left: auto; */
+}
+.tableCageFlex > div.textB{
+  margin: auto;
 }
 .tableOrderStatusClose > div,
 .tableOrderStatusOpen > div,
@@ -891,7 +906,7 @@ th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:
     flex-direction: column;
   }
   .main2-title > div{
-    text-align: center;
+    text-align: right;
     margin: 5px 0;
   }
   .wrapFlexTwoCol{

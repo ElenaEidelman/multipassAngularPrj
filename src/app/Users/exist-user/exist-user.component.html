@@ -53,13 +53,14 @@
                                         פרטי משתמש
                                     </div>
                                 </mat-panel-description>
-                            </mat-expansion-panel-header>
+                            </mat-expansion-panel-header
+                            >
                             <div class="wrapFormElement">
                                 <div class="wrapFlexTwoCol">
                                     <div class="formWrapColumn">
                                         <mat-form-field>
-                                            <mat-label>שם מלא*</mat-label>
-                                            <input matInput placeholder="שם מלא*" formControlName="FullName">
+                                            <mat-label>שם</mat-label>
+                                            <input matInput placeholder="שם*" formControlName="FName">
                                         </mat-form-field>
                                         <mat-form-field class="selectedFormFieldWidth">
                                             <mat-label>סטטוס</mat-label>
@@ -68,12 +69,11 @@
                                                     {{status.viewValue}}</mat-option>
                                             </mat-select>
                                         </mat-form-field>
-
                                     </div>
                                     <div class="formWrapColumn">
                                         <mat-form-field>
-                                            <mat-label>דוא"ל</mat-label>
-                                            <input matInput placeholder='דוא"ל' formControlName="Email">
+                                            <mat-label>שם משפחה</mat-label>
+                                            <input matInput placeholder="שם משפחה" formControlName="LName">
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>מספר משתמש של המערכת</mat-label>
@@ -82,12 +82,22 @@
                                     </div>
                                     <div class="formWrapColumn">
                                         <mat-form-field>
-                                            <mat-label>סיסמה*</mat-label>
-                                            <input matInput placeholder="סיסמה*" formControlName="Password">
+                                            <mat-label>ח.פ</mat-label>
+                                            <input matInput placeholder='ח.פ' formControlName="Tz">
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>מספר עובד</mat-label>
                                             <input matInput placeholder="מספר עובד" formControlName="Id">
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="formWrapColumn">
+                                        <mat-form-field>
+                                            <mat-label>דוא"ל</mat-label>
+                                            <input matInput placeholder='דוא"ל' formControlName="Email">
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <mat-label>סיסמה*</mat-label>
+                                            <input matInput placeholder="סיסמה*" formControlName="Password">
                                         </mat-form-field>
                                     </div>
                                 </div>

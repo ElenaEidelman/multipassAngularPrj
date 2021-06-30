@@ -21,7 +21,8 @@ export class BarChartComponent implements OnInit {
 
     // maintainAspectRatio: false,
     // We use these empty structures as placeholders for dynamic theming.
-    scales: { xAxes: [{
+    scales: { 
+              xAxes: [{
                         // barPercentage: 0.2,
                         gridLines: {
                           display: false
@@ -38,7 +39,9 @@ export class BarChartComponent implements OnInit {
       datalabels: {
         anchor: 'start',
         align: 'end',
+        color: 'black'
       }
+      
     }
     
   };

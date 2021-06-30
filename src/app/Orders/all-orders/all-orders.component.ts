@@ -24,18 +24,18 @@ import { DialogConfirmComponent } from 'src/app/PopUps/dialog-confirm/dialog-con
 })
 export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  
+
   constructor(
-              private fb: FormBuilder, 
-              private dataService: DataServiceService, 
-              private router: Router, 
-              private acivatedRoute: ActivatedRoute,
-              private sharedService: SharedService,
-              private dialog: MatDialog) { }
+    private fb: FormBuilder,
+    private dataService: DataServiceService,
+    private router: Router,
+    private acivatedRoute: ActivatedRoute,
+    private sharedService: SharedService,
+    private dialog: MatDialog) { }
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  
+
   //allOrders;
   displayedColumns: string[] = [];
 
@@ -58,26 +58,26 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     Status: (''),
   });
 
-   dataSource = new MatTableDataSource([]);
-   dataSourceSpare = new MatTableDataSource([]);
-   statusList = new Set();
+  dataSource = new MatTableDataSource([]);
+  dataSourceSpare = new MatTableDataSource([]);
+  statusList = new Set();
 
-   userToken: string;
+  userToken: string;
 
-    orderLabelForTable = [
-    {value: 'idex', viewValue: 'מספר הזמנה'}, //v
-    {value: 'OrganizationName', viewValue: 'שם הלקוח'},
-    {value: 'Total', viewValue: 'שווי ההזמנה'},//v
-    {value: 'CardsQty', viewValue: 'כמות שוברים בהזמנה'},
-    {value: 'MDate', viewValue: 'תאריך יצירת הזמנה'},
-    {value: 'ApproveDate', viewValue: 'תאריך שליחה'},//v
-    {value: 'UserId', viewValue: 'מספר לקוח בהנה"ח'},//v
-    {value: 'Status', viewValue: 'סטטוס הזמנה'},
+  orderLabelForTable = [
+    { value: 'idex', viewValue: 'מספר הזמנה' }, //v
+    { value: 'OrganizationName', viewValue: 'שם הלקוח' },
+    { value: 'Total', viewValue: 'שווי ההזמנה' },//v
+    { value: 'CardsQty', viewValue: 'כמות שוברים בהזמנה' },
+    { value: 'MDate', viewValue: 'תאריך יצירת הזמנה' },
+    { value: 'ApproveDate', viewValue: 'תאריך שליחה' },//v
+    { value: 'UserId', viewValue: 'מספר לקוח בהנה"ח' },//v
+    { value: 'Status', viewValue: 'סטטוס הזמנה' },
   ];
-  
+
 
   ngOnInit() {
-    window.scroll(0,0);
+    window.scroll(0, 0);
 
     this.filterActionButtonSpinner = true;
     this.userToken = JSON.parse(localStorage.getItem('user')).Token
@@ -85,71 +85,91 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     this.createDisplayedColumns(this.orderLabelForTable);
 
     this.activeRouteUnsubscribe = this.acivatedRoute.params.subscribe(param => {
-      if(param['customerName'] != undefined){
+      if (param['customerName'] != undefined) {
         this.filterTableGroup.get('OrganizationName').setValue(param['customerName']);
         this.filterTable();
       }
-      else{
-        this.getOrdersList();    
+      else {
+        this.getOrdersList();
       }
     })
 
   }
 
-  getStatusList(){
+  getStatusList() {
     //api/Orders/GetOrdersStatus
     //Token
 
-    let objToApi={
+    let objToApi = {
       Token: this.userToken
     }
 
     this.dataService.GetOrdersStatus(objToApi).subscribe(result => {
-      if(typeof result == 'object' && result.obj != null){
-        this.statusListArr = [...result.obj];
+
+      if (result['Token'] != undefined || result['Token'] != null) {
+
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
+
+
+        if (typeof result == 'object' && result.obj != null) {
+          this.statusListArr = [...result.obj];
+        }
+      }
+      else {
+        alert(result.errdesc);
+        this.sharedService.exitSystemEvent();
       }
     });
 
 
   }
-  getOrdersList(){
+  getOrdersList() {
+    //debugger
     this.filterActionButtonSpinner = true;
     let objToApi = {
       Token: this.userToken
     }
 
-    //getAllOrders
-    //GetOrdersByFilter
     this.filterActionButtonSpinner = true;
     this.dataService.GetOrdersByFilter(objToApi).subscribe(result => {
+      //debugger
 
       this.filterActionButtonSpinner = false;
-      if(result['Token'] != undefined){
+
+      if (result['Token'] != undefined || result['Token'] != null) {
 
         //set new token
-        // let tempObjUser = JSON.parse(localStorage.getItem('user'));
-        // tempObjUser['Token'] = result['Token'];
-        // localStorage.setItem('user',JSON.stringify(tempObjUser));
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
 
         // JSON.parse(localStorage.getItem('user'))
-        if(typeof result == 'object' && result.obj != null){
+        if (typeof result == 'object' && result.obj != null) {
           this.dataSourceSpare.data = result['obj'];
           this.dataSource.data = result['obj'];
         }
-        if(result.errdesc == 'No Data Found'){
-          this.noTableData = true;
+        // if(result.errdesc == 'No Data Found'){
+        //   this.noTableData = true;
+        // }
+        if (result.errdesc != null && result.errdesc != '') {
+          alert(result.errdesc);
         }
 
       }
-      else{
-        alert(JSON.stringify(result));
-        // this.sharedService.exitSystemEvent();
+      else {
+        alert(result.errdesc);
+        this.sharedService.exitSystemEvent();
       }
     })
   }
 
-  createDisplayedColumns(columns){
-    columns.forEach( el => {
+  createDisplayedColumns(columns) {
+    columns.forEach(el => {
       this.displayedColumns.push(el.value);
     });
 
@@ -158,68 +178,77 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     //debugger
   }
 
-  deleteOrder(order){
-
+  deleteOrder(order) {
     this.dialog.open(DialogConfirmComponent, {
-      data: {message: 'האם למחוק? '}
-    }). afterClosed().subscribe(response => {
+      data: { message: 'האם למחוק הזמנה מספר ' + ' ' + order.id + ' ?' }
+    }).afterClosed().subscribe(response => {
 
-      if(response.result == 'yes'){
+      if (response.result == 'yes') {
 
-                ///api/InsertUpdateOrder/DeleteVoidOrder
-                let objToApi = {
-                  Token: this.userToken,
-                  OrderId: order.id,
-                  UserID: order.UserId,       
-                   OpCode:"delete"
-              
-                }
-                this.dataService.DeleteVoidOrder(objToApi).subscribe(result => {
-                  debugger
-                 if(typeof result == 'object' && Object.values(result.obj[0]).includes('Order is deleted Successfully')){
-        
-                  this.dialog.open(DialogComponent, {
-                    data: {message: JSON.stringify(result.obj[0]['Order Status'])}
-                    });
-        
-                  this.getOrdersList();
-                 }
-                 if(typeof result == 'string'){
-        
-                 }
-                });
+        ///api/InsertUpdateOrder/DeleteVoidOrder
+        let objToApi = {
+          Token: this.userToken,
+          OrderId: order.id,
+          UserID: order.UserId,
+          OpCode: "delete"
+        }
+
+        this.dataService.DeleteVoidOrder(objToApi).subscribe(result => {
+          if (result['Token'] != undefined || result['Token'] != null) {
+
+            //set new token
+            let tempObjUser = JSON.parse(localStorage.getItem('user'));
+            tempObjUser['Token'] = result['Token'];
+            localStorage.setItem('user', JSON.stringify(tempObjUser));
+            this.userToken = result['Token'];
+
+            if (typeof result == 'object' && Object.values(result.obj[0]).includes('Order is deleted Successfully')) {
+
+              this.dialog.open(DialogComponent, {
+                data: { message: 'ההזמנה נמחקה בהצלחה' }
+              });
+
+              this.dataSource.data = [];
+              this.getOrdersList();
+            }
+          }
+          else {
+            alert(result.errdesc);
+            this.sharedService.exitSystemEvent();
+          }
+        });
       }
     })
   }
 
-  returnHebTranslation(obj,value){
+  returnHebTranslation(obj, value) {
     return obj.filter(el => el.value == value)[0].viewValue;
   }
 
-  resetForm(){
+  resetForm() {
 
     this.acivatedRoute.params.subscribe(param => {
       Object.keys(this.filterTableGroup.controls).forEach(control => {
         this.filterTableGroup.get(control).setValue('');
       });
       // this.filterTableGroup.reset();
-      if(Object.keys(param).length > 0){
- 
+      if (Object.keys(param).length > 0) {
+
         //for clear params from url
         this.router.navigate(['/public/allOrders']);
       }
-      else{
-        if(this.dataSourceSpare.data.length > 0){
+      else {
+        if (this.dataSourceSpare.data.length > 0) {
           this.dataSource.data = this.dataSourceSpare.data;
         }
-        else{
+        else {
           this.getOrdersList();
         }
       }
     });
 
   }
-  filterTable(){
+  filterTable() {
 
     this.noTableData = false;
     let filterList = this.filterTableGroup.value;
@@ -230,54 +259,63 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     //fill obj to api
-    debugger
+    // debugger
     Object.keys(filterList).forEach(element => {
-      if(filterList[element]!= null && filterList[element].toString() != ''){
+      if (filterList[element] != null && filterList[element].toString() != '') {
         inputSelected = true;
         objToApi[element] = filterList[element];
       }
     });
 
 
-    if(!inputSelected){
+    if (!inputSelected) {
       this.errorMsg = 'נא למלא לפחות אחד מהשדות';
-      setTimeout(()=>{
+      setTimeout(() => {
         this.errorMsg = '';
-      },3000);
+      }, 3000);
     }
-    else{
+    else {
 
       this.filterActionButtonSpinner = true;
-      this.dataService.GetOrdersByFilter(objToApi).subscribe(result => {
-        debugger
-        this.filterActionButtonSpinner = false;
-        if(typeof result == 'object' && result.obj != null){
-          this.dataSource.data = [...result['obj']];
-        }
+      // this.dataService.GetOrdersByFilter(objToApi).subscribe(result => {
+      //   // debugger
+      //   this.filterActionButtonSpinner = false;
 
-        if(result.errdesc == 'No Data Found'){
-          this.noTableData = true;
-          this.dataSource.data = [];
-        }
-        if(typeof result == 'string'){
-          this.errorMsg = result;
+      //   if (result['Token'] != undefined || result['Token'] != null) {
+      //     if (typeof result == 'object' && result.obj != null) {
+      //       this.dataSource.data = [...result['obj']];
+      //     }
 
-          setTimeout(() => {
-            this.errorMsg = '';
-          }, 3000);
-        }
-      })
+      //     if (result.errdesc == 'No Data Found') {
+      //       this.noTableData = true;
+      //       this.dataSource.data = [];
+      //     }
+      //     if (typeof result == 'string') {
+      //       this.errorMsg = result;
+
+      //       setTimeout(() => {
+      //         this.errorMsg = '';
+      //       }, 3000);
+      //     }
+      //   }
+      //   else {
+      //     alert(result.errdesc);
+      //     this.sharedService.exitSystemEvent();
+      //   }
+      // })
     }
   }
 
+  
+
   ngAfterViewInit() {
-    if(this.dataSource != undefined){
+    if (this.dataSource != undefined) {
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     }
   }
 
-  ngOnDestroy(){
+  ngOnDestroy() {
     this.activeRouteUnsubscribe.unsubscribe();
   }
 

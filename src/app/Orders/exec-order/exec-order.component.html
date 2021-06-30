@@ -14,7 +14,7 @@
         <div class="main-title">{{dataByPage[0].companyName}}</div>
         <div class="sub-title">ID: {{id}}</div>
     </div> -->
-    <div class="main-page-element">
+    <div class="main-page-element" *ngIf="dataByPage">
         <div class="page-element width-block">
             <div class="formBorder">
                 <div class="element-page-body flex-element">
@@ -56,15 +56,15 @@
                         </div>
                         <div class="flexDataChild">
                             <div>
-                                <div class="dataBolder">{{dataByPage != undefined ? dataByPage['MDate'] : ''}} </div>
+                                <div class="dataBolder">{{(dataByPage != undefined ? dataByPage['MDate'] : '') | formatDate }} </div>
                                 <div class="customerDataTitle">:תאריך יצירת הזמנה</div>
                             </div>
                             <div>
-                                <div class="dataBolder"> {{ dataByPage != undefined ? dataByPage['ApproveDate'] : ''}} </div>
+                                <div class="dataBolder"> {{(dataByPage != undefined ? dataByPage['ApproveDate'] : '') | formatDate}} </div>
                                 <div class="customerDataTitle">:תאריך הנפקה</div>
                             </div>
                             <div>
-                                <div class="dataBolder"> {{dataByPage != undefined ? dataByPage['CancelationDate']: ''}} </div>
+                                <div class="dataBolder"> {{(dataByPage != undefined ? dataByPage['CancelationDate']: '') | formatDate}} </div>
                                 <div class="customerDataTitle">:תאריך ביטול</div>
                             </div>
                         </div>
@@ -189,7 +189,7 @@
 
             <div class="innerElement flexElement">
                 <div class="flexButtonsElement">
-                    <div>
+                    <div *ngIf="dataByPage.StatusId == '1'">
                         <button mat-button class="deleteButton" (click)="deleteOrder()">מחק הזמנה
                             <mat-icon>delete</mat-icon>
                             <mat-spinner class="spinner" *ngIf="deleteCardsSpinner"></mat-spinner>

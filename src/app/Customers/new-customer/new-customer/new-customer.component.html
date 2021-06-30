@@ -28,6 +28,7 @@
                         </div>
                     </div>
                     <div class="error" *ngIf="errorActionButtons">{{errorActionButtons}}</div>
+                    <div class="msg" *ngIf="msgActionButtons">{{msgActionButtons}}</div>
                 </div>
 
 
@@ -114,10 +115,17 @@
                                             </button>
                                             <mat-error *ngIf="newCustomerForm.get('Email').hasError('email')">email not valid</mat-error>
                                         </mat-form-field>
-                                        <mat-form-field>
+                                        <!-- <mat-form-field>
                                             <mat-label>מספר משתמש</mat-label>
                                             <input matInput placeholder="מספר משתמש" formControlName="userNumber">
                                             <button class="clearButton" *ngIf="this.newCustomerForm.get('userNumber').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('userNumber').setValue('')">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        </mat-form-field> -->
+                                        <mat-form-field>
+                                            <mat-label>ח.פ*</mat-label>
+                                            <input matInput placeholder="ח.פ*" formControlName="Tz">
+                                            <button class="clearButton" *ngIf="this.newCustomerForm.get('Tz').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('Tz').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
                                         </mat-form-field>
@@ -237,7 +245,7 @@
                                                 <mat-icon>close</mat-icon>
                                             </button>
                                         </mat-form-field>
-                                        <mat-form-field appearance="fill"
+                                        <!-- <mat-form-field appearance="fill"
                                             class="datePicker datePickerPadding marginTop-1">
                                             <mat-label>תאריך תוקף לקוח</mat-label>
                                             <input matInput [matDatepicker]="picker" formControlName="ValidateDate">
@@ -246,16 +254,26 @@
                                             </button>
                                             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                                             <mat-datepicker #picker></mat-datepicker>
-                                        </mat-form-field>
+                                        </mat-form-field> -->
                                     </div>
                                     <div class="formWrapColumn">
-                                        <mat-form-field>
+                                        <!-- <mat-form-field>
                                             <mat-label>ח.פ*</mat-label>
                                             <input matInput placeholder="ח.פ*" formControlName="Tz">
                                             <button class="clearButton" *ngIf="this.newCustomerForm.get('Tz').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('Tz').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
-                                        </mat-form-field>
+                                        </mat-form-field> -->
+                                        <mat-form-field appearance="fill"
+                                        class="datePicker datePickerPadding marginTop-1">
+                                        <mat-label>תאריך תוקף לקוח</mat-label>
+                                        <input matInput [matDatepicker]="picker" formControlName="ValidateDate">
+                                        <button class="clearButton" *ngIf="this.newCustomerForm.get('ValidateDate').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('ValidateDate').setValue('')">
+                                            <mat-icon>close</mat-icon>
+                                        </button>
+                                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                        <mat-datepicker #picker></mat-datepicker>
+                                    </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>אחוז הנחה קבוע</mat-label>
                                             <input matInput placeholder="אחוז הנחה קבוע" formControlName="DealerDiscountPercent">

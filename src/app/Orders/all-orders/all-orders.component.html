@@ -109,15 +109,58 @@
                                 [class.tableOrderStatusFour] = "element['StatusId'] == 4"
                                 [class.tableOrderStatusFiftin] = "element['StatusId'] == 50">
 
-                                <div class="tableCageFlex" *ngIf="element['StatusId'] == 0"><mat-icon>hourglass_empty</mat-icon>{{element['Description']}}</div>
-                                <div class="tableCageFlex" *ngIf="element['StatusId'] == 1"><mat-icon>watch_later</mat-icon> {{element['Description']}}</div>
-                                <div class="tableCageFlex" *ngIf="element['StatusId'] == 2"><mat-icon>pending_actions</mat-icon>{{element['Description']}}</div>
-                                <div class="tableCageFlex" *ngIf="element['StatusId'] == 3"><mat-icon>local_printshop</mat-icon>{{element['Description']}}</div>
-                                <div class="tableCageFlex" *ngIf="element['StatusId'] == 4"><mat-icon>delivery_dining</mat-icon>{{element['Description']}}</div>
-                                <div class="tableCageFlex" *ngIf="element['StatusId'] == 50"><mat-icon>cancel</mat-icon>{{element['Description']}}</div>
-                                <div>{{element[obj]}}</div>
+                                <div class="tableCageFlex" *ngIf="element['StatusId'] == 0">
+                                    <div class="iconB">
+                                        <mat-icon>hourglass_empty</mat-icon>
+                                    </div>
+                                    <div class="textB">
+                                        {{element['Description']}}
+                                    </div>
+                                </div>
+                                <div class="tableCageFlex" *ngIf="element['StatusId'] == 1">
+                                    <div class="iconB">
+                                        <mat-icon>watch_later</mat-icon>
+                                    </div>
+                                    <div class="textB">{{element['Description']}}</div>
+                                </div>
+                                <div class="tableCageFlex" *ngIf="element['StatusId'] == 2">
+                                    <div class="iconB">
+                                        <mat-icon>pending_actions</mat-icon>
+                                    </div>
+                                    <div class="textB">
+                                        {{element['Description']}}
+                                    </div>
+                                </div>
+                                <div class="tableCageFlex" *ngIf="element['StatusId'] == 3">
+                                    <div class="iconB">
+                                        <mat-icon>local_printshop</mat-icon>
+                                    </div>
+                                    <div class="textB">{{element['Description']}}</div>
+                                </div>
+                                <div class="tableCageFlex" *ngIf="element['StatusId'] == 4">
+                                    <div class="iconB">
+                                        <mat-icon>delivery_dining</mat-icon>
+                                    </div>
+                                    <div class="textB">
+                                        {{element['Description']}}
+                                    </div>
+                                </div>
+                                <div class="tableCageFlex" *ngIf="element['StatusId'] == 50">
+                                    <div class="iconB">
+                                        <mat-icon>cancel</mat-icon>
+                                    </div>
+                                    <div class="textB">{{element['Description']}}</div>
+                                </div>
                             </div>
-                            <span *ngIf="obj != 'idex' && obj != 'OrganizationName' && obj != 'StatusDesc'">{{element[obj]}}</span>
+                            <span *ngIf="obj == 'ApproveDate' || obj == 'MDate'">{{element[obj] | formatDate}}</span>
+                            <span *ngIf="
+                                        obj != 'idex' && 
+                                        obj != 'OrganizationName' && 
+                                        obj != 'StatusDesc' &&
+                                        obj != 'ApproveDate' && 
+                                        obj != 'MDate'">{{element[obj]}}
+                            </span>
+
                         </td>
                     </ng-container>
                 </ng-container>

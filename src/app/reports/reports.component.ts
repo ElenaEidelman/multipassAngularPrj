@@ -1,10 +1,11 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'app-reports',
   templateUrl: './reports.component.html',
-  styleUrls: ['./reports.component.css']
+  styleUrls: ['./reports.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
 export class ReportsComponent implements OnInit, AfterViewInit {
 

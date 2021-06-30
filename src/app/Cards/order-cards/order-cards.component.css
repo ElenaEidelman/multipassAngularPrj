@@ -70,7 +70,16 @@ mat-hint{
     text-align: center;
 }
 
+.flexB{
+    display: flex;
+    justify-content: center;
+    margin-left: auto;
+}
 @media screen and (max-width: 1024px){
+    .flexB{
+        margin-left: 0;
+        margin: auto;
+    }
     .formWrapRow{
         flex-direction: column;
     }

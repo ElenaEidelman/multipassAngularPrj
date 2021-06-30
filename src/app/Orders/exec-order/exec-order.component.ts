@@ -22,19 +22,19 @@ import { AlertMessage } from 'src/assets/alertMessage';
 
 
 export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
-    @ViewChildren('orderLinesChildren') orderLinesChildren;
-  
+  @ViewChildren('orderLinesChildren') orderLinesChildren;
+
 
   // OrderData;
 
   constructor(
-                private activeRoute: ActivatedRoute, 
-                private fb: FormBuilder, 
-                private dataService: DataServiceService, 
-                private sharedService: SharedService,
-                private router: Router,
-                private dialog: MatDialog) { }
-  
+    private activeRoute: ActivatedRoute,
+    private fb: FormBuilder,
+    private dataService: DataServiceService,
+    private sharedService: SharedService,
+    private router: Router,
+    private dialog: MatDialog) { }
+
   insertOrderLineSpinner: boolean = false;
   createCardsSpinner: boolean = false;
   deleteCardsSpinner: boolean = false;
@@ -49,31 +49,31 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   newOrder: boolean = false;
   //translate customer data value to hebrew
   CustomerLangObj = [
-    {value: 'Fname', viewValue: 'שם'},
-    {value: 'Lname', viewValue: 'שם משפחה'},
-    {value: 'Tz', viewValue: 'ח.פ'},
-    {value: 'Email', viewValue: 'מייל'},
-    {value: 'Phone', viewValue: 'טלפון'},
-    {value: 'Phone1', viewValue: 'טלפון נוסף'}
+    { value: 'PayFName', viewValue: 'שם' },
+    { value: 'PayLName', viewValue: 'שם משפחה' },
+    { value: 'Tz', viewValue: 'ח.פ' },
+    { value: 'Email', viewValue: 'מייל' },
+    { value: 'Phone', viewValue: 'טלפון' },
+    { value: 'Phone1', viewValue: 'טלפון נוסף' }
   ];
 
   Customer;
 
-//orderDetail must contain one row with empty data
+  //orderDetail must contain one row with empty data
   orderDetails = [
-    {id:0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem : 0}
+    { id: 0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem: 0 }
   ];
- 
-  displayedColumnsOrderDetails = ['id','QTY','LoadSum','ValidationDate','TotalForItem','additionalColumn'];
+
+  displayedColumnsOrderDetails = ['id', 'QTY', 'LoadSum', 'ValidationDate', 'TotalForItem', 'additionalColumn'];
 
   orderDetailsUpdateForm = this.fb.group({});
 
   columnsHeb = {
-    'id' : "מס''ד",
-    'QTY' : 'כמות כרטיסים	',
-    'LoadSum' : 'סכום טעינה',
-    'ValidationDate' : 'תוקף',
-    'TotalForItem' : "סה''כ סכום טעינה",
+    'id': "מס''ד",
+    'QTY': 'כמות כרטיסים	',
+    'LoadSum': 'סכום טעינה',
+    'ValidationDate': 'תוקף',
+    'TotalForItem': "סה''כ סכום טעינה",
   }
 
   Orders: MatTableDataSource<any>;
@@ -87,13 +87,13 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   alertMessage: string = '';
   orderTitle = '';
 
-  sendSuccess: boolean = false; 
+  sendSuccess: boolean = false;
   viewAddToExecOrderForm: boolean = true;
 
   totalTicketCount: number = 0;
   totalOrderSum: number = 0;
 
-  userToken : string;
+  userToken: string;
 
   orderDetailsTable;
 
@@ -102,7 +102,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     ticketCount: ['', [Validators.required, Validators.min(1), Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
     chargeAmount: ['', [Validators.required, Validators.min(1), Validators.max(1000), Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
     validity: [new Date(new Date().setDate(new Date().getDate() + 1)), Validators.required],
-    TotalForItem: [{value: '', disabled: true}]
+    TotalForItem: [{ value: '', disabled: true }]
   });
 
   //מספר אסמכתה
@@ -111,7 +111,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   //disable all days before current data
   calendarFilter = (d: Date | null): boolean => {
     //  debugger
-    const day = (d || new Date()).getDate() < 10 ? '0' + (d || new Date()).getDate() : (d || new Date()).getDate()  ;
+    const day = (d || new Date()).getDate() < 10 ? '0' + (d || new Date()).getDate() : (d || new Date()).getDate();
     const month = ((d || new Date()).getMonth() + 1) < 10 ? '0' + ((d || new Date()).getMonth() + 1) : ((d || new Date()).getMonth() + 1);
     const year = (d || new Date()).getFullYear();
 
@@ -120,18 +120,18 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnInit() {
-    window.scroll(0,0);
+    window.scroll(0, 0);
 
     let url = this.router.url;
-    this.idUnsubscribe = this.activeRoute.params.subscribe( param => {
+    this.idUnsubscribe = this.activeRoute.params.subscribe(param => {
       this.userToken = JSON.parse(localStorage.getItem('user')).Token;
 
       let objToApi = {
-        Token : this.userToken
+        Token: this.userToken
       }
 
       //if order id received
-      if(url.includes('order')){
+      if (url.includes('order')) {
         this.orderId = param['id'];
         this.customerId = param['customerId'];
         this.newOrder = false;
@@ -139,26 +139,26 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
         debugger
         this.dataService.GetOrderDetails(objToApi).subscribe(result => {
-         debugger
-          if(typeof result == 'string'){
+          debugger
+          if (typeof result == 'string') {
             alert(result);
           }
-          else{
-            if(result['Token'] != undefined){
-  
+          else {
+            if (result['Token'] != undefined) {
+
               //set new token
               // let tempObjUser = JSON.parse(localStorage.getItem('user'));
               // tempObjUser['Token'] = result['Token'];
               // localStorage.setItem('user',JSON.stringify(tempObjUser));
-    
-              
+
+
               //
-             // debugger
+              // debugger
               this.dataByPage = result['obj'][0];
-                  
+
               //get customer data
               this.Customer = result['obj'][0]['User'];
-    
+              debugger
               //debugger
               this.Orders = new MatTableDataSource(result['obj'][0]['Lines']);
 
@@ -166,12 +166,12 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
                 debugger
                 this.orderDetails.unshift(element);
               });
-  
+
               this.orderDetailsTable = new MatTableDataSource(this.orderDetails);
               this.setTitles();
               this.totalData();
             }
-            else{
+            else {
               alert(JSON.stringify(result));
               // this.sharedService.exitSystemEvent();
             }
@@ -180,11 +180,11 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       }
 
       //if customer id recevied for new order
-      if(url.includes('newOrder')){
+      if (url.includes('newOrder')) {
         this.customerId = param['customerId'];
         this.newOrder = true;
 
-        let objToApi  = {
+        let objToApi = {
           Token: this.userToken,
           CustomerId: param['customerId']
         }
@@ -193,25 +193,25 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
           this.Customer = result.obj[0];
           this.dataByPage = result.obj[0];
         });
-        
-        let orderDetails = [{id:0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem : 0}];
+
+        let orderDetails = [{ id: 0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem: 0 }];
         this.orderDetailsTable = new MatTableDataSource(orderDetails);
       }
     })
-    
+
     this.RefControl.setValue(this.orderId);
     this.totalData();
   }
 
-  setTitles(){
+  setTitles() {
     //debugger
-    if(this.Orders != undefined){
+    if (this.Orders != undefined) {
       //debugger
-      if(this.orderId != undefined){
+      if (this.orderId != undefined) {
         //debugger
         this.orderTitle = 'פרוט הזמנה';
       }
-      if(this.customerId != undefined){
+      if (this.customerId != undefined) {
         this.orderTitle = 'הזמנה חדשה';
 
         // let orderDetails = [{id:0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem : 0}];
@@ -219,23 +219,24 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         //debugger
       }
     }
-    else{
+    else {
       alert('this.Orders == ' + this.Orders);
     }
   }
 
-  totalData(){
+  totalData() {
     this.totalTicketCount = 0;
     this.totalOrderSum = 0;
     //debugger
-    
+
     this.orderDetails.forEach(el => {
-          this.totalTicketCount += el.QTY;
-          this.totalOrderSum += el.TotalForItem;
-        }
-    )}
-  
-  sendMessageToCustomer(){
+      this.totalTicketCount += el.QTY;
+      this.totalOrderSum += el.TotalForItem;
+    }
+    )
+  }
+
+  sendMessageToCustomer() {
     this.alertMessage = AlertMessage.sendSuccessfully;
     this.sendSuccess = true;
     setTimeout(() => {
@@ -244,7 +245,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     }, 3000);
   }
 
-  deleteRow(element,row){
+  deleteRow(element, row) {
 
     let date = element.ValidationDate.split('/');
     let dateForApi = date[1] + '-' + date[0] + '-' + date[2];
@@ -252,138 +253,162 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
     let objToApi = {
       Token: this.userToken,
-      OrderId:this.orderId.toString(),
-      UserID:this.customerId,
+      OrderId: this.orderId.toString(),
+      UserID: this.customerId,
       ChargeAmount: element.LoadSum,
       Validity: dateForApi,
-      OpCode:"delete"
+      OpCode: "delete"
     }
 
-    
-    //chow spinner of order line by id
-    // this.orderLinesChildren._results.forEach(el => {
-    //   let spinner = (el.nativeElement.children['spinnerDelete' + element.id] as HTMLBodyElement);
-    //   if(spinner != undefined){
-    //     (el.nativeElement.children['spinnerDelete' + element.id] as HTMLBodyElement).classList.remove('disableSpinner');
-    //     (el.nativeElement.children['spinnerDelete' + element.id] as HTMLBodyElement).classList.add('enableSpinner');
-    //   }
-    // })
+
+    //show spinner of order line by id
+    this.orderLinesChildren._results.forEach(el => {
+      let spinner = (el.nativeElement.children['spinnerDelete' + element.id] as HTMLBodyElement);
+      if (spinner != undefined) {
+        (el.nativeElement.children['spinnerDelete' + element.id] as HTMLBodyElement).classList.remove('disableSpinner');
+        (el.nativeElement.children['spinnerDelete' + element.id] as HTMLBodyElement).classList.add('enableSpinner');
+      }
+    })
+
     debugger
     this.dataService.InsertUpdateLines(objToApi).subscribe(result => {
       debugger
-      this.orderDetails = [
-        {id:0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem : 0}
-      ];
-      if(result['obj'][0]['Lines'].length > 0){
-        this.orderDetails.unshift(... result['obj'][0]['Lines']);
+      if (result['Token'] != undefined || result['Token'] != null) {
+
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
+
+        this.orderDetails = [
+          { id: 0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem: 0 }
+        ];
+        if (result['obj'][0]['Lines'].length > 0) {
+          this.orderDetails.unshift(...result['obj'][0]['Lines']);
+        }
+
+        // let filteringObj = this.orderDetails.filter((el, indexRow) => {
+        //    return indexRow != row;
+        // });
+        this.orderDetailsTable.data = this.orderDetails;
+        this.totalData();
+        // this.orderDetails = filteringObj;
       }
-
-
-
-
-      // let filteringObj = this.orderDetails.filter((el, indexRow) => {
-      //    return indexRow != row;
-      // });
-      this.orderDetailsTable.data = this.orderDetails;
-      this.totalData();
-      // this.orderDetails = filteringObj;
-      
+      else {
+        alert(result.errdesc);
+        this.sharedService.exitSystemEvent();
+      }
     });
 
   }
-  addOrderLine(){
-    if(this.newOrder){
-      if(this.addToExecOrderForm.valid){
+  addOrderLine() {
+    if (this.newOrder) {
+      if (this.addToExecOrderForm.valid) {
         this.insertOrderLineSpinner = true;
         let ticketCount = +this.addToExecOrderForm.get('ticketCount').value;
         let chargeAmount = +this.addToExecOrderForm.get('chargeAmount').value;
         let validity = this.addToExecOrderForm.get('validity').value;
-        let validityFormating = (new Date(validity).getDate() < 10 ? '0' + new Date(validity).getDate() : new Date(validity).getDate() )  + '/' + ((new Date(validity).getMonth() + 1) < 10 ? '0' + (new Date(validity).getMonth() + 1) : new Date(validity).getMonth() + 1) + '/' + new Date(validity).getFullYear();
+        let validityFormating = (new Date(validity).getDate() < 10 ? '0' + new Date(validity).getDate() : new Date(validity).getDate()) + '/' + ((new Date(validity).getMonth() + 1) < 10 ? '0' + (new Date(validity).getMonth() + 1) : new Date(validity).getMonth() + 1) + '/' + new Date(validity).getFullYear();
         this.addToExecOrderForm.get('TotalForItem').setValue(ticketCount * chargeAmount);
         let TotalForItem = +this.addToExecOrderForm.get('TotalForItem').value;
-  
+
         let objToApi = {
           Token: this.userToken,
           UserId: this.customerId,
           ChargeAmount: chargeAmount,
           TicketCount: ticketCount,
           Validity: validity,
-          OpCode:"insert"
+          OpCode: "insert"
         }
-  
+
         //query for insert update order lines, but not for the first line
-        if(this.orderDetailsTable.data.length > 1){
-  
+        if (this.orderDetailsTable.data.length > 1) {
+
           objToApi['OrderId'] = this.orderId;
-  
+
           debugger
           this.dataService.InsertUpdateLines(objToApi).subscribe(result => {
             debugger
             this.insertOrderLineSpinner = false;
-            if(result['obj'] != undefined){
-  
-              this.orderDetails = [
-                {id:0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem : 0}
-              ];
-  
-              this.orderDetails.unshift(...result['obj'][0]['Lines']);
-              this.orderDetailsTable = new MatTableDataSource(this.orderDetails);
-              //calculate new total dat
-              this.totalData();
+
+            if (result['Token'] != undefined || result['Token'] != null) {
+
+              //set new token
+              let tempObjUser = JSON.parse(localStorage.getItem('user'));
+              tempObjUser['Token'] = result['Token'];
+              localStorage.setItem('user', JSON.stringify(tempObjUser));
+              this.userToken = result['Token'];
+
+              if (result['obj'] != undefined) {
+
+                this.orderDetails = [
+                  { id: 0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem: 0 }
+                ];
+
+                this.orderDetails.unshift(...result['obj'][0]['Lines']);
+                this.orderDetailsTable = new MatTableDataSource(this.orderDetails);
+                //calculate new total dat
+                this.totalData();
+              }
+            }
+            else {
+              alert(result.errdesc);
+              this.sharedService.exitSystemEvent();
             }
           });
         }
-  
-         //insert first line, create new order
-        else{
+
+        //insert first line, create new order
+        else {
           this.dataService.InsertUpdateOrder(objToApi).subscribe(result => {
             this.insertOrderLineSpinner = false;
-  
-            if(result['obj'][0]['Lines'].length > 0){
+
+            if (result['obj'][0]['Lines'].length > 0) {
               this.orderDetails = [
-                {id:0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem : 0}
+                { id: 0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem: 0 }
               ];
-          
+
               this.orderDetails.unshift(result['obj'][0]['Lines'][0]);
-  
+
               this.orderDetailsTable = new MatTableDataSource(this.orderDetails);
-  
+
               //after created new order, set order id
               this.orderId = result['obj'][0]['orderid'];
-  
+
               //calculate new total dat
               this.totalData();
             }
           });
         }
-  
+
         //reset form
         this.viewAddToExecOrderForm = false;
-        setTimeout(()=>{
+        setTimeout(() => {
           this.addToExecOrderForm.reset();
           this.addToExecOrderForm.get('validity').setValue(new Date(new Date().setDate(new Date().getDate() + 1)));
           this.viewAddToExecOrderForm = true;
         }, 0);
-  
+
       }
-      else{
+      else {
         this.addOrderLineErrMsg = 'נא למלא את כל השדות';
 
-        setTimeout(()=>{
+        setTimeout(() => {
           this.addOrderLineErrMsg = '';
         }, 3000);
       }
     }
 
     //not new order
-    else{
+    else {
       alert('not new order');
     }
   }
 
-  ApproveOrder(){
+  ApproveOrder() {
 
-    if(this.orderDetails.length > 1){
+    if (this.orderDetails.length > 1) {
       this.createCardsSpinner = true;
       let objToApi = {
         Token: this.userToken,
@@ -394,78 +419,104 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       this.dataService.ApproveOrder(objToApi).subscribe(result => {
         debugger
         this.createCardsSpinner = false;
-        if(typeof result == 'object' && result.obj != null && result.obj.length > 0){
-          this.orderMsg = 'הזמנה נקלטה בהצלחה';
-          setTimeout(()=> {
-            this.orderMsg = '';
-          }, 3000);
 
-          setTimeout(() => {
-            this.router.navigate(['/public/order/', result.obj[0]['orderid'], this.customerId]);
-          }, 3000);
-          
-        }
-        if(result.obj == null){
-          alert('order already created => orderId: ' + this.orderId);
-        }
-        else{
-          this.errorMsg = result;
+        if (result['Token'] != undefined || result['Token'] != null) {
 
-          setTimeout(()=>{
-            this.errorMsg = '';
-          }, 3000)
+
+
+          //set new token
+          let tempObjUser = JSON.parse(localStorage.getItem('user'));
+          tempObjUser['Token'] = result['Token'];
+          localStorage.setItem('user', JSON.stringify(tempObjUser));
+          this.userToken = result['Token'];
+
+          if (typeof result == 'object' && result.obj != null && result.obj.length > 0) {
+            this.orderMsg = 'הזמנה נקלטה בהצלחה';
+            setTimeout(() => {
+              this.orderMsg = '';
+            }, 3000);
+
+            setTimeout(() => {
+              this.router.navigate(['/public/order/', result.obj[0]['orderid'], this.customerId]);
+            }, 3000);
+
+          }
+          // if (result.obj == null) {
+          //   alert('order already created => orderId: ' + this.orderId);
+          // }
+          else {
+            // this.errorMsg = result;
+
+            // setTimeout(() => {
+            //   this.errorMsg = '';
+            // }, 3000)
+          }
+        }
+        else {
+          alert(result.errdesc);
+          this.sharedService.exitSystemEvent();
         }
       })
     }
-    else{
+    else {
       this.errorMsg = 'נא ליצור לפחות הזמנה אחת';
 
-      setTimeout(()=>{
+      setTimeout(() => {
         this.errorMsg = '';
       }, 3000)
     }
   }
-  deleteOrder(){
-    
-    this.dialog.open(DialogConfirmComponent,{
-      data: {message: 'האם למחוק הזמנה מספר: ' + ' ' + this.orderId}
-    }).afterClosed().subscribe(response =>  {
-      if(response.result == 'yes'){
+  deleteOrder() {
+
+    this.dialog.open(DialogConfirmComponent, {
+      data: { message: 'האם למחוק הזמנה מספר: ' + ' ' + this.orderId }
+    }).afterClosed().subscribe(response => {
+      if (response.result == 'yes') {
+
         let objToApi = {
           Token: this.userToken,
-          OrderId:this.orderId,
-          UserID:this.customerId,       
-           OpCode:"delete"
-      
+          OrderId: this.orderId,
+          UserID: this.customerId,
+          OpCode: "delete"
         }
+
         this.deleteCardsSpinner = true;
         this.dataService.DeleteVoidOrder(objToApi).subscribe(result => {
-          debugger
           this.deleteCardsSpinner = false;
 
-         if(typeof result == 'object' && Object.values(result.obj[0]).includes('Order is deleted Successfully')){
-          this.orderMsgDelete = 'ההזמנה נמחקה בהצלחה';
-          setTimeout(() => {
-            this.orderMsgDelete = '';
-            this.router.navigate(['/public/allOrders']);
-          }, 2000);
-         }
-         if(typeof result == 'string'){
-           this.errorMsgDelete = result;
-           setTimeout(()=> {
-             this.errorMsgDelete = '';
-           }, 3000);
-         }
-         else{
-          alert(JSON.stringify(result));
-         }
+          if (result['Token'] != undefined || result['Token'] != null) {
+
+            //set new token
+            let tempObjUser = JSON.parse(localStorage.getItem('user'));
+            tempObjUser['Token'] = result['Token'];
+            localStorage.setItem('user', JSON.stringify(tempObjUser));
+            this.userToken = result['Token'];
+
+            if (typeof result == 'object' && Object.values(result.obj[0]).includes('Order is deleted Successfully')) {
+              this.orderMsgDelete = 'ההזמנה נמחקה בהצלחה';
+              setTimeout(() => {
+                this.orderMsgDelete = '';
+                this.router.navigate(['/public/allOrders']);
+              }, 2000);
+            }
+            if (typeof result == 'string') {
+              this.errorMsgDelete = result;
+              setTimeout(() => {
+                this.errorMsgDelete = '';
+              }, 3000);
+            }
+          }
+          else {
+            alert(result.errdesc);
+            this.sharedService.exitSystemEvent();
+          }
         });
       }
     })
 
   }
 
-  calculateTotalCharge(){
+  calculateTotalCharge() {
     let ticketCount = this.addToExecOrderForm.get('ticketCount').value;
     let chargeAmount = this.addToExecOrderForm.get('chargeAmount').value;
 
@@ -473,16 +524,16 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     //debugger
   }
 
-  returnHebTranslation(value){
+  returnHebTranslation(value) {
     return this.CustomerLangObj.filter(el => el.value == value)[0].viewValue;
   }
 
-  
-  ngOnChanges(changes: SimpleChanges){
+
+  ngOnChanges(changes: SimpleChanges) {
 
   }
 
-  ngOnDestroy(){
+  ngOnDestroy() {
     this.idUnsubscribe.unsubscribe();
   }
 

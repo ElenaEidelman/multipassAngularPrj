@@ -12,8 +12,9 @@ import { AlertMessage } from 'src/assets/alertMessage';
 import { OrderData } from '../../Classes/OrderData';
 import { faFileExcel } from '@fortawesome/free-solid-svg-icons';
 import { DataServiceService } from 'src/app/data-service.service';
-import { DialogConfirmComponent} from 'src/app/PopUps/dialog-confirm/dialog-confirm.component';
+import { DialogConfirmComponent } from 'src/app/PopUps/dialog-confirm/dialog-confirm.component';
 import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
+import { SharedService } from 'src/app/shared.service';
 
 
 
@@ -25,33 +26,34 @@ import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
 export class ExistCustomerComponent implements OnInit {
 
   @ViewChild(MatAccordion) accordion: MatAccordion;
-   faFileExcel = faFileExcel;
+  faFileExcel = faFileExcel;
 
-    // data chart
-    public recOrdersChartData: ChartDataSets[];
-    public recOrdersChartLabels:Label[];
+  // data chart
+  public recOrdersChartData: ChartDataSets[];
+  public recOrdersChartLabels: Label[];
 
-    userToken: string;
-    userId;
-    errorActionButtons: string = '';
-    msgActionButtons: string = '';
-    customerData;
-    customerOrders;
+  userToken: string;
+  userId;
+  errorActionButtons: string = '';
+  msgActionButtons: string = '';
+  customerData;
+  customerOrders;
 
-    saveFormSpinner: boolean = false;
+  saveFormSpinner: boolean = false;
 
 
-    customerDetails;
-    customerAddress;
-    customerSettings;
+  customerDetails;
+  customerAddress;
+  customerSettings;
 
   constructor(
-              private activeRoute: ActivatedRoute, 
-              private router: Router, 
-              private fb: FormBuilder, 
-              private dataService: DataServiceService,
-              public dialog: MatDialog) { }
-  
+    private activeRoute: ActivatedRoute,
+    private router: Router,
+    private fb: FormBuilder,
+    private dataService: DataServiceService,
+    public dialog: MatDialog,
+    private sharedService: SharedService) { }
+
   CustomerForm = this.fb.group({
     OrganizationName: ['', Validators.required],//v
     FName: (''),
@@ -60,7 +62,7 @@ export class ExistCustomerComponent implements OnInit {
     Phone: (''), //v
     Permission: ['', Validators.required],//v
     Phone1: (''), //v
-    userNumber: [{value: '', disabled: true}], //v
+    userNumber: [{ value: '', disabled: true }], //v
     CityName: (''),//v
     Streetno: (''),//v
     HouseNumber: (''), //new
@@ -68,40 +70,48 @@ export class ExistCustomerComponent implements OnInit {
     floor: (''), // new
     ApartmentNo: (''),//v
     ZIP: (''), // ------------
-    StatusId: [{value: '', disabled: true}],
+    StatusId: [{ value: '', disabled: true }],
     MultipassIclientID: (''),
     Tz: ['', Validators.required],//v
     DealerDiscountPercent: (''), //v
     ValidateDate: (''), //new
     BusinessFile: ('/test.txt') //must to be required Validators.required
-});
+  });
 
   idUnsubscribe;
 
 
   ngOnInit() {
-    window.scroll(0,0);
+    window.scroll(0, 0);
     this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
 
-    this.idUnsubscribe = this.activeRoute.params.subscribe( param => {
+    this.idUnsubscribe = this.activeRoute.params.subscribe(param => {
       this.userId = param['id'];
 
-      let objToApi={
+      let objToApi = {
         Token: this.userToken,
         CustomerId: param['id']
       }
-      
 
+      debugger
       this.dataService.GetCustomersByFilter(objToApi).subscribe(result => {
-        if(typeof result == 'object' && result.obj != null){
-          this.customerData = result.obj[0];
+        debugger
+        if (result['Token'] != undefined || result['Token'] != null) {
 
-          Object.keys(result.obj[0]).forEach(el => {
-            if(this.CustomerForm.get(el) != null){
-              this.CustomerForm.get(el).setValue(result.obj[0][el]);
-            }
-          });
-      this.getChartData();
+          if (typeof result == 'object' && result.obj != null) {
+            this.customerData = result.obj[0];
+
+            Object.keys(result.obj[0]).forEach(el => {
+              if (this.CustomerForm.get(el) != null) {
+                this.CustomerForm.get(el).setValue(result.obj[0][el]);
+              }
+            });
+            this.getChartData();
+          }
+        }
+        else {
+          alert(result.errdesc);
+          this.sharedService.exitSystemEvent();
         }
       });
 
@@ -116,51 +126,66 @@ export class ExistCustomerComponent implements OnInit {
 
   }
 
-  
-  ngOnChanges(changes: SimpleChanges){
+
+  ngOnChanges(changes: SimpleChanges) {
 
   }
 
-  getChartData(){
+  getChartData() {
     // this.recOrdersChartData = [
     //   { data: [1500,2000,1750,9000,500, 250], label: 'ערך הזמנה' }
     // ];
 
-    
+
     // this.recOrdersChartLabels = ['16:12:23 16/03/2021','15:12:23 14/03/2021','13:12:23 13/03/2021','12:12:23 11/03/2021','16:12:23 9/03/2021','16:12:23 6/03/2021'];
-  
+
 
     let objToApi = {
       Token: this.userToken,
       UserID: this.userId
     }
+    debugger
     this.dataService.GetOrdersByFilter(objToApi).subscribe(result => {
-      if(typeof result == 'object' && result['obj'] != undefined && result['obj'].length > 0){
-        this.customerOrders = result.obj;
-        let totalOrder = 0;
-        let totalByOrder = [];
-        let createDateByOrder = [];
+      debugger
+      if (result['Token'] != undefined || result['Token'] != null) {
 
-        result['obj'].forEach(element => {
-          totalOrder += element.Total;
-          totalByOrder.push(element.Total);
-          createDateByOrder.push(element.MDate);
-        });
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
 
-        this.recOrdersChartData = [
-          { data: totalByOrder, label: 'הזמנות אחרונות' }
-          // { data: totalByOrder, label: 'הזמנות אחרונות' }
-        ];
+        if (typeof result == 'object' && result['obj'] != undefined && result['obj'].length > 0) {
+          this.customerOrders = result.obj;
+          let totalOrder = 0;
+          let totalByOrder = [];
+          let createDateByOrder = [];
+
+          result['obj'].forEach(element => {
+            totalOrder += element.Total;
+            totalByOrder.push(element.Total);
+            createDateByOrder.push(this.formatDate(element.MDate));
+          });
+
+          this.recOrdersChartData = [
+            { data: totalByOrder, label: 'הזמנות אחרונות' }
+            // { data: totalByOrder, label: 'הזמנות אחרונות' }
+          ];
 
 
-        this.recOrdersChartLabels = createDateByOrder;
+          this.recOrdersChartLabels = createDateByOrder;
+        }
+      }
+      else {
+        alert(result.errdesc);
+        this.sharedService.exitSystemEvent();
       }
     });
-  
+
   }
 
-  saveForm(){
-    if(this.CustomerForm.valid){
+  saveForm() {
+    if (this.CustomerForm.valid) {
       this.saveFormSpinner = true;
 
       let date = new Date(this.CustomerForm.get('ValidateDate').value);
@@ -176,77 +201,103 @@ export class ExistCustomerComponent implements OnInit {
         Token: this.userToken, //req
         Id: this.customerData.id
       }
-  
+
       Object.keys(data).forEach(key => {
-        if(data[key] != ''){
+        if (data[key] != '') {
           objToApi[key] = data[key]
         }
       })
 
       //change to numeric
-      objToApi['Tz']= +objToApi['Tz'];
+      objToApi['Tz'] = +objToApi['Tz'];
       objToApi['ValidateDate'] = formattingDate;
 
+      debugger
       this.dataService.InsertUpdateUser(objToApi).subscribe(result => {
+        debugger
         this.saveFormSpinner = false;
-        if(typeof result == 'object' && result.obj != null){
 
-          this.msgActionButtons = 'נשמר בהצלחה';
-          setTimeout(()=>{
-            this.msgActionButtons = '';
-          }, 3000);
-          
-          this.customerData = result.obj[0];
-          this.customerData.ValidateDate = result.obj[0]['businessValidDate'];
-          
-          Object.keys(result.obj[0]).forEach(el => {
-            if(this.CustomerForm.get(el) != null){
-              this.CustomerForm.get(el).setValue(result.obj[0][el]);
-            }
-          });
+        if (result['Token'] != undefined || result['Token'] != null) {
 
+          //set new token
+          let tempObjUser = JSON.parse(localStorage.getItem('user'));
+          tempObjUser['Token'] = result['Token'];
+          localStorage.setItem('user', JSON.stringify(tempObjUser));
+          this.userToken = result['Token'];
+
+          if (typeof result == 'object' && result.obj != null) {
+
+            this.msgActionButtons = 'נשמר בהצלחה';
+            setTimeout(() => {
+              this.msgActionButtons = '';
+            }, 3000);
+
+            this.customerData = result.obj[0];
+            this.customerData.ValidateDate = result.obj[0]['businessValidDate'];
+
+            Object.keys(result.obj[0]).forEach(el => {
+              if (this.CustomerForm.get(el) != null) {
+                this.CustomerForm.get(el).setValue(result.obj[0][el]);
+              }
+            });
+
+          }
+          if (typeof result == 'string') {
+            this.errorActionButtons = result;
+
+            setTimeout(() => {
+              this.errorActionButtons = '';
+            }, 3000);
+          }
         }
-        if(typeof result == 'string'){
-          this.errorActionButtons = result;
-
-          setTimeout(() => {
-            this.errorActionButtons = '';
-          }, 3000);
+        else {
+          alert(result.errdesc);
+          this.sharedService.exitSystemEvent();
         }
-        // else{
-        //   alert(JSON.stringify(result));
-        // }
       });
     }
-    else{
+    else {
       alert('form validation error');
     }
   }
 
-  deleteCustomer(){
+  deleteCustomer() {
 
-    const dialogRef = this.dialog.open(DialogConfirmComponent,{
-      data: {message: 'האם למחוק ' + this.customerData.OrganizationName + '?'}
+    const dialogRef = this.dialog.open(DialogConfirmComponent, {
+      data: { message: 'האם למחוק ' + this.customerData.OrganizationName + '?' }
     }).afterClosed().subscribe(response => {
-      if(response.result == 'yes'){
+      if (response.result == 'yes') {
 
         let objToApi = {
           Token: this.userToken,
           UserId: this.userId
         }
-  
+
         this.dataService.DeleteSuspendUsers(objToApi).subscribe(result => {
-          if(result != undefined){
-            if(result.obj != null){
-              this.dialog.open(DialogComponent,{
-                data: {message: 'נמחק בהצלחה'}
+
+          if (result['Token'] != undefined || result['Token'] != null) {
+
+            //set new token
+            let tempObjUser = JSON.parse(localStorage.getItem('user'));
+            tempObjUser['Token'] = result['Token'];
+            localStorage.setItem('user', JSON.stringify(tempObjUser));
+            this.userToken = result['Token'];
+
+            if (result.errdesc.includes('User Deleted Successfully')) {
+              this.router.navigate(['/public/allCustomers']);
+              this.dialog.open(DialogComponent, {
+                data: { message: 'לקוח נמחק בהצלחה' }
               });
             }
-            if(result.errdesc != ''){
-              this.dialog.open(DialogComponent,{
-                data: {message: '--' + result.errdesc + '--'}
+            else {
+              this.dialog.open(DialogComponent, {
+                data: { message: result.errdesc }
               });
             }
+          }
+          else {
+            alert(result.errdesc);
+            this.sharedService.exitSystemEvent();
           }
         });
       }
@@ -259,11 +310,18 @@ export class ExistCustomerComponent implements OnInit {
 
   }
 
+  formatDate(dateToFormat){
+    let date = new Date(dateToFormat.toString());
+    let day = date.getDay() < 10 ? '0' + date.getDay() : date.getDay();
+    let month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
+    let year = date.getFullYear();
+    return day + '/' + month + '/' + year;
+  }
 
-  openDialog(){
+  openDialog() {
 
   }
-  ngOnDestroy(){
+  ngOnDestroy() {
     this.idUnsubscribe.unsubscribe();
   }
 

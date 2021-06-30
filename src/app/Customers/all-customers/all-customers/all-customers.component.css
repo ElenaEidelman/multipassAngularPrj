@@ -16,6 +16,10 @@ div.formWrapRow > div > mat-form-field{
     
 }
 
+mat-form-field div.mat-form-field-flex{
+    display: flex;
+    /* flex-direction: row-reverse; */
+}
 
 @media screen and (max-width: 1024px){
     .formWrap{

@@ -1,11 +1,15 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table/';
 import { CustomerData } from 'src/app/Classes/customerData';
 import { DataServiceService } from 'src/app/data-service.service';
+import { DialogConfirmComponent } from 'src/app/PopUps/dialog-confirm/dialog-confirm.component';
+import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
+import { SharedService } from 'src/app/shared.service';
 
 @Component({
   selector: 'app-all-users',
@@ -15,12 +19,19 @@ import { DataServiceService } from 'src/app/data-service.service';
 export class AllUsersComponent implements OnInit {
 
   displayedColumns: string[] = [];
-  dataSource: MatTableDataSource<any>;
+  dataSource: MatTableDataSource<any> = new MatTableDataSource();
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  
-  constructor(private fb: FormBuilder, private dataService: DataServiceService) { }
+
+  constructor(
+    private fb: FormBuilder,
+    private dataService: DataServiceService,
+    private sharedService: SharedService,
+    private dialog: MatDialog) { }
+
+  userToken;
+  userId;
 
   filterCustomerForm = this.fb.group({
     customerId: (''),
@@ -30,11 +41,11 @@ export class AllUsersComponent implements OnInit {
 
   //filter table by customer status
   statusList = [
-    {value: 'nextTo', viewValue: 'ליד'},
-    {value: 'pending', viewValue: 'ממתין לאישור'},
-    {value: 'active', viewValue: 'פעיל'},
-    {value: 'delayed', viewValue: 'מושהה'},
-    {value: 'refused', viewValue: 'מסורב'}
+    { value: 'nextTo', viewValue: 'ליד' },
+    { value: 'pending', viewValue: 'ממתין לאישור' },
+    { value: 'active', viewValue: 'פעיל' },
+    { value: 'delayed', viewValue: 'מושהה' },
+    { value: 'refused', viewValue: 'מסורב' }
   ];
 
   // customerLabelForTable = [
@@ -45,38 +56,53 @@ export class AllUsersComponent implements OnInit {
   // ];
 
   userLabelForTable = [
-    {value: 'id', viewValue: 'Id'},
-    {value: 'fullName', viewValue: 'שם מלא'},
-    {value: 'empNumber', viewValue: 'מספר עובד'},
-    {value: 'permisLvl', viewValue: 'רמת הרשאה'},
-    {value: 'email', viewValue: 'דוא"ל'},
-    {value: 'phone', viewValue: 'טלפון'},
-    {value: 'status', viewValue: 'סטטוס'},
-    {value: 'delUser', viewValue: 'מחיקת משתמש'}
+    { value: 'id', viewValue: 'מספר משתמש' },
+    { value: 'FName', viewValue: 'שם' },
+    { value: 'LName', viewValue: 'שם משפחה' },
+    { value: 'Tz', viewValue: 'ח.פ' },
+    { value: 'role', viewValue: 'רמת הרשאה' },
+    { value: 'Email', viewValue: 'דוא"ל' },
+    { value: 'Phone', viewValue: 'טלפון' },
+    { value: 'StatusDescription', viewValue: 'סטטוס' },
+    { value: 'delUser', viewValue: 'מחיקת משתמש' }
   ];
 
   ngOnInit(): void {
-    window.scroll(0,0);
+    window.scroll(0, 0);
+    this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
     this.createDisplayedColumns(this.userLabelForTable);
-    this.createDataSourceForTable();
+    // this.createDataSourceForTable();
 
     this.getAllUsers();
   }
 
-  getAllUsers(){
-    let token = JSON.parse(localStorage.getItem('user'))['Token'];
+  getAllUsers() {
+
+    ///api/AllUsers/GetAllUsers
+
 
     let objToApi = {
-      Token: token
+      Token: this.userToken
     }
-    debugger
     this.dataService.GetAllUsers(objToApi).subscribe(result => {
-      debugger
+      if (result['Token'] != undefined || result['Token'] != null) {
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
+
+        this.dataSource.data = result.obj;
+      }
+      else {
+        alert(result.errdesc);
+        this.sharedService.exitSystemEvent();
+      }
     });
   }
 
-  createDisplayedColumns(columns){
-    columns.forEach( el => {
+  createDisplayedColumns(columns) {
+    columns.forEach(el => {
       this.displayedColumns.unshift(el.value);
     });
 
@@ -84,19 +110,19 @@ export class AllUsersComponent implements OnInit {
     // this.displayedColumns.unshift('delUser');
     // this.displayedColumns.unshift('goToUser');
   }
-  createDataSourceForTable(){
+  createDataSourceForTable() {
     this.dataSource = new MatTableDataSource([
-      {id: '2523', fullName: 'fName lName 1', empNumber: '1578569', permisLvl: 'lvl1' ,email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: ''},
-      {id: '2524', fullName: 'fName lName 2', empNumber: '1578569', permisLvl: 'lvl1' ,email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: ''},
-      {id: '2525', fullName: 'fName lName 3', empNumber: '1578569', permisLvl: 'lvl1' ,email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: ''},
-      {id: '2526', fullName: 'fName lName 4', empNumber: '1578569', permisLvl: 'lvl1' ,email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: ''},
-      {id: '2527', fullName: 'fName lName 5', empNumber: '1578569', permisLvl: 'lvl1' ,email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: ''},
-      {id: '2528', fullName: 'fName lName 6', empNumber: '1578569', permisLvl: 'lvl1' ,email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: ''}
+      { id: '2523', fullName: 'fName lName 1', empNumber: '1578569', permisLvl: 'lvl1', email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: '' },
+      { id: '2524', fullName: 'fName lName 2', empNumber: '1578569', permisLvl: 'lvl1', email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: '' },
+      { id: '2525', fullName: 'fName lName 3', empNumber: '1578569', permisLvl: 'lvl1', email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: '' },
+      { id: '2526', fullName: 'fName lName 4', empNumber: '1578569', permisLvl: 'lvl1', email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: '' },
+      { id: '2527', fullName: 'fName lName 5', empNumber: '1578569', permisLvl: 'lvl1', email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: '' },
+      { id: '2528', fullName: 'fName lName 6', empNumber: '1578569', permisLvl: 'lvl1', email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: '' }
     ]);
   }
 
 
-  returnHebTranslation(obj,value){
+  returnHebTranslation(obj, value) {
     return obj.filter(el => el.value == value)[0].viewValue;
   }
 
@@ -108,9 +134,52 @@ export class AllUsersComponent implements OnInit {
       this.dataSource.paginator.firstPage();
     }
   }
-  translateTitles(){
+  translateTitles() {
     document.querySelectorAll('.mat-paginator-page-size-label').forEach(title => {
       title.innerHTML = 'פריטים פר עמוד';
+    });
+  }
+
+  deleteUser(user){
+    debugger
+    const dialogRef = this.dialog.open(DialogConfirmComponent, {
+      data: { message: 'האם למחוק ' + user.FName + ' ' + user.LName + '?' }
+    }).afterClosed().subscribe(response => {
+      if (response.result == 'yes') {
+
+        let objToApi = {
+          Token: this.userToken,
+          UserId: user.id.toString()
+        }
+        debugger
+        this.dataService.DeleteSuspendUsers(objToApi).subscribe(result => {
+          debugger
+          if (result['Token'] != undefined || result['Token'] != null) {
+
+            //set new token
+            let tempObjUser = JSON.parse(localStorage.getItem('user'));
+            tempObjUser['Token'] = result['Token'];
+            localStorage.setItem('user', JSON.stringify(tempObjUser));
+            this.userToken = result['Token'];
+
+            if (result.errdesc.includes('User Deleted Successfully')) {
+              this.getAllUsers();
+              this.dialog.open(DialogComponent, {
+                data: { message: 'משתמש נמחק בהצלחה' }
+              });
+            }
+            else {
+              this.dialog.open(DialogComponent, {
+                data: { message: result.errdesc }
+              });
+            }
+          }
+          else {
+            alert(result.errdesc);
+            this.sharedService.exitSystemEvent();
+          }
+        });
+      }
     });
   }
 

@@ -16,8 +16,8 @@ export class DataServiceService implements OnInit {
 
 
 
-  //baseUrl = 'http://tempdomain-test-4.mltp.co.il';
-  baseUrl = 'http://localhost:45036';
+  baseUrl = 'http://tempdomain-test-4.mltp.co.il';
+  //baseUrl = 'http://localhost:45036';
  
   
 
@@ -32,7 +32,6 @@ export class DataServiceService implements OnInit {
   SendOtp(obj){
       return this.http.post(`${this.baseUrl}/api/Users/SendOtp`,obj).pipe(
         map(result => {
-         debugger
           return result;
         })
       );
@@ -193,7 +192,7 @@ export class DataServiceService implements OnInit {
   }
 
   InsertUpdateUser(objToApi){
-    return this.http.post(`${this.baseUrl}/api/InsertUpdateUser`, objToApi).pipe(
+    return this.http.post(`${this.baseUrl}/api/InsertUpdateUser/InsertUpdateUsers`, objToApi).pipe(
       map(result => {
         return result;
       }),
@@ -216,6 +215,18 @@ export class DataServiceService implements OnInit {
 
   DeleteSuspendUsers(objToApi){
     return this.http.post(`${this.baseUrl}/api/InsertUpdateUser/DeleteSuspendUsers`,objToApi).pipe(
+      map(result => {
+        return result;
+      }),
+      catchError(error => {
+        return of(error.message);
+      })
+    );
+  }
+
+  
+  GetSMSFormats(objToApi){
+    return this.http.post(`${this.baseUrl}/api/SMSTemplateList/GetSMSFormats`,objToApi).pipe(
       map(result => {
         return result;
       }),

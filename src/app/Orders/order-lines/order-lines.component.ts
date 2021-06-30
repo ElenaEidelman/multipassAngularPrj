@@ -5,6 +5,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
 import { DataServiceService } from 'src/app/data-service.service';
 import { faFileExcel } from '@fortawesome/free-solid-svg-icons';
+import { SharedService } from 'src/app/shared.service';
 
 
 @Component({
@@ -20,7 +21,7 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
   faFileExcel = faFileExcel;
 
   urlParamDestroy;
-  userToken :string;
+  userToken: string;
   userId;
   orderId;
 
@@ -31,34 +32,37 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
   public dataTable = new MatTableDataSource([]);;
 
   public tabelLabels = [
-    {value: 'ItemId', viewValue: "מס''ד"},
-    {value: 'CardId', viewValue: 'קוד דיגיטלי'},
-    {value: 'DSendName', viewValue: 'שם נמען'},
-    {value: 'DSendPhone', viewValue: 'מספר נייד נמען	'},
-    {value: 'LoadSum', viewValue: 'סכום טעינה ראשוני		'},
-    {value: 'ValidationDate', viewValue: '	תוקף	'},
-    {value: 'KindOfLoadSumDesc', viewValue: 'סוג שובר טעינה	'},
-    {value: 'DSendLastSent', viewValue: 'נשלח לאחרונה'}
+    { value: 'ItemId', viewValue: "מס''ד" },
+    { value: 'CardId', viewValue: 'קוד דיגיטלי' },
+    { value: 'DSendName', viewValue: 'שם נמען' },
+    { value: 'DSendPhone', viewValue: 'מספר נייד נמען	' },
+    { value: 'LoadSum', viewValue: 'סכום טעינה ראשוני		' },
+    { value: 'ValidationDate', viewValue: '	תוקף	' },
+    { value: 'KindOfLoadSumDesc', viewValue: 'סוג שובר טעינה	' },
+    { value: 'DSendLastSent', viewValue: 'נשלח לאחרונה' }
   ];
-  tabelLabelsList = ['ItemId','CardId','DSendName','DSendPhone','LoadSum','ValidationDate','KindOfLoadSumDesc','DSendLastSent'];
+  tabelLabelsList = ['ItemId', 'CardId', 'DSendName', 'DSendPhone', 'LoadSum', 'ValidationDate', 'KindOfLoadSumDesc', 'DSendLastSent'];
 
-  constructor(private activeRoute: ActivatedRoute, private dataService: DataServiceService) { }
+  constructor(
+    private activeRoute: ActivatedRoute,
+    private dataService: DataServiceService,
+    private sharedService: SharedService) { }
   ngOnDestroy(): void {
     this.urlParamDestroy.unsubscribe();
   }
 
   ngOnInit(): void {
-    window.scroll(0,0);
+    window.scroll(0, 0);
     this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
     this.urlParamDestroy = this.activeRoute.params.subscribe(param => {
       this.userId = param['userId'];
       this.orderId = param['orderId'];
 
-      this.GetCards(this.userId,  this.orderId);
+      this.GetCards(this.userId, this.orderId);
     });
   }
 
-  GetCards(userId, orderId){
+  GetCards(userId, orderId) {
 
     this.tableSpinner = true;
 
@@ -73,12 +77,26 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
     // ]);
     this.dataService.GetCardsByOrderId(objToAPI).subscribe(result => {
       this.tableSpinner = false;
-      if(typeof result == 'object'){
-        this.dataTable.data = result['obj'];
 
+      if (result['Token'] != undefined || result['Token'] != null) {
+
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
+
+        if (typeof result == 'object') {
+          this.dataTable.data = result['obj'];
+
+        }
+        else {
+          alert(result);
+        }
       }
-      else{
-        alert(result);
+      else {
+        alert(result.errdesc);
+        this.sharedService.exitSystemEvent();
       }
     });
   }
@@ -93,19 +111,9 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    if(this.dataTable){
+    if (this.dataTable) {
       this.dataTable.paginator = this.paginator;
       this.dataTable.sort = this.sort;
     }
   }
-
-  /**
-   * "api/InsertUpdateOrder/GetCardsByOrderId"
-   * 
-   * {
-    "Token":"Zbas0buEfdfVPxL-CPGXAHcs3eaxk1rsPqquLmw5GKs1",
-    "OrderId":"6215",
-    "UserID":"2680"
-}
-   */
 }

@@ -11,6 +11,9 @@ mat-accordion mat-expansion-panel mat-expansion-panel-header .mat-icon{
       justify-content: space-between;
       flex-direction: column-reverse;
   }
+  .fixed-column-buttons{
+    text-align: center;
+  }
   .buttonAny{
     margin: 1rem 4rem;
   }

@@ -1,6 +1,8 @@
 import { Component, ElementRef, Input, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { FormBuilder, NgControl } from '@angular/forms';
 import { MatAccordion } from '@angular/material/expansion';
+import { DataServiceService } from 'src/app/data-service.service';
+import { SharedService } from 'src/app/shared.service';
 
 @Component({
   selector: 'app-all-sms-templates',
@@ -14,6 +16,9 @@ export class AllSmsTemplatesComponent implements OnInit {
   @ViewChild(MatAccordion) accordion: MatAccordion;
   @ViewChild('newTemplate') newTemplate: ElementRef;
 
+
+  userToken;
+  userId;
 
 
 
@@ -44,14 +49,41 @@ export class AllSmsTemplatesComponent implements OnInit {
   saveMessage:string = '';
 
 
-  constructor(private fb: FormBuilder) { }
+  constructor(
+              private fb: FormBuilder,
+              private dataService: DataServiceService,
+              private sharedService: SharedService) { }
 
 
   ngOnInit(): void {
     window.scroll(0,0);
+
+    this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
+
+    this.GetSMSFormats();
+
     this.createForm('SMSForm', this.templatesSMS, 'id-');
   }
 
+  GetSMSFormats(){
+    //api/SMSTemplateList/GetSMSFormats
+
+
+    let objToApi = {
+      Token: this.userToken
+    }
+
+    this.dataService.GetSMSFormats(objToApi).subscribe(result => {
+      if (result['Token'] != undefined || result['Token'] != null) {
+
+      }
+      else {
+        alert(result.errdesc);
+        this.sharedService.exitSystemEvent();
+      }
+
+    });
+  }
 
 
   createForm(form, values, controlName){

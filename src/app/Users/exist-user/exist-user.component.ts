@@ -39,8 +39,10 @@ export class ExistUserComponent implements OnInit {
   ];
 
   userDataForm = this.fb.group({
-    FullName: (''),
-    status: (''),
+    FName: (''), // new  V
+    LName: (''), // new  V
+    Tz: (''), // new     V
+    status: (''), // StatusDescription
     Email: (''),//
     UserType: (''),//
     Password: (''),//
@@ -49,33 +51,13 @@ export class ExistUserComponent implements OnInit {
     CityName: (''),//
     Phone1: (''),//
     Streetno: (''),//
-    Role: (''),//
+    Role: (''),//role // ?
     ZIP: (''),//
-    Permission: (''),
+    Permission: (''), // ?
     ApartmentNo: ('')
 
   });
-  /**
-   * 
-"Token":"IX_XFPHFaSg_B49tuiJwaZGrvjMMpFullName1Ozhx1SFnc2Qpg1", 
-"Id":"2697",
-"FullName":"Fname Lname",
-"Email": "yuvi@16",
-"Phone": "9876543",
- "Phone1" : " ",
-"Tz": "1006",
-"Password" : "txtPasswordnew",
- "Address" : "txtAddress", 
-"Streetno" : "txtStreetno",
-"ApartmentNo":"1004",
-"OrganizationName" : "יינות ביתן",
-"ZIP" : "txtZIP", 
-"Permission" : "משתשמ משרד אחורי",
- "BusinessFile" : "", 
-"CityName":"txtCityName.Text",
-"StatusId" : "1", 
-"UserType" : "6"
-   */
+  
   
   constructor(private activeRoute: ActivatedRoute, private fb: FormBuilder, private dataService: DataServiceService) { }
 
@@ -83,14 +65,12 @@ export class ExistUserComponent implements OnInit {
 
   ngOnInit(): void {
     window.scroll(0,0);
-    debugger
     this.idUnsubscribe = this.activeRoute.params.subscribe( param => {
       //debugger
       //this.createDataSourceForTable();
       if(Object.keys(param).length > 0){
         this.id = param['id'];
         this.userData = this.getUserDataById(param['id']);
-        debugger
         this.fillFormOfUserData(this.userData);
       }
       else{
@@ -103,6 +83,15 @@ export class ExistUserComponent implements OnInit {
   }
 
   getUserDataById(id){
+
+
+    let objToApi = {
+      Token: this.userToken
+    }
+
+
+
+    debugger
     let user = [
       {id: '2523', fullName: 'fName lName 1', empNumber: '1578569', Email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: ''},
       {id: '2524', fullName: 'fName lName 2', empNumber: '1578569', Email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: ''},

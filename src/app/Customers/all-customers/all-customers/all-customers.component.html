@@ -44,6 +44,9 @@
                         <div>
                             <mat-form-field class="selectedFormFieldWidth">
                                 <mat-label>סטטוס</mat-label>
+                                <button class="clearButton" *ngIf="filterCustomerForm.get('OrderStatus').value != ''"  mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="filterCustomerForm.get('OrderStatus').setValue('')">
+                                    <mat-icon>close</mat-icon>
+                                </button>
                                 <mat-select formControlName="OrderStatus" multiple>
                                     <!-- <mat-option #closeSelect>
                                         <button mat-button (click)="resetStatusField(this); closeMatSelect()"></button>

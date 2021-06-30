@@ -95,6 +95,9 @@ tr.example-element-row:not(.example-expanded-row):hover {
     /* .customer-data{
         flex-direction: column;
     } */
+    .flexElement{
+        flex-direction: column-reverse !important;
+    }
     .customer-data > div{
         width: 50%;
         padding: 0 10px;
@@ -107,5 +110,11 @@ tr.example-element-row:not(.example-expanded-row):hover {
     }
     .flexData > div{
         margin: 15px 0;
+    }
+    .refBlock{
+        margin: 5px;
+    }
+    .refBlock > mat-form-field{
+        width: 100%;
     }
 }
