@@ -224,4 +224,18 @@ export class DataServiceService implements OnInit {
       })
     );
   }
+
+  InsertUpdateOrderByExcel(objToApi){
+    //debugger
+    return this.http.post(`${this.baseUrl}/api/InsertUpdateOrder/InsertUpdateOrderByExcel`,objToApi).pipe(
+      map(result => {
+        //debugger
+        return result;
+      }),
+      catchError(error => {
+        //debugger
+        return of(error.message);
+      })
+    );
+  }
 }

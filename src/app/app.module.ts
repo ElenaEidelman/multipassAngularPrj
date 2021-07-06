@@ -40,6 +40,7 @@ import { HeaderComponent } from './header/header.component';
 import { MainMenuComponent } from './main-menu/main-menu.component';
 import { MainViewComponent } from './main-view/main-view.component';
 import { ExecOrderComponent } from './Orders/exec-order/exec-order.component';
+import { ExcelOrderComponent } from './Orders/excel-order/excel-order.component';
 import { AllOrdersComponent } from './Orders/all-orders/all-orders.component';
 import { MatNativeDateModule } from '@angular/material/core';
 import { DialogConfirmComponent } from './PopUps/dialog-confirm/dialog-confirm.component';
@@ -86,6 +87,7 @@ import { DialogComponent } from './PopUps/dialog/dialog.component';
     MainMenuComponent,
     MainViewComponent,
     ExecOrderComponent,
+    ExcelOrderComponent,
     AllOrdersComponent,
     DialogConfirmComponent,
     AllCustomersComponent,

@@ -33,11 +33,13 @@
                                 </mat-form-field>
                             </div>
                             <div>
-                                <mat-form-field class="example-full-width">
+                                <div class="example-full-width">
                                     <mat-label>תאור הקובץ</mat-label>
-                                    <textarea placeholder="נא להכניס תיאור של הקובץ" matInput
-                                        formControlName="fileDesc"></textarea>
-                                </mat-form-field>
+                                    <!-- <textarea placeholder="נא להכניס תיאור של הקובץ" matInput
+                                        formControlName="fileDesc">{{uploadDoc.value}}</textarea> -->
+                                </div>
+                                <span *ngIf="uploadDoc.value">{{uploadDoc.value}}</span>
+
                             </div>
                             <div class="alignRight">
                                 <mat-hint>בדיקה וטעינה של הקובץ</mat-hint>
@@ -52,7 +54,8 @@
                             </div>
                         </div>
                         <div class="sendButtonWrap">
-                            <button mat-button class="addButton">שלח</button>
+                          <button mat-button class="addButton"(click)="sendCard()"
+                          [routerLink]="['/public/excelOrder', 2700]">שלח</button>
                         </div>
                     </form>
                 </div>

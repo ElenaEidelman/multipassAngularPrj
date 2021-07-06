@@ -38,7 +38,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
 
   showHiddenLoadingCardContent: boolean = false;
   loadingCardUserExist: boolean = false;
-
+  filename;
 
   // selectedCustomerControl = new FormControl('');
 
@@ -82,6 +82,8 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
     });
 
     this.loadingCardGroupChange();
+    this.filename = this.excelCardCreatingForm.value;
+    // console.log("this.filename",this.filename)
 
   }
   getAllCustomers(){
@@ -230,6 +232,25 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+  sendCard(){
+    let token = JSON.parse(localStorage.getItem('user'))['Token'];
+    console.log("this.userId",this.userId)
+    let objToApi = {
+      Token: token,
+      UserID: "2700",
+      OpCode: "upload",
+      FileName: this.filename
+    }
+    console.log("objToApi",objToApi)
+
+    this.dataService.InsertUpdateOrderByExcel(objToApi).subscribe(result => {
+      console.log("InsertUpdateOrderByExcel",result);
+
+    });
+  }
+
+
   getCardsData(){
     this.cardsData = [
       {customerName:'multipass1', customerId: '11111', cardId: '15245814', dataIssues: '03/01/2021', orderId: '900000025', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום'},

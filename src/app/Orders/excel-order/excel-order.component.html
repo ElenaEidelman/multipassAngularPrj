@@ -1,0 +1,41 @@
+<div class="page-wrap">
+  
+    <div class="main-page-element">
+       
+        <div class="page-element width-block-auto">
+          <div class="wrapTables">
+
+            <div class="element-page-title"> {{orderTitle}} </div>
+
+<div >
+
+<table mat-table matSort class="mat-elevation-z8 tableInsideElement tableView" dir="rtl">
+  <thead>
+    <tr class="mat-header-row">
+      <th class="text-left" *ngFor="let column of columnsHeb">
+        {{column.value}}
+      </th>                                                                        
+    </tr>
+  </thead>
+  <tbody>
+      <td *ngFor="let column of dataSource.data | keyvalue">
+        {{column.value}}
+      </td>
+  </tbody> 
+  <div class="buttonAny alignRight">
+    <div class="wrapUserButton">
+        <button mat-button class="addButton" (click)="createCard()"
+            [routerLink]="['/public/excelOrder', customerId]">הכנס
+        </button>
+
+    </div>
+</div>                                   
+</table>
+</div>
+</div>        
+</div>
+    </div>
+</div>
+
+<!-- ========================================================================================= -->
+
