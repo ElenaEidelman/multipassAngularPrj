@@ -18,7 +18,22 @@ export class DataServiceService implements OnInit {
 
   baseUrl = 'http://tempdomain-test-4.mltp.co.il';
   //baseUrl = 'http://localhost:45036';
- 
+
+  //test 
+  
+  /**
+   * 
+$ git checkout master
+$ git branch new-branch
+$ git checkout new-branch
+
+# ...develop some code...
+
+$ git add –A
+$ git commit –m "Some commit message"
+$ git checkout master
+$ git merge new-branch
+   */
   
 
   constructor(private http: HttpClient, private sharedService: SharedService) { }
