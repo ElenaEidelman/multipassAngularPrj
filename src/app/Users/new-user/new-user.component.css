@@ -1,0 +1,50 @@
+mat-panel-description{
+    direction: rtl;
+}
+mat-accordion mat-expansion-panel mat-expansion-panel-header .mat-icon{
+    width: unset !important;
+    font-size: 45px;
+    height: 45px !important;
+  }
+  .wrapData{
+      display: flex;
+      justify-content: space-between;
+      flex-direction: column-reverse;
+  }
+  .fixed-column-buttons{
+    text-align: center;
+  }
+  .buttonAny{
+    margin: 1rem 4rem;
+  }
+  .wrapData > div.buttonAny{
+    flex-grow: 1;
+    width: 130px;
+    margin: 0 auto;
+    flex-direction: column;
+  }
+  .example-action-buttons{
+    background: #EEF0F2;
+    border-radius: 4px;
+  }
+  .selectedFormFieldWidth{
+    width: 100% !important;
+  }
+  .wrapButtons{
+    display: flex;
+    flex-direction: row-reverse;
+  }
+  .margin0{
+    margin: auto 0;
+  }
+  .delCustButtonWrap{
+    text-align: left;
+    padding: 1em 0;
+  }
+
+  @media screen and (max-width: 1024px){
+    .flexData {
+      flex-direction: row-reverse;
+    }
+  }
+

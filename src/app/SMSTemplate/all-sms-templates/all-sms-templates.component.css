@@ -31,7 +31,6 @@ mat-accordion mat-expansion-panel mat-expansion-panel-header .mat-icon{
     flex-direction: row-reverse;
   }
   .cards-wrap > div{
-    flex-grow: 2;
     margin: 0 6px;
     width: 49%;
   }
@@ -113,6 +112,20 @@ mat-card-title > div{
 .mat-card>.mat-card-actions{
   text-align: right;
 }
+
+.spinnerBWrap{
+  position: relative;
+}
+.spinner{
+  position: absolute;
+  top: -25px;
+}
+
+.deleteB{
+  margin-right: auto;
+  margin-left: 0 !important;
+}
+
   @media screen and (max-width: 1024px){
     .edit-buttons-wrap > button{
       width: 29%;

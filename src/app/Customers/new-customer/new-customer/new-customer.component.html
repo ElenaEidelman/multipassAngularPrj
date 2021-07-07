@@ -20,15 +20,16 @@
                                 <mat-icon>expand</mat-icon>
                             </a>
                         </div>
-                        <div>
+                        <div class="wrapAB">
                             <button mat-button class="addButton" type="submit">
                                 <span>שמור</span>
                                 <mat-icon>save</mat-icon>
                             </button>
+                            <mat-spinner *ngIf="saveFormSpinner" class="saveFormSpinner"></mat-spinner>
                         </div>
                     </div>
                     <div class="error" *ngIf="errorActionButtons">{{errorActionButtons}}</div>
-                    <div class="msg" *ngIf="msgActionButtons">{{msgActionButtons}}</div>
+                    <div class="saveMessage" *ngIf="msgActionButtons">{{msgActionButtons}}</div>
                 </div>
 
 

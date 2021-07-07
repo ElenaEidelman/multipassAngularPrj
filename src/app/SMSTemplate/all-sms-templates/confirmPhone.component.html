@@ -1,0 +1,33 @@
+<div>
+    <div class="close-icon-wrap" (click)="dialogClose()" >
+        <mat-icon matTooltip="סגור" matTooltipPosition="right">cancel</mat-icon>
+    </div>
+
+
+
+    <div class="log-in">
+        <div class="wrap-form">
+          <div class="wrapInput">
+            <mat-form-field appearance="outline">
+                <mat-label>{{data.message}}</mat-label>
+                <input matInput placeholder="{{data.message}}" [formControl]='phoneControl'>
+                <mat-icon matPrefix>phone</mat-icon>
+                <!-- <mat-hint>Hint</mat-hint> -->
+              </mat-form-field>
+          </div>
+            <div class="wrapSendButton">
+                <div>
+                    <button mat-button class="linkButton" (click)="no()">סגור
+                        <mat-icon>cancel</mat-icon>
+                    </button>
+                </div>
+                <div>
+                    <button mat-button class="addButton" (click)="yes()" cdkFocusInitial>שלח
+                        <mat-icon>send</mat-icon>
+                    </button>
+                    <hint class="err" *ngIf="errorPhone != ''">{{errorPhone}}</hint>
+                </div>
+            </div>
+        </div>
+      </div>
+</div>

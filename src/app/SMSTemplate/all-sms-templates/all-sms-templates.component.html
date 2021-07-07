@@ -29,12 +29,12 @@
                                 </div>
                                 <div>
                                     <mat-form-field>
-                                        <input matInput value=""  placeholder="שם תבנית" formControlName="name">
+                                        <input matInput value=""  placeholder="שם תבנית" formControlName="TemplateName">
                                     </mat-form-field>
                                 </div>
                                 <div>
                                     <mat-form-field>
-                                        <input matInput value=""  placeholder="שם שולח" formControlName="senderName">
+                                        <input matInput value=""  placeholder="שם שולח" formControlName="SenderName">
                                     </mat-form-field>
                                 </div>
                             </mat-card-title>
@@ -42,31 +42,33 @@
                         </mat-card-header>
                             <mat-card-content>
                                 <mat-form-field class="smsTA">
-                                    <textarea matInput #newTemplate  placeholder="SMS תבנית" class="templateTextArea" formControlName="template"></textarea>
+                                    <textarea matInput #newTemplate  placeholder="SMS תבנית" class="templateTextArea" formControlName="TemplateFormat"></textarea>
                                 </mat-form-field>
                             </mat-card-content> 
 
                         <!-- action buttons -->
                         <mat-card-actions class="newSMSActionButtons">
                             <div>
-                                <button mat-button class="linkButton">
+                                <button mat-button class="linkButton" (click)="sendSMSForExample(newTemplateForm.value)">
                                     <span>שלח לדוגמא</span>
                                     <mat-icon>send</mat-icon>
                                 </button>
                             </div>
-                            <div>
+                            <div class="spinnerBWrap">
                                 <button mat-button class="primaryButton" (click)="saveTemplate('newTemplate')">
                                     <span>שמור</span>
                                     <mat-icon>save</mat-icon>
                                 </button>
+                                <mat-spinner class="spinner" *ngIf="spinnerNewTemp"></mat-spinner>
                                 <div class="saveMessage">{{saveMessage}}</div>
+                                <div class="error">{{errorMessagenewSms}}</div>
                             </div>
                         </mat-card-actions>
                     </mat-card>
                 </form>
             </div>
 
-            <!-- template buttons -->
+            <!-- TemplateFormat buttons -->
             <div class="innerElement bgMint">
                 <mat-card>
                     <!-- edit template -->
@@ -121,7 +123,7 @@
 
                 <div class="cards-wrap" >
                         <div *ngFor="let temp of templatesSMS; let i = index;">
-                            <mat-card class="innerElement bgMint" formGroupName=id-{{temp.id}}>
+                            <mat-card class="innerElement bgMint" formGroupName=Id-{{temp.Id}}>
                                 <mat-card-header class="sms">
                                     <!-- <div mat-card-avatar class="example-header-image">
                                         <mat-icon>sms</mat-icon>
@@ -132,12 +134,12 @@
                                         </div>
                                         <div>
                                             <mat-form-field>
-                                                <input matInput value="{{temp.tempName}}"  placeholder="שם תבנית" formControlName="name{{temp.id}}">
+                                                <input matInput value="{{temp.TemplateName}}"  placeholder="שם תבנית" formControlName="TemplateName{{temp.Id}}">
                                             </mat-form-field>
                                         </div>
                                         <div>
                                             <mat-form-field>
-                                                <input matInput value="{{temp.tempName}}"  placeholder="שם שולח" formControlName="senderName{{temp.id}}">
+                                                <input matInput value="{{temp.TemplateName}}"  placeholder="שם שולח" formControlName="SenderName{{temp.Id}}">
                                             </mat-form-field>
                                         </div>
                                     </mat-card-title>
@@ -145,15 +147,15 @@
                                 </mat-card-header>
                                     <mat-card-content>
                                         <mat-form-field>
-                                            <textarea matInput #txtArea formControlName="template{{temp.id}}" placeholder="SMS תבנית" class="templateTextArea"></textarea>
+                                            <textarea matInput #txtArea formControlName="TemplateFormat{{temp.Id}}" placeholder="SMS תבנית" class="templateTextArea"></textarea>
                                         </mat-form-field>
                                     </mat-card-content> 
 
                                 <!-- action buttons -->
-                                <mat-card-actions class="actionWrapB newSMSActionButtons" *ngIf="temp.id != editingTempId || !edit">
+                                <mat-card-actions class="actionWrapB newSMSActionButtons" *ngIf="temp.Id != editingTempId || !edit">
 
                                     <div>
-                                        <button mat-button class="linkButton">
+                                        <button mat-button class="linkButton" (click)="sendSMSForExample(temp)">
                                             <span>שלח לדוגמא</span>
                                             <mat-icon>send</mat-icon>
                                         </button>
@@ -163,17 +165,16 @@
                                             <span>ערוך</span>
                                             <mat-icon>edit</mat-icon>
                                         </button>
+
                                     </div>
-                                    <div>
-                                        <button mat-button class="deleteButton">
-                                            <span>מחק</span>
-                                            <mat-icon>delete</mat-icon>
-                                        </button>
+                                    <div class="deleteB">
+                                            <!-- <span>מחק</span> -->
+                                            <mat-icon class="deleteIcon" (click)="deleteTemplate(temp)" matTooltip="מחק תבנית">delete</mat-icon>
                                     </div>
                                 </mat-card-actions>
 
                                 <!-- edit template -->
-                                <div *ngIf="temp.id == editingTempId && edit">
+                                <div *ngIf="temp.Id == editingTempId && edit">
                                     <mat-card-actions class="edit-buttons-wrap">
                                         <button mat-button class="linkButton" (click)="editButtonClicked(temp,'שם פרטי')">
                                             <span><שם פרטי></span>
@@ -201,7 +202,7 @@
                                         </button>
                                     </mat-card-actions>
                                     <div class="save-edit-button">
-                                        <button mat-button class="addButton" (click)="saveTemplate(temp)">
+                                        <button mat-button class="addButton" (click)="closeTemplate(temp)">
                                             <span>בטל</span>
                                             <mat-icon>close</mat-icon>
                                         </button>
@@ -209,6 +210,8 @@
                                             <span>שמור</span>
                                             <mat-icon>save</mat-icon>
                                         </button>
+                                        <diV [id]="'msgBySms' + temp.Id" class="saveMessage"></diV>
+                                        <diV [id]="'msgErrorBySms' + temp.Id" class="error"></diV>
                                     </div>
                                 </div>
                             </mat-card>

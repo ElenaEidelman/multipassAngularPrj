@@ -9,7 +9,6 @@
         <form [formGroup]="CustomerForm" (submit)="saveForm()">
 
             <div class="wrapData formBorder">
-
                 <div class="fixed-column-buttons">
                     <div class="wrapStickyButtons">
                         <div>
@@ -24,14 +23,16 @@
                                 <mat-icon>expand</mat-icon>
                             </a>
                         </div>
-                        <button mat-button class="addButton">
-                            <span>שמור</span>
-                            <mat-icon>save</mat-icon>
+                        <div class="wrapAB">
+                            <button mat-button class="addButton">
+                                <span>שמור</span>
+                                <mat-icon>save</mat-icon>
+                            </button>
                             <mat-spinner *ngIf="saveFormSpinner" class="saveFormSpinner"></mat-spinner>
-                        </button>
+                        </div>
                     </div>
                     <div class="error" *ngIf="errorActionButtons != ''">{{errorActionButtons}}</div>
-                    <div class="msg" *ngIf="msgActionButtons != ''">{{msgActionButtons}}</div>
+                    <div class="saveMessage" *ngIf="msgActionButtons != ''">{{msgActionButtons}}</div>
                 </div>
 
                 <!-- user data -->

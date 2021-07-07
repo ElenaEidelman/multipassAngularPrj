@@ -3,7 +3,8 @@
     <div>
         <!-- <div>{{dataByPage[0].customerName}}</div> -->
         <div><span class="subTitle">מספר הזמנה:</span> {{orderId != undefined ? orderId : 'הזמנה חדשה'}}</div>
-        <div><span class="subTitle">סטטוס הזמנה: </span> {{dataByPage != undefined ? dataByPage.StatusDescription != undefined ? dataByPage.StatusDescription : dataByPage.Description  : ''}}</div>
+        <!-- <div><span class="subTitle">סטטוס הזמנה: </span> {{dataByPage != undefined ? dataByPage.StatusDescription != undefined ? dataByPage.StatusDescription : dataByPage.Description  : ''}}</div> -->
+        <div><span class="subTitle">סטטוס הזמנה: </span> {{orderStatus.description}}</div>
     </div>
 </div>
 <div class="page-wrap">
@@ -167,7 +168,7 @@
                             <td mat-cell *matCellDef="let element; let rowNum = index;">
                                 <div *ngIf="rowNum != orderDetails.length-1" class="tableButton" #orderLinesChildren>
                                     <!-- <button mat-icon-button class="deleteButton" (click)="deleteRow(element, rowNum)">מחק</button> -->
-                                    <mat-icon *ngIf="dataByPage.StatusId == '1' || dataByPage.StatusId == '0'" class="deleteIcon" (click)="deleteRow(element, rowNum)" matTooltip="מחק">delete</mat-icon>
+                                    <mat-icon *ngIf="orderStatus.id == '1' || orderStatus.id == '0'" class="deleteIcon" (click)="deleteRow(element, rowNum)" matTooltip="מחק">delete</mat-icon>
                                     <mat-spinner class="spinner disableSpinner" id="spinnerDelete{{element.id}}"></mat-spinner>
                                 </div>
                                 <div *ngIf="(rowNum == orderDetails.length-1) && newOrder" class="tableButton">
@@ -189,21 +190,21 @@
 
             <div class="innerElement flexElement">
                 <div class="flexButtonsElement">
-                    <div *ngIf="dataByPage.StatusId == '1'">
+                    <div *ngIf="orderStatus.id == '1'">
                         <button mat-button class="deleteButton" (click)="deleteOrder()">מחק הזמנה
                             <mat-icon>delete</mat-icon>
                             <mat-spinner class="spinner" *ngIf="deleteCardsSpinner"></mat-spinner>
                         </button>
-                        <div class="msg" *ngIf="orderMsgDelete != ''">{{orderMsgDelete}}</div>
+                        <div class="saveMessage" *ngIf="orderMsgDelete != ''">{{orderMsgDelete}}</div>
                         <div class="error" *ngIf="errorMsgDelete != ''">{{errorMsgDelete}}</div>
                     </div>
-                    <div *ngIf="newOrder">
+                    <div *ngIf="orderStatus.id == '1'">
                         <button mat-button class="addButton" (click)="ApproveOrder()">אישור הזמנה
                             <mat-icon>done_outline</mat-icon>
                             <mat-spinner class="spinner orangeSp" *ngIf="createCardsSpinner"></mat-spinner>
                         </button>
                         <div class="error" *ngIf="errorMsg != ''">{{errorMsg}}</div>
-                        <div class="msg" *ngIf="orderMsg != ''">{{orderMsg}}</div>
+                        <div class="saveMessage" *ngIf="orderMsg != ''">{{orderMsg}}</div>
                         
                     </div>
                 </div>

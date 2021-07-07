@@ -1,8 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DataServiceService } from 'src/app/data-service.service';
+import { DialogConfirmComponent } from 'src/app/PopUps/dialog-confirm/dialog-confirm.component';
+import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
+import { SharedService } from 'src/app/shared.service';
 
 @Component({
   selector: 'app-exist-user',
@@ -20,102 +24,240 @@ export class ExistUserComponent implements OnInit {
 
   userToken;
 
-  statusList = [
-    {value: 'nextTo', viewValue: 'ליד'},
-    {value: 'pending', viewValue: 'ממתין לאישור'},
-    {value: 'active', viewValue: 'פעיל'},
-    {value: 'delayed', viewValue: 'מושהה'},
-    {value: 'refused', viewValue: 'מסורב'},
-    {value: 'deleted', viewValue: 'מחוק'},
-  ];
-  userStat = [
-    {value: 'admin', viewValue: 'אדמין'},
-    {value: 'suppliers', viewValue: 'ספקים/מלונות'},
-    {value: 'managerBO', viewValue: 'מנהל בק אופיס'},
-    {value: 'company', viewValue: 'חברה'},
-    {value: 'AuthoRecTickets', viewValue: 'מורשה קבלת כרטיסים'},
-    {value: 'AuthoRecSecondOrd', viewValue: 'מורשה לקבל הזמנה שני'},
-    {value: 'PrintHouse', viewValue: 'בית דפוס'}
-  ];
+  msgActionButtons: string = '';
+  errorActionButtons: string = '';
+
+  saveFormSpinner: boolean = false;
+  deleteUserSpinner: boolean = false;
+
+  statusList = [];
 
   userDataForm = this.fb.group({
-    FName: (''), // new  V
-    LName: (''), // new  V
-    Tz: (''), // new     V
-    status: (''), // StatusDescription
-    Email: (''),//
-    UserType: (''),//
-    Password: (''),//
-    Id: (''),//
-    Phone: (''),//
-    CityName: (''),//
-    Phone1: (''),//
-    Streetno: (''),//
-    Role: (''),//role // ?
-    ZIP: (''),//
-    Permission: (''), // ?
-    ApartmentNo: ('')
-
+    FName: (''), // new  V ---------FName
+    LName: (''), // new  V ---------LName
+    Email: ['', [Validators.required, Validators.email]],// -----------Email
+    StatusId: [{ value: '', disabled: true }, Validators.required], // -------------StatusDescription
+    Tz: ['', Validators.required],//מספר משתמש של המערכת -------------Tz
+    Id: (''),//מספר עובד -----------id
+    Phone: (''),//------------Phone
+    CityName: (''),// -----------CityName
+    Phone1: (''),// ------------Phone1
+    Streetno: (''),// ---------Streetno
+    ZIP: (''),// --------ZIP
+    Permission: [{value:'משתמש משרד אחורי', disabled: true}, Validators.required], // ---------------Permission
+    ApartmentNo: ('')// ---------ApartmentNo
   });
   
   
-  constructor(private activeRoute: ActivatedRoute, private fb: FormBuilder, private dataService: DataServiceService) { }
-
-
+  constructor(
+                private activeRoute: ActivatedRoute, 
+                private router: Router,
+                private fb: FormBuilder, 
+                private dataService: DataServiceService,
+                private sharedService: SharedService,
+                private dialog: MatDialog) { }
 
   ngOnInit(): void {
     window.scroll(0,0);
     this.idUnsubscribe = this.activeRoute.params.subscribe( param => {
-      //debugger
-      //this.createDataSourceForTable();
-      if(Object.keys(param).length > 0){
+
         this.id = param['id'];
-        this.userData = this.getUserDataById(param['id']);
-        this.fillFormOfUserData(this.userData);
-      }
-      else{
+        this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
+        this.getUserStatus();
+        this.getUserDataById(param['id']);
 
-      }
     })
-
-    this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
 
   }
 
   getUserDataById(id){
+    let objToApi = {
+      Token: this.userToken,
+      BackUserId: id
+    }
 
+    debugger
+    this.dataService.GetUsersByFilter(objToApi).subscribe(result => {
+      debugger
+      if (result['Token'] != undefined || result['Token'] != null) {
 
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
+
+        if(result.obj != null && result.obj != undefined && Object.keys(result.obj[0]).length > 0){
+          this.userData = result.obj[0];
+          this.fillFormOfUserData(this.userData);
+        }
+        else{
+          this.dialog.open(DialogComponent,{
+            data: {message: result.errdesc}
+          });
+        }
+      }
+      else {
+        this.dialog.open(DialogComponent,{
+          data: {message: result.errdesc != undefined ? result.errdesc : result}
+        });
+        this.sharedService.exitSystemEvent();
+      }
+    });
+  }
+
+  getUserStatus(){
     let objToApi = {
       Token: this.userToken
     }
+    this.dataService.GetUserStatus(objToApi).subscribe(result => {
+      if (result['Token'] != undefined || result['Token'] != null) {
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
 
-
-
-    debugger
-    let user = [
-      {id: '2523', fullName: 'fName lName 1', empNumber: '1578569', Email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: ''},
-      {id: '2524', fullName: 'fName lName 2', empNumber: '1578569', Email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: ''},
-      {id: '2525', fullName: 'fName lName 3', empNumber: '1578569', Email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: ''},
-      {id: '2526', fullName: 'fName lName 4', empNumber: '1578569', Email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: ''},
-      {id: '2527', fullName: 'fName lName 5', empNumber: '1578569', Email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: ''},
-      {id: '2528', fullName: 'fName lName 6', empNumber: '1578569', Email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: ''}
-    ];
-
-    return user.filter(userById => userById.id == id)[0];
+        if(result.obj != null && result.obj != undefined && Object.keys(result.obj).length > 0){
+          
+        this.statusList = [...result.obj];
+        /**
+         * Description: "ממתין לאישור"
+          StatusId: 1
+          StatusType: "PendingApproval"
+         */
+        }
+      }
+      else {
+        this.dialog.open(DialogComponent,{
+          data: {message: result.errdesc != undefined ? result.errdesc : result}
+        });
+        this.sharedService.exitSystemEvent();
+      }
+    })
   }
 
   fillFormOfUserData(user){
-    
-    debugger
+    Object.keys(this.userDataForm.controls).forEach(control => {
+      if(control == 'StatusId'){
+        let statusDesc = this.statusList.filter(status => status.StatusId == user.StatusId);
+        this.userDataForm.get(control).setValue(statusDesc[0]['Description']);
+      }
+      if(control != 'Permission' && control != 'StatusId'){
+        this.userDataForm.get(control).setValue(user[control]);
+      }
+    });
   }
 
   saveData(){
-    debugger
 
-    this.userDataForm.value['Token'] = this.userToken;
+    if(this.userDataForm.valid){
+      this.saveFormSpinner = true;
+      let objToApi = {
+        Token: this.userToken
+      }
 
-    this.dataService.InsertUpdateUser(this.userDataForm.value).subscribe(result => {
-      debugger
+      Object.keys(this.userDataForm.controls).forEach(control => {
+        if(this.userDataForm.get(control).value != ''){
+          if(control == 'StatusId'){
+            let statusId = this.statusList.filter(status => status.Description == this.userDataForm.get(control).value)[0]['StatusId']
+            objToApi[control] = statusId.toString();
+
+          }
+          else{
+            objToApi[control] = this.userDataForm.get(control).value;
+          }
+        }
+      });
+
+      objToApi['OrganizationName'] = '';
+      objToApi['BusinessFile'] = '';
+
+      this.dataService.InsertUpdateBackOfficeUsers(objToApi).subscribe(result => {
+        this.saveFormSpinner = false;
+        if (result['Token'] != undefined || result['Token'] != null) {
+  
+          //set new token
+          let tempObjUser = JSON.parse(localStorage.getItem('user'));
+          tempObjUser['Token'] = result['Token'];
+          localStorage.setItem('user', JSON.stringify(tempObjUser));
+          this.userToken = result['Token'];
+  
+          if(result.obj != null && result.obj != undefined && Object.keys(result.obj[0]).length > 0){
+            this.userData = result.obj[0];
+
+            this.msgActionButtons = 'נשמר בהצלחה';
+            setTimeout(()=>{
+              this.msgActionButtons = '';
+            }, 2000);
+
+            // this.fillFormOfUserData(this.userData);
+          }
+          else{
+            this.errorActionButtons = result.errdesc;
+            setTimeout(()=>{
+              this.errorActionButtons = '';
+            }, 2000);
+          }
+        }
+        else {
+          this.dialog.open(DialogComponent,{
+            data: {message: result.errdesc != undefined ? result.errdesc : result}
+          });
+          this.sharedService.exitSystemEvent();
+        }
+      });
+    }
+    else{
+      this.errorActionButtons = 'נא למלא שדות חובה';
+      setTimeout(()=>{
+        this.errorActionButtons = '';
+      }, 2000);
+    }
+
+  }
+
+  deleteUser(){
+    this.dialog.open(DialogConfirmComponent, {
+      data: { message: 'האם למחוק ' + this.userData.FName + ' ' + this.userData.LName + '?' }
+    }).afterClosed().subscribe(response => {
+      if (response.result == 'yes') {
+        let objToApi = {
+          Token: this.userToken,
+          BackUserId: this.userData.Id.toString()
+        }
+        debugger
+        this.dataService.DeleteSuspendBackOfficeUsers(objToApi).subscribe(result => {
+          debugger
+          if (result['Token'] != undefined || result['Token'] != null) {
+
+            //set new token
+            let tempObjUser = JSON.parse(localStorage.getItem('user'));
+            tempObjUser['Token'] = result['Token'];
+            localStorage.setItem('user', JSON.stringify(tempObjUser));
+            this.userToken = result['Token'];
+
+            if (result.errdesc.includes('User Deleted Successfully')) {
+
+              this.dialog.open(DialogComponent, {
+                data: { message: 'משתמש נמחק בהצלחה' }
+              });
+              this.router.navigate(['/public/allUsers']);
+            }
+            else {
+              this.dialog.open(DialogComponent, {
+                data: { message: result.errdesc }
+              });
+            }
+          }
+          else {
+            this.dialog.open(DialogComponent,{
+              data: {message: result.errdesc != undefined ? result.errdesc : result}
+            });
+            this.sharedService.exitSystemEvent();
+          }
+        });
+      }
     });
   }
 

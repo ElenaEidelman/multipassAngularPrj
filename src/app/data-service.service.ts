@@ -33,6 +33,9 @@ export class DataServiceService implements OnInit {
       return this.http.post(`${this.baseUrl}/api/Users/SendOtp`,obj).pipe(
         map(result => {
           return result;
+        }),
+        catchError(err => {
+          return of(err.message);
         })
       );
   }
@@ -64,7 +67,8 @@ export class DataServiceService implements OnInit {
       })
     );
   }
-  
+
+
   ApproveOrder(objToApi){
     //debugger
     return this.http.post(`${this.baseUrl}/api/InsertUpdateOrder/ApproveOrder`,objToApi).pipe(
@@ -191,6 +195,17 @@ export class DataServiceService implements OnInit {
     );
   }
 
+  GetUsersByFilter(objToApi){
+    return this.http.post(`${this.baseUrl}/api/AllUsers/GetUsersByFilter	`, objToApi).pipe(
+      map(result => {
+        return result;
+      }),
+      catchError(err => {
+        return of(err.message);
+      })
+    );
+  }
+
   InsertUpdateUser(objToApi){
     return this.http.post(`${this.baseUrl}/api/InsertUpdateUser/InsertUpdateUsers`, objToApi).pipe(
       map(result => {
@@ -201,7 +216,28 @@ export class DataServiceService implements OnInit {
       })
     );
   }
+  InsertUpdateBackOfficeUsers(objToApi){
+    return this.http.post(`${this.baseUrl}/api/AllUsers/InsertUpdateBackOfficeUsers`, objToApi).pipe(
+      map(result => {
+        return result;
+      }),
+      catchError(error => {
+        return of(error.message);
+      })
+    );
+  }
 
+  GetUserStatus(objToApi){
+    return this.http.post(`${this.baseUrl}/api/AllUsers/GetUserStatus	
+    `, objToApi).pipe(
+      map(result => {
+        return result;
+      }),
+      catchError(error => {
+        return of(error.message);
+      })
+    );
+  }
   GetOrdersStatus(objToApi){
     return this.http.post(`${this.baseUrl}/api/Orders/GetOrdersStatus`, objToApi).pipe(
       map(result => {
@@ -224,9 +260,8 @@ export class DataServiceService implements OnInit {
     );
   }
 
-  
-  GetSMSFormats(objToApi){
-    return this.http.post(`${this.baseUrl}/api/SMSTemplateList/GetSMSFormats`,objToApi).pipe(
+  DeleteSuspendBackOfficeUsers(objToApi){
+    return this.http.post(`${this.baseUrl}/api/AllUsers/DeleteSuspendBackOfficeUsers`,objToApi).pipe(
       map(result => {
         return result;
       }),
@@ -235,4 +270,50 @@ export class DataServiceService implements OnInit {
       })
     );
   }
+
+  
+  GetSMSFormats(objToApi){
+    return this.http.post(`${this.baseUrl}/api/SMS/GetSMSFormats`,objToApi).pipe(
+      map(result => {
+        return result;
+      }),
+      catchError(error => {
+        return of(error.message);
+      })
+    );
+  }
+
+  CreateOrUpdateSMSTemplate(objToApi){
+    return this.http.post(`${this.baseUrl}/api/SMS/CreateOrUpdateSMSTemplate`,objToApi).pipe(
+      map(result => {
+        return result;
+      }),
+      catchError(error => {
+        return of(error.message);
+      })
+    );
+  }
+
+  DeleteSMSTemplate(objToApi){
+    return this.http.post(`${this.baseUrl}/api/SMS/DeleteSMSTemplate`,objToApi).pipe(
+      map(result => {
+        return result;
+      }),
+      catchError(error => {
+        return of(error.message);
+      })
+    );
+  }
+
+  SendSampleMessage(objToApi){
+    return this.http.post(`${this.baseUrl}//api/SMS/SendSampleMessage`,objToApi).pipe(
+      map(result => {
+        return result;
+      }),
+      catchError(error => {
+        return of(error.message);
+      })
+    );
+  }
+
 }

@@ -54,7 +54,7 @@ const routes: Routes = [
     {path: 'allUsers', component: AllUsersComponent},
     // {path: 'newUser', component: NewUserComponent},
     {path: 'user/:id', component: ExistUserComponent},
-    {path: 'newUser', component: ExistUserComponent},
+    {path: 'newUser', component: NewUserComponent},
     {path: 'allSMStemplates', component: AllSmsTemplatesComponent},
     {path: 'testExpandingTable', component: TestExpandingTableComponent},
     {path: 'admin', component: AdminComponent, children: [

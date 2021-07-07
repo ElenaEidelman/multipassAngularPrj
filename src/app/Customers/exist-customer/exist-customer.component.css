@@ -61,6 +61,7 @@ mat-accordion mat-expansion-panel mat-expansion-panel-header .mat-icon{
     text-align: center;
     display: flex;
     justify-content: center;
+    padding: 6px;
   }
   .buttonInElement > div:hover{
     cursor: pointer;
@@ -122,6 +123,9 @@ mat-accordion mat-expansion-panel mat-expansion-panel-header .mat-icon{
   .delCustButtonWrap{
     text-align: left;
     padding: 1em 0;
+  }
+  .wrapAB{
+    position: relative;
   }
   @media screen and (max-width: 1024px){
     .flexData {

@@ -59,7 +59,7 @@ export class AllUsersComponent implements OnInit {
     { value: 'id', viewValue: 'מספר משתמש' },
     { value: 'FName', viewValue: 'שם' },
     { value: 'LName', viewValue: 'שם משפחה' },
-    { value: 'Tz', viewValue: 'ח.פ' },
+    { value: 'Tz', viewValue: 'מספר משתמש' },
     { value: 'role', viewValue: 'רמת הרשאה' },
     { value: 'Email', viewValue: 'דוא"ל' },
     { value: 'Phone', viewValue: 'טלפון' },
@@ -95,7 +95,9 @@ export class AllUsersComponent implements OnInit {
         this.dataSource.data = result.obj;
       }
       else {
-        alert(result.errdesc);
+        this.dialog.open(DialogComponent,{
+          data: {message: result.errdesc}
+        })
         this.sharedService.exitSystemEvent();
       }
     });
@@ -141,18 +143,17 @@ export class AllUsersComponent implements OnInit {
   }
 
   deleteUser(user){
-    debugger
-    const dialogRef = this.dialog.open(DialogConfirmComponent, {
+    this.dialog.open(DialogConfirmComponent, {
       data: { message: 'האם למחוק ' + user.FName + ' ' + user.LName + '?' }
     }).afterClosed().subscribe(response => {
       if (response.result == 'yes') {
 
         let objToApi = {
           Token: this.userToken,
-          UserId: user.id.toString()
+          BackUserId: user.id.toString()
         }
         debugger
-        this.dataService.DeleteSuspendUsers(objToApi).subscribe(result => {
+        this.dataService.DeleteSuspendBackOfficeUsers(objToApi).subscribe(result => {
           debugger
           if (result['Token'] != undefined || result['Token'] != null) {
 
@@ -175,7 +176,9 @@ export class AllUsersComponent implements OnInit {
             }
           }
           else {
-            alert(result.errdesc);
+            this.dialog.open(DialogComponent,{
+              data: {message: result.errdesc != undefined ? result.errdesc : result}
+            });
             this.sharedService.exitSystemEvent();
           }
         });

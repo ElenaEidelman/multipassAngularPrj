@@ -11,6 +11,15 @@ export class NewSmsTemplateComponent implements OnInit {
 
   ngOnInit(): void {
     
+    /**
+     * Route:/api/SMS/CreateOrUpdateSMSTemplate
+        Json: {
+            "Token":"BHW6RE5gNkygs4EjlXCFyC8K8DKouFhkgCfEtAob2zA1",
+            "TemplateId":62,
+            "Format":"Update New Format 1110",
+            "Description":"Create new SMS 0111"
+        }
+     */
   }
 
 }

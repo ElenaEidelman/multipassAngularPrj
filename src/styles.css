@@ -331,6 +331,13 @@ form.addToExecOrderForm > table > tbody > tr > td{
 .mat-form-field-flex{
   direction: ltr;
 }
+.wrapAB{
+  position: relative;
+}
+.wrapAB > mat-spinner{
+  position: absolute;
+  top: -15px;
+}
 
 .datePickerPadding div.mat-form-field-flex{
   padding: 0;
@@ -572,11 +579,13 @@ svg{
 }
 .mat-dialog-container{
   background: rgba(255,255,255,0.8);
+  padding: 0px !important; 
+  border-radius: 8px !important;
 }
 
-button.linkButton{
+/* button.linkButton{
   color: #686866;
-}
+} */
 
 .tab-label{
   display: flex;
@@ -772,7 +781,7 @@ textarea.mat-input-element{
 .mat-form-field.mat-focused.mat-primary .mat-select-arrow,
 button svg,
 button.linkButton mat-icon {
-  color: #8FC636;
+  color: #8FC636 !important;
 }
 button.linkButton:hover{
   background: #b1e65c;

@@ -23,6 +23,7 @@ export class NewCustomerComponent implements OnInit {
   userToken: string;
   errorActionButtons: string = '';
   msgActionButtons: string = '';
+  saveFormSpinner: boolean = false;
 
   newCustomerForm = this.fb.group({
     OrganizationName: ['', Validators.required], //Validators.required
@@ -68,8 +69,9 @@ export class NewCustomerComponent implements OnInit {
         if (data[key] != '') {
           objToApi[key] = data[key]
         }
-      })
+      });
 
+      debugger
       this.dataService.InsertUpdateUser(objToApi).subscribe(result => {
         debugger
         if (result['Token'] != undefined || result['Token'] != null) {

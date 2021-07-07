@@ -38,6 +38,11 @@ mat-accordion mat-expansion-panel mat-expansion-panel-header .mat-icon{
     margin: auto 0;
   }
 
+  .delCustButtonWrap{
+    text-align: left;
+    padding: 1em 0;
+  }
+
   @media screen and (max-width: 1024px){
     .flexData {
       flex-direction: row-reverse;

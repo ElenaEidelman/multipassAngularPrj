@@ -99,7 +99,7 @@ mat-form-field{
         height: 100%;
     }
     mat-icon{
-     /* color: #8FC636;     */
+     color: #8FC636;    
     }
     .msgAlert{
         direction: rtl;

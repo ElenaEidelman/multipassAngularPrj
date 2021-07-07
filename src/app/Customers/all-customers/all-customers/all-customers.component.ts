@@ -122,18 +122,16 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
         if (result.errdesc != '' && result.errdesc != null) {
           alert(result.errdesc);
         }
-        else {
-          if (typeof result == 'object' && result['obj'] != null && result['obj'].length > 0) {
-            this.allCustomersDataSpare = result['obj'];
-            this.dataSource.data = result['obj'];
-          }
-          // if(typeof result == 'object' &&  result['obj'] == null){
-          //   // this.errorMsg = 'No Data Found';
-          //   setTimeout(()=>{
-          //     this.errorMsg = '';
-          //   },3000);
-          // }
+        if (typeof result == 'object' && result['obj'] != null && result['obj'].length > 0) {
+          this.allCustomersDataSpare = result['obj'];
+          this.dataSource.data = result['obj'];
         }
+        // if(typeof result == 'object' &&  result['obj'] == null){
+        //   // this.errorMsg = 'No Data Found';
+        //   setTimeout(()=>{
+        //     this.errorMsg = '';
+        //   },3000);
+        // }
       }
       else {
         debugger

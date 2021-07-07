@@ -62,6 +62,7 @@ export class BarChartComponent implements OnInit {
     if(this.chartData != undefined && this.chartLabels != undefined){
       this.barChartData = this.chartData;
       this.barChartLabels = this.chartLabels;
+      debugger
       this.setColorForChart();
     }
   }

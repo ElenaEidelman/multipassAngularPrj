@@ -86,18 +86,27 @@ export class LogInComponent implements OnInit {
         CompanyId: this.loginForm.get('CompanyId').value
       }
 
+      debugger
       this.dataService.SendOtp(objToApi).subscribe(result => {
         debugger
         this.loginSpinner = false;
-        if(Object.values(result).length > 0){
-          this.validKind = 'ValidateOtp';
-   
-          this.loginForm.get('OtpKey').setValue(result['Token']);
-          this.loginForm.get('OtpKey').setValidators(Validators.required);
-
+        if (result['Token'] != undefined || result['Token'] != null) {
+          if(Object.values(result).length > 0){
+            this.validKind = 'ValidateOtp';
+     
+            this.loginForm.get('OtpKey').setValue(result['Token']);
+            this.loginForm.get('OtpKey').setValidators(Validators.required);
+  
+          }
+          else{
+            this.msgAlert = 'שגיאה, נא לנסות שוב פעם';
+            setTimeout(() =>{
+              this.msgAlert = '';
+            }, 3000);
+          }
         }
         else{
-          this.msgAlert = 'שגיאה, נא לנסות שוב פעם';
+          this.msgAlert = result.errdesc;
           setTimeout(() =>{
             this.msgAlert = '';
           }, 3000);

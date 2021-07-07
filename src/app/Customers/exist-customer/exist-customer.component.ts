@@ -93,9 +93,7 @@ export class ExistCustomerComponent implements OnInit {
         CustomerId: param['id']
       }
 
-      debugger
       this.dataService.GetCustomersByFilter(objToApi).subscribe(result => {
-        debugger
         if (result['Token'] != undefined || result['Token'] != null) {
 
           if (typeof result == 'object' && result.obj != null) {
@@ -144,9 +142,7 @@ export class ExistCustomerComponent implements OnInit {
       Token: this.userToken,
       UserID: this.userId
     }
-    debugger
     this.dataService.GetOrdersByFilter(objToApi).subscribe(result => {
-      debugger
       if (result['Token'] != undefined || result['Token'] != null) {
 
         //set new token
@@ -169,11 +165,19 @@ export class ExistCustomerComponent implements OnInit {
 
           this.recOrdersChartData = [
             { data: totalByOrder, label: 'הזמנות אחרונות' }
-            // { data: totalByOrder, label: 'הזמנות אחרונות' }
           ];
 
 
           this.recOrdersChartLabels = createDateByOrder;
+        }
+        if(result.errdesc!= null && result.errdesc.includes("No Data Found")){
+
+          this.customerOrders = [];
+          this.recOrdersChartData = [
+            { data: [0], label: 'הזמנות אחרונות' }
+          ];
+
+          this.recOrdersChartLabels = ['אין הזמנות'];
         }
       }
       else {

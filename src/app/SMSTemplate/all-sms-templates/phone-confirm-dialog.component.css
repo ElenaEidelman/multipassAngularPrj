@@ -1,52 +1,64 @@
+.wrapInput{
+    width: 100%;
+}
+
+.mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+    -webkit-transform: translateY(-1.59375em) scale(0.73);
+    transform: translateY(-1.59375em) scale(0.64);
+}
+
+/* 
+dialog styles */
+
 mat-label{
     text-align: right;
-}
-.dialog-content-wrap{
+  }
+  .dialog-content-wrap{
     display: flex;
     flex-direction: row-reverse;
-}
-.mat-dialog-container{
+  }
+  .mat-dialog-container{
     display: contents;
-}
-.dialog-content-wrap > div{
+  }
+  .dialog-content-wrap > div{
     flex-grow: 1;
     margin: 10px 15px;
-}
-.addButtonWrap{
+  }
+  .addButtonWrap{
     margin: 42px 15px !important;
-}
-.actions-button{
+  }
+  .actions-button{
     justify-content: center;
-}
-.mat-dialog-title{
-
-}
-
-.close-icon-wrap{
+  }
+  .mat-dialog-title{
+  
+  }
+  
+  .close-icon-wrap{
     position: relative;
-}
-.close-icon-wrap > mat-icon{
+  }
+  .close-icon-wrap > mat-icon{
     position: absolute;
     right: -20px;
     top: -25px;
     font-size: 32px;
     color: #fff;
-}
-.close-icon-wrap > mat-icon:hover{
+  }
+  .close-icon-wrap > mat-icon:hover{
     color: #686866;
-}
-.close-icon-wrap:hover{
+  }
+  .close-icon-wrap:hover{
     cursor: pointer;
-}
-
-mat-form-field{
+  }
+  
+  mat-form-field{
     width:100%;
-}
-.drop-down-title{
+  }
+  .drop-down-title{
     text-align: right;
-}
-
-.wrap-form{
+  }
+  
+  .wrap-form{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -113,16 +125,19 @@ mat-form-field{
         justify-content: space-evenly;
         width: 100%;
     }
-
+  
     .dialogMessage{
         font-size: 2em;
         margin: 1em;
         direction: rtl;
         text-align: center;
-        overflow-wrap: anywhere;
+    }
+  
+    .mat-form-field-infix{
+        direction: rtl;
     }
 
-@media screen and (max-width: 1024px){
+  @media screen and (max-width: 1024px){
     .dialog-content-wrap
     {
         margin: auto;
@@ -142,5 +157,8 @@ mat-form-field{
         width: auto;
         margin: auto 10px;
     }
-
-}
+  
+  }
+  
+  
+  /* dialog styles end */
