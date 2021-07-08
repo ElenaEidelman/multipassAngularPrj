@@ -39,7 +39,9 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
   showHiddenLoadingCardContent: boolean = false;
   loadingCardUserExist: boolean = false;
   filename;
-
+ 
+  excelfileName;
+  excelCustomerId;
   // selectedCustomerControl = new FormControl('');
 
 
@@ -61,6 +63,17 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
     sum: ['',{value: ''},Validators.required]
   });
 
+  excelCardGroup = this.fb.group({
+    customer: ['',Validators.required],
+    fileDesc: ['',Validators.required],
+    file: ['',Validators.required],
+
+    userId: [{value: '', disabled: true}, Validators.required],
+    fromCardNumber: ['',{value: ''},Validators.required],
+    toCardNumber: ['',{value: ''},Validators.required],
+    sum: ['',{value: ''},Validators.required]
+  });
+
 
   constructor(private fb: FormBuilder, private activeRoute: ActivatedRoute, private dataService: DataServiceService) { }
 
@@ -73,19 +86,12 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
     this.userDataUnsubscribe = this.activeRoute.params.subscribe(param => {
       this.userId = param['userId'];
       this.indexId = param['indexId'];
-      // if(this.userId != undefined && this.indexId != undefined){
-      //   this.excelCardCreatingForm.controls['customer'].setValue(this.fillteringUserData(this.userId));
-      // }
-      // else{
-      //   this.indexId = 0;
-      // }
+      
     });
 
     this.loadingCardGroupChange();
-    this.filename = this.excelCardCreatingForm.value;
-    // console.log("this.filename",this.filename)
-
   }
+
   getAllCustomers(){
     let token = JSON.parse(localStorage.getItem('user'))['Token'];
     let objToApi = {
@@ -151,21 +157,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
     this.manualCardgroup.get('selectedCustomerControl').value;
     debugger
   }
-  // indentityUser(){
-  //   if(this.loadingCardGroup.valid){
-  //     this.showHiddenLoadingCardContent = true;
-  //     this.loadingCardGroup.get('userId').disable();
-  //     this.loadingCardGroup.get('selectedCustomerControl').disable();
-  //   }
-  //   else{
-  //     this.showHiddenLoadingCardContent = false;
-  //     this.loadingCardUserExist = true;
-
-  //     setTimeout(()=>{
-  //       this.loadingCardUserExist = false;
-  //     },3000);
-  //   }
-  // }
+ 
   optionChange(){
       if(this.loadingCardGroup.get('selectedCustomerControl').value){
         this.showHiddenLoadingCardContent = true;
@@ -173,6 +165,23 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
         // this.loadingCardGroup.get('userId').enable();
       }
   }
+
+  excelOptionChange(){
+  
+    if(this.excelCardCreatingForm.get('customer').value){
+      this.excelCustomerId = this.excelCardCreatingForm.get('customer').value.id;
+      this.showHiddenLoadingCardContent = true;
+    }
+}
+
+fileOptionChange(event){
+  if(event.target.files.length > 0) 
+  {
+    this.filename = event.target.files[0].name;
+    localStorage.setItem('excelFilename', this.filename);
+  }
+}
+
   loadingCardGroupChange(){
     this.loadingCardGroup.valueChanges.pipe(
       debounceTime(1000)
@@ -232,24 +241,6 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
       }
     });
   }
-
-  sendCard(){
-    let token = JSON.parse(localStorage.getItem('user'))['Token'];
-    console.log("this.userId",this.userId)
-    let objToApi = {
-      Token: token,
-      UserID: "2700",
-      OpCode: "upload",
-      FileName: this.filename
-    }
-    console.log("objToApi",objToApi)
-
-    this.dataService.InsertUpdateOrderByExcel(objToApi).subscribe(result => {
-      console.log("InsertUpdateOrderByExcel",result);
-
-    });
-  }
-
 
   getCardsData(){
     this.cardsData = [
