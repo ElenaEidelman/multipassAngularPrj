@@ -18,9 +18,6 @@
     flex-basis: 0;
 }
 
-.buttonsWrap button{
-    margin: 10px
-}
 .example-radio-group {
     display: flex;
     flex-direction: column;
@@ -49,15 +46,6 @@
     width:100% !important;
 }
 
-
-.actionsButton{
-    text-align: center;
-    margin: 1em 0;
-    display: flex;
-    /* margin: auto; */
-    justify-content: center;
-    align-items: center;
-}
 .filterActionButton{
     position: absolute;
 }

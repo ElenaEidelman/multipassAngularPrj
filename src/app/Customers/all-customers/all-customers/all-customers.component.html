@@ -47,7 +47,7 @@
                                 <button class="clearButton" *ngIf="filterCustomerForm.get('OrderStatus').value != ''"  mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="filterCustomerForm.get('OrderStatus').setValue('')">
                                     <mat-icon>close</mat-icon>
                                 </button>
-                                <mat-select formControlName="OrderStatus" multiple>
+                                <mat-select formControlName="OrderStatus">
                                     <!-- <mat-option #closeSelect>
                                         <button mat-button (click)="resetStatusField(this); closeMatSelect()"></button>
                                     </mat-option> -->

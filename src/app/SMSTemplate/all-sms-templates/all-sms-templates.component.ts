@@ -47,10 +47,10 @@ export class AllSmsTemplatesComponent implements OnInit {
 
 
   constructor(
-              private fb: FormBuilder,
-              private dataService: DataServiceService,
-              private sharedService: SharedService,
-              private dialog: MatDialog) { }
+    private fb: FormBuilder,
+    private dataService: DataServiceService,
+    private sharedService: SharedService,
+    private dialog: MatDialog) { }
 
 
   ngOnInit(): void {
@@ -93,13 +93,13 @@ export class AllSmsTemplatesComponent implements OnInit {
         }
         if (result.errdesc != '' && result.errdesc != null) {
           this.dialog.open(DialogComponent, {
-            data: {message: result.errdesc}
+            data: { message: result.errdesc }
           })
         }
       }
       else {
         this.dialog.open(DialogComponent, {
-          data: {message: result}
+          data: { message: result }
         })
         this.sharedService.exitSystemEvent();
       }
@@ -133,80 +133,80 @@ export class AllSmsTemplatesComponent implements OnInit {
   addNewTemplate() {
     this.openNewTemplate = !this.openNewTemplate;
 
-    setTimeout(()=>{
-    //focus text area
-    this.newTemplate.nativeElement.focus();
+    setTimeout(() => {
+      //focus text area
+      this.newTemplate.nativeElement.focus();
     }, 100);
   }
 
   saveTemplate(template) {
     if (template != 'newTemplate') {
 
-      if(this.SMSForm.get('Id-' + template.Id).valid){
-        
-      let objToApi = {
-        Token: this.userToken,
-        TemplateName: this.SMSForm.get('Id-' + template.Id).get('TemplateName' + template.Id).value,
-        SenderName: this.SMSForm.get('Id-' + template.Id).get('SenderName' + template.Id).value,
-        TemplateFormat: this.SMSForm.get('Id-' + template.Id).get('TemplateFormat' + template.Id).value,
-        TemplateId: template.Id
-      }
+      if (this.SMSForm.get('Id-' + template.Id).valid) {
+
+        let objToApi = {
+          Token: this.userToken,
+          TemplateName: this.SMSForm.get('Id-' + template.Id).get('TemplateName' + template.Id).value,
+          SenderName: this.SMSForm.get('Id-' + template.Id).get('SenderName' + template.Id).value,
+          TemplateFormat: this.SMSForm.get('Id-' + template.Id).get('TemplateFormat' + template.Id).value,
+          TemplateId: template.Id
+        }
 
 
-      this.dataService.CreateOrUpdateSMSTemplate(objToApi).subscribe(result => {
-        if (result['Token'] != undefined || result['Token'] != null) {
+        this.dataService.CreateOrUpdateSMSTemplate(objToApi).subscribe(result => {
+          if (result['Token'] != undefined || result['Token'] != null) {
 
-          //set new token
-          let tempObjUser = JSON.parse(localStorage.getItem('user'));
-          tempObjUser['Token'] = result['Token'];
-          localStorage.setItem('user', JSON.stringify(tempObjUser));
-          this.userToken = result['Token'];
+            //set new token
+            let tempObjUser = JSON.parse(localStorage.getItem('user'));
+            tempObjUser['Token'] = result['Token'];
+            localStorage.setItem('user', JSON.stringify(tempObjUser));
+            this.userToken = result['Token'];
 
-          if (typeof result == 'object' && result['obj'] != null && result['obj'].length > 0) {
+            if (typeof result == 'object' && result['obj'] != null && result['obj'].length > 0) {
 
-            document.getElementById('msgBySms' + template.Id).innerHTML = 'נשמר בהצלחה';
-            setTimeout(() => {
-              document.getElementById('msgBySms' + template.Id).innerHTML = '';
-              this.edit = !this.edit;
-              this.editingTempId = -1;
-            }, 2000);
+              document.getElementById('msgBySms' + template.Id).innerHTML = 'נשמר בהצלחה';
+              setTimeout(() => {
+                document.getElementById('msgBySms' + template.Id).innerHTML = '';
+                this.edit = !this.edit;
+                this.editingTempId = -1;
+              }, 2000);
 
-            this.SMSForm.get('Id-' + template.Id).get('TemplateFormat' + template.Id).disable();
-            this.SMSForm.get('Id-' + template.Id).get('SenderName' + template.Id).disable();
-            this.SMSForm.get('Id-' + template.Id).get('TemplateName' + template.Id).disable();
+              this.SMSForm.get('Id-' + template.Id).get('TemplateFormat' + template.Id).disable();
+              this.SMSForm.get('Id-' + template.Id).get('SenderName' + template.Id).disable();
+              this.SMSForm.get('Id-' + template.Id).get('TemplateName' + template.Id).disable();
+            }
+            if (typeof result == 'string') {
+              this.errorMessagenewSms = result;
+
+              setTimeout(() => {
+                this.errorMessagenewSms = '';
+              }, 5000)
+            }
+            if (result.obj == null && result.errdesc != '' && result.errdesc != null) {
+              this.dialog.open(DialogComponent, {
+                data: { message: result.errdesc }
+              })
+            }
+
           }
-          if (typeof result == 'string') {
-            this.errorMessagenewSms = result;
-
-            setTimeout(() => {
-              this.errorMessagenewSms = '';
-            }, 5000)
-          }
-          if (result.obj == null && result.errdesc != '' && result.errdesc != null) {
+          else {
             this.dialog.open(DialogComponent, {
-              data: {message: result.errdesc}
+              data: { message: result.errdesc }
             })
+            // this.sharedService.exitSystemEvent();
           }
-
-        }
-        else {
-          this.dialog.open(DialogComponent, {
-            data: {message: result.errdesc}
-          })
-          // this.sharedService.exitSystemEvent();
-        }
-      });
+        });
       }
-      else{
-          document.getElementById('msgErrorBySms' + template.Id).innerHTML = 'נא למלא את כל השדות';
+      else {
+        document.getElementById('msgErrorBySms' + template.Id).innerHTML = 'נא למלא את כל השדות';
 
-          setTimeout(()=>{
-            document.getElementById('msgErrorBySms' + template.Id).innerHTML = '';
-          }, 2000);
+        setTimeout(() => {
+          document.getElementById('msgErrorBySms' + template.Id).innerHTML = '';
+        }, 2000);
       }
     }
     else {
-      if(this.newTemplateForm.valid){
+      if (this.newTemplateForm.valid) {
         this.spinnerNewTemp = true;
         let objToApi = {
           Token: this.userToken,
@@ -214,60 +214,60 @@ export class AllSmsTemplatesComponent implements OnInit {
           SenderName: this.newTemplateForm.get('SenderName').value,
           TemplateFormat: this.newTemplateForm.get('TemplateFormat').value,
         }
-  
+
         this.dataService.CreateOrUpdateSMSTemplate(objToApi).subscribe(result => {
           this.spinnerNewTemp = false;
           if (result['Token'] != undefined || result['Token'] != null) {
-  
+
             //set new token
             let tempObjUser = JSON.parse(localStorage.getItem('user'));
             tempObjUser['Token'] = result['Token'];
             localStorage.setItem('user', JSON.stringify(tempObjUser));
             this.userToken = result['Token'];
-  
+
             if (typeof result == 'object' && result['obj'] != null && result['obj'].length > 0 && result.errdesc == 'Template Created Successfully') {
               debugger
               this.templatesSMS.unshift(...result.obj);
-  
+
               this.saveMessage = 'נשמר בהצלחה';
 
-                
+
               this.newTemplateForm.get('TemplateName').setValue('');
               this.newTemplateForm.get('SenderName').setValue('');
               this.newTemplateForm.get('TemplateFormat').setValue('');
-  
+
               setTimeout(() => {
                 this.saveMessage = '';
                 this.openNewTemplate = false;
               }, 2000);
               this.createForm('SMSForm', this.templatesSMS, 'Id-');
-  
+
             }
             if (typeof result == 'string') {
               this.errorMessagenewSms = result;
-  
+
               setTimeout(() => {
                 this.errorMessagenewSms = '';
               }, 5000)
             }
             if (result.obj == null && result.errdesc != '' && result.errdesc != null) {
               this.dialog.open(DialogComponent, {
-                data: {message: result.errdesc}
+                data: { message: result.errdesc }
               })
             }
           }
           else {
             this.dialog.open(DialogComponent, {
-              data: {message: result.errdesc}
+              data: { message: result.errdesc }
             })
             // this.sharedService.exitSystemEvent();
           }
         });
       }
-      else{
+      else {
         this.errorMessagenewSms = 'נא למלא את כל השדות';
 
-        setTimeout(()=>{
+        setTimeout(() => {
           this.errorMessagenewSms = '';
         }, 2000);
       }
@@ -312,7 +312,7 @@ export class AllSmsTemplatesComponent implements OnInit {
 
   }
 
-  deleteTemplate(template){
+  deleteTemplate(template) {
     /**
      * Route: /api/SMS/DeleteSMSTemplate
 Json: 
@@ -321,16 +321,16 @@ Json:
     "TemplateId":6
 }
      */
-    this.dialog.open(DialogConfirmComponent,{
-      data: {message: 'האם למחוק ' + template.TemplateName + ' ?'}
+    this.dialog.open(DialogConfirmComponent, {
+      data: { message: 'האם למחוק ' + template.TemplateName + ' ?' }
     }).afterClosed().subscribe(result => {
-      if(result.result == 'yes'){
+      if (result.result == 'yes') {
 
         let objToApi = {
           Token: this.userToken,
           TemplateId: template.Id
         }
-        
+
         this.dataService.DeleteSMSTemplate(objToApi).subscribe(result => {
           if (result['Token'] != undefined || result['Token'] != null) {
 
@@ -339,10 +339,10 @@ Json:
             tempObjUser['Token'] = result['Token'];
             localStorage.setItem('user', JSON.stringify(tempObjUser));
             this.userToken = result['Token'];
-    
+
             if (result.errdesc.includes('Template is Deleted Successfully')) {
-              this.dialog.open(DialogComponent,{
-                data: {message: 'נמחק בהצלחה'}
+              this.dialog.open(DialogComponent, {
+                data: { message: 'נמחק בהצלחה' }
               })
 
               this.templatesSMS = this.templatesSMS.filter(temp => temp.Id != template.Id);
@@ -356,7 +356,7 @@ Json:
           }
           else {
             this.dialog.open(DialogComponent, {
-              data: {message: result.errdesc}
+              data: { message: result.errdesc }
             })
             // this.sharedService.exitSystemEvent();
           }
@@ -365,7 +365,7 @@ Json:
     });
 
   }
-  closeTemplate(template){
+  closeTemplate(template) {
     this.edit = !this.edit;
     this.editingTempId = -1;
 
@@ -374,7 +374,7 @@ Json:
     this.SMSForm.get('Id-' + template.Id).get('TemplateName' + template.Id).disable();
   }
 
-  sendSMSForExample(template){
+  sendSMSForExample(template) {
 
     /**
      * /api/SMS/SendSampleMessage
@@ -382,13 +382,15 @@ Json:
      * 
      */
 
+    if (this.newTemplateForm.valid) {
 
-    let dataRef =  this.dialog.open(PhoneConfirmComponent, {
-      data: {message: '   מה מספר טלפון לשליחת SMS  ?'}
-    }).afterClosed().subscribe(result => {
-      if(result.result.includes('phone')){
 
-        let phone = result.result.split('phone: ')[1];
+      this.dialog.open(PhoneConfirmComponent, {
+        data: { message: '   מה מספר טלפון לשליחת SMS  ?' }
+      }).afterClosed().subscribe(result => {
+        if (result.result.includes('phone')) {
+
+          let phone = result.result.split('phone: ')[1];
 
           let objToApi = {
             Token: this.userToken,
@@ -405,29 +407,30 @@ Json:
               localStorage.setItem('user', JSON.stringify(tempObjUser));
               this.userToken = result['Token'];
 
-              if(result.errdesc == 'OK'){
+              if (result.errdesc == 'OK') {
                 this.dialog.open(DialogComponent, {
-                  data: {message : 'נשלח בהצלחה'}
+                  data: { message: 'נשלח בהצלחה' }
                 });
               }
 
             }
             else {
               this.dialog.open(DialogComponent, {
-                data: {message: result.errdesc}
+                data: { message: result.errdesc }
               })
               // this.sharedService.exitSystemEvent();
             }
           });
-      }
-    })
+        }
+      })
+    }
   }
 
 }
 
 
 
-export interface DialogData{
+export interface DialogData {
   message: any
 }
 @Component({
@@ -439,9 +442,9 @@ export interface DialogData{
 export class PhoneConfirmComponent implements OnInit {
 
   constructor(public dialog: MatDialog,
-              public dialogRef: MatDialogRef<PhoneConfirmComponent>, 
-              @Inject(MAT_DIALOG_DATA) public data: DialogData, 
-              private route: Router) { }
+    public dialogRef: MatDialogRef<PhoneConfirmComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: DialogData,
+    private route: Router) { }
 
   phoneControl = new FormControl('');
   errorPhone: string = '';
@@ -449,21 +452,21 @@ export class PhoneConfirmComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  dialogClose(){
+  dialogClose() {
     this.dialogRef.close();
   }
-  yes(){
-    if(this.phoneControl.value != ''){
-      this.dialogRef.close({result: 'phone: ' + this.phoneControl.value}); 
+  yes() {
+    if (this.phoneControl.value != '') {
+      this.dialogRef.close({ result: 'phone: ' + this.phoneControl.value });
     }
-    else{
+    else {
       this.errorPhone = 'נא להזין מספר טלפון תקין';
-      setTimeout(()=>{
+      setTimeout(() => {
         this.errorPhone = '';
       }, 2000);
     }
   }
-  no(){
-    this.dialogRef.close({result: 'no'});
+  no() {
+    this.dialogRef.close({ result: 'no' });
   }
 }

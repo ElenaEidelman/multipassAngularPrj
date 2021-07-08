@@ -181,6 +181,8 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
 
     if (fieldFilled) {
       this.filterSpinner = true;
+
+      debugger
       this.dataService.GetCustomersByFilter(objToApi).subscribe(result => {
         this.filterSpinner = false;
 

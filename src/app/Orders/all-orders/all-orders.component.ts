@@ -277,32 +277,33 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     else {
 
       this.filterActionButtonSpinner = true;
-      // this.dataService.GetOrdersByFilter(objToApi).subscribe(result => {
-      //   // debugger
-      //   this.filterActionButtonSpinner = false;
+      debugger
+      this.dataService.GetOrdersByFilter(objToApi).subscribe(result => {
+        debugger
+        this.filterActionButtonSpinner = false;
 
-      //   if (result['Token'] != undefined || result['Token'] != null) {
-      //     if (typeof result == 'object' && result.obj != null) {
-      //       this.dataSource.data = [...result['obj']];
-      //     }
+        if (result['Token'] != undefined || result['Token'] != null) {
+          if (typeof result == 'object' && result.obj != null) {
+            this.dataSource.data = [...result['obj']];
+          }
 
-      //     if (result.errdesc == 'No Data Found') {
-      //       this.noTableData = true;
-      //       this.dataSource.data = [];
-      //     }
-      //     if (typeof result == 'string') {
-      //       this.errorMsg = result;
+          if (result.errdesc == 'No Data Found') {
+            this.noTableData = true;
+            this.dataSource.data = [];
+          }
+          if (typeof result == 'string') {
+            this.errorMsg = result;
 
-      //       setTimeout(() => {
-      //         this.errorMsg = '';
-      //       }, 3000);
-      //     }
-      //   }
-      //   else {
-      //     alert(result.errdesc);
-      //     this.sharedService.exitSystemEvent();
-      //   }
-      // })
+            setTimeout(() => {
+              this.errorMsg = '';
+            }, 3000);
+          }
+        }
+        else {
+          alert(result.errdesc);
+          this.sharedService.exitSystemEvent();
+        }
+      })
     }
   }
 
