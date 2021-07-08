@@ -285,6 +285,7 @@ $ git merge new-branch
     );
   }
 
+
   
   GetSMSFormats(objToApi){
     return this.http.post(`${this.baseUrl}/api/SMS/GetSMSFormats`,objToApi).pipe(
@@ -330,4 +331,17 @@ $ git merge new-branch
     );
   }
 
+  InsertUpdateOrderByExcel(objToApi){
+    //debugger
+    return this.http.post(`${this.baseUrl}/api/InsertUpdateOrder/InsertUpdateOrderByExcel`,objToApi).pipe(
+      map(result => {
+        //debugger
+        return result;
+      }),
+      catchError(error => {
+        //debugger
+        return of(error.message);
+      })
+    );
+  }
 }
