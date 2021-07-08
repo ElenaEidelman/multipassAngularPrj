@@ -4,16 +4,14 @@
     flex-direction: row-reverse;
     flex-wrap: wrap;
 }
-mat-spinner{
+/* mat-spinner{
     margin: auto;
     position: absolute;
-    /* width: 50px !important;
-    height: 50px !important; */
 }
 mat-spinner >  svg{
     width: 50px !important;
     height: 50px !important;
-}
+} */
 .spinner{
 
 }

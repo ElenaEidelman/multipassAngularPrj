@@ -523,6 +523,9 @@ dialog-content-example-dialog div.innerElement{
 .formWrapRow mat-form-field.datePickerPadding div.mat-form-field-wrapper{
   /* margin-left: 83px; */
 }
+.svg-inline--fa.fa-w-12 {
+  color: #fff !important;
+}
 .selectedFormFieldWidth{
   width: 180px !important;
 }

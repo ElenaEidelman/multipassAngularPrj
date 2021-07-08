@@ -83,7 +83,6 @@
                 <button mat-button class="addButton" (click) = "filterTable()">חפש</button>
                 <mat-spinner *ngIf="filterActionButtonSpinner" class="filterActionButton"></mat-spinner>
             </div>
-            <div *ngIf="filterActionButtonSpinner" style="text-align: center;">searching...</div>
             <div class="error" *ngIf="errorMsg != ''">{{errorMsg}}</div>
         </div>
     </div>
