@@ -32,18 +32,13 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
 
   fromCardCheckedOrderNumber: any;
   toCardCheckedOrderNumber: any;
-
   toCardError: string;
   fromCardError: string = '';
-
   showHiddenLoadingCardContent: boolean = false;
   loadingCardUserExist: boolean = false;
   filename;
- 
   excelfileName;
   excelCustomerId;
-  // selectedCustomerControl = new FormControl('');
-
 
   excelCardCreatingForm = this.fb.group({
     customer: (''),

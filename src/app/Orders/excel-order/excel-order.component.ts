@@ -115,12 +115,9 @@ export class ExcelOrderComponent implements OnInit, OnDestroy, OnChanges {
 
   //disable all days before current data
   calendarFilter = (d: Date | null): boolean => {
-    //  debugger
     const day = (d || new Date()).getDate() < 10 ? '0' + (d || new Date()).getDate() : (d || new Date()).getDate()  ;
     const month = ((d || new Date()).getMonth() + 1) < 10 ? '0' + ((d || new Date()).getMonth() + 1) : ((d || new Date()).getMonth() + 1);
     const year = (d || new Date()).getFullYear();
-
-
     return new Date() < new Date(month + '/' + day + '/' + year);
   }
 
@@ -153,10 +150,6 @@ export class ExcelOrderComponent implements OnInit, OnDestroy, OnChanges {
           else{
             if(result['Token'] != undefined){
   
-              //set new token
-              // let tempObjUser = JSON.parse(localStorage.getItem('user'));
-              // tempObjUser['Token'] = result['Token'];
-              // localStorage.setItem('user',JSON.stringify(tempObjUser));
              // debugger
               this.dataByPage = result['obj'][0];
                   
@@ -177,7 +170,6 @@ export class ExcelOrderComponent implements OnInit, OnDestroy, OnChanges {
             }
             else{
               alert(JSON.stringify(result));
-              // this.sharedService.exitSystemEvent();
             }
           }
         })
