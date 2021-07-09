@@ -162,7 +162,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
   }
 
   excelOptionChange(){
-  
+    debugger
     if(this.excelCardCreatingForm.get('customer').value){
       this.excelCustomerId = this.excelCardCreatingForm.get('customer').value.id;
       this.showHiddenLoadingCardContent = true;
