@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, RouterLinkActive } from '@angular/router';
 import { CustomerData } from 'src/app/Classes/customerData';
+import { DataServiceService } from 'src/app/data-service.service';
 
 @Component({
   selector: 'app-card-info',
@@ -10,18 +11,26 @@ import { CustomerData } from 'src/app/Classes/customerData';
 })
 export class CardInfoComponent implements OnInit {
 
-  constructor(private activateRoute: ActivatedRoute) { }
+  constructor(
+              private activateRoute: ActivatedRoute,
+              private dataService: DataServiceService) { }
 
     // data table
     public newOrderLabelForTable;
     public newOrderDataSource: MatTableDataSource<any>;  
 
     cardStatus: boolean = false;
+    userId;
+    userToken;
+    cardId;
 
   unsubscribeId;
   ngOnInit(): void {
     window.scroll(0,0);
-    this.unsubscribeId = this.activateRoute.params.subscribe(el => {
+    this.unsubscribeId = this.activateRoute.params.subscribe(param => {
+      this.cardId = param['id'];
+      this.userId = param['userId'];
+      this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
       this.getTablesData();
     });
   }
@@ -49,6 +58,29 @@ export class CardInfoComponent implements OnInit {
       {cNumber: '8', digitalCode: '15280433', recipName: '', recipPhomeNumber: '', firstChargeAmount: '100.00', validity: '31/03/2026',  chargVaucherType: 'דיגיטלים', sendRecently: ''}
     ]);
 
+
+    /**
+     * /api/AllCards/GetCardInfoById
+
+
+    {
+    "Token":"dqzbWm7xipd8zBjLOMMTlRx_QKR9ZQWGYnxKpuXtKuw1",
+    "CardId":15377519,
+    "UserId":2700
+ 
+}
+     */
+
+   let objToApi = {
+     Token: this.userToken,
+     CardId: this.cardId,
+     UserId: this.userId
+   }
+
+   debugger
+   this.dataService.GetCardInfoById(objToApi).subscribe(result => {
+     debugger
+   });
   }
 
 }

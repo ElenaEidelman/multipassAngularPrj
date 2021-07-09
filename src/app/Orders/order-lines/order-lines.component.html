@@ -38,7 +38,7 @@
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header> {{column['viewValue']}} </th>
                                 <td mat-cell *matCellDef="let row">
                                     <span *ngIf="column['value'] != 'CardId'">{{row[column['value']]}}</span>
-                                    <a [routerLink]="['/public/cardInfo',row['CardId']]" *ngIf="column['value'] == 'CardId'">{{row[column['value']]}}</a>
+                                    <a [routerLink]="['/public/cardInfo',row['CardId'], userId]" *ngIf="column['value'] == 'CardId'">{{row[column['value']]}}</a>
                                 </td>
                             </ng-container>
                         </ng-container>

@@ -16,8 +16,8 @@ export class DataServiceService implements OnInit {
 
 
 
-  baseUrl = 'http://tempdomain-test-3.mltp.co.il';
-  //baseUrl = 'http://localhost:45036';
+  //baseUrl = 'http://tempdomain-test-3.mltp.co.il';
+  baseUrl = 'http://localhost:45036';
 
   //test main
   /**
@@ -108,6 +108,18 @@ $ git merge new-branch
   }
   GetCardsByOrderId(objToApi){
     return this.http.post(`${this.baseUrl}/api/InsertUpdateOrder/GetCardsByOrderId`, objToApi).pipe(
+      map(result => {
+        return result;
+      }),
+      catchError(err => {
+        return of(err.message);
+      })
+
+    );
+  }
+
+  GetCardInfoById(objToApi){
+    return this.http.post(`${this.baseUrl}/api/AllCards/GetCardInfoById`, objToApi).pipe(
       map(result => {
         return result;
       }),

@@ -171,10 +171,16 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
     let objToApi = {
       Token: token,
     };
-    Object.keys(this.filterCustomerForm.value).forEach(key => {
-      if (this.filterCustomerForm.get(key).value != '' && this.filterCustomerForm.get(key).value != null) {
+    Object.keys(this.filterCustomerForm.controls).forEach(control => {
+      if (this.filterCustomerForm.get(control).value != '' && this.filterCustomerForm.get(control).value != null) {
         fieldFilled = true;
-        objToApi[key] = this.filterCustomerForm.get(key).value;
+
+        if(control == 'OrderStatus'){
+          objToApi[control] = Array.of(this.filterCustomerForm.get(control).value);
+        }
+        else{
+          objToApi[control] = this.filterCustomerForm.get(control).value;
+        }
       }
     })
 
@@ -184,6 +190,7 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
 
       debugger
       this.dataService.GetCustomersByFilter(objToApi).subscribe(result => {
+        debugger
         this.filterSpinner = false;
 
         if (result['Token'] != undefined || result['Token'] != null) {

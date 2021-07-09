@@ -251,7 +251,6 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   filterTable() {
 
     this.noTableData = false;
-    let filterList = this.filterTableGroup.value;
     let inputSelected = false;
 
     let objToApi = {
@@ -259,11 +258,11 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     //fill obj to api
-    // debugger
-    Object.keys(filterList).forEach(element => {
-      if (filterList[element] != null && filterList[element].toString() != '') {
+    Object.keys(this.filterTableGroup.controls).forEach(control => {
+      if (this.filterTableGroup.get(control).value != null && this.filterTableGroup.get(control).value.toString() != '') {
         inputSelected = true;
-        objToApi[element] = filterList[element];
+          objToApi[control] = this.filterTableGroup.get(control).value;
+        
       }
     });
 
@@ -301,7 +300,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         else {
           alert(result.errdesc);
-          this.sharedService.exitSystemEvent();
+          // this.sharedService.exitSystemEvent();
         }
       })
     }
