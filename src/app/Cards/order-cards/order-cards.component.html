@@ -1,5 +1,6 @@
 <div class="pageTitle main2-title">
     <div>הזמנת שוברים</div>
+    
 </div>
 <div class="page-element width-block-auto">
     <div class="element-page-title">הזמנת שוברים</div>
@@ -30,13 +31,23 @@
                                             </mat-option>
                                         </ng-container>
                                     </mat-select>
+                                    <mat-error *ngIf="excelCustomerError != ''">{{excelCustomerError}}</mat-error>
                                 </mat-form-field>
                             </div>
                             <div>
                                 <div class="example-full-width">
-                                    <mat-label>תאור הקובץ</mat-label>
-                                    <textarea placeholder="נא להכניס תיאור של הקובץ" matInput
-                                        formControlName="fileDesc">{{uploadDoc.value}}</textarea>
+                                    <mat-form-field class="width100 textA">
+                                        <mat-label>תאור הקובץ</mat-label>
+                                        <textarea 
+                                                    placeholder="נא להכניס תיאור של הקובץ" 
+                                                    matInput
+                                                    formControlName="fileDesc"
+                                                    cdkTextareaAutosize
+                                                    #autosize="cdkTextareaAutosize"
+                                                    cdkAutosizeMinRows="2">
+                                                    {{uploadDoc.value}}
+                                        </textarea>
+                                    </mat-form-field>
                                 </div>
 
                             </div>
@@ -51,12 +62,17 @@
                                     </button>
                                 </div>
                                 <span [hidden]="false" id="file-upload-filename" >{{filename}}</span>
+                                <mat-error *ngIf="excelFileError != ''">{{excelFileError}}</mat-error>
                             </div>
                         </div>
                         <div class="sendButtonWrap">
-                          <button mat-button class="addButton"
+                          <!-- <button mat-button class="addButton"
                           [routerLink]="['/public/excelOrder', excelCardCreatingForm.get('customer').value != undefined ?  excelCardCreatingForm.get('customer').value['id'] : '-1' ]"
-                          >שלח</button>
+                          >שלח</button> -->
+                            <button mat-button class="addButton" (click)="goToExcelView()">
+                                שלח
+                            </button>
+                            <mat-error *ngIf="excelSendError != ''">{{excelSendError}}</mat-error>
                         </div>
                     </form>
                 </div>
@@ -91,9 +107,8 @@
                             </div>
                             <div class="buttonAny alignRight">
                                 <div class="wrapUserButton">
-                                    <button mat-button class="addButton flexB" (click)="test()"
-                                        [routerLink]="['/public/newOrder', manualCardgroup.get('selectedCustomerControl').value != undefined ?  manualCardgroup.get('selectedCustomerControl').value['id'] : '-1' ]">הכנס
-                                    </button>
+                                    <button mat-button class="addButton flexB" (click)="checkFormValidity()">הכנס</button>
+                                    <div class="error">{{manualError}}</div>
                                     <!-- <button mat-button class="addButton" (click)="test()"
                                         [routerLink]="'/public/newOrder'" [state]="{data: manualCardgroup.get('selectedCustomerControl').value}">הכנס
                                     </button> -->

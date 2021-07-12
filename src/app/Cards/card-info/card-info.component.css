@@ -4,6 +4,13 @@
     justify-content: space-between;
     flex-direction: row-reverse;
 }
+.wrapExpData{
+    display: flex;
+    justify-content: flex-end;
+}
+.padd{
+    padding-left: 10px;
+}
 .innerElement{
     margin: 1.5rem 0;
     position: relative;

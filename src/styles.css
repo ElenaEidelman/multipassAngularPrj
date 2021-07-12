@@ -514,6 +514,9 @@ dialog-content-example-dialog div.innerElement{
   padding: 15px 15px 0;
   border-radius: 10px;
 }
+.width100{
+  width: 100%;
+}
  .mat-select{/*.mat-form-field.datePicker*/
   direction: rtl;
 }

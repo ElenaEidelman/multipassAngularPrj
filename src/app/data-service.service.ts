@@ -16,8 +16,8 @@ export class DataServiceService implements OnInit {
 
 
 
-  //baseUrl = 'http://tempdomain-test-3.mltp.co.il';
-  baseUrl = 'http://localhost:45036';
+ baseUrl = 'http://tempdomain-test-3.mltp.co.il';
+  //baseUrl = 'http://localhost:45036';
 
   //test main
   /**
@@ -333,7 +333,7 @@ $ git merge new-branch
   }
 
   SendSampleMessage(objToApi){
-    return this.http.post(`${this.baseUrl}//api/SMS/SendSampleMessage`,objToApi).pipe(
+    return this.http.post(`${this.baseUrl}/api/SMS/SendSampleMessage`,objToApi).pipe(
       map(result => {
         return result;
       }),

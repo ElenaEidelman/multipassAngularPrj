@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, RouterLinkActive } from '@angular/router';
 import { CustomerData } from 'src/app/Classes/customerData';
 import { DataServiceService } from 'src/app/data-service.service';
+import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
+import { SharedService } from 'src/app/shared.service';
 
 @Component({
   selector: 'app-card-info',
@@ -13,16 +17,32 @@ export class CardInfoComponent implements OnInit {
 
   constructor(
               private activateRoute: ActivatedRoute,
-              private dataService: DataServiceService) { }
+              private dataService: DataServiceService,
+              private dialog: MatDialog,
+              private sharedService: SharedService,
+              private fb: FormBuilder) { }
 
     // data table
     public newOrderLabelForTable;
     public newOrderDataSource: MatTableDataSource<any>;  
 
-    cardStatus: boolean = false;
     userId;
     userToken;
     cardId;
+
+    CardInfo;
+    OrderDetails;
+    History;
+
+    saveUserDataSpinner: boolean = false;
+
+    userDetailsForm = this.fb.group({
+      FullName: (''),
+      PhoneNumber: ('')
+    });
+
+    Note = this.fb.control({value: '', disabled: true});
+
 
   unsubscribeId;
   ngOnInit(): void {
@@ -79,8 +99,44 @@ export class CardInfoComponent implements OnInit {
 
    debugger
    this.dataService.GetCardInfoById(objToApi).subscribe(result => {
-     debugger
+     if (result['Token'] != undefined || result['Token'] != null) {
+debugger
+          //set new token
+          let tempObjUser = JSON.parse(localStorage.getItem('user'));
+          tempObjUser['Token'] = result['Token'];
+          localStorage.setItem('user', JSON.stringify(tempObjUser));
+          this.userToken = result['Token'];
+
+      if (typeof result == 'object' && result.obj != null) {
+        this.CardInfo = result.obj[1][0];
+        this.OrderDetails = result.obj[3];
+ 
+        this.userDetailsForm.get('FullName').setValue(result.obj[5].Fname + ' ' + result.obj[5].Lname);
+        this.userDetailsForm.get('PhoneNumber').setValue(result.obj[5].Phone);
+        this.Note.setValue(result.obj[1][0]['RemarkNotes']);
+
+        this.History = result.obj[7][0];
+        //implement data
+      }
+    }
+    else {
+      this.dialog.open(DialogComponent, {
+        data: {message: result.errdesc}
+      });
+      this.sharedService.exitSystemEvent();
+    }
    });
+  }
+
+  saveUserDetails(){
+    this.saveUserDataSpinner = true;
+
+    setTimeout(()=>{
+      this.saveUserDataSpinner = false;
+    }, 2000);
+  }
+  activeDisActiveCard(cardStatus){
+    this.CardInfo.IsActive = !this.CardInfo.IsActive;
   }
 
 }

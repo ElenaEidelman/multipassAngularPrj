@@ -79,6 +79,7 @@ import { TestExpandingTableComponent } from './Orders/test-expanding-table/test-
 import { OrderLinesComponent } from './Orders/order-lines/order-lines.component';
 import { DialogComponent } from './PopUps/dialog/dialog.component';
 import { FormatDatePipe } from './Pipes/format-date.pipe';
+import { ExcelFileViewComponent } from './excel/excel-file-view/excel-file-view.component';
 
 
 @NgModule({
@@ -118,7 +119,8 @@ import { FormatDatePipe } from './Pipes/format-date.pipe';
     OrderLinesComponent,
     DialogComponent,
     FormatDatePipe,
-    PhoneConfirmComponent
+    PhoneConfirmComponent,
+    ExcelFileViewComponent
   ],
   imports: [
     BrowserModule,

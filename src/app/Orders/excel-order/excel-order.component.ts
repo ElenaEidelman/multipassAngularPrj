@@ -125,11 +125,10 @@ export class ExcelOrderComponent implements OnInit, OnDestroy, OnChanges {
     this.insertOrderLineSpinner = true;
 
     window.scroll(0,0);
-
+    this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
     let url = this.router.url;
     this.idUnsubscribe = this.activeRoute.params.subscribe( param => {
       this.userToken = JSON.parse(localStorage.getItem('user')).Token;
-
       let objToApi = {
         Token : this.userToken
       }
@@ -186,22 +185,22 @@ export class ExcelOrderComponent implements OnInit, OnDestroy, OnChanges {
           CustomerId: param['customerId']
         }
         this.dataService.GetCustomersByFilter(objToApi).subscribe(result => {
-          debugger
           this.Customer = result.obj[0];
           this.dataByPage = result.obj[0];
         });
         
-        let token = JSON.parse(localStorage.getItem('user'))['Token'];
         let excelFilename = localStorage.getItem('excelFilename');
 
           let excelobjToApi = {
-            Token: token,
+            Token: this.userToken,
             UserID:  excelCustomerId,
             OpCode: "create",
             FileName: excelFilename
           }
       
+          debugger
           this.dataService.InsertUpdateOrderByExcel(excelobjToApi).subscribe(result => {
+            debugger
             this.insertOrderLineSpinner = false;
 
             if(result['obj'][0]['Lines'].length > 0){

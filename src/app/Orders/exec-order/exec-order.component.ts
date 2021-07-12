@@ -10,6 +10,7 @@ import { resourceUsage } from 'process';
 import { elementAt } from 'rxjs/operators';
 import { DataServiceService } from 'src/app/data-service.service';
 import { DialogConfirmComponent } from 'src/app/PopUps/dialog-confirm/dialog-confirm.component';
+import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
 import { SharedService } from 'src/app/shared.service';
 import { AlertMessage } from 'src/assets/alertMessage';
 
@@ -91,7 +92,6 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   idUnsubscribe;
 
   alertMessage: string = '';
-  orderTitle = '';
 
   sendSuccess: boolean = false;
   viewAddToExecOrderForm: boolean = true;
@@ -136,7 +136,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         Token: this.userToken
       }
 
-      //if order id received
+      //manual order
       if (url.includes('order')) {
         this.orderId = param['id'];
         this.customerId = param['customerId'];
@@ -170,23 +170,26 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
               });
 
               this.orderDetailsTable = new MatTableDataSource(this.orderDetails);
-              this.setTitles();
               this.totalData();
             }
             if (result.Token == null && result.errdesc != null && result.errdesc != '') {
-              alert(result.errdesc);
+              this.dialog.open(DialogComponent, {
+                data: {message: result.errdesc}
+              });
             }
 
           }
           else {
-            alert(result.errdesc);
+            this.dialog.open(DialogComponent, {
+              data: {message: result.errdesc}
+            });
             this.sharedService.exitSystemEvent();
           }
 
         })
       }
 
-      //if customer id recevied for new order
+      //new order
       if (url.includes('newOrder')) {
         this.customerId = param['customerId'];
         this.newOrder = true;
@@ -222,6 +225,10 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
         let orderDetails = [{ id: 0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem: 0 }];
         this.orderDetailsTable = new MatTableDataSource(orderDetails);
+      }
+
+      if (url.includes('excelOrder')){
+        this.customerId = param['customerId'];
       }
     })
 
@@ -262,26 +269,6 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
   }
 
-  setTitles() {
-    //debugger
-    if (this.Orders != undefined) {
-      //debugger
-      if (this.orderId != undefined) {
-        //debugger
-        this.orderTitle = 'פרוט הזמנה';
-      }
-      if (this.customerId != undefined) {
-        this.orderTitle = 'הזמנה חדשה';
-
-        // let orderDetails = [{id:0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem : 0}];
-        // this.orderDetailsTable = new MatTableDataSource(orderDetails);
-        //debugger
-      }
-    }
-    else {
-      alert('this.Orders == ' + this.Orders);
-    }
-  }
 
   totalData() {
     this.totalTicketCount = 0;

@@ -75,7 +75,14 @@ mat-hint{
     justify-content: center;
     margin-left: auto;
 }
+.textA .mat-form-field-infix{
+    padding-top: 10px;
+}
+
 @media screen and (max-width: 1024px){
+    .textA .mat-form-field-infix{
+        padding-top: 0px;
+    }
     .flexB{
         margin-left: 0;
         margin: auto;
