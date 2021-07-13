@@ -53,7 +53,7 @@
                     </table>
                     <mat-spinner *ngIf="tableSpinner"></mat-spinner>
                     <div *ngIf="errorMsg != ''" style="color: red; text-align: center">{{errorMsg}}</div>
-                    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" class="mat-paginator-sticky"></mat-paginator>
+                    <mat-paginator [pageSizeOptions]="[25,50,100]" class="mat-paginator-sticky"></mat-paginator>
                 </div>
     
     

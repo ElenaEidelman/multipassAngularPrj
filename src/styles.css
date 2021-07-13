@@ -676,6 +676,9 @@ mat-form-field.Picker input.mat-datepicker-input ~ span.mat-form-field-label-wra
 mat-spinner{
   position: absolute;
 }
+.noDataSpinner{
+  margin: auto;
+}
 .mat-progress-spinner circle, .mat-spinner circle {
   stroke: #8AC443;
 }

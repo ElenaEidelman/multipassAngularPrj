@@ -201,8 +201,8 @@
                     <div *ngIf="orderStatus.id == '1'">
                         <button mat-button class="addButton" (click)="ApproveOrder()">אישור הזמנה
                             <mat-icon>done_outline</mat-icon>
-                            <mat-spinner class="spinner orangeSp" *ngIf="createCardsSpinner"></mat-spinner>
                         </button>
+                        <mat-spinner class="spinner orangeSp" *ngIf="createCardsSpinner"></mat-spinner>
                         <div class="error" *ngIf="errorMsg != ''">{{errorMsg}}</div>
                         <div class="saveMessage" *ngIf="orderMsg != ''">{{orderMsg}}</div>
                         

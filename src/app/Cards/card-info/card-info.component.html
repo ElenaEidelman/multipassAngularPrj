@@ -1,8 +1,8 @@
 <div class="pageTitle main2-title">
     <div>נתוני שובר</div>
 </div>
-
-<div class="page-wrap">
+<mat-spinner *ngIf="CardInfo == undefined" class="noDataSpinner"></mat-spinner>
+<div class="page-wrap" *ngIf="CardInfo">
     <!--filter table-->
     <div class="page-element width-block-auto wrapCardsFilter">
 
@@ -39,15 +39,16 @@
                     <div>
                         <div class="customer-info-element buttonCardFunc">
                             <div class="customerDataTitle"></div>
-                            <div>
-                                <button mat-button class="primaryButton" *ngIf="!CardInfo.IsActive" (click)="activeDisActiveCard(CardInfo.IsActive)">
+                            <div class="wrapActiveVoidButton">
+                                <button mat-button class="primaryButton" *ngIf="!CardInfo.IsActive" (click)="activeVoidCard(CardInfo.IsActive)">
                                     הפעל שובר
                                     <mat-icon class="mat-icon-rtl-mirror">touch_app</mat-icon>
                                 </button>
-                                <button mat-button class="deleteButton" *ngIf="CardInfo.IsActive" (click)="activeDisActiveCard(CardInfo.IsActive)">
+                                <button mat-button class="deleteButton" *ngIf="CardInfo.IsActive" (click)="activeVoidCard(CardInfo.IsActive)">
                                     חסום שובר
                                     <mat-icon class="mat-icon-rtl-mirror">highlight_off</mat-icon>
                                 </button>
+                                <mat-spinner *ngIf="spinnerActiveVoidCard" class="spinnerActiveVoidCard"></mat-spinner>
                             </div>
                         </div>
                         <div class="customer-info-element">
@@ -83,10 +84,6 @@
                 <div class="customer-info-element">
                     <div class="customerDataTitle">חברה</div>
                     <div class="detailsRow">{{OrderDetails.PrimaryUser.OrganizationName}}</div>
-                </div>
-                <div class="customer-info-element">
-                    <div class="customerDataTitle">קוד קומקס</div>
-                    <div class="detailsRow">???</div>
                 </div>
                 <div class="customer-info-element">
                     <div class="customerDataTitle">תאריך ההנפקה</div>

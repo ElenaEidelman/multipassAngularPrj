@@ -135,8 +135,9 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.filterActionButtonSpinner = true;
-    this.dataService.GetOrdersByFilter(objToApi).subscribe(result => {
-      //debugger
+    //GetOrdersByFilter
+    this.dataService.getAllOrders(objToApi).subscribe(result => {
+      debugger
 
       this.filterActionButtonSpinner = false;
 

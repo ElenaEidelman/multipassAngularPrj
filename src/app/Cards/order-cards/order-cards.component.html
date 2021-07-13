@@ -23,7 +23,7 @@
                             <div>
                                 <mat-form-field class="marginSelectTop">
                                     <mat-label>בחירת לקוח</mat-label>
-                                    <mat-select formControlName="customer"  (selectionChange)="excelOptionChange()">
+                                    <mat-select formControlName="customer">
                                         <ng-container *ngFor="let customer of customers; let i = index">
                                             <mat-option [value]="customer">
                                                 {{customer.organizationName}}
@@ -53,7 +53,7 @@
                             </div>
                             <div class="alignRight">
                                 <mat-hint>בדיקה וטעינה של הקובץ</mat-hint>
-                                <input [hidden]="true" id="file-upload" name="uploadDoc" (change)="fileOptionChange($event)"
+                                <input [hidden]="true" id="file-upload" name="uploadDoc" #uploadDoc  (change)="fileOptionChange($event)"
                                 #uploadDoc type="file" formControlName="file">
                                 <div class="wrapUserButton">
                                     <button mat-button class="sendButton marginRight" (click)="uploadDoc.click()">

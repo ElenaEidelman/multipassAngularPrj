@@ -73,7 +73,7 @@ export class ExistCustomerComponent implements OnInit {
     StatusId: [{ value: '', disabled: true }],
     MultipassIclientID: (''),
     Tz: ['', Validators.required],//v
-    DealerDiscountPercent: (''), //v
+    DealerDiscountPercent: [{ value: '', disabled: true }], //v
     ValidateDate: (''), //new
     BusinessFile: ('/test.txt') //must to be required Validators.required
   });

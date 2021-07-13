@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatTabChangeEvent } from '@angular/material/tabs';
@@ -8,6 +8,8 @@ import { debounceTime } from 'rxjs/operators';
 import { CustomerData } from 'src/app/Classes/customerData';
 import { DataServiceService } from 'src/app/data-service.service';
 import {CdkTextareaAutosize} from '@angular/cdk/text-field';
+import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-order-cards',
@@ -21,6 +23,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
   // @Input() customerId;
 
   @ViewChild('autosize') autosize: CdkTextareaAutosize;
+  @ViewChild('uploadDoc') uploadDoc: ElementRef;
 
 
   userDataUnsubscribe;
@@ -87,7 +90,8 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private activeRoute: ActivatedRoute,
     private dataService: DataServiceService,
-    private router: Router) { }
+    private router: Router,
+    private dialog: MatDialog) { }
 
 
   ngOnInit(): void {
@@ -141,25 +145,6 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
     });
   }
 
-  // getCustomersData(){
-  //   //debugger
-  //   this.customers = [
-  //     new CustomerData('multipass1','11111','26','פעיל'),
-  //     new CustomerData('multipass2','22222','2','ליד'),
-  //     new CustomerData('multipass3','33333','3','ממתין לאישור'),
-  //     new CustomerData('multipass4','44444','4','מסורב'),
-  //     new CustomerData('multipass5','55555','5','מושהה'),
-  //     new CustomerData('multipass6','66666','6','מושהה'),
-  //     new CustomerData('multipass7','77777','26','פעיל'),
-  //     new CustomerData('multipass8','88888','2','ליד'),
-  //     new CustomerData('multipass9','99999','3','ממתין לאישור'),
-  //     new CustomerData('multipass12','12121','4','מסורב'),
-  //     new CustomerData('multipass13','13131','4','מושהה'),
-  //     new CustomerData('multipass14','14141','6','מושהה'),
-
-  //   ]
-  // }
-
   fillteringUserData(userId) {
     return this.customers.filter(customer => customer.id == userId)[0];
   }
@@ -198,7 +183,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
     if(this.excelCardCreatingForm.get('customer').value.id != undefined){
       if (event.target.files.length > 0) {
         const file = event.target.files[0];
-        this.filename = file.name;
+        // this.filename = file.name;
   
         this.excelFileError = 'excel file: ' + file.type.includes('excel');
         setTimeout(() => {
@@ -209,57 +194,52 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
           this.fileUplodadeValid = false;
         }
         else {
-          this.fileUplodadeValid = true;
-          // localStorage.setItem('excelFilename', this.filename);
-  
-  
-          //uploading file
-  
-          const fileOBJ = new File([file], new Date().getTime() + file.name, { type: file.type, lastModified: Date.now() });
-  
-  
-          let objGetFile = {
-            excelName: this.filename,
-            customerId: this.excelCardCreatingForm.get('customer').value.id
-          }
-          localStorage.setItem('excelFileData', JSON.stringify(objGetFile));
   
           const formData = new FormData();
-  
-  
-          debugger
           formData.append('Token', this.userToken);
           formData.append('UserId', this.excelCardCreatingForm.get('customer').value.id);
+          formData.append('OpCode', 'upload');
+          formData.append('Description', this.excelCardCreatingForm.get('fileDesc').value);
           formData.append('ExcelFile', file);
   
-          // let objToApi = {
-          //   Token: this.userToken,
-          //   UserID:  this.userId,
-          //   OpCode: "create",
-          //   FileName:formData
-          // }
-  
-          
-          debugger
           this.dataService.InsertUpdateOrderByExcel(formData).subscribe(result => {
             debugger
-            if(typeof result == 'string'){
-              this.excelFileError = result;
-            }
-            debugger
-          });
-  
-          /**
-           *     this.http.post('https://localhost:5001/api/upload', formData, {reportProgress: true, observe: 'events'})
-                .subscribe(event => {
-                  if (event.type === HttpEventType.UploadProgress)
-                    this.progress = Math.round(100 * event.loaded / event.total);
-                  else if (event.type === HttpEventType.Response) {
-                    this.message = 'Upload success.';
-                    this.onUploadFinished.emit(event.body);
+            this.fileUplodadeValid = false;
+            if (result['Token'] != undefined || result['Token'] != null) {
+            
+              //set new token
+              let tempObjUser = JSON.parse(localStorage.getItem('user'));
+              tempObjUser['Token'] = result['Token'];
+              localStorage.setItem('user', JSON.stringify(tempObjUser));
+              this.userToken = result['Token'];
+
+              if(result.obj != undefined && Object.keys(result.obj).length > 0){
+
+                if(result.errdesc != null && result.errdesc.includes('Excel File already Exist')){
+                  this.excelFileError = result.errdesc;
+                }
+                else{
+                  this.fileUplodadeValid = true;
+                  this.filename = result.obj[0].NewFileName;
+                  debugger
+                  let objGetFile = {
+                    excelName: this.filename,
+                    customerId: this.excelCardCreatingForm.get('customer').value.id,
+                    fileData: JSON.stringify(result)
                   }
-                });
-           */
+                  localStorage.setItem('excelFileData', JSON.stringify(objGetFile));
+                }
+              }
+              if(typeof result == 'string'){
+                this.excelFileError = result;
+              }
+            }
+            else{
+              this.dialog.open(DialogComponent,{
+                data: {message: result.errdesc != undefined ? result.errdesc : result}
+              })
+            }
+          });
         }
   
       }
@@ -372,6 +352,10 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
           this.excelSendError = '';
         }, 2000)
     }
+  }
+
+  resetFileUploaded(){
+    alert();
   }
 
   ngOnDestroy() {

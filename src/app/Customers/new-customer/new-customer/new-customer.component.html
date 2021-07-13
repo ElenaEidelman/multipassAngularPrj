@@ -60,7 +60,7 @@
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>שם חברה*</mat-label>
-                                            <input matInput placeholder="שם חברה*" formControlName="OrganizationName">
+                                            <input matInput placeholder="שם חברה*" formControlName="OrganizationName" tabindex="1">
                                             <button class="clearButton" *ngIf="this.newCustomerForm.get('OrganizationName').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('OrganizationName').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
@@ -68,7 +68,7 @@
                                         
                                         <mat-form-field>
                                             <mat-label>מספר טלפון</mat-label>
-                                            <input matInput placeholder="מספר טלפון" formControlName="Phone">
+                                            <input matInput placeholder="מספר טלפון" formControlName="Phone" tabindex="5">
                                             <button class="clearButton" *ngIf="this.newCustomerForm.get('Phone').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('Phone').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
@@ -77,14 +77,14 @@
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>שם פרטי</mat-label>
-                                            <input matInput placeholder="שם פרטי" formControlName="FName">
+                                            <input matInput placeholder="שם פרטי" formControlName="FName" tabindex="2">
                                             <button class="clearButton" *ngIf="this.newCustomerForm.get('FName').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('FName').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>מספר טלפון נוסף</mat-label>
-                                            <input matInput placeholder="מספר טלפון נוסף" formControlName="Phone1">
+                                            <input matInput placeholder="מספר טלפון נוסף" formControlName="Phone1" tabindex="6">
                                             <button class="clearButton" *ngIf="this.newCustomerForm.get('Phone1').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('Phone1').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
@@ -94,14 +94,14 @@
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>שם משפחה</mat-label>
-                                            <input matInput placeholder="שם משפחה" formControlName="LName">
+                                            <input matInput placeholder="שם משפחה" formControlName="LName" tabindex="3">
                                             <button class="clearButton" *ngIf="this.newCustomerForm.get('LName').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('LName').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>תפקיד*</mat-label>
-                                            <input matInput placeholder="תפקיד*" formControlName="Permission">
+                                            <input matInput placeholder="תפקיד*" formControlName="Permission" tabindex="7">
                                             <button class="clearButton" *ngIf="this.newCustomerForm.get('Permission').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('Permission').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
@@ -110,7 +110,7 @@
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>דוא"ל*</mat-label>
-                                            <input matInput type="email" placeholder='דוא"ל*' formControlName="Email" >
+                                            <input matInput type="email" placeholder='דוא"ל*' formControlName="Email" tabindex="4">
                                             <button class="clearButton" *ngIf="this.newCustomerForm.get('Email').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('Email').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
@@ -125,7 +125,7 @@
                                         </mat-form-field> -->
                                         <mat-form-field>
                                             <mat-label>ח.פ*</mat-label>
-                                            <input matInput placeholder="ח.פ*" formControlName="Tz">
+                                            <input matInput placeholder="ח.פ*" formControlName="Tz" tabindex="8">
                                             <button class="clearButton" *ngIf="this.newCustomerForm.get('Tz').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('Tz').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
@@ -154,14 +154,14 @@
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>עיר</mat-label>
-                                            <input matInput placeholder="עיר" formControlName="CityName">
+                                            <input matInput placeholder="עיר" formControlName="CityName" tabindex="9">
                                             <button class="clearButton" *ngIf="this.newCustomerForm.get('CityName').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('CityName').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>מספר דירה</mat-label>
-                                            <input matInput placeholder="מספר דירה" formControlName="ApartmentNo">
+                                            <input matInput placeholder="מספר דירה" formControlName="ApartmentNo" tabindex="13">
                                             <button class="clearButton" *ngIf="this.newCustomerForm.get('ApartmentNo').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('ApartmentNo').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
@@ -170,7 +170,7 @@
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>רחוב</mat-label>
-                                            <input matInput placeholder="רחוב" formControlName="Streetno">
+                                            <input matInput placeholder="רחוב" formControlName="Streetno" tabindex="10">
                                             <button class="clearButton" *ngIf="this.newCustomerForm.get('Streetno').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('Streetno').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
@@ -178,7 +178,7 @@
                                         
                                         <mat-form-field>
                                             <mat-label>קומה</mat-label>
-                                            <input matInput placeholder="קומה" formControlName="floor">
+                                            <input matInput placeholder="קומה" formControlName="floor" tabindex="14">
                                             <button class="clearButton" *ngIf="this.newCustomerForm.get('floor').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('floor').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
@@ -187,14 +187,14 @@
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>מספר בית</mat-label>
-                                            <input matInput placeholder="מספר בית" formControlName="HouseNumber">
+                                            <input matInput placeholder="מספר בית" formControlName="HouseNumber" tabindex="11">
                                             <button class="clearButton" *ngIf="this.newCustomerForm.get('HouseNumber').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('HouseNumber').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>מיקוד</mat-label>
-                                            <input matInput placeholder="מיקוד" formControlName="ZIP">
+                                            <input matInput placeholder="מיקוד" formControlName="ZIP" tabindex="15">
                                             <button class="clearButton" *ngIf="this.newCustomerForm.get('ZIP').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('ZIP').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
@@ -203,7 +203,7 @@
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>כניסה</mat-label>
-                                            <input matInput placeholder="כניסה" formControlName="Entrance">
+                                            <input matInput placeholder="כניסה" formControlName="Entrance" tabindex="12">
                                             <button class="clearButton" *ngIf="this.newCustomerForm.get('Entrance').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('Entrance').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
@@ -241,7 +241,7 @@
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>מזה לקוח</mat-label>
-                                            <input matInput placeholder="מזה לקוח" formControlName="MultipassIclientID">
+                                            <input matInput placeholder="מזה לקוח" formControlName="MultipassIclientID" tabindex="17">
                                             <button class="clearButton" *ngIf="this.newCustomerForm.get('MultipassIclientID').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('MultipassIclientID').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
@@ -268,7 +268,7 @@
                                         <mat-form-field appearance="fill"
                                         class="datePicker datePickerPadding marginTop-1">
                                         <mat-label>תאריך תוקף לקוח</mat-label>
-                                        <input matInput [matDatepicker]="picker" formControlName="ValidateDate">
+                                        <input matInput [matDatepicker]="picker" formControlName="ValidateDate" tabindex="16">
                                         <button class="clearButton" *ngIf="this.newCustomerForm.get('ValidateDate').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('ValidateDate').setValue('')">
                                             <mat-icon>close</mat-icon>
                                         </button>
@@ -277,7 +277,7 @@
                                     </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>אחוז הנחה קבוע</mat-label>
-                                            <input matInput placeholder="אחוז הנחה קבוע" formControlName="DealerDiscountPercent">
+                                            <input matInput placeholder="אחוז הנחה קבוע" formControlName="DealerDiscountPercent" tabindex="18">
                                             <mat-icon matPrefix *ngIf="newCustomerForm.get('DealerDiscountPercent').value == ''">%</mat-icon>
                                             <button class="clearButton" *ngIf="this.newCustomerForm.get('DealerDiscountPercent').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('DealerDiscountPercent').setValue('')">
                                                 <mat-icon>close</mat-icon>

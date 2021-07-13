@@ -16,8 +16,8 @@ export class DataServiceService implements OnInit {
 
 
 
- baseUrl = 'http://tempdomain-test-3.mltp.co.il';
-  //baseUrl = 'http://localhost:45036';
+baseUrl = 'http://tempdomain-test-3.mltp.co.il';
+//baseUrl = 'http://localhost:45036';
 
   //test main
   /**
@@ -67,6 +67,9 @@ $ git merge new-branch
     return this.http.post(`${this.baseUrl}/api/Orders/GetOrders`, objToApi, httpOptions).pipe(
       map(result => {
         return result;
+      }),
+      catchError(err => {
+        return of(err.message);
       })
     );
   }
@@ -346,6 +349,33 @@ $ git merge new-branch
   InsertUpdateOrderByExcel(objToApi){
     //debugger
     return this.http.post(`${this.baseUrl}/api/InsertUpdateOrder/InsertUpdateOrderByExcel`,objToApi).pipe(
+      map(result => {
+        //debugger
+        return result;
+      }),
+      catchError(error => {
+        //debugger
+        return of(error.message);
+      })
+    );
+  }
+
+  ActivateCards(objToApi){
+    //debugger
+    return this.http.post(`${this.baseUrl}/api/AllCards/ActivateCards`,objToApi).pipe(
+      map(result => {
+        //debugger
+        return result;
+      }),
+      catchError(error => {
+        //debugger
+        return of(error.message);
+      })
+    );
+  }
+  VoidCards(objToApi){
+    //debugger
+    return this.http.post(`${this.baseUrl}/api/AllCards/VoidCards`,objToApi).pipe(
       map(result => {
         //debugger
         return result;

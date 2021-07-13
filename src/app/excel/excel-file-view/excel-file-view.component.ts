@@ -11,45 +11,53 @@ export class ExcelFileViewComponent implements OnInit, OnDestroy {
   constructor(
               private router: Router
               ) { }
-  file;
+  excelData;
   userToken: string;
   customerId;
+  tableSource;
+  tableLabels;
+  excelFileData;
 
   ngOnInit(): void {
 
     window.scroll(0,0);
     this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
-
-    debugger
     this.getExcelFile();
   }
 
   getExcelFile(){
-    
-    debugger
     if(localStorage.getItem('excelFileData') != ''){
-      debugger
-      let excelFileData = JSON.parse(localStorage.getItem('excelFileData'));
-      this.customerId = excelFileData.customerId;
-      debugger
-      let objToApi = {
-        Token: this.userToken,
-        CustomerId: excelFileData.customerId,
-        ExcelFileName: excelFileData.excelName
-      }
+      this.excelFileData = JSON.parse(localStorage.getItem('excelFileData'));
+      this.customerId = this.excelFileData.customerId;
+      this.excelData = JSON.parse(this.excelFileData.fileData).obj;
+      this.createTableToViewExcelFile(this.excelData);
     }
     else{
       this.router.navigate(['/public/home']);
     }
-
-    
-
   }
 
 
   goToCreateOrder(){
+    let localStorageObj = {
+      UserID: this.customerId,
+      FileName: this.excelFileData.excelName
+    }
+    localStorage.setItem('createOrderByExcel', JSON.stringify(localStorageObj));
+    localStorage.removeItem('excelFileData');
+    this.router.navigate(['/public/excelOrder/', this.customerId]);
+  }
 
-    this.router.navigate(['/public/newOrder/', this.customerId]);
+  createTableToViewExcelFile(fileData){
+    debugger
+    this.tableLabels = Object.keys(fileData[0]).filter(key => key != 'NewFileName');
+    this.tableSource = [fileData[0]];
+  }
+
+  cancelOrder(){
+    localStorage.getItem('excelFileData') != '';
+    this.router.navigate(['/public/orderCards']);
+
   }
   ngOnDestroy(){
     localStorage.setItem('excelFileData', '');

@@ -132,31 +132,32 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     this.idUnsubscribe = this.activeRoute.params.subscribe(param => {
       this.userToken = JSON.parse(localStorage.getItem('user')).Token;
 
-      let objToApi = {
-        Token: this.userToken
-      }
-
       //manual order
       if (url.includes('order')) {
         this.orderId = param['id'];
         this.customerId = param['customerId'];
         this.newOrder = false;
-        objToApi['CoreOrderID'] = this.orderId;
 
+        let objToApi = {
+          Token: this.userToken,
+          CoreOrderID: this.orderId
+        }
+        debugger
         this.dataService.GetOrderDetails(objToApi).subscribe(result => {
+          debugger
           if (result['Token'] != undefined || result['Token'] != null) {
+
+                //set new token
+                let tempObjUser = JSON.parse(localStorage.getItem('user'));
+                tempObjUser['Token'] = result['Token'];
+                localStorage.setItem('user', JSON.stringify(tempObjUser));
+                this.userToken = result['Token'];
 
             if (typeof result == 'object' && result.obj != null) {
 
               let statusData = this.statusListArr.filter(status => status.StatusId == result.obj[0].StatusId);
               this.orderStatus.id = statusData[0].StatusId;
               this.orderStatus.description = statusData[0].Description;
-
-              //set new token
-              let tempObjUser = JSON.parse(localStorage.getItem('user'));
-              tempObjUser['Token'] = result['Token'];
-              localStorage.setItem('user', JSON.stringify(tempObjUser));
-              this.userToken = result['Token'];
 
               this.dataByPage = result['obj'][0];
 
@@ -201,6 +202,13 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         this.dataService.GetCustomersByFilter(objToApi).subscribe(result => {
 
           if (result['Token'] != undefined || result['Token'] != null) {
+
+                //set new token
+                let tempObjUser = JSON.parse(localStorage.getItem('user'));
+                tempObjUser['Token'] = result['Token'];
+                localStorage.setItem('user', JSON.stringify(tempObjUser));
+                this.userToken = result['Token'];
+
             if (typeof result == 'object' && result.obj != null) {
 
               //set status data
@@ -229,6 +237,92 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
       if (url.includes('excelOrder')){
         this.customerId = param['customerId'];
+        this.newOrder = false;
+
+        let forNewOrderData = JSON.parse(localStorage.getItem('createOrderByExcel'));
+        //get customer data
+        let objToApiForCustomerData = {
+          Token: this.userToken,
+          CustomerId: param['customerId']
+        }
+        this.dataService.GetCustomersByFilter(objToApiForCustomerData).subscribe(result => {
+          debugger
+          if (result['Token'] != undefined || result['Token'] != null) {
+              //set new token
+              let tempObjUser = JSON.parse(localStorage.getItem('user'));
+              tempObjUser['Token'] = result['Token'];
+              localStorage.setItem('user', JSON.stringify(tempObjUser));
+              this.userToken = result['Token'];
+
+            if (typeof result == 'object' && result.obj != null) {
+              this.orderStatus.description = 'הזמנה חדשה';
+              this.Customer = result.obj[0];
+              this.dataByPage = result.obj[0];
+            }
+            if (result.Token == null && result.errdesc != null && result.errdesc != '') {
+              // alert(result.errdesc);
+              this.dialog.open(DialogComponent,{
+                data: {message: result.errdesc != undefined ? result.errdesc : result}
+              })
+            }
+          }
+          else {
+            this.dialog.open(DialogComponent,{
+              data: {message: result.errdesc != undefined ? result.errdesc : result}
+            })
+            this.sharedService.exitSystemEvent();
+          }
+        });
+
+
+        //object for insert orderLines
+        let formDataForOrdersLine = new FormData();
+        formDataForOrdersLine.append('Token',this.userToken)
+        formDataForOrdersLine.append('UserID',param['customerId'])
+        formDataForOrdersLine.append('Description',forNewOrderData.FileName)
+        formDataForOrdersLine.append('OpCode','create')
+
+        this.dataService.InsertUpdateOrderByExcel(formDataForOrdersLine).subscribe(result => {
+          if (result['Token'] != undefined || result['Token'] != null) {
+            
+            //set new token
+            let tempObjUser = JSON.parse(localStorage.getItem('user'));
+            tempObjUser['Token'] = result['Token'];
+            localStorage.setItem('user', JSON.stringify(tempObjUser));
+            this.userToken = result['Token'];
+
+
+            if (result['obj'][0] != undefined) {
+              this.orderDetails = [
+                { id: 0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem: 0 }
+              ];
+
+              this.orderDetails.unshift(...result['obj'][0]['Lines']);
+              this.orderDetailsTable = new MatTableDataSource(this.orderDetails);
+
+              //set status data
+              let statusData = this.statusListArr.filter(status => status.StatusId == result.obj[0].OrderStatus);
+              this.orderStatus.id = statusData[0].StatusId;
+              this.orderStatus.description = statusData[0].Description;
+
+              debugger
+              this.orderId = result.obj[0].orderid;
+
+              //calculate new total dat
+              this.totalData();
+            }
+
+          }
+          else{
+            this.dialog.open(DialogComponent,{
+              data: {message: result.errdesc != undefined ? result.errdesc : result}
+            })
+          }
+        });
+
+
+        let orderDetails = [{ id: 0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem: 0 }];
+        this.orderDetailsTable = new MatTableDataSource(orderDetails);
       }
     })
 
@@ -316,9 +410,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       }
     })
 
-    debugger
     this.dataService.InsertUpdateLines(objToApi).subscribe(result => {
-      debugger
       if (result['Token'] != undefined || result['Token'] != null) {
 
         //set new token
@@ -373,9 +465,8 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
           objToApi['OrderId'] = this.orderId;
 
-          debugger
           this.dataService.InsertUpdateLines(objToApi).subscribe(result => {
-            debugger
+
             this.insertOrderLineSpinner = false;
 
             if (result['Token'] != undefined || result['Token'] != null) {
@@ -402,7 +493,6 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
               let statusData = this.statusListArr.filter(status => status.StatusId == result.obj[0].OrderStatus);
               this.orderStatus.id = statusData[0].OrderStatus;
               this.orderStatus.description = statusData[0].Description;
-              debugger
               }
             }
             else {
@@ -414,10 +504,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
         //insert first line, create new order
         else {
-          debugger
           this.dataService.InsertUpdateOrder(objToApi).subscribe(result => {
-            debugger
-            
 
             if (result['Token'] != undefined || result['Token'] != null) {
               this.insertOrderLineSpinner = false;
@@ -441,8 +528,6 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
               let statusData = this.statusListArr.filter(status => status.StatusId == result.obj[0].OrderStatus);
               this.orderStatus.id = statusData[0].StatusId;
               this.orderStatus.description = statusData[0].Description;
-              debugger
-
               }
             }
             else {
@@ -472,12 +557,14 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
     //not new order
     else {
-      alert('not new order');
+      this.dialog.open(DialogComponent, {
+        data: {message: 'not new order'}
+      })
     }
   }
 
   ApproveOrder() {
-
+debugger
     if (this.orderDetails.length > 1) {
       this.createCardsSpinner = true;
       let objToApi = {
