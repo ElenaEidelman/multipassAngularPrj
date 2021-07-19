@@ -49,10 +49,11 @@
                         <!-- action buttons -->
                         <mat-card-actions class="newSMSActionButtons">
                             <div>
-                                <button mat-button class="linkButton" (click)="sendSMSForExample(newTemplateForm.value)">
+                                <button mat-button class="linkButton" (click)="sendSMSForExample(newTemplateForm.value, true)">
                                     <span>שלח לדוגמא</span>
                                     <mat-icon>send</mat-icon>
                                 </button>
+                                <div class="error" *ngIf="newTemplateSendError != ''">{{newTemplateSendError}}</div>
                             </div>
                             <div class="spinnerBWrap">
                                 <button mat-button class="primaryButton" (click)="saveTemplate('newTemplate')">
@@ -155,7 +156,7 @@
                                 <mat-card-actions class="actionWrapB newSMSActionButtons" *ngIf="temp.Id != editingTempId || !edit">
 
                                     <div>
-                                        <button mat-button class="linkButton" (click)="sendSMSForExample(temp)">
+                                        <button mat-button class="linkButton" (click)="sendSMSForExample(temp, false)">
                                             <span>שלח לדוגמא</span>
                                             <mat-icon>send</mat-icon>
                                         </button>

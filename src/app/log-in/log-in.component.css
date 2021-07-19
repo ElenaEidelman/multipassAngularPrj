@@ -18,6 +18,7 @@ flex-direction: column;
 .wrap-button-login{
 text-align: center;
 position: relative;
+padding-top: 15px;
 }
 .wrap-button-login span{
 position: absolute;
@@ -67,6 +68,17 @@ mat-icon{
     direction: rtl;
     font-weight: 600;
     margin: 5px 0;
+}
+mat-form-field{
+    width: 100%;
+}
+.wrapUndButtons{
+    text-align: center;
+    padding-top: 20px;
+}
+span.undButton:hover{
+    color: #404040;
+    cursor: pointer;
 }
 
 @media screen and (max-width: 1024px){

@@ -23,7 +23,7 @@
                             <div>
                                 <mat-form-field class="marginSelectTop">
                                     <mat-label>בחירת לקוח</mat-label>
-                                    <mat-select formControlName="customer">
+                                    <mat-select formControlName="customer" (selectionChange)="optionChange()">
                                         <ng-container *ngFor="let customer of customers; let i = index">
                                             <mat-option [value]="customer">
                                                 {{customer.organizationName}}
@@ -56,7 +56,7 @@
                                 <input [hidden]="true" id="file-upload" name="uploadDoc" #uploadDoc  (change)="fileOptionChange($event)"
                                 #uploadDoc type="file" formControlName="file">
                                 <div class="wrapUserButton">
-                                    <button mat-button class="sendButton marginRight" (click)="uploadDoc.click()">
+                                    <button mat-button class="sendButton marginRight" [class.addButton]="!fileUploadButtonDisabled" [disabled]="fileUploadButtonDisabled" (click)="uploadDoc.click()">
                                         <span>בחירת קובץ</span>
                                         <mat-icon>attach_file</mat-icon>
                                     </button>
@@ -137,8 +137,7 @@
                             <div>
                                 <mat-form-field class="marginSelectTop">
                                     <mat-label>בחירת לקוח</mat-label>
-                                    <mat-select formControlName="selectedCustomerControl"
-                                        (selectionChange)="optionChange()">
+                                    <mat-select formControlName="selectedCustomerControl">
                                         <ng-container *ngFor="let customer of customers; let i = index">
                                             <mat-option [value]="customer">
                                                 {{customer.organizationName}}

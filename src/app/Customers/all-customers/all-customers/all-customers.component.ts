@@ -5,6 +5,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
+import { MsgList } from 'src/app/Classes/msgsList';
 import { DataServiceService } from 'src/app/data-service.service';
 import { DialogConfirmComponent } from 'src/app/PopUps/dialog-confirm/dialog-confirm.component';
 import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
@@ -59,6 +60,7 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
   filterSpinner: boolean = false;
 
   idUnsubscribe;
+  MsgList = MsgList;
 
   filterCustomerForm = this.fb.group({
     customerId: (''),

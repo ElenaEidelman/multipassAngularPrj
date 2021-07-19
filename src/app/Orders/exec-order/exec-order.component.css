@@ -13,9 +13,14 @@ mat-spinner >  svg{
     height: 50px !important;
 } */
 .spinner{
-
+    position: absolute !important;
+    top: -2em;
+    left: 1em;
 }
 
+.wrapAprDel{
+    position: relative;
+}
 .tableButton {
     position: relative;
 }
@@ -30,7 +35,7 @@ mat-spinner >  svg{
     padding: 0 3px;
 }
 .customerDataTitle{
-    text-align: right;
+    text-align: center;
 }
 .margin0{
     margin: 0 auto;
@@ -84,6 +89,15 @@ tr.example-element-row:not(.example-expanded-row):hover {
     background: #efefef;
   }
 
+  .tableWrapNoInfo{
+      position: relative;
+  }
+  .noInfo{
+      position: absolute;
+      bottom: 15px;
+      width: 100%;
+      text-align: center;
+  }
 
 
 @media screen and (max-width: 1024px){

@@ -15,6 +15,7 @@ import { DataServiceService } from 'src/app/data-service.service';
 import { DialogConfirmComponent } from 'src/app/PopUps/dialog-confirm/dialog-confirm.component';
 import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
 import { SharedService } from 'src/app/shared.service';
+import { MsgList } from 'src/app/Classes/msgsList';
 
 
 
@@ -38,6 +39,7 @@ export class ExistCustomerComponent implements OnInit {
   msgActionButtons: string = '';
   customerData;
   customerOrders;
+  MsgList = MsgList;
 
   saveFormSpinner: boolean = false;
 
@@ -59,7 +61,7 @@ export class ExistCustomerComponent implements OnInit {
     FName: (''),
     LName: (''),
     Email: ['', [Validators.required, Validators.email]], //v
-    Phone: (''), //v
+    Phone: ['', Validators.required], //v
     Permission: ['', Validators.required],//v
     Phone1: (''), //v
     userNumber: [{ value: '', disabled: true }], //v

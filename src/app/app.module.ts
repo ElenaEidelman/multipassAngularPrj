@@ -80,6 +80,7 @@ import { OrderLinesComponent } from './Orders/order-lines/order-lines.component'
 import { DialogComponent } from './PopUps/dialog/dialog.component';
 import { FormatDatePipe } from './Pipes/format-date.pipe';
 import { ExcelFileViewComponent } from './excel/excel-file-view/excel-file-view.component';
+import { LoweUppCaseCheckPipe } from './Pipes/LowerUpperCaseCheck/lowe-upp-case-check.pipe';
 
 
 @NgModule({
@@ -120,7 +121,8 @@ import { ExcelFileViewComponent } from './excel/excel-file-view/excel-file-view.
     DialogComponent,
     FormatDatePipe,
     PhoneConfirmComponent,
-    ExcelFileViewComponent
+    ExcelFileViewComponent,
+    LoweUppCaseCheckPipe
   ],
   imports: [
     BrowserModule,

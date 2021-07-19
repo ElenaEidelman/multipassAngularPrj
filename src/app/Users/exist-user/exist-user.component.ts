@@ -3,6 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MsgList } from 'src/app/Classes/msgsList';
 import { DataServiceService } from 'src/app/data-service.service';
 import { DialogConfirmComponent } from 'src/app/PopUps/dialog-confirm/dialog-confirm.component';
 import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
@@ -30,6 +31,8 @@ export class ExistUserComponent implements OnInit {
   saveFormSpinner: boolean = false;
   deleteUserSpinner: boolean = false;
 
+  MsgList= MsgList;
+
   statusList = [];
 
   userDataForm = this.fb.group({
@@ -37,7 +40,7 @@ export class ExistUserComponent implements OnInit {
     LName: (''), // new  V ---------LName
     Email: ['', [Validators.required, Validators.email]],// -----------Email
     StatusId: [{ value: '', disabled: true }, Validators.required], // -------------StatusDescription
-    Tz: ['', Validators.required],//מספר משתמש של המערכת -------------Tz
+    Tz: (''),//מספר משתמש של המערכת -------------Tz
     Id: (''),//מספר עובד -----------id
     Phone: (''),//------------Phone
     CityName: (''),// -----------CityName
@@ -173,7 +176,9 @@ export class ExistUserComponent implements OnInit {
       objToApi['OrganizationName'] = '';
       objToApi['BusinessFile'] = '';
 
+      debugger
       this.dataService.InsertUpdateBackOfficeUsers(objToApi).subscribe(result => {
+        debugger
         this.saveFormSpinner = false;
         if (result['Token'] != undefined || result['Token'] != null) {
   

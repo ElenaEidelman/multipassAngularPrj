@@ -78,6 +78,7 @@ export class AllCardsComponent implements OnInit {
 
     if(formSearchFiled){
       this.spinner = true;
+      debugger
       this.dataService.GetAllCards(objToApi).subscribe(result => {
         this.spinner = false;
         if(typeof result == 'object' &&  result['obj'] != null && result['obj'].length > 0){

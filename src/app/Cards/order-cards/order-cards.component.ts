@@ -38,6 +38,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
   customers;
 
   cardsData = [];
+  fileUploadButtonDisabled: boolean = true;
 
   fromCardCheckedOrderNumber: any;
   toCardCheckedOrderNumber: any;
@@ -164,22 +165,26 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
   }
 
   optionChange() {
-    if (this.loadingCardGroup.get('selectedCustomerControl').value) {
-      this.showHiddenLoadingCardContent = true;
-      // this.getCardsData();
-      // this.loadingCardGroup.get('userId').enable();
-    }
+
+    this.fileUploadButtonDisabled = false;
+    debugger
+    // if (this.loadingCardGroup.get('selectedCustomerControl').value) {
+    //   this.showHiddenLoadingCardContent = true;
+    //   // this.getCardsData();
+    //   // this.loadingCardGroup.get('userId').enable();
+    // }
   }
 
-  excelOptionChange() {
-    debugger
-    if (this.excelCardCreatingForm.get('customer').value) {
-      this.excelCustomerId = this.excelCardCreatingForm.get('customer').value.id;
-      this.showHiddenLoadingCardContent = true;
-    }
-  }
+  // excelOptionChange() {
+  //   debugger
+  //   if (this.excelCardCreatingForm.get('customer').value) {
+  //     this.excelCustomerId = this.excelCardCreatingForm.get('customer').value.id;
+  //     this.showHiddenLoadingCardContent = true;
+  //   }
+  // }
 
   fileOptionChange(event) {
+    debugger
     if(this.excelCardCreatingForm.get('customer').value.id != undefined){
       if (event.target.files.length > 0) {
         const file = event.target.files[0];

@@ -79,6 +79,16 @@ mat-hint{
     padding-top: 10px;
 }
 
+.mat-button.mat-primary.mat-button-disabled, .mat-button.mat-accent.mat-button-disabled, .mat-button.mat-warn.mat-button-disabled, .mat-button.mat-button-disabled.mat-button-disabled, .mat-icon-button.mat-primary.mat-button-disabled, .mat-icon-button.mat-accent.mat-button-disabled, .mat-icon-button.mat-warn.mat-button-disabled, .mat-icon-button.mat-button-disabled.mat-button-disabled, .mat-stroked-button.mat-primary.mat-button-disabled, .mat-stroked-button.mat-accent.mat-button-disabled, .mat-stroked-button.mat-warn.mat-button-disabled, .mat-stroked-button.mat-button-disabled.mat-button-disabled{
+    color: #fff !important;
+}
+
+
+.addButton {
+    /* background: #267491; */
+    background: #88C43E !important;
+    color: #fff !important;
+}
 @media screen and (max-width: 1024px){
     .textA .mat-form-field-infix{
         padding-top: 0px;

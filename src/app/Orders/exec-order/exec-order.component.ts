@@ -46,6 +46,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   orderMsgDelete: string = '';
   errorMsgDelete: string = '';
   addOrderLineErrMsg: string = '';
+  orderIdToPreview;
 
   orderStatus = {
     id: '',
@@ -94,13 +95,13 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   alertMessage: string = '';
 
   sendSuccess: boolean = false;
+  noInfoView: boolean;
   viewAddToExecOrderForm: boolean = true;
 
   totalTicketCount: number = 0;
   totalOrderSum: number = 0;
 
   userToken: string;
-
   orderDetailsTable;
 
   //for additional empty row foraddToExecOrderForm
@@ -131,7 +132,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     let url = this.router.url;
     this.idUnsubscribe = this.activeRoute.params.subscribe(param => {
       this.userToken = JSON.parse(localStorage.getItem('user')).Token;
-
+      
       //manual order
       if (url.includes('order')) {
         this.orderId = param['id'];
@@ -142,9 +143,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
           Token: this.userToken,
           CoreOrderID: this.orderId
         }
-        debugger
         this.dataService.GetOrderDetails(objToApi).subscribe(result => {
-          debugger
           if (result['Token'] != undefined || result['Token'] != null) {
 
                 //set new token
@@ -154,16 +153,18 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
                 this.userToken = result['Token'];
 
             if (typeof result == 'object' && result.obj != null) {
-
+              this.orderIdToPreview = result.obj[0].idex;
               let statusData = this.statusListArr.filter(status => status.StatusId == result.obj[0].StatusId);
               this.orderStatus.id = statusData[0].StatusId;
               this.orderStatus.description = statusData[0].Description;
 
               this.dataByPage = result['obj'][0];
+              
+              debugger
 
               //get customer data
-              this.Customer = result['obj'][0]['User'];
-              //debugger
+              this.Customer = result['obj'][0];
+
               this.Orders = new MatTableDataSource(result['obj'][0]['Lines']);
 
               this.Orders.data.forEach((element, index) => {
@@ -200,7 +201,6 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
           CustomerId: param['customerId']
         }
         this.dataService.GetCustomersByFilter(objToApi).subscribe(result => {
-
           if (result['Token'] != undefined || result['Token'] != null) {
 
                 //set new token
@@ -246,7 +246,6 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
           CustomerId: param['customerId']
         }
         this.dataService.GetCustomersByFilter(objToApiForCustomerData).subscribe(result => {
-          debugger
           if (result['Token'] != undefined || result['Token'] != null) {
               //set new token
               let tempObjUser = JSON.parse(localStorage.getItem('user'));
@@ -304,8 +303,6 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
               let statusData = this.statusListArr.filter(status => status.StatusId == result.obj[0].OrderStatus);
               this.orderStatus.id = statusData[0].StatusId;
               this.orderStatus.description = statusData[0].Description;
-
-              debugger
               this.orderId = result.obj[0].orderid;
 
               //calculate new total dat
@@ -466,7 +463,6 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
           objToApi['OrderId'] = this.orderId;
 
           this.dataService.InsertUpdateLines(objToApi).subscribe(result => {
-
             this.insertOrderLineSpinner = false;
 
             if (result['Token'] != undefined || result['Token'] != null) {
@@ -491,7 +487,8 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
               //set status data
               let statusData = this.statusListArr.filter(status => status.StatusId == result.obj[0].OrderStatus);
-              this.orderStatus.id = statusData[0].OrderStatus;
+              this.orderStatus.id = statusData[0].OrderStatus != undefined ? statusData[0].OrderStatus : statusData[0].StatusId;
+              debugger
               this.orderStatus.description = statusData[0].Description;
               }
             }
@@ -564,7 +561,6 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ApproveOrder() {
-debugger
     if (this.orderDetails.length > 1) {
       this.createCardsSpinner = true;
       let objToApi = {
@@ -573,6 +569,7 @@ debugger
         UserID: this.customerId
       }
       this.dataService.ApproveOrder(objToApi).subscribe(result => {
+        debugger
         this.createCardsSpinner = false;
 
         if (result['Token'] != undefined || result['Token'] != null) {
@@ -586,6 +583,7 @@ debugger
           this.userToken = result['Token'];
 
           if (typeof result == 'object' && result.obj != null && result.obj.length > 0) {
+            localStorage.setItem('createOrderByExcel','');
             this.orderMsg = 'הזמנה נקלטה בהצלחה';
             setTimeout(() => {
               this.orderMsg = '';
@@ -593,7 +591,7 @@ debugger
 
             setTimeout(() => {
               this.router.navigate(['/public/order/', result.obj[0]['orderid'], this.customerId]);
-            }, 3000);
+            }, 2000);
 
           }
           // if (result.obj == null) {
@@ -608,7 +606,9 @@ debugger
           }
         }
         else {
-          alert(result.errdesc);
+          this.dialog.open(DialogComponent, {
+            data: {message: result.errdesc}
+          })
           this.sharedService.exitSystemEvent();
         }
       })
@@ -624,7 +624,7 @@ debugger
   deleteOrder() {
 
     this.dialog.open(DialogConfirmComponent, {
-      data: { message: 'האם למחוק הזמנה מספר: ' + ' ' + this.orderId }
+      data: { message: 'האם למחוק הזמנה מספר: ' + ' ' + this.orderIdToPreview }
     }).afterClosed().subscribe(response => {
       if (response.result == 'yes') {
 
@@ -647,12 +647,24 @@ debugger
             localStorage.setItem('user', JSON.stringify(tempObjUser));
             this.userToken = result['Token'];
 
-            if (typeof result == 'object' && Object.values(result.obj[0]).includes('Order is deleted Successfully')) {
+            if (typeof result == 'object' && result.obj != null && Object.values(result.obj[0]).includes('Order is deleted Successfully')) {
               this.orderMsgDelete = 'ההזמנה נמחקה בהצלחה';
               setTimeout(() => {
                 this.orderMsgDelete = '';
                 this.router.navigate(['/public/allOrders']);
               }, 2000);
+            }
+            if (typeof result == 'object' && result.obj != null && Object.values(result.obj[0]).includes('Order is Voided Successfully')) {
+              this.orderMsgDelete = 'בוטל בהצלחה';
+              setTimeout(() => {
+                this.orderMsgDelete = '';
+                this.router.navigate(['/public/allOrders']);
+              }, 2000);
+            }
+            if(result.obj == null && result.errdesc != ''){
+              this.dialog.open(DialogComponent,{
+                data: {message: result.errdesc}
+              });
             }
             if (typeof result == 'string') {
               this.errorMsgDelete = result;

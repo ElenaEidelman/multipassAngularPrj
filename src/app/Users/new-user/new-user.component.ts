@@ -48,7 +48,7 @@ export class NewUserComponent implements OnInit {
     LName: (''), // new  V ---------LName
     Email: ['', [Validators.required, Validators.email]],// -----------Email
     StatusId: [{ value: 'פעיל', disabled: true }, Validators.required], // -------------StatusDescription
-    Tz: ['', Validators.required],//מספר משתמש של המערכת -------------Tz
+    Tz: (''),//מספר משתמש של המערכת -------------Tz
     Id: (''),//מספר עובד -----------id
     Phone: (''),//------------Phone
     CityName: (''),// -----------CityName
@@ -108,12 +108,14 @@ export class NewUserComponent implements OnInit {
 
             setTimeout(()=>{
               this.msgActionButtons = '';
-              debugger
               this.router.navigate(['/public/user/', result.obj[0]['id']]);
             }, 2000)
           }
           else{
             this.errorActionButtons = result.errdesc;
+            setTimeout(()=>{
+              this.errorActionButtons = '';
+            }, 2000)
           }
 
           //for user must to set id not description

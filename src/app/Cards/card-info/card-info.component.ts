@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, RouterLinkActive } from '@angular/router';
@@ -38,9 +38,12 @@ export class CardInfoComponent implements OnInit {
 
   saveUserDataSpinner: boolean = false;
 
+  saveUserDetailsMSG: string = '';
+  saveUserDetailsError: string = '';
+
   userDetailsForm = this.fb.group({
-    FullName: (''),
-    PhoneNumber: ('')
+    FullName: ['', Validators.required],
+    PhoneNumber: ['', Validators.required],
   });
 
   Note = this.fb.control({ value: '', disabled: true });
@@ -102,8 +105,8 @@ export class CardInfoComponent implements OnInit {
 
           debugger
 
-          this.userDetailsForm.get('FullName').setValue(result.obj[5].Fname + ' ' + result.obj[5].Lname);
-          this.userDetailsForm.get('PhoneNumber').setValue(result.obj[5].Phone);
+          this.userDetailsForm.get('FullName').setValue(this.CardInfo.FullName);
+          this.userDetailsForm.get('PhoneNumber').setValue(this.CardInfo.PhoneNumber);
           this.Note.setValue(result.obj[1][0]['RemarkNotes']);
 
           this.History = result.obj[7][0];
@@ -120,7 +123,55 @@ export class CardInfoComponent implements OnInit {
   }
 
   saveUserDetails() {
+
     this.saveUserDataSpinner = true;
+
+    if(this.userDetailsForm.valid){
+      
+    let objToApi = {
+      Token: this.userToken,
+      CardId: this.cardId,
+      FullName: this.userDetailsForm.get('FullName').value,
+      Phoneno: this.userDetailsForm.get('PhoneNumber').value,
+      UserID: this.userId,
+      OrderId: this.OrderDetails.IdForDisplay
+    }
+
+    debugger
+    this.dataService.UpdateCards(objToApi).subscribe(result => {
+      debugger
+      this.saveUserDataSpinner = false;
+      if (result['Token'] != undefined || result['Token'] != null) {
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
+
+        if(result.obj != undefined && result.obj != null && Object.keys(result.obj).length > 0){
+          this.userDetailsForm.get('FullName').setValue(result.obj.DSendName);
+          this.userDetailsForm.get('PhoneNumber').setValue(result.obj.DSendPhone);
+
+          this.saveUserDetailsMSG = 'נשמר בהצלחה';
+          setTimeout(()=>{
+            this.saveUserDetailsMSG = '';
+          }, 2000);
+
+          //saveUserDetailsError
+        }
+
+      }
+      else{
+        this.dialog.open(DialogComponent, {
+          data: {message: result.errdesc}
+        })
+      }
+      
+    });
+    }
+    else{
+      alert('form not valid');
+    }
 
     setTimeout(() => {
       this.saveUserDataSpinner = false;

@@ -1,62 +1,146 @@
 <div class="pageTitle main2-title">
     <div>רשימת כרטיסים </div>
-    <div>מספר הזמנה: {{orderId}}</div>
+    <div>מספר הזמנה: {{orderIdToPreview}}</div>
 </div>
 
 <div class="page-wrap">
 
-        <!--table-->
-        <div class="page-element width-block-auto">
-            <div class="element-page-title">רשימת כרטיסים</div>
-            <div class="tableActions">
-                <div>
-                    <button mat-button class="addButton">
-                        ייצוא
-                        <fa-icon [icon]="faFileExcel"></fa-icon>
-                    </button>
-                </div>
-                <div>
-                    <button mat-button class="deleteButton">
-                        ביטול שוברים
-                        <mat-icon>cancel</mat-icon>
-                    </button>
-                </div>
+    <!--table-->
+    <div class="page-element width-block-auto">
+        <div class="element-page-title">רשימת כרטיסים</div>
+        <div class="tableActions">
+            <div>
+                <button mat-button class="addButton" (click)="excelFileExport()">
+                    ייצוא
+                    <fa-icon [icon]="faFileExcel"></fa-icon>
+                </button>
+            </div>
+            <div *ngIf="this.OrderCreatedFromExcel">
+                <button mat-button class="addButton" (click)="addSelectForSmsColumn()">
+                    שליחת SMS
+                    <mat-icon>{{smsIcon}}</mat-icon>
+                </button>
             </div>
             <div>
-                <mat-form-field>
-                    <mat-label>סינון</mat-label>
-                    <input matInput (keyup)="applyFilter($event)" placeholder="לדוגמה: פעיל" #input>
-                    <mat-icon  matPrefix>filter_list</mat-icon>
-                </mat-form-field>
-    
-                <div class="mat-elevation-z8" >
-                    <table mat-table [dataSource]="dataTable" matSort class="tableView"dir="rtl">
-    
-                        <!-- ID Column -->
-                        <ng-container *ngFor="let column of tabelLabels">
-                            <ng-container matColumnDef="{{column['value']}}">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header> {{column['viewValue']}} </th>
-                                <td mat-cell *matCellDef="let row">
-                                    <span *ngIf="column['value'] != 'CardId'">{{row[column['value']]}}</span>
-                                    <a [routerLink]="['/public/cardInfo',row['CardId'], userId]" *ngIf="column['value'] == 'CardId'">{{row[column['value']]}}</a>
-                                </td>
-                            </ng-container>
-                        </ng-container>
-    
-                        <tr mat-header-row *matHeaderRowDef="tabelLabelsList; sticky: true"></tr>
-                        <tr mat-row *matRowDef="let row; columns: tabelLabelsList;"></tr>
-    
-                        <!-- Row shown when there is no matching data. -->
-                        <tr class="mat-row" *matNoDataRow>
-                            <td class="mat-cell" colspan="4">לא נמצאו נתונים</td>
-                        </tr>
-                    </table>
-                    <mat-spinner *ngIf="tableSpinner"></mat-spinner>
-                    <div *ngIf="errorMsg != ''" style="color: red; text-align: center">{{errorMsg}}</div>
-                    <mat-paginator [pageSizeOptions]="[25,50,100]" class="mat-paginator-sticky"></mat-paginator>
-                </div>
-    
-    
+                <button mat-button class="deleteButton" (click)="addSelectForBlockedColumn()">
+                    ביטול שוברים
+                    <mat-icon>{{deleteIcon}}</mat-icon>
+                </button>
             </div>
         </div>
+        <div *ngIf="additionalOptionsSMS" class="additionalOptionsSMS formBorder">
+            <div class="selectWrap">
+                <mat-form-field>
+                    <mat-label>בחר תבנית מסרון</mat-label>
+                    <mat-select [formControl]="smsTemplates" (selectionChange)="smsTempleteSelect($event)">
+                        <!-- <mat-select-trigger>
+                            {{toppings.value ? toppings.value[0] : ''}}
+                            <span *ngIf="toppings.value?.length > 1" class="example-additional-selection">
+                              (+{{toppings.value.length - 1}} {{toppings.value?.length === 2 ? 'other' : 'others'}})
+                            </span>
+                          </mat-select-trigger> -->
+                        <mat-option *ngFor="let template of smsTemplatesData" [value]="template.Id">
+                            {{template.TemplateName}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="textAreaWrap">
+                <mat-form-field class="textAreaWrap">
+                    <textarea matInput [formControl]="previewSmsTemplate" cdkTextareaAutosize
+                        #autosize="cdkTextareaAutosize">
+                        </textarea>
+                </mat-form-field>
+            </div>
+            <div class="buttonSendSms">
+                <button mat-button class="linkButton" (click)="sendSMS()" [disabled]="sendButtonSms">שלח הודעה
+                    למסומנים</button>
+                <div class="errorSendSms error" *ngIf="errorSendSms">
+                    {{errorSendSms}}
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="additionalOptionDelete" class="additionalOptionDelete formBorder">
+            <div class="voidBWrap">
+                <button mat-button class="deleteButton" (click)="voidCards()">בטל כל מסומנים</button>
+                <div *ngIf="cardsDeletedMsg" class="saveMessage">{{cardsDeletedMsg}}</div>
+                <div *ngIf="cardsDeletedError" class="error">{{cardsDeletedError}}</div>
+                <mat-spinner *ngIf="voidCardSpinner" class="voidSpinner"></mat-spinner>
+            </div>
+        </div>
+        <div>
+            <mat-form-field>
+                <mat-label>סינון</mat-label>
+                <input matInput (keyup)="applyFilter($event)" placeholder="לדוגמה: פעיל" #input>
+                <mat-icon matPrefix>filter_list</mat-icon>
+            </mat-form-field>
+
+            <div class="mat-elevation-z8">
+                <table mat-table [dataSource]="dataTable" matSort class="tableView" dir="rtl">
+
+                    <!-- Checkbox Column send sms -->
+                    <ng-container matColumnDef="selectSMS">
+                        <th mat-header-cell *matHeaderCellDef class="checkBoxBG">
+                            <span class="smsLabel">sms</span>
+                            <mat-checkbox (change)="$event ? masterToggle() : null"
+                                [checked]="selection.hasValue() && isAllSelected()"
+                                [indeterminate]="selection.hasValue() && !isAllSelected()"
+                                [aria-label]="checkboxLabel()">
+                            </mat-checkbox>
+                        </th>
+                        <td mat-cell *matCellDef="let row" class="checkBoxBG">
+                            <mat-checkbox (click)="$event.stopPropagation()"
+                                (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)"
+                                [aria-label]="checkboxLabel(row)">
+                            </mat-checkbox>
+                        </td>
+                    </ng-container>
+
+                    <!-- Checkbox Column delete multi cards -->
+                    <ng-container matColumnDef="selectDeleteCards">
+                        <th mat-header-cell *matHeaderCellDef class="checkBoxBG">
+                            <span class="smsLabel">חסימה</span>
+                            <mat-checkbox (change)="$event ? masterToggle() : null"
+                                [checked]="selection.hasValue() && isAllSelected()"
+                                [indeterminate]="selection.hasValue() && !isAllSelected()"
+                                [aria-label]="checkboxLabel()">
+                            </mat-checkbox>
+                        </th>
+                        <td mat-cell *matCellDef="let row" class="checkBoxBG"> 
+                            <mat-checkbox (click)="$event.stopPropagation()"
+                                (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)"
+                                [aria-label]="checkboxLabel(row)">
+                            </mat-checkbox>
+                        </td>
+                    </ng-container>
+
+
+                    <!-- ID Column -->
+                    <ng-container *ngFor="let column of tabelLabels">
+                        <ng-container matColumnDef="{{column['value']}}">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> {{column['viewValue']}} </th>
+                            <td mat-cell *matCellDef="let row">
+                                <span *ngIf="column['value'] != 'CardId'">{{row[column['value']]}}</span>
+                                <a [routerLink]="['/public/cardInfo',row['CardId'], userId]"
+                                    *ngIf="column['value'] == 'CardId'">{{row[column['value']]}}</a>
+                            </td>
+                        </ng-container>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="tabelLabelsList; sticky: true"></tr>
+                    <tr mat-row *matRowDef="let row; columns: tabelLabelsList;"></tr>
+
+                    <!-- Row shown when there is no matching data. -->
+                    <tr class="mat-row" *matNoDataRow>
+                        <td class="mat-cell" colspan="4">לא נמצאו נתונים</td>
+                    </tr>
+                </table>
+                <mat-spinner *ngIf="tableSpinner"></mat-spinner>
+                <div *ngIf="errorMsg != ''" style="color: red; text-align: center">{{errorMsg}}</div>
+                <mat-paginator [pageSizeOptions]="[25,50,100]" class="mat-paginator-sticky"></mat-paginator>
+            </div>
+
+
+        </div>
+    </div>
 </div>

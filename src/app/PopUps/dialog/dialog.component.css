@@ -71,9 +71,9 @@ mat-form-field{
     text-align: center;
     }
     .log-in{
-    width: 450px;
+    /* width: 450px; */
     margin: auto;
-    padding: 25px;
+    /* padding: 25px; */
     box-shadow: 0px 0px 10px rgba(104,104,102,0.8);
     border-radius: 10px;
     position: relative;
@@ -112,6 +112,7 @@ mat-form-field{
         flex-direction: row;
         justify-content: space-evenly;
         width: 100%;
+        margin: 1.2em 0;
     }
 
     .dialogMessage{
@@ -120,6 +121,16 @@ mat-form-field{
         direction: rtl;
         text-align: center;
         overflow-wrap: anywhere;
+        padding: 0 25px;
+    }
+
+    .title{
+        padding: 10px;
+        text-align: right;
+        direction: rtl;
+        font-size: 1.3em;
+        border-top-left-radius: 6px;
+        border-top-right-radius: 6px;
     }
 
 @media screen and (max-width: 1024px){

@@ -79,6 +79,7 @@ export class LogInComponent implements OnInit {
   // }
 
   SendOtp(){
+    debugger
     if(this.loginForm.valid){
       this.loginSpinner = true;
       let objToApi = {
@@ -152,5 +153,15 @@ export class LogInComponent implements OnInit {
         this.validateOtpErrorAlert = '';
       }, 3000);
     }
+  }
+
+  sendAgainCodeValidation(){
+    this.SendOtp();
+  }
+  editPhoneNumber(){
+    // alert('editPhoneNumber');
+    debugger
+    this.validKind = 'SendOtp';
+    debugger
   }
 }

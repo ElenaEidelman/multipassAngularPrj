@@ -46,7 +46,7 @@
                                 </button>
                                 <button mat-button class="deleteButton" *ngIf="CardInfo.IsActive" (click)="activeVoidCard(CardInfo.IsActive)">
                                     חסום שובר
-                                    <mat-icon class="mat-icon-rtl-mirror">highlight_off</mat-icon>
+                                    <mat-icon class="mat-icon-rtl-mirror">block</mat-icon>
                                 </button>
                                 <mat-spinner *ngIf="spinnerActiveVoidCard" class="spinnerActiveVoidCard"></mat-spinner>
                             </div>
@@ -120,6 +120,8 @@
                             <span>שמור עידכונים</span>
                             <mat-icon>save</mat-icon>
                         </button>
+                        <div class="saveMessage" *ngIf="saveUserDetailsMSG != ''">{{saveUserDetailsMSG}}</div>
+                        <div class="error" *ngIf="saveUserDetailsError != ''">{{saveUserDetailsError}}</div>
                         <mat-spinner *ngIf="saveUserDataSpinner"></mat-spinner>
                     </div>
                 </div>

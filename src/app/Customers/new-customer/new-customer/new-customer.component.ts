@@ -1,8 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { Router } from '@angular/router';
+import { MsgList } from 'src/app/Classes/msgsList';
 import { DataServiceService } from 'src/app/data-service.service';
+import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
 import { SharedService } from 'src/app/shared.service';
 
 @Component({
@@ -16,7 +19,8 @@ export class NewCustomerComponent implements OnInit {
     private fb: FormBuilder,
     private dataService: DataServiceService,
     private router: Router,
-    private sharedService: SharedService) { }
+    private sharedService: SharedService,
+    private dialog: MatDialog) { }
 
   @ViewChild(MatAccordion) accordion: MatAccordion;
 
@@ -25,12 +29,14 @@ export class NewCustomerComponent implements OnInit {
   msgActionButtons: string = '';
   saveFormSpinner: boolean = false;
 
+  MsgList = MsgList;
+
   newCustomerForm = this.fb.group({
     OrganizationName: ['', Validators.required], //Validators.required
     FName: (''),
     LName: (''),
     Email: ['', [Validators.email, Validators.required]], //Validators.required,
-    Phone: (''),
+    Phone: ['', Validators.required],
     Permission: ['', Validators.required], // Validators.required
     Phone1: (''),
     userNumber: [{ value: '', disabled: true }], //?
@@ -58,7 +64,8 @@ export class NewCustomerComponent implements OnInit {
 
 
   saveForm() {
-    if (true) {//this.newCustomerForm.valid
+    if (this.newCustomerForm.valid) {
+      this.saveFormSpinner = true;
       let data = this.newCustomerForm.value;
 
       let objToApi = {
@@ -74,6 +81,7 @@ export class NewCustomerComponent implements OnInit {
       debugger
       this.dataService.InsertUpdateUser(objToApi).subscribe(result => {
         debugger
+        this.saveFormSpinner = false;
         if (result['Token'] != undefined || result['Token'] != null) {
 
           //set new token
@@ -90,16 +98,26 @@ export class NewCustomerComponent implements OnInit {
             }, 3000);
           }
           if (typeof result == 'object' && result.obj != null) {
+            debugger
             this.msgActionButtons = 'לקוח חדש נשמר בהצלחה';
 
             setTimeout(() => {
               this.msgActionButtons = '';
+              this.router.navigate(['/public/customer/', result.obj[0].id]);
             }, 2000);
-            this.router.navigate(['/public/customer/', result.obj[0].id]);
+          }
+          if(result.obj == null && result.errdesc != ''){
+            this.errorActionButtons = result.errdesc;
+
+            setTimeout(() => {
+              this.errorActionButtons = '';
+            }, 3000);
           }
         }
         else {
-          alert(result.errdesc);
+          this.dialog.open(DialogComponent, {
+            data: {message: result.errdesc}
+          })
           this.sharedService.exitSystemEvent();
         }
       });

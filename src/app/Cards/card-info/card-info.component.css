@@ -70,6 +70,14 @@
 .buttonSave{
     text-align: center;
     padding: 10px;
+    position: relative;
+}
+.buttonSave mat-spinner{
+    position: absolute !important;
+    top: -12px;
+    right: 0;
+    left: 0;
+    margin: auto;
 }
 .formWrapRow{
     flex-wrap: wrap;

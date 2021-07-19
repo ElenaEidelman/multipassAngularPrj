@@ -1,0 +1,18 @@
+      if (result['Token'] != undefined || result['Token'] != null) {
+
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
+
+        if (typeof result == 'object' && result.obj != null && result.obj.length > 0) {
+
+        }
+      }
+      else {
+        this.dialog.open(DialogComponent, {
+          data: {message: result.errdesc}
+        })
+        this.sharedService.exitSystemEvent();
+      }
