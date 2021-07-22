@@ -1,5 +1,5 @@
 import { Route } from '@angular/compiler/src/core';
-import { Component, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild, ViewEncapsulation } from '@angular/core';
 import { tick } from '@angular/core/testing';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatDialog, throwMatDialogContentAlreadyAttachedError } from '@angular/material/dialog';
@@ -42,6 +42,7 @@ export class ExistCustomerComponent implements OnInit {
   MsgList = MsgList;
 
   saveFormSpinner: boolean = false;
+  statusList = [];
 
 
   customerDetails;
@@ -75,8 +76,7 @@ export class ExistCustomerComponent implements OnInit {
     StatusId: [{ value: '', disabled: true }],
     MultipassIclientID: (''),
     Tz: ['', Validators.required],//v
-    DealerDiscountPercent: [{ value: '', disabled: true }], //v
-    ValidateDate: (''), //new
+    Notes: (''), //v
     BusinessFile: ('/test.txt') //must to be required Validators.required
   });
 
@@ -100,28 +100,32 @@ export class ExistCustomerComponent implements OnInit {
 
           if (typeof result == 'object' && result.obj != null) {
             this.customerData = result.obj[0];
-
             Object.keys(result.obj[0]).forEach(el => {
-              if (this.CustomerForm.get(el) != null) {
+              if (this.CustomerForm.get(el) != null && el != 'SEO_Description') {
                 this.CustomerForm.get(el).setValue(result.obj[0][el]);
+              }
+              if(el == 'SEO_Description'){
+                this.CustomerForm.get('Notes').setValue(result.obj[0][el]);
+              }
+              if( el == 'StatusId'){        ;
+  
+                let list = this.statusList.filter(status => status.StatusId == this.CustomerForm.get(el).value);
+                this.CustomerForm.get(el).setValue(list[0]['Description']);
+
               }
             });
             this.getChartData();
           }
         }
         else {
-          alert(result.errdesc);
+          this.dialog.open(DialogComponent, {
+            data: {message: result.errdesc}
+          })
           this.sharedService.exitSystemEvent();
         }
       });
 
-
-
-
-      // this.customerDetails = {customerId: this.id, companyName: 'multipass', email: 'test@gmail.com', phone: '0504454325', addPhoneNum: '', role: 'עובד', userNum: '1481'};
-      // this.customerAddress = {city: '', street: '', houseNum: '', appNumber: '', entranceNum: '', floor: '', zCode: ''};
-      // this.customerSettings = {status: '', idNum: '', comaxCode: '', discount: '', custValDate: ''};
-
+      this.getUserStatus();
     })
 
   }
@@ -183,40 +187,66 @@ export class ExistCustomerComponent implements OnInit {
         }
       }
       else {
-        alert(result.errdesc);
+        this.dialog.open(DialogComponent, {
+          data: {message: result.errdesc}
+        })
         this.sharedService.exitSystemEvent();
       }
     });
 
   }
 
+  getUserStatus(){
+    let objToApi = {
+      Token: this.userToken
+    }
+    this.dataService.GetUserStatus(objToApi).subscribe(result => {
+      if (result['Token'] != undefined || result['Token'] != null) {
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
+
+        if(result.obj != null && result.obj != undefined && Object.keys(result.obj).length > 0){
+          
+          debugger
+        this.statusList = [...result.obj];
+        }
+      }
+      else {
+        this.dialog.open(DialogComponent,{
+          data: {message: result.errdesc != undefined ? result.errdesc : result}
+        });
+        this.sharedService.exitSystemEvent();
+      }
+    })
+  }
+
   saveForm() {
     if (this.CustomerForm.valid) {
       this.saveFormSpinner = true;
 
-      let date = new Date(this.CustomerForm.get('ValidateDate').value);
-      let day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
-      let month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
-      let year = date.getFullYear();
-      let formattingDate = month + '-' + day + '-' + year;
-      // this.CustomerForm.get('ValidateDate').setValue(formattingDate);
-
       let data = this.CustomerForm.value;
 
       let objToApi = {
-        Token: this.userToken, //req
+        Token: this.userToken, 
         Id: this.customerData.id
       }
 
       Object.keys(data).forEach(key => {
-        if (data[key] != '') {
+        if(key == 'StatusId'){
+          debugger
+          objToApi[key] = this.statusList.filter(status => status.Description == this.CustomerForm.get(key).value)[0]['StatusId']
+        }
+
+        if (data[key] != '' && key == 'StatusId') {
           objToApi[key] = data[key]
         }
       })
 
       //change to numeric
-      objToApi['Tz'] = +objToApi['Tz'];
-      objToApi['ValidateDate'] = formattingDate;
+      // objToApi['Tz'] = +objToApi['Tz'];
 
       debugger
       this.dataService.InsertUpdateUser(objToApi).subscribe(result => {

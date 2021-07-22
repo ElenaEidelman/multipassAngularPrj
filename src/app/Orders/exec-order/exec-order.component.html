@@ -36,7 +36,7 @@
 
 
         <!-- digital order-->
-        <div class="page-element">
+        <div class="page-element flexElements">
             <div class="element-page-title">סיכום הזמנה דיגיטלית</div>
             <div class="element-page-body">
                 <div class="innerElement margin0">
@@ -79,11 +79,39 @@
                     </div>
                 </div>
             </div>
+            <div class="flexButtonsElement">
+                <div *ngIf="orderStatus.id == '1' || orderStatus.id == '4'">
+                    <button mat-button class="deleteButton" (click)="deleteOrder()">מחק הזמנה
+                        <mat-icon>delete</mat-icon>
+                        <mat-spinner class="spinner" *ngIf="deleteCardsSpinner"></mat-spinner>
+                    </button>
+                    <div class="saveMessage" *ngIf="orderMsgDelete != ''">{{orderMsgDelete}}</div>
+                    <div class="error" *ngIf="errorMsgDelete != ''">{{errorMsgDelete}}</div>
+                </div>
+                <div *ngIf="orderStatus.id == '1'" class="wrapAprDel">
+                    <button mat-button class="addButton" (click)="ApproveOrder()">אישור הזמנה
+                        <mat-icon>done_outline</mat-icon>
+                    </button>
+                    <mat-spinner class="spinner orangeSp" *ngIf="createCardsSpinner"></mat-spinner>
+                    <div class="error" *ngIf="errorMsg != ''">{{errorMsg}}</div>
+                    <div class="saveMessage" *ngIf="orderMsg != ''">{{orderMsg}}</div>
+                    
+                </div>
+                <div class="wrapAprDel">
+                    <button mat-button class="addButton">שמור שינויים
+                        <mat-icon>save</mat-icon>
+                    </button>
+                    <mat-spinner class="spinner orangeSp" *ngIf="createCardsSpinner"></mat-spinner>
+                    <div class="error" *ngIf="errorMsg != ''">{{errorMsg}}</div>
+                    <div class="saveMessage" *ngIf="orderMsg != ''">{{orderMsg}}</div>
+                    
+                </div>
+            </div>
         </div>
 
         <!-- table -->
         <div class="page-element">
-            <div class="element-page-title"> {{orderStatus.description}} </div>
+            <div class="element-page-title"> פרטי הזמנה </div>
             <div class="mat-elevation-z8 tableWrapNoInfo">
                 <table  mat-table 
                         [dataSource]="orderDetailsTable" class="mat-elevation-z8 tableInsideElement tableView"
@@ -141,9 +169,10 @@
                                             <mat-form-field class="datePicker datePickerPadding marginTop-1"
                                                 appearance="fill" dir="ltr">
                                                 <input matInput formControlName="validity"
-                                                    [matDatepickerFilter]="calendarFilter" [matDatepicker]="picker">
+                                                     [matDatepicker]="picker" [min]="minDate" [max]="maxDate">
                                                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                                                 <mat-datepicker #picker></mat-datepicker>
+                                                  
                                             </mat-form-field>
                                         </ng-container>
                                         <ng-container *ngIf="obj == 'TotalForItem'">
@@ -195,25 +224,6 @@
 
 
             <div class="innerElement flexElement">
-                <div class="flexButtonsElement">
-                    <div *ngIf="orderStatus.id == '1' || orderStatus.id == '4'">
-                        <button mat-button class="deleteButton" (click)="deleteOrder()">מחק הזמנה
-                            <mat-icon>delete</mat-icon>
-                            <mat-spinner class="spinner" *ngIf="deleteCardsSpinner"></mat-spinner>
-                        </button>
-                        <div class="saveMessage" *ngIf="orderMsgDelete != ''">{{orderMsgDelete}}</div>
-                        <div class="error" *ngIf="errorMsgDelete != ''">{{errorMsgDelete}}</div>
-                    </div>
-                    <div *ngIf="orderStatus.id == '1'" class="wrapAprDel">
-                        <button mat-button class="addButton" (click)="ApproveOrder()">אישור הזמנה
-                            <mat-icon>done_outline</mat-icon>
-                        </button>
-                        <mat-spinner class="spinner orangeSp" *ngIf="createCardsSpinner"></mat-spinner>
-                        <div class="error" *ngIf="errorMsg != ''">{{errorMsg}}</div>
-                        <div class="saveMessage" *ngIf="orderMsg != ''">{{orderMsg}}</div>
-                        
-                    </div>
-                </div>
                 <div class="refBlock">
                     <mat-form-field>
                         <mat-label dir="rtl">מספר אסמכתא</mat-label>

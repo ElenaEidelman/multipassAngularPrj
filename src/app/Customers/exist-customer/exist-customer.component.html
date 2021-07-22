@@ -327,59 +327,15 @@
 
                                     <div class="formWrapColumn">
                                         <mat-form-field>
-                                            <mat-label>אחוז הנחה קבועה</mat-label>
-                                            <input matInput placeholder="אחוז הנחה קבועה" formControlName="DealerDiscountPercent">
-                                            <mat-icon matPrefix *ngIf="CustomerForm.get('DealerDiscountPercent').value == ''">%</mat-icon>
-                                            <button class="clearButton" *ngIf="this.CustomerForm.get('DealerDiscountPercent').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('DealerDiscountPercent').setValue('')">
+                                            <mat-label>הערות</mat-label>
+                                            <textarea class="multipassTextArea" matInput placeholder="הערות" formControlName="Notes" minlength="1"></textarea>
+                                            <button class="clearButton" *ngIf="this.CustomerForm.get('Notes').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('Notes').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
-                                        </mat-form-field>
-                                    </div>
-                                    <div class="formWrapColumn">
-                                        <mat-form-field appearance="fill"
-                                            class="datePicker datePickerPadding marginTop-1">
-                                            <mat-label>תאריך תוקף לקוח</mat-label>
-                                            <input matInput [matDatepicker]="picker" formControlName="ValidateDate">
-                                            <button class="clearButton" *ngIf="this.CustomerForm.get('ValidateDate').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('ValidateDate').setValue('')">
-                                                <mat-icon>close</mat-icon>
-                                            </button>
-                                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                                            <mat-datepicker #picker></mat-datepicker>
-                                            <mat-error>{{MsgList.dateFormatValidationErr}}</mat-error>
                                         </mat-form-field>
                                     </div>
                                 </div>
-                                <div class="wrapButtons">
-                                    <div class="buttonAny">
-                                        <!-- <div class="infoLabel">
-                                            <div class="textAlignCenter">
-                                                <span>תמונה ללקוח (ידרוס את הקיים)</span>
-                                            </div>
-                                            <div class="margin0">
-                                                <mat-icon>info</mat-icon>
-                                            </div>
-                                        </div> -->
-                                        <input [hidden]="true" name="uploadDoc" #uploadDoc type="file">
-                                        <button mat-button class="addButton" (click)="uploadDoc.click()">
-                                            <span>לצפיה בתעודה</span>
-                                            <mat-icon>preview</mat-icon>
-                                        </button>
-                                        <span *ngIf="uploadDoc.value">{{uploadDoc.value}}</span>
-                                    </div>
-                                    <div class="buttonAny">
-                                        <div class="infoForButton">
-                                            <span class="infoTitle">תדרוס את הקיימת</span>
-                                            <span>
-                                                <mat-icon>info</mat-icon>
-                                            </span>
-                                        </div>
-                                        <button mat-button class="addButton">
-                                            <span>טעינת תעודה חדשה</span>
-                                            <mat-icon>post_add</mat-icon>
-                                        </button>
 
-                                    </div>
-                                </div>
                             </div>
 
                             <!-- <mat-datepicker #picker></mat-datepicker> -->

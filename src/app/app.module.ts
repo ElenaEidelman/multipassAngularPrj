@@ -42,7 +42,7 @@ import { MainViewComponent } from './main-view/main-view.component';
 import { ExecOrderComponent } from './Orders/exec-order/exec-order.component';
 import { ExcelOrderComponent } from './Orders/excel-order/excel-order.component';
 import { AllOrdersComponent } from './Orders/all-orders/all-orders.component';
-import { MatNativeDateModule } from '@angular/material/core';
+import { MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
 import { DialogConfirmComponent } from './PopUps/dialog-confirm/dialog-confirm.component';
 import { AllCustomersComponent } from './Customers/all-customers/all-customers/all-customers.component';
 import { NewCustomerComponent } from './Customers/new-customer/new-customer/new-customer.component';
@@ -155,7 +155,8 @@ import { LoweUppCaseCheckPipe } from './Pipes/LowerUpperCaseCheck/lowe-upp-case-
     HttpClientModule,
     MatProgressSpinnerModule
   ],
-  providers: [DataServiceService, { provide: MatPaginatorIntl, useClass: MatPaginatorIntlCro}],
+  providers: [DataServiceService, { provide: MatPaginatorIntl, useClass: MatPaginatorIntlCro},{ provide: MAT_DATE_LOCALE, useValue: 'en-GB' }
+],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

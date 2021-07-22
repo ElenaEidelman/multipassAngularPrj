@@ -85,9 +85,9 @@
                                         <mat-error *ngIf="userDataForm.get('LName').errors?.pattern">{{MsgList.lettersValidationErr}}</mat-error>
                                     </mat-form-field>
                                     <mat-form-field>
-                                        <mat-label>מספר משתמש של המערכת</mat-label>
-                                        <input matInput placeholder="מספר משתמש של המערכת" formControlName="Tz" tabindex="5" pattern="[0-9]*" >
-                                        <mat-error *ngIf="userDataForm.get('Tz').errors?.pattern">{{MsgList.numbersValidationErr}}</mat-error>
+                                        <mat-label>מספר טלפון*</mat-label>
+                                        <input matInput placeholder="מספר טלפון" formControlName="Phone" tabindex="5" pattern="[0-9]*" >
+                                        <mat-error *ngIf="userDataForm.get('Phone').errors?.pattern">{{MsgList.numbersValidationErr}}</mat-error>
                                     </mat-form-field>
                                 </div>
                                 <div class="formWrapColumn">
@@ -95,11 +95,6 @@
                                         <mat-label>דוא"ל*</mat-label>
                                         <input matInput placeholder='דוא"ל*' formControlName="Email" tabindex="3">
                                         <mat-error *ngIf="userDataForm.get('Email').hasError('email')">{{MsgList.emailFormatValidationErr}}</mat-error>
-                                    </mat-form-field>
-                                    <mat-form-field>
-                                        <mat-label>מספר עובד</mat-label>
-                                        <input matInput placeholder="מספר עובד" formControlName="Id" tabindex="6" pattern="[0-9]*" >
-                                        <mat-error *ngIf="userDataForm.get('Id').errors?.pattern">{{MsgList.numbersValidationErr}}</mat-error>
                                     </mat-form-field>
                                 </div>
                             </div>
@@ -126,44 +121,38 @@
                             <div class="wrapFlexTwoCol">
                                 <div class="formWrapColumn">
                                     <mat-form-field>
-                                        <mat-label>מספר טלפון</mat-label>
-                                        <input matInput placeholder="מספר טלפון" formControlName="Phone" tabindex="7" pattern="[0-9]*" >
-                                        <mat-error *ngIf="userDataForm.get('Phone').errors?.pattern">{{MsgList.numbersValidationErr}}</mat-error>
-                                    </mat-form-field>
-                                    <mat-form-field>
                                         <mat-label>עיר</mat-label>
-                                        <input matInput placeholder="עיר" formControlName="CityName" tabindex="11" pattern="^([^0-9]*)$">
+                                        <input matInput placeholder="עיר" formControlName="CityName" tabindex="6" pattern="^([^0-9]*)$">
                                         <mat-error *ngIf="userDataForm.get('CityName').errors?.pattern">{{MsgList.lettersValidationErr}}</mat-error>
                                     </mat-form-field>
-                                </div>
-                                <div class="formWrapColumn">
-                                    <mat-form-field>
-                                        <mat-label>מספר טלפון נוסף</mat-label>
-                                        <input matInput placeholder="מספר טלפון נוסף" formControlName="Phone1" tabindex="8" pattern="[0-9]*">
-                                        <mat-error *ngIf="userDataForm.get('Phone1').errors?.pattern">{{MsgList.numbersValidationErr}}</mat-error>
-                                    </mat-form-field>
-                                    <mat-form-field>
-                                        <mat-label>רחוב</mat-label>
-                                        <input matInput placeholder="רחוב" formControlName="Streetno" tabindex="12" pattern="^([^0-9]*)$">
-                                        <mat-error *ngIf="userDataForm.get('Streetno').errors?.pattern">{{MsgList.lettersValidationErr}}</mat-error>
-                                    </mat-form-field>
-                                </div>
-                                <div class="formWrapColumn">
                                     <mat-form-field>
                                         <mat-label>הרשאות*</mat-label>
                                         <input matInput placeholder="הרשאות*" formControlName="Permission">
                                     </mat-form-field>
+                                </div>
+                                <div class="formWrapColumn">
                                     <mat-form-field>
-                                        <mat-label>מיקוד</mat-label>
-                                        <input matInput placeholder="מיקוד" formControlName="ZIP" tabindex="13" pattern="[0-9]*" >
-                                        <mat-error *ngIf="userDataForm.get('ZIP').errors?.pattern">{{MsgList.numbersValidationErr}}</mat-error>
+                                        <mat-label>רחוב</mat-label>
+                                        <input matInput placeholder="רחוב" formControlName="Streetno" tabindex="7" pattern="^([^0-9]*)$">
+                                        <mat-error *ngIf="userDataForm.get('Streetno').errors?.pattern">{{MsgList.lettersValidationErr}}</mat-error>
                                     </mat-form-field>
+                                    <mat-form-field>
+                                        <mat-label>מספר טלפון נוסף</mat-label>
+                                        <input matInput placeholder="מספר טלפון נוסף" formControlName="Phone1" tabindex="10" pattern="[0-9]*">
+                                        <mat-error *ngIf="userDataForm.get('Phone1').errors?.pattern">{{MsgList.numbersValidationErr}}</mat-error>
+                                    </mat-form-field>
+
                                 </div>
                                 <div class="formWrapColumn">
                                     <mat-form-field>
                                         <mat-label>מספר בית</mat-label>
-                                        <input matInput placeholder="מספר בית" formControlName="ApartmentNo" tabindex="10" pattern="[0-9]*" >
+                                        <input matInput placeholder="מספר בית" formControlName="ApartmentNo" tabindex="8" pattern="[0-9]*" >
                                         <mat-error *ngIf="userDataForm.get('ApartmentNo').errors?.pattern">{{MsgList.numbersValidationErr}}</mat-error>
+                                    </mat-form-field>
+                                    <mat-form-field>
+                                        <mat-label>מיקוד</mat-label>
+                                        <input matInput placeholder="מיקוד" formControlName="ZIP" tabindex="11" pattern="[0-9]*" >
+                                        <mat-error *ngIf="userDataForm.get('ZIP').errors?.pattern">{{MsgList.numbersValidationErr}}</mat-error>
                                     </mat-form-field>
                                 </div>
                             </div>

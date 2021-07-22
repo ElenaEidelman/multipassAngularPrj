@@ -68,7 +68,8 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
     OrderStatus: ('')
   });
 
-  statusList = new Set();
+  statusList = [];
+
   allCustomersDataSpare;
 
   customerLabelForTable = [
@@ -92,6 +93,35 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
         this.createDisplayedColumns(this.customerLabelForTable);
         //this.createDataSourceForTable();
         this.getAllCustomers();
+      }
+    });
+    this.getStatusList();
+  }
+
+  getStatusList(){
+
+    let objToApi = {
+      Token: this.userToken
+    }
+
+    this.dataService.GetUserStatus(objToApi).subscribe(result => {
+      if (result['Token'] != undefined || result['Token'] != null) {
+
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
+
+        if (typeof result == 'object' && result.obj != null && result.obj.length > 0) {
+          this.statusList = [...result.obj];
+        }
+      }
+      else {
+        this.dialog.open(DialogComponent, {
+          data: {message: result.errdesc}
+        })
+        this.sharedService.exitSystemEvent();
       }
     });
   }
@@ -227,23 +257,6 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
         this.filterMsg = '';
       }, 3000);
     }
-  }
-
-  returnStatusList() {
-    if (this.dataSource != undefined) {
-      this.dataSource.data.forEach(data => {
-        for (let el in data) {
-          if (el == 'StatusDescription') {
-            this.statusList.add(data[el]);
-          }
-        }
-      });
-    }
-    else {
-      //debugger
-    }
-
-    return this.statusList;
   }
 
   recoverTable() {

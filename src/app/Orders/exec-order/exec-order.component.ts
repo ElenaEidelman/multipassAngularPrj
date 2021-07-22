@@ -6,6 +6,7 @@ import { ControlContainer, FormBuilder, FormControl, Validators } from '@angular
 import { MatDialog, throwMatDialogContentAlreadyAttachedError } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Data, Router, RouterModule } from '@angular/router';
+import * as moment from 'moment';
 import { resourceUsage } from 'process';
 import { elementAt } from 'rxjs/operators';
 import { DataServiceService } from 'src/app/data-service.service';
@@ -46,6 +47,12 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   orderMsgDelete: string = '';
   errorMsgDelete: string = '';
   addOrderLineErrMsg: string = '';
+
+
+  minDate: any;
+  maxDate: any;
+
+
   orderIdToPreview;
 
   orderStatus = {
@@ -104,35 +111,29 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   userToken: string;
   orderDetailsTable;
 
+  date: any;
+
+
   //for additional empty row foraddToExecOrderForm
   addToExecOrderForm = this.fb.group({
     ticketCount: ['', [Validators.required, Validators.min(1), Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
     chargeAmount: ['', [Validators.required, Validators.min(1), Validators.max(1000), Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
-    validity: [new Date(new Date().setDate(new Date().getDate() + 1)), Validators.required],
+    validity: [this.getLastDateOfCurrentMonth(), Validators.required],
     TotalForItem: [{ value: '', disabled: true }]
   });
 
   //מספר אסמכתה
   RefControl = new FormControl('');
 
-  //disable all days before current data
-  calendarFilter = (d: Date | null): boolean => {
-    //  debugger
-    const day = (d || new Date()).getDate() < 10 ? '0' + (d || new Date()).getDate() : (d || new Date()).getDate();
-    const month = ((d || new Date()).getMonth() + 1) < 10 ? '0' + ((d || new Date()).getMonth() + 1) : ((d || new Date()).getMonth() + 1);
-    const year = (d || new Date()).getFullYear();
-
-
-    return new Date() < new Date(month + '/' + day + '/' + year);
-  }
-
   ngOnInit() {
     window.scroll(0, 0);
-
     let url = this.router.url;
+
+    this.getCalendarFilter();
+
     this.idUnsubscribe = this.activeRoute.params.subscribe(param => {
       this.userToken = JSON.parse(localStorage.getItem('user')).Token;
-      
+
       //manual order
       if (url.includes('order')) {
         this.orderId = param['id'];
@@ -146,11 +147,11 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         this.dataService.GetOrderDetails(objToApi).subscribe(result => {
           if (result['Token'] != undefined || result['Token'] != null) {
 
-                //set new token
-                let tempObjUser = JSON.parse(localStorage.getItem('user'));
-                tempObjUser['Token'] = result['Token'];
-                localStorage.setItem('user', JSON.stringify(tempObjUser));
-                this.userToken = result['Token'];
+            //set new token
+            let tempObjUser = JSON.parse(localStorage.getItem('user'));
+            tempObjUser['Token'] = result['Token'];
+            localStorage.setItem('user', JSON.stringify(tempObjUser));
+            this.userToken = result['Token'];
 
             if (typeof result == 'object' && result.obj != null) {
               this.orderIdToPreview = result.obj[0].idex;
@@ -159,7 +160,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
               this.orderStatus.description = statusData[0].Description;
 
               this.dataByPage = result['obj'][0];
-              
+
               debugger
 
               //get customer data
@@ -176,16 +177,16 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
             }
             if (result.Token == null && result.errdesc != null && result.errdesc != '') {
               this.dialog.open(DialogComponent, {
-                data: {message: result.errdesc}
+                data: { message: result.errdesc }
               });
             }
 
           }
           else {
             this.dialog.open(DialogComponent, {
-              data: {message: result.errdesc}
+              data: { message: result.errdesc }
             });
-            this.sharedService.exitSystemEvent();
+            // this.sharedService.exitSystemEvent();
           }
 
         })
@@ -203,11 +204,11 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         this.dataService.GetCustomersByFilter(objToApi).subscribe(result => {
           if (result['Token'] != undefined || result['Token'] != null) {
 
-                //set new token
-                let tempObjUser = JSON.parse(localStorage.getItem('user'));
-                tempObjUser['Token'] = result['Token'];
-                localStorage.setItem('user', JSON.stringify(tempObjUser));
-                this.userToken = result['Token'];
+            //set new token
+            let tempObjUser = JSON.parse(localStorage.getItem('user'));
+            tempObjUser['Token'] = result['Token'];
+            localStorage.setItem('user', JSON.stringify(tempObjUser));
+            this.userToken = result['Token'];
 
             if (typeof result == 'object' && result.obj != null) {
 
@@ -217,17 +218,21 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
               // this.orderStatus.description = statusData[0].Description;
               this.orderStatus.description = 'הזמנה חדשה';
 
-              
+
               this.Customer = result.obj[0];
               this.dataByPage = result.obj[0];
             }
             if (result.Token == null && result.errdesc != null && result.errdesc != '') {
-              alert(result.errdesc);
+              this.dialog.open(DialogComponent, {
+                data: { message: result.errdesc }
+              });
             }
           }
           else {
-            alert(result.errdesc);
-            this.sharedService.exitSystemEvent();
+            this.dialog.open(DialogComponent, {
+              data: { message: result.errdesc }
+            });
+            // this.sharedService.exitSystemEvent();
           }
         });
 
@@ -235,7 +240,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         this.orderDetailsTable = new MatTableDataSource(orderDetails);
       }
 
-      if (url.includes('excelOrder')){
+      if (url.includes('excelOrder')) {
         this.customerId = param['customerId'];
         this.newOrder = false;
 
@@ -247,11 +252,11 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         }
         this.dataService.GetCustomersByFilter(objToApiForCustomerData).subscribe(result => {
           if (result['Token'] != undefined || result['Token'] != null) {
-              //set new token
-              let tempObjUser = JSON.parse(localStorage.getItem('user'));
-              tempObjUser['Token'] = result['Token'];
-              localStorage.setItem('user', JSON.stringify(tempObjUser));
-              this.userToken = result['Token'];
+            //set new token
+            let tempObjUser = JSON.parse(localStorage.getItem('user'));
+            tempObjUser['Token'] = result['Token'];
+            localStorage.setItem('user', JSON.stringify(tempObjUser));
+            this.userToken = result['Token'];
 
             if (typeof result == 'object' && result.obj != null) {
               this.orderStatus.description = 'הזמנה חדשה';
@@ -260,30 +265,30 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
             }
             if (result.Token == null && result.errdesc != null && result.errdesc != '') {
               // alert(result.errdesc);
-              this.dialog.open(DialogComponent,{
-                data: {message: result.errdesc != undefined ? result.errdesc : result}
+              this.dialog.open(DialogComponent, {
+                data: { message: result.errdesc != undefined ? result.errdesc : result }
               })
             }
           }
           else {
-            this.dialog.open(DialogComponent,{
-              data: {message: result.errdesc != undefined ? result.errdesc : result}
+            this.dialog.open(DialogComponent, {
+              data: { message: result.errdesc != undefined ? result.errdesc : result }
             })
-            this.sharedService.exitSystemEvent();
+            // this.sharedService.exitSystemEvent();
           }
         });
 
 
         //object for insert orderLines
         let formDataForOrdersLine = new FormData();
-        formDataForOrdersLine.append('Token',this.userToken)
-        formDataForOrdersLine.append('UserID',param['customerId'])
-        formDataForOrdersLine.append('Description',forNewOrderData.FileName)
-        formDataForOrdersLine.append('OpCode','create')
+        formDataForOrdersLine.append('Token', this.userToken)
+        formDataForOrdersLine.append('UserID', param['customerId'])
+        formDataForOrdersLine.append('Description', forNewOrderData.FileName)
+        formDataForOrdersLine.append('OpCode', 'create')
 
         this.dataService.InsertUpdateOrderByExcel(formDataForOrdersLine).subscribe(result => {
           if (result['Token'] != undefined || result['Token'] != null) {
-            
+
             //set new token
             let tempObjUser = JSON.parse(localStorage.getItem('user'));
             tempObjUser['Token'] = result['Token'];
@@ -310,9 +315,9 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
             }
 
           }
-          else{
-            this.dialog.open(DialogComponent,{
-              data: {message: result.errdesc != undefined ? result.errdesc : result}
+          else {
+            this.dialog.open(DialogComponent, {
+              data: { message: result.errdesc != undefined ? result.errdesc : result }
             })
           }
         });
@@ -324,8 +329,33 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     })
 
     this.getStatusList();
-    this.RefControl.setValue(this.orderId);
+    // this.RefControl.setValue(this.orderId);
     this.totalData();
+  }
+
+  getCalendarFilter() {
+    let lastDateOfMonth = this.addToExecOrderForm.get('validity').value;//last day of current month
+    let fiveYFromCurrDate = new Date(lastDateOfMonth.getFullYear() + 5, lastDateOfMonth.getMonth(), lastDateOfMonth.getDate());
+    // const currentYear = new Date().getFullYear();
+
+    const day = lastDateOfMonth.getDate();
+    const month = lastDateOfMonth.getMonth();
+    const year = lastDateOfMonth.getFullYear();
+
+
+
+    const Fday = fiveYFromCurrDate.getDate();
+    const Fmonth = fiveYFromCurrDate.getMonth();
+    const Fyear = fiveYFromCurrDate.getFullYear();
+
+    this.minDate = new Date(year, month, day);
+    this.maxDate = new Date(Fyear, +Fmonth, +Fday);
+  }
+
+  getLastDateOfCurrentMonth() {
+    let date = new Date();
+    let lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59);
+    return lastDay;
   }
 
   getStatusList() {
@@ -352,8 +382,10 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         }
       }
       else {
-        alert(result.errdesc);
-        this.sharedService.exitSystemEvent();
+        this.dialog.open(DialogComponent, {
+          data: { message: result.errdesc }
+        });
+        // this.sharedService.exitSystemEvent();
       }
     });
 
@@ -431,8 +463,10 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         // this.orderDetails = filteringObj;
       }
       else {
-        alert(result.errdesc);
-        this.sharedService.exitSystemEvent();
+        this.dialog.open(DialogComponent, {
+          data: { message: result.errdesc }
+        })
+        // this.sharedService.exitSystemEvent();
       }
     });
 
@@ -443,10 +477,11 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         this.insertOrderLineSpinner = true;
         let ticketCount = +this.addToExecOrderForm.get('ticketCount').value;
         let chargeAmount = +this.addToExecOrderForm.get('chargeAmount').value;
-        let validity = this.addToExecOrderForm.get('validity').value;
-        let validityFormating = (new Date(validity).getDate() < 10 ? '0' + new Date(validity).getDate() : new Date(validity).getDate()) + '/' + ((new Date(validity).getMonth() + 1) < 10 ? '0' + (new Date(validity).getMonth() + 1) : new Date(validity).getMonth() + 1) + '/' + new Date(validity).getFullYear();
+        let validity = new Date(this.addToExecOrderForm.get('validity').value);
+        validity.setHours(23,59,59)
+        // let validityFormating = (new Date(validity).getDate() < 10 ? '0' + new Date(validity).getDate() : new Date(validity).getDate()) + '/' + ((new Date(validity).getMonth() + 1) < 10 ? '0' + (new Date(validity).getMonth() + 1) : new Date(validity).getMonth() + 1) + '/' + new Date(validity).getFullYear();
         this.addToExecOrderForm.get('TotalForItem').setValue(ticketCount * chargeAmount);
-        let TotalForItem = +this.addToExecOrderForm.get('TotalForItem').value;
+        // let TotalForItem = +this.addToExecOrderForm.get('TotalForItem').value;
 
         let objToApi = {
           Token: this.userToken,
@@ -456,15 +491,15 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
           Validity: validity,
           OpCode: "insert"
         }
-
         //query for insert update order lines, but not for the first line
         if (this.orderDetailsTable.data.length > 1) {
 
           objToApi['OrderId'] = this.orderId;
-
+          debugger
           this.dataService.InsertUpdateLines(objToApi).subscribe(result => {
+            debugger
             this.insertOrderLineSpinner = false;
-
+            this.addToExecOrderForm.get('validity').setValue(this.getLastDateOfCurrentMonth());
             if (result['Token'] != undefined || result['Token'] != null) {
 
               //set new token
@@ -485,16 +520,18 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
                 this.totalData();
 
 
-              //set status data
-              let statusData = this.statusListArr.filter(status => status.StatusId == result.obj[0].OrderStatus);
-              this.orderStatus.id = statusData[0].OrderStatus != undefined ? statusData[0].OrderStatus : statusData[0].StatusId;
-              debugger
-              this.orderStatus.description = statusData[0].Description;
+                //set status data
+                let statusData = this.statusListArr.filter(status => status.StatusId == result.obj[0].OrderStatus);
+                this.orderStatus.id = statusData[0].OrderStatus != undefined ? statusData[0].OrderStatus : statusData[0].StatusId;
+                debugger
+                this.orderStatus.description = statusData[0].Description;
               }
             }
             else {
-              alert(result.errdesc);
-              this.sharedService.exitSystemEvent();
+              this.dialog.open(DialogComponent, {
+                data: { message: result.errdesc }
+              });
+              // this.sharedService.exitSystemEvent();
             }
           });
         }
@@ -502,7 +539,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         //insert first line, create new order
         else {
           this.dataService.InsertUpdateOrder(objToApi).subscribe(result => {
-
+            this.addToExecOrderForm.get('validity').setValue(this.getLastDateOfCurrentMonth());
             if (result['Token'] != undefined || result['Token'] != null) {
               this.insertOrderLineSpinner = false;
 
@@ -510,26 +547,28 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
                 this.orderDetails = [
                   { id: 0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem: 0 }
                 ];
-  
+
                 this.orderDetails.unshift(result['obj'][0]['Lines'][0]);
-  
+                debugger
                 this.orderDetailsTable = new MatTableDataSource(this.orderDetails);
-  
+
                 //after created new order, set order id
                 this.orderId = result['obj'][0]['orderid'];
-  
+
                 //calculate new total dat
                 this.totalData();
 
-              //set status data
-              let statusData = this.statusListArr.filter(status => status.StatusId == result.obj[0].OrderStatus);
-              this.orderStatus.id = statusData[0].StatusId;
-              this.orderStatus.description = statusData[0].Description;
+                //set status data
+                let statusData = this.statusListArr.filter(status => status.StatusId == result.obj[0].OrderStatus);
+                this.orderStatus.id = statusData[0].StatusId;
+                this.orderStatus.description = statusData[0].Description;
               }
             }
             else {
-              alert(result.errdesc);
-              this.sharedService.exitSystemEvent();
+              this.dialog.open(DialogComponent, {
+                data: { message: result.errdesc }
+              });
+              // this.sharedService.exitSystemEvent();
             }
           });
         }
@@ -555,7 +594,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     //not new order
     else {
       this.dialog.open(DialogComponent, {
-        data: {message: 'not new order'}
+        data: { message: 'not new order' }
       })
     }
   }
@@ -583,7 +622,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
           this.userToken = result['Token'];
 
           if (typeof result == 'object' && result.obj != null && result.obj.length > 0) {
-            localStorage.setItem('createOrderByExcel','');
+            localStorage.setItem('createOrderByExcel', '');
             this.orderMsg = 'הזמנה נקלטה בהצלחה';
             setTimeout(() => {
               this.orderMsg = '';
@@ -607,9 +646,9 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         }
         else {
           this.dialog.open(DialogComponent, {
-            data: {message: result.errdesc}
+            data: { message: result.errdesc }
           })
-          this.sharedService.exitSystemEvent();
+          // this.sharedService.exitSystemEvent();
         }
       })
     }
@@ -661,9 +700,9 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
                 this.router.navigate(['/public/allOrders']);
               }, 2000);
             }
-            if(result.obj == null && result.errdesc != ''){
-              this.dialog.open(DialogComponent,{
-                data: {message: result.errdesc}
+            if (result.obj == null && result.errdesc != '') {
+              this.dialog.open(DialogComponent, {
+                data: { message: result.errdesc }
               });
             }
             if (typeof result == 'string') {
@@ -674,8 +713,10 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
             }
           }
           else {
-            alert(result.errdesc);
-            this.sharedService.exitSystemEvent();
+            this.dialog.open(DialogComponent, {
+              data: { message: result.errdesc }
+            });
+            // this.sharedService.exitSystemEvent();
           }
         });
       }

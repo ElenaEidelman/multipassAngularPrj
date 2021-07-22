@@ -692,6 +692,23 @@ mat-spinner.orangeSp > svg > circle {
 .enableSpinner{
   display: block;
 }
+
+textarea.multipassTextArea{
+  min-height: 8em;
+  padding: 10px !important;
+  border: 1px solid #DDE0E0;
+  border-radius: 10px;
+  background: #fff;
+}
+textarea.multipassTextArea + span > label{
+  padding: 5px 10px;
+}
+
+
+div.time-container{
+  direction: ltr;
+}
+
 /* rewrite */
 /* .mat-form-field-appearance-fill .mat-form-field-label{
   margin-top: 0;

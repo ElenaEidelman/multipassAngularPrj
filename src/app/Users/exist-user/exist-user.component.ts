@@ -40,9 +40,9 @@ export class ExistUserComponent implements OnInit {
     LName: (''), // new  V ---------LName
     Email: ['', [Validators.required, Validators.email]],// -----------Email
     StatusId: [{ value: '', disabled: true }, Validators.required], // -------------StatusDescription
-    Tz: (''),//מספר משתמש של המערכת -------------Tz
-    Id: (''),//מספר עובד -----------id
-    Phone: (''),//------------Phone
+    // Tz: (''),//מספר משתמש של המערכת -------------Tz
+    // Id: (''),//מספר עובד -----------id
+    Phone: ['', Validators.required],//------------Phone
     CityName: (''),// -----------CityName
     Phone1: (''),// ------------Phone1
     Streetno: (''),// ---------Streetno

@@ -3,6 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MsgList } from 'src/app/Classes/msgsList';
 import { DataServiceService } from 'src/app/data-service.service';
 import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
 import { SharedService } from 'src/app/shared.service';
@@ -40,6 +41,7 @@ export class NewUserComponent implements OnInit {
   errorActionButtons: string = '';
 
   saveFormSpinner: boolean = false;
+  MsgList = MsgList;
 
   statusList = [];
 
@@ -48,9 +50,9 @@ export class NewUserComponent implements OnInit {
     LName: (''), // new  V ---------LName
     Email: ['', [Validators.required, Validators.email]],// -----------Email
     StatusId: [{ value: 'פעיל', disabled: true }, Validators.required], // -------------StatusDescription
-    Tz: (''),//מספר משתמש של המערכת -------------Tz
+    // Tz: (''),//מספר משתמש של המערכת -------------Tz
     Id: (''),//מספר עובד -----------id
-    Phone: (''),//------------Phone
+    Phone: ['', Validators.required],//------------Phone
     CityName: (''),// -----------CityName
     Phone1: (''),// ------------Phone1
     Streetno: (''),// ---------Streetno

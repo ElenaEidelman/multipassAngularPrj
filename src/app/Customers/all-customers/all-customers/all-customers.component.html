@@ -53,8 +53,8 @@
                                     <!-- <mat-option #closeSelect>
                                         <button mat-button (click)="resetStatusField(this); closeMatSelect()"></button>
                                     </mat-option> -->
-                                    <mat-option *ngFor="let status of returnStatusList()" [value]="status">
-                                        {{status}}
+                                    <mat-option *ngFor="let status of statusList" [value]="status.Description">
+                                        {{status.Description}}
                                     </mat-option>
                                 </mat-select>
                             </mat-form-field>

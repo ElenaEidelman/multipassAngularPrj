@@ -29,6 +29,8 @@ export class NewCustomerComponent implements OnInit {
   msgActionButtons: string = '';
   saveFormSpinner: boolean = false;
 
+  statusList = [];
+
   MsgList = MsgList;
 
   newCustomerForm = this.fb.group({
@@ -47,11 +49,10 @@ export class NewCustomerComponent implements OnInit {
     floor: (''), // -------------------------
     ApartmentNo: (''),//v
     ZIP: (''), // -----------------------
-    StatusId: [{ value: '1', disabled: true }],
-    MultipassIclientID: (''),
+    StatusId: [{ value: 'פעיל', disabled: true }],
+    // MultipassIclientID: (''),
     Tz: ['', Validators.required], //, Validators.required
-    DealerDiscountPercent: (''),
-    ValidateDate: (''), // --------------------
+    Notes: (''),
     BusinessFile: ('/test.txt') //must to be required Validators.required
   });
 
@@ -62,19 +63,47 @@ export class NewCustomerComponent implements OnInit {
     this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
   }
 
+  getUserStatus(){
+    let objToApi = {
+      Token: this.userToken
+    }
+    this.dataService.GetUserStatus(objToApi).subscribe(result => {
+      if (result['Token'] != undefined || result['Token'] != null) {
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
+
+        if(result.obj != null && result.obj != undefined && Object.keys(result.obj).length > 0){
+          
+        this.statusList = [...result.obj];
+        }
+      }
+      else {
+        this.dialog.open(DialogComponent,{
+          data: {message: result.errdesc != undefined ? result.errdesc : result}
+        });
+        this.sharedService.exitSystemEvent();
+      }
+    })
+  }
+
 
   saveForm() {
     if (this.newCustomerForm.valid) {
       this.saveFormSpinner = true;
-      let data = this.newCustomerForm.value;
-
+      
       let objToApi = {
         Token: this.userToken, //req
       }
 
-      Object.keys(data).forEach(key => {
-        if (data[key] != '') {
-          objToApi[key] = data[key]
+      Object.keys(this.newCustomerForm.controls).forEach(control => {
+        if (this.newCustomerForm.get(control).value != '' && control != 'StatusId') {
+          objToApi[control] = this.newCustomerForm.get(control).value
+        }
+        else if(control == 'StatusId'){
+          objToApi[control] = this.statusList.filter(status => status.Description == this.newCustomerForm.get(control).value)['StatusId']
         }
       });
 

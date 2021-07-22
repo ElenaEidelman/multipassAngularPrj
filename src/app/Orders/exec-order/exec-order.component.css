@@ -60,12 +60,17 @@ mat-spinner >  svg{
     flex-grow: 2;
 }
 .refBlock > mat-form-field{
-    width: 88%;
+    width: 100%;
 }
 .subTitle{
     margin-left: 10px;
     font-size: 1.3rem;
     color: #8989a4;
+}
+.inputValue{
+    width: 100%;
+    text-align: center;
+    color: #757575;
 }
 
 .dataRows .mat-form-field{
@@ -99,6 +104,15 @@ tr.example-element-row:not(.example-expanded-row):hover {
       text-align: center;
   }
 
+  .flexElements{
+    display: flex;
+    flex-direction: column;
+  }
+  .flexButtonsElement{
+    flex-direction: row;
+    justify-content: center;
+    margin-top: auto;
+  }
 
 @media screen and (max-width: 1024px){
     /* .customer-data{

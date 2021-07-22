@@ -139,6 +139,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.filterActionButtonSpinner = true;
     //GetOrdersByFilter
+    debugger
     this.dataService.getAllOrders(objToApi).subscribe(result => {
       debugger
 
@@ -163,15 +164,18 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
         if (result.errdesc != null && result.errdesc != '') {
           this.dialog.open(DialogComponent, {
             data: {message: result.errdesc}
-          });        }
+          });        
+        }
 
       }
-      if(typeof result == 'string'){
+      else if(typeof result == 'string'){
 
       }
       else {
-        alert(result.errdesc);
-        this.sharedService.exitSystemEvent();
+        this.dialog.open(DialogComponent, {
+          data: {message: result.errdesc}
+        }); 
+        // this.sharedService.exitSystemEvent();
       }
     })
   }
