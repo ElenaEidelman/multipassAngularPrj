@@ -71,7 +71,7 @@ mat-form-field{
     text-align: center;
     }
     .log-in{
-    width: 450px;
+    /* width: 450px; */
     margin: auto;
     padding: 25px;
     box-shadow: 0px 0px 10px rgba(104,104,102,0.8);

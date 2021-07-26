@@ -1,0 +1,33 @@
+<div>
+    <div class="close-icon-wrap" (click)="dialogClose()">
+        <mat-icon matTooltip="סגור" matTooltipPosition="right">cancel</mat-icon>
+    </div>
+
+
+    <div class="log-in">
+        <div class="wrap-form">
+            <div class="title">
+
+                title
+            </div>
+            <div class="dialogMessage">
+                <mat-form-field class="datePicker datePickerPadding marginTop-1"
+                appearance="fill" dir="ltr">
+                <input matInput [formControl]="validity"
+                     [matDatepicker]="picker">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+                  
+            </mat-form-field>
+            </div>
+            <div>
+                subtitle
+            </div>
+            <div class="wrapSendButton">
+                <div>
+                    <button mat-button class="addButton" (click)="select()">בחר</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

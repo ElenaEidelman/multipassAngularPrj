@@ -13,6 +13,7 @@ import { element } from 'protractor';
 import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogConfirmComponent } from 'src/app/PopUps/dialog-confirm/dialog-confirm.component';
+import { MsgList } from 'src/app/Classes/msgsList';
 
 
 
@@ -47,8 +48,10 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   activeRouteUnsubscribe;
 
   statusListArr = [];
+  MsgList = MsgList;
 
 
+  //pattern="[a-zA-Z ]*"
   filterTableGroup = this.fb.group({
     OrganizationName: (''),
     CoreOrderId: (''),
@@ -78,7 +81,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     window.scroll(0, 0);
-
+    debugger
     this.filterActionButtonSpinner = true;
     this.userToken = JSON.parse(localStorage.getItem('user')).Token
     this.getStatusList();
@@ -135,8 +138,10 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.filterActionButtonSpinner = true;
-    this.dataService.GetOrdersByFilter(objToApi).subscribe(result => {
-      //debugger
+    //GetOrdersByFilter
+    debugger
+    this.dataService.getAllOrders(objToApi).subscribe(result => {
+      debugger
 
       this.filterActionButtonSpinner = false;
 
@@ -157,13 +162,20 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
         //   this.noTableData = true;
         // }
         if (result.errdesc != null && result.errdesc != '') {
-          alert(result.errdesc);
+          this.dialog.open(DialogComponent, {
+            data: {message: result.errdesc}
+          });        
         }
 
       }
+      else if(typeof result == 'string'){
+
+      }
       else {
-        alert(result.errdesc);
-        this.sharedService.exitSystemEvent();
+        this.dialog.open(DialogComponent, {
+          data: {message: result.errdesc}
+        }); 
+        // this.sharedService.exitSystemEvent();
       }
     })
   }
@@ -179,8 +191,9 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   deleteOrder(order) {
+    debugger
     this.dialog.open(DialogConfirmComponent, {
-      data: { message: 'האם למחוק הזמנה מספר ' + ' ' + order.id + ' ?' }
+      data: { message: 'האם למחוק הזמנה מספר ' + ' ' + order.idex + ' ?' }
     }).afterClosed().subscribe(response => {
 
       if (response.result == 'yes') {
@@ -193,8 +206,10 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
           OpCode: "delete"
         }
 
+        debugger
         this.dataService.DeleteVoidOrder(objToApi).subscribe(result => {
-          if (result['Token'] != undefined || result['Token'] != null) {
+          debugger
+          if (result['Token'] != undefined) {
 
             //set new token
             let tempObjUser = JSON.parse(localStorage.getItem('user'));
@@ -202,8 +217,9 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
             localStorage.setItem('user', JSON.stringify(tempObjUser));
             this.userToken = result['Token'];
 
-            if (typeof result == 'object' && Object.values(result.obj[0]).includes('Order is deleted Successfully')) {
-
+            debugger
+            if (typeof result == 'object' && result.obj != null && Object.values(result.obj[0]).includes('Order is deleted Successfully')) {
+              debugger
               this.dialog.open(DialogComponent, {
                 data: { message: 'ההזמנה נמחקה בהצלחה' }
               });
@@ -211,10 +227,72 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
               this.dataSource.data = [];
               this.getOrdersList();
             }
+            debugger
+            if(result.obj == null && result.errdesc != ''){
+              debugger
+              this.dialog.open(DialogComponent, {
+                data: { message: result.errdesc }
+              });
+            }
           }
           else {
-            alert(result.errdesc);
-            this.sharedService.exitSystemEvent();
+            this.dialog.open(DialogComponent, {
+              data: {message: result.errdesc}
+            });  
+            // this.sharedService.exitSystemEvent();
+          }
+        });
+      }
+    })
+  }
+
+  blockOrder(order){
+    debugger
+    this.dialog.open(DialogConfirmComponent, {
+      data: { message: 'האם לחסום הזמנה מספר ' + ' ' + order.idex + ' ?' }
+    }).afterClosed().subscribe(response => {
+
+      if (response.result == 'yes') {
+        ///api/InsertUpdateOrder/DeleteVoidOrder
+        let objToApi = {
+          Token: this.userToken,
+          OrderId: order.id,
+          UserID: order.UserId,
+          OpCode: "delete"
+        }
+
+        debugger
+        this.dataService.DeleteVoidOrder(objToApi).subscribe(result => {
+          if (result['Token'] != undefined) {
+
+            //set new token
+            let tempObjUser = JSON.parse(localStorage.getItem('user'));
+            tempObjUser['Token'] = result['Token'];
+            localStorage.setItem('user', JSON.stringify(tempObjUser));
+            this.userToken = result['Token'];
+
+            debugger
+            if (typeof result == 'object' && result.obj != null && result.errdesc == 'Order is Voided Successfully') {
+              debugger
+              this.dialog.open(DialogComponent, {
+                data: { message: 'ההזמנה נחסמה בהצלחה' }
+              });
+
+              this.dataSource.data = [];
+              this.getOrdersList();
+            }
+            debugger
+            if(result.obj == null && result.errdesc != ''){
+              this.dialog.open(DialogComponent, {
+                data: { message: result.errdesc }
+              });
+            }
+          }
+          else {
+            this.dialog.open(DialogComponent, {
+              data: {message: result.errdesc}
+            });  
+            // this.sharedService.exitSystemEvent();
           }
         });
       }
@@ -248,10 +326,10 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
   }
+
   filterTable() {
 
     this.noTableData = false;
-    let filterList = this.filterTableGroup.value;
     let inputSelected = false;
 
     let objToApi = {
@@ -259,11 +337,11 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     //fill obj to api
-    // debugger
-    Object.keys(filterList).forEach(element => {
-      if (filterList[element] != null && filterList[element].toString() != '') {
+    Object.keys(this.filterTableGroup.controls).forEach(control => {
+      if (this.filterTableGroup.get(control).value != null && this.filterTableGroup.get(control).value.toString() != '') {
         inputSelected = true;
-        objToApi[element] = filterList[element];
+          objToApi[control] = this.filterTableGroup.get(control).value;
+        
       }
     });
 
@@ -277,36 +355,35 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     else {
 
       this.filterActionButtonSpinner = true;
-      // this.dataService.GetOrdersByFilter(objToApi).subscribe(result => {
-      //   // debugger
-      //   this.filterActionButtonSpinner = false;
+      this.dataService.GetOrdersByFilter(objToApi).subscribe(result => {
+        this.filterActionButtonSpinner = false;
 
-      //   if (result['Token'] != undefined || result['Token'] != null) {
-      //     if (typeof result == 'object' && result.obj != null) {
-      //       this.dataSource.data = [...result['obj']];
-      //     }
+        if (result['Token'] != undefined || result['Token'] != null) {
+          if (typeof result == 'object' && result.obj != null) {
+            this.dataSource.data = [...result['obj']];
+          }
 
-      //     if (result.errdesc == 'No Data Found') {
-      //       this.noTableData = true;
-      //       this.dataSource.data = [];
-      //     }
-      //     if (typeof result == 'string') {
-      //       this.errorMsg = result;
+          if (result.errdesc == 'No Data Found') {
+            this.noTableData = true;
+            this.dataSource.data = [];
+          }
+        }
+        if (typeof result == 'string') {
+          this.errorMsg = result;
 
-      //       setTimeout(() => {
-      //         this.errorMsg = '';
-      //       }, 3000);
-      //     }
-      //   }
-      //   else {
-      //     alert(result.errdesc);
-      //     this.sharedService.exitSystemEvent();
-      //   }
-      // })
+          setTimeout(() => {
+            this.errorMsg = '';
+          }, 3000);
+        }
+        else {
+          this.dialog.open(DialogComponent, {
+            data: {message: result.errdesc}
+          });  
+          // this.sharedService.exitSystemEvent();
+        }
+      })
     }
   }
-
-  
 
   ngAfterViewInit() {
     if (this.dataSource != undefined) {

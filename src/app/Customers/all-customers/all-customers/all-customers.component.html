@@ -17,11 +17,13 @@
                         <div>
                             <mat-form-field>
                                 <mat-label>מזהה לקוח</mat-label>
-                                <input matInput placeholder="שם לקוח, ח.פ" formControlName="customerId">
+                                <input matInput placeholder="שם לקוח, ח.פ" formControlName="customerId" pattern="[0-9]*">
                                 <mat-icon matPrefix *ngIf="this.filterCustomerForm.get('customerId').value == ''">person</mat-icon>
                                 <button class="clearButton" *ngIf="this.filterCustomerForm.get('customerId').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.filterCustomerForm.get('customerId').setValue('')">
                                     <mat-icon>close</mat-icon>
                                 </button>
+                                <mat-error *ngIf="filterCustomerForm.get('customerId').errors?.pattern">{{MsgList.numbersValidationErr}}</mat-error>
+
                             </mat-form-field>
                         </div>
                     </div>
@@ -35,7 +37,7 @@
                                     <mat-icon>close</mat-icon>
                                 </button>
                                 <mat-error *ngIf="this.filterCustomerForm.get('customerEmail').hasError('email')">
-                                 כתובת דוא"ל לא תקין*
+                                    {{MsgList.emailFormatValidationErr}}
                                   </mat-error>
                             </mat-form-field>
                         </div>
@@ -47,12 +49,12 @@
                                 <button class="clearButton" *ngIf="filterCustomerForm.get('OrderStatus').value != ''"  mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="filterCustomerForm.get('OrderStatus').setValue('')">
                                     <mat-icon>close</mat-icon>
                                 </button>
-                                <mat-select formControlName="OrderStatus" multiple>
+                                <mat-select formControlName="OrderStatus">
                                     <!-- <mat-option #closeSelect>
                                         <button mat-button (click)="resetStatusField(this); closeMatSelect()"></button>
                                     </mat-option> -->
-                                    <mat-option *ngFor="let status of returnStatusList()" [value]="status">
-                                        {{status}}
+                                    <mat-option *ngFor="let status of statusList" [value]="status.Description">
+                                        {{status.Description}}
                                     </mat-option>
                                 </mat-select>
                             </mat-form-field>
@@ -88,7 +90,7 @@
                             <th mat-header-cell *matHeaderCellDef mat-sort-header> {{returnHebTranslation(customerLabelForTable,column)}} </th>
                             <td mat-cell *matCellDef="let row">
                                 <span *ngIf="column != 'organizationName'">{{row[column]}} </span>
-                                <a [routerLink]="['/public/customer',row['id']]" *ngIf="column == 'organizationName'">{{row[column]}}</a>
+                                <a [routerLink]="['/public/customer',row['id']]" *ngIf="column == 'organizationName'">{{row[column] != undefined ? row[column] : row['OrganizationName']}}</a>
                             </td>
                         </ng-container>
                         <ng-container matColumnDef="{{column}}" *ngIf="column == 'newOrder'" style="width:100px">

@@ -8,7 +8,9 @@
     <div class="log-in">
       <div class="wrap-form">
         <h2>כניסה למערכת</h2>
-        <form [formGroup]="loginForm" class="logInForm" (ngSubmit)="SendOtp()" *ngIf="validKind == 'SendOtp'">
+
+        
+        <form [formGroup]="loginForm" *ngIf="validKind == 'SendOtp'" class="logInForm" (ngSubmit)="SendOtp()" >
           <p>
             <mat-form-field>
               <mat-label>מספר טלפון</mat-label>
@@ -39,14 +41,16 @@
             </span>
           </div>
         </form>
-
+<!-- 
+         -->
         <form [formGroup]="loginForm" *ngIf="validKind == 'ValidateOtp'" class="logInForm" (ngSubmit)="ValidateOtp()">
           <p>
             <mat-form-field>
               <mat-label>קוד אימות</mat-label>
               <input type="text" matInput placeholder="קוד אימות" formControlName="OtpKey">
               <mat-icon matPrefix>domain</mat-icon>
-              <mat-hint>ברגעים אלא נשלח אליך קוד אימות</mat-hint>
+              <mat-hint>  <span>: קוד אימות נשלח למספר טלפון </span></mat-hint>
+              <mat-hint>{{this.loginForm.get('PhoneNumber').value}}</mat-hint>
               <mat-error *ngIf="loginForm.get('OtpKey').hasError('required')">
                 נא להזין קוד אימות
               </mat-error>
@@ -59,6 +63,11 @@
             <span *ngIf="loginSpinner">
               <mat-spinner></mat-spinner>
             </span>
+          </div>
+
+          <div class="wrapUndButtons">
+            <span class="undButton" (click)="sendAgainCodeValidation()">נסה שוב</span> | 
+            <span class="undButton" (click)="editPhoneNumber()">תיקון מספר טלפון</span>
           </div>
         </form>
       </div>

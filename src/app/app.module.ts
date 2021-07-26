@@ -39,9 +39,9 @@ import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
 import { MainMenuComponent } from './main-menu/main-menu.component';
 import { MainViewComponent } from './main-view/main-view.component';
-import { ExecOrderComponent } from './Orders/exec-order/exec-order.component';
+import { ExecOrderComponent, DatePickerDialog } from './Orders/exec-order/exec-order.component';
 import { AllOrdersComponent } from './Orders/all-orders/all-orders.component';
-import { MatNativeDateModule } from '@angular/material/core';
+import { MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
 import { DialogConfirmComponent } from './PopUps/dialog-confirm/dialog-confirm.component';
 import { AllCustomersComponent } from './Customers/all-customers/all-customers/all-customers.component';
 import { NewCustomerComponent } from './Customers/new-customer/new-customer/new-customer.component';
@@ -78,6 +78,8 @@ import { TestExpandingTableComponent } from './Orders/test-expanding-table/test-
 import { OrderLinesComponent } from './Orders/order-lines/order-lines.component';
 import { DialogComponent } from './PopUps/dialog/dialog.component';
 import { FormatDatePipe } from './Pipes/format-date.pipe';
+import { ExcelFileViewComponent } from './excel/excel-file-view/excel-file-view.component';
+import { LoweUppCaseCheckPipe } from './Pipes/LowerUpperCaseCheck/lowe-upp-case-check.pipe';
 
 
 @NgModule({
@@ -116,7 +118,10 @@ import { FormatDatePipe } from './Pipes/format-date.pipe';
     OrderLinesComponent,
     DialogComponent,
     FormatDatePipe,
-    PhoneConfirmComponent
+    PhoneConfirmComponent,
+    ExcelFileViewComponent,
+    LoweUppCaseCheckPipe,
+    DatePickerDialog
   ],
   imports: [
     BrowserModule,
@@ -149,7 +154,8 @@ import { FormatDatePipe } from './Pipes/format-date.pipe';
     HttpClientModule,
     MatProgressSpinnerModule
   ],
-  providers: [DataServiceService, { provide: MatPaginatorIntl, useClass: MatPaginatorIntlCro}],
+  providers: [DataServiceService, { provide: MatPaginatorIntl, useClass: MatPaginatorIntlCro},{ provide: MAT_DATE_LOCALE, useValue: 'en-GB' }
+],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

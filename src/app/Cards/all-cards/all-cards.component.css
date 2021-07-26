@@ -1,4 +1,4 @@
-.mobileTwoCol{
+/* .mobileTwoCol{
     display: flex;
     flex-direction: row-reverse;
     flex-wrap: wrap;
@@ -18,9 +18,11 @@
 
 .buttonsWrap{
     position: relative;
+} */
+
+.formWrap{
+    flex-direction: column;
 }
-
-
 
 @media screen and (max-width: 1024px){
     .idNumber{

@@ -1,8 +1,8 @@
 <div class="pageTitle main2-title">
     <div>נתוני שובר</div>
 </div>
-
-<div class="page-wrap">
+<mat-spinner *ngIf="CardInfo == undefined" class="noDataSpinner"></mat-spinner>
+<div class="page-wrap" *ngIf="CardInfo">
     <!--filter table-->
     <div class="page-element width-block-auto wrapCardsFilter">
 
@@ -11,58 +11,61 @@
             <div class="element-page-title element-page-title2">נתוני שובר</div>
             <div class="wrapInnerEl">
                 <div class="firstChild datePicker">
-                    <div>
-                        <mat-form-field appearance="fill" class="Picker datePicker datePickerPadding marginTop-1">
+                    <div class="wrapExpData">
+                        <!-- <mat-form-field appearance="fill" class="Picker datePicker datePickerPadding marginTop-1">
                             <mat-label>תאריך פקיעת תוקף</mat-label>
                             <input matInput [matDatepicker]="picker">
                             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                             <mat-datepicker #picker></mat-datepicker>
-                        </mat-form-field>
+                        </mat-form-field> -->
+                        <div> {{CardInfo.ExpirationDate | formatDate}} </div>
+                        <div class="customerDataTitle padd"> :תאריך פקיעת תוקף</div>
                     </div>
                 </div>
                 <div class="secondChild">
                     <div>
                         <div class="customer-info-element">
                             <div class="customerDataTitle"> מספר שובר </div>
-                            <div class="detailsRow">111111</div>
+                            <div class="detailsRow">{{CardInfo.CardId}}</div>
                         </div>
                     </div>
                     <div>
                         <div class="customer-info-element">
                             <div class="customerDataTitle">פין קוד</div>
-                            <div class="detailsRow">1234</div>
+                            <div class="detailsRow">{{CardInfo.PinCode}}</div>
                         </div>
                     </div>
 
                     <div>
                         <div class="customer-info-element buttonCardFunc">
                             <div class="customerDataTitle"></div>
-                            <div>
-                                <button mat-button class="primaryButton" *ngIf="!cardStatus">
+                            <div class="wrapActiveVoidButton">
+                                <button mat-button class="primaryButton" *ngIf="!CardInfo.IsActive" (click)="activeVoidCard(CardInfo.IsActive)">
                                     הפעל שובר
                                     <mat-icon class="mat-icon-rtl-mirror">touch_app</mat-icon>
                                 </button>
-                                <button mat-button class="deleteButton" *ngIf="cardStatus">
+                                <button mat-button class="deleteButton" *ngIf="CardInfo.IsActive" (click)="activeVoidCard(CardInfo.IsActive)">
                                     חסום שובר
-                                    <mat-icon class="mat-icon-rtl-mirror">highlight_off</mat-icon>
+                                    <mat-icon class="mat-icon-rtl-mirror">block</mat-icon>
                                 </button>
+                                <mat-spinner *ngIf="spinnerActiveVoidCard" class="spinnerActiveVoidCard"></mat-spinner>
                             </div>
                         </div>
                         <div class="customer-info-element">
                             <div class="customerDataTitle">סטטוס שובר</div>
-                            <div class="detailsRow">חסום</div>
+                            <div class="detailsRow">{{CardInfo.IsActive ? 'פעיל' : 'חסום'}}</div>
                         </div>
                     </div>
                     <div>
                         <div class="customer-info-element">
                             <div class="customerDataTitle">יתרה עכשווית</div>
-                            <div class="detailsRow">10</div>
+                            <div class="detailsRow">{{CardInfo.CurrentBudget}}</div>
                         </div>
                     </div>
                     <div>
                         <div class="customer-info-element">
                             <div class="customerDataTitle">סכום טעינה ראשוני</div>
-                            <div class="detailsRow">10</div>
+                            <div class="detailsRow">{{CardInfo.OriginalBusget}}</div>
                         </div>
                     </div>
                 </div>
@@ -73,63 +76,63 @@
         <div class="page-element innerElement">
             <div class="element-page-title element-page-title2">נתוני הזמנה</div>
             <!-- <div class="wrapInnerElCol"> -->
-                <div class="wrapData dataRow">
-                    <div class="customer-info-element">
-                        <div class="customerDataTitle">מספר הזמנה</div>
-                        <div class="detailsRow">900000347</div>
-                    </div>
-                    <div class="customer-info-element">
-                        <div class="customerDataTitle">חברה</div>
-                        <div class="detailsRow">רמי לוי</div>
-                    </div>
-                    <div class="customer-info-element">
-                        <div class="customerDataTitle">קוד קומקס</div>
-                        <div class="detailsRow">5646544</div>
-                    </div>
-                    <div class="customer-info-element">
-                        <div class="customerDataTitle">תאריך ההנפקה</div>
-                        <div class="detailsRow">17/03/2021</div>
-                    </div>
+            <div class="wrapData dataRow">
+                <div class="customer-info-element">
+                    <div class="customerDataTitle">מספר הזמנה</div>
+                    <div class="detailsRow">{{OrderDetails.IdForDisplay}}</div>
                 </div>
+                <div class="customer-info-element">
+                    <div class="customerDataTitle">חברה</div>
+                    <div class="detailsRow">{{OrderDetails.PrimaryUser.OrganizationName}}</div>
+                </div>
+                <div class="customer-info-element">
+                    <div class="customerDataTitle">תאריך ההנפקה</div>
+                    <div class="detailsRow">{{OrderDetails.CreationDate | formatDate}}</div>
+                </div>
+            </div>
             <!-- </div> -->
         </div>
 
         <!-- פרטים אישיים -->
         <div class="page-element innerElement">
             <div class="element-page-title element-page-title2">פרטים אישיים</div>
-            <div class="wrapData">
-                <div class="formWrap">
-                    <div class="formWrapRow">
-                        <div>
-                            <mat-form-field>
-                                <mat-label>שם מלא</mat-label>
-                                <input matInput placeholder="שם מלא של מחזיק השובר">
-                            </mat-form-field>
-                        </div>
-                        <div>
-                            <mat-form-field>
-                                <mat-label>מספר טלפון נייד</mat-label>
-                                <input matInput placeholder="מספר טלפון נייד">
-                            </mat-form-field>
-                        </div>
+            <form [formGroup]="userDetailsForm">
 
-
+                <div class="wrapData">
+                    <div class="formWrap">
+                        <div class="formWrapRow">
+                            <div>
+                                <mat-form-field>
+                                    <mat-label>שם מלא</mat-label>
+                                    <input matInput placeholder="שם מלא של מחזיק השובר" formControlName="FullName">
+                                </mat-form-field>
+                            </div>
+                            <div>
+                                <mat-form-field>
+                                    <mat-label>מספר טלפון נייד</mat-label>
+                                    <input matInput placeholder="מספר טלפון נייד" formControlName="PhoneNumber">
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="buttonSave">
+                        <button mat-button class="addButton" (click)="saveUserDetails()">
+                            <span>שמור עידכונים</span>
+                            <mat-icon>save</mat-icon>
+                        </button>
+                        <div class="saveMessage" *ngIf="saveUserDetailsMSG != ''">{{saveUserDetailsMSG}}</div>
+                        <div class="error" *ngIf="saveUserDetailsError != ''">{{saveUserDetailsError}}</div>
+                        <mat-spinner *ngIf="saveUserDataSpinner"></mat-spinner>
                     </div>
                 </div>
-                <div class="buttonSave">
-                    <button mat-button class="addButton">
-                        <span>שמור עידכונים</span>
-                        <mat-icon>save</mat-icon>
-                    </button>
-                </div>
-            </div>
+            </form>
         </div>
 
         <!-- הערות -->
         <div class="page-element innerElement">
             <div class="element-page-title element-page-title2">הערות</div>
             <mat-form-field class="templateTextArea">
-                <textarea matInput placeholder="הערות" class="templateTextArea"></textarea>
+                <textarea matInput placeholder="הערות" class="templateTextArea" [formControl]="Note"></textarea>
             </mat-form-field>
         </div>
     </div>

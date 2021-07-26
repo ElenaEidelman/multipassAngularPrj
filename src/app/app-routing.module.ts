@@ -26,6 +26,7 @@ import { AllSmsTemplatesComponent } from './SMSTemplate/all-sms-templates/all-sm
 import { AllUsersComponent } from './Users/all-users/all-users.component';
 import { ExistUserComponent } from './Users/exist-user/exist-user.component';
 import { NewUserComponent } from './Users/new-user/new-user.component';
+import { ExcelFileViewComponent } from './excel/excel-file-view/excel-file-view.component';
 
 const routes: Routes = [
   {path:'', redirectTo: 'logIn', pathMatch: 'full'},
@@ -38,6 +39,8 @@ const routes: Routes = [
     {path: 'order/:id', component: ExecOrderComponent},
     {path: 'order/:id/:customerId', component: ExecOrderComponent},
     {path: 'newOrder/:customerId', component: ExecOrderComponent},
+    {path: 'excelOrder/:customerId', component: ExecOrderComponent},
+    // {path: 'excelOrder/:customerId', component: ExcelOrderComponent},
     {path: 'allOrders', component: AllOrdersComponent},
     {path: 'allOrders/:customerName', component: AllOrdersComponent},
     {path: 'allCustomers', component: AllCustomersComponent},
@@ -46,7 +49,7 @@ const routes: Routes = [
     {path: 'customer/:id', component: ExistCustomerComponent  },
     {path: 'allCards', component: AllCardsComponent},
     {path: 'orderCards', component: OrderCardsComponent},
-    {path: 'cardInfo/:id', component: CardInfoComponent},
+    {path: 'cardInfo/:id/:userId', component: CardInfoComponent},
     {path: 'orderLines/:orderId/:userId', component: OrderLinesComponent},
     {path: 'orderCards/:indexId/:userId', component: OrderCardsComponent},
     {path: 'digitalFilesList', component: DigitalFilesListComponent},
@@ -57,6 +60,7 @@ const routes: Routes = [
     {path: 'newUser', component: NewUserComponent},
     {path: 'allSMStemplates', component: AllSmsTemplatesComponent},
     {path: 'testExpandingTable', component: TestExpandingTableComponent},
+    {path: 'excelView', component: ExcelFileViewComponent},
     {path: 'admin', component: AdminComponent, children: [
       {path: 'createNewUser', component: AdminNewUserComponent},
       {path: 'createNewCard', component: AdminNewCardComponent},

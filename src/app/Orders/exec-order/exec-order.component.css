@@ -4,23 +4,23 @@
     flex-direction: row-reverse;
     flex-wrap: wrap;
 }
-mat-spinner{
+/* mat-spinner{
     margin: auto;
-    position: absolute !important;
-    top: 0;
-    right: 0;
-    left: 0;
-    width: 50px !important;
-    height: 50px !important;
+    position: absolute;
 }
 mat-spinner >  svg{
     width: 50px !important;
     height: 50px !important;
-}
+} */
 .spinner{
-
+    position: absolute !important;
+    top: -2em;
+    left: 1em;
 }
 
+.wrapAprDel{
+    position: relative;
+}
 .tableButton {
     position: relative;
 }
@@ -35,7 +35,7 @@ mat-spinner >  svg{
     padding: 0 3px;
 }
 .customerDataTitle{
-    text-align: right;
+    text-align: center;
 }
 .margin0{
     margin: 0 auto;
@@ -56,16 +56,29 @@ mat-spinner >  svg{
     flex-grow: 1;
     flex-basis: 0;
 }
+
 .refBlock{
     flex-grow: 2;
 }
+
 .refBlock > mat-form-field{
-    width: 88%;
+    width: 100%;
 }
+
 .subTitle{
     margin-left: 10px;
     font-size: 1.3rem;
     color: #8989a4;
+}
+
+mat-spinner{
+    margin: auto;
+}
+
+.inputValue{
+    width: 100%;
+    text-align: center;
+    color: #757575;
 }
 
 .dataRows .mat-form-field{
@@ -88,6 +101,37 @@ tr.example-element-row:not(.example-expanded-row):hover {
   tr.example-element-row:not(.example-expanded-row):active {
     background: #efefef;
   }
+
+  .tableWrapNoInfo{
+      position: relative;
+  }
+  .noInfo{
+      position: absolute;
+      bottom: 15px;
+      width: 100%;
+      text-align: center;
+  }
+
+  .flexElements{
+    display: flex;
+    flex-direction: column;
+  }
+  .flexButtonsElement{
+    flex-direction: row;
+    justify-content: center;
+    margin-top: auto;
+  }
+
+  .changeDate{
+      text-decoration: underline;
+  }
+  .changeDate:hover{
+      cursor: pointer;
+  }
+
+
+
+
 
 
 

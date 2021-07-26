@@ -13,3 +13,53 @@
 .main2-title{
     flex-direction: column;
 }
+.smsLabel{
+    position: absolute;
+    bottom: 0.3em;
+    right: 2em;
+}
+.additionalOptionsSMS{
+    display: flex;
+    flex-direction: row-reverse;
+    margin: 2em 0;
+}
+.additionalOptionsSMS > div{
+    /* margin: auto;
+    flex-grow: 1;
+    flex-basis: 0;
+    text-align: CENTER; */
+    margin: 0 20px;
+}
+
+.additionalOptionDelete{
+    display: flex;
+    margin: 2em 0;
+    padding: 15px;
+    width: fit-content;
+    margin-left: auto;
+}
+.voidBWrap{
+    position: relative;
+}
+.voidSpinner{
+    position: absolute;
+    top: -24px;
+    right: 7px;
+}
+
+/* table tr > td:first-child{
+    background:#DDE0E0;
+} */
+.checkBoxBG{
+    background:#DDE0E0;
+}
+
+.textAreaWrap{
+    width: 100%;
+}
+.buttonSendSms{
+    margin: auto 2em !important;
+}
+.selectWrap{
+    margin: auto 0 !important;
+}

@@ -59,7 +59,7 @@ export class AllUsersComponent implements OnInit {
     { value: 'id', viewValue: 'מספר משתמש' },
     { value: 'FName', viewValue: 'שם' },
     { value: 'LName', viewValue: 'שם משפחה' },
-    { value: 'Tz', viewValue: 'מספר משתמש' },
+    // { value: 'Tz', viewValue: 'מספר משתמש' },
     { value: 'role', viewValue: 'רמת הרשאה' },
     { value: 'Email', viewValue: 'דוא"ל' },
     { value: 'Phone', viewValue: 'טלפון' },

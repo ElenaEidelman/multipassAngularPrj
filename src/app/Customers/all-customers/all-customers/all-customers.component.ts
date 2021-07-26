@@ -5,6 +5,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
+import { MsgList } from 'src/app/Classes/msgsList';
 import { DataServiceService } from 'src/app/data-service.service';
 import { DialogConfirmComponent } from 'src/app/PopUps/dialog-confirm/dialog-confirm.component';
 import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
@@ -59,6 +60,7 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
   filterSpinner: boolean = false;
 
   idUnsubscribe;
+  MsgList = MsgList;
 
   filterCustomerForm = this.fb.group({
     customerId: (''),
@@ -66,7 +68,8 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
     OrderStatus: ('')
   });
 
-  statusList = new Set();
+  statusList = [];
+
   allCustomersDataSpare;
 
   customerLabelForTable = [
@@ -90,6 +93,35 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
         this.createDisplayedColumns(this.customerLabelForTable);
         //this.createDataSourceForTable();
         this.getAllCustomers();
+      }
+    });
+    this.getStatusList();
+  }
+
+  getStatusList(){
+
+    let objToApi = {
+      Token: this.userToken
+    }
+
+    this.dataService.GetUserStatus(objToApi).subscribe(result => {
+      if (result['Token'] != undefined || result['Token'] != null) {
+
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
+
+        if (typeof result == 'object' && result.obj != null && result.obj.length > 0) {
+          this.statusList = [...result.obj];
+        }
+      }
+      else {
+        this.dialog.open(DialogComponent, {
+          data: {message: result.errdesc}
+        })
+        this.sharedService.exitSystemEvent();
       }
     });
   }
@@ -171,17 +203,26 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
     let objToApi = {
       Token: token,
     };
-    Object.keys(this.filterCustomerForm.value).forEach(key => {
-      if (this.filterCustomerForm.get(key).value != '' && this.filterCustomerForm.get(key).value != null) {
+    Object.keys(this.filterCustomerForm.controls).forEach(control => {
+      if (this.filterCustomerForm.get(control).value != '' && this.filterCustomerForm.get(control).value != null) {
         fieldFilled = true;
-        objToApi[key] = this.filterCustomerForm.get(key).value;
+
+        if(control == 'OrderStatus'){
+          objToApi[control] = Array.of(this.filterCustomerForm.get(control).value);
+        }
+        else{
+          objToApi[control] = this.filterCustomerForm.get(control).value;
+        }
       }
     })
 
 
     if (fieldFilled) {
       this.filterSpinner = true;
+
+      debugger
       this.dataService.GetCustomersByFilter(objToApi).subscribe(result => {
+        debugger
         this.filterSpinner = false;
 
         if (result['Token'] != undefined || result['Token'] != null) {
@@ -192,10 +233,7 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
           localStorage.setItem('user', JSON.stringify(tempObjUser));
           this.userToken = result['Token'];
 
-          if (typeof result == 'string') {
-            alert(result);
-          }
-          else {
+
             if (typeof result == 'object' && result['obj'] != null && result['obj'].length > 0) {
               this.dataSource = new MatTableDataSource(result['obj']);
             }
@@ -206,7 +244,12 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
                 this.errorMsg = '';
               }, 3000);
             }
-          }
+
+        }
+        if (typeof result == 'string') {
+          this.dialog.open(DialogComponent, {
+            data: {message: result}
+          });
         }
       });
     }
@@ -216,23 +259,6 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
         this.filterMsg = '';
       }, 3000);
     }
-  }
-
-  returnStatusList() {
-    if (this.dataSource != undefined) {
-      this.dataSource.data.forEach(data => {
-        for (let el in data) {
-          if (el == 'StatusDescription') {
-            this.statusList.add(data[el]);
-          }
-        }
-      });
-    }
-    else {
-      //debugger
-    }
-
-    return this.statusList;
   }
 
   recoverTable() {
@@ -278,10 +304,10 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
             localStorage.setItem('user', JSON.stringify(tempObjUser));
             this.userToken = result['Token'];
 
-            if (result.errdesc.includes('User Deleted Successfully')) {
+            if (result.errdesc.includes('Successfully')) {
               this.getAllCustomers();
               this.dialog.open(DialogComponent, {
-                data: { message: 'לקוח נמחק בהצלחה' }
+                data: { message: result.errdesc }
               });
             }
             else {

@@ -1,5 +1,6 @@
 <div class="pageTitle main2-title">
     <div>הזמנת שוברים</div>
+    
 </div>
 <div class="page-element width-block-auto">
     <div class="element-page-title">הזמנת שוברים</div>
@@ -22,7 +23,7 @@
                             <div>
                                 <mat-form-field class="marginSelectTop">
                                     <mat-label>בחירת לקוח</mat-label>
-                                    <mat-select formControlName="customer">
+                                    <mat-select formControlName="customer" (selectionChange)="optionChange()">
                                         <ng-container *ngFor="let customer of customers; let i = index">
                                             <mat-option [value]="customer">
                                                 {{customer.organizationName}}
@@ -30,34 +31,52 @@
                                             </mat-option>
                                         </ng-container>
                                     </mat-select>
+                                    <mat-error *ngIf="excelCustomerError != ''">{{excelCustomerError}}</mat-error>
                                 </mat-form-field>
                             </div>
                             <div>
-                                <mat-form-field class="example-full-width">
-                                    <mat-label>תאור הקובץ</mat-label>
-                                    <textarea placeholder="נא להכניס תיאור של הקובץ" matInput
-                                        formControlName="fileDesc"></textarea>
-                                </mat-form-field>
+                                <div class="example-full-width">
+                                    <mat-form-field class="width100 textA">
+                                        <mat-label>תאור הקובץ</mat-label>
+                                        <textarea 
+                                                    placeholder="נא להכניס תיאור של הקובץ" 
+                                                    matInput
+                                                    formControlName="fileDesc"
+                                                    cdkTextareaAutosize
+                                                    #autosize="cdkTextareaAutosize"
+                                                    cdkAutosizeMinRows="2">
+                                                    {{uploadDoc.value}}
+                                        </textarea>
+                                    </mat-form-field>
+                                </div>
+
                             </div>
                             <div class="alignRight">
                                 <mat-hint>בדיקה וטעינה של הקובץ</mat-hint>
-                                <input [hidden]="true" name="uploadDoc" #uploadDoc type="file" formControlName="file">
+                                <input [hidden]="true" id="file-upload" name="uploadDoc" #uploadDoc  (change)="fileOptionChange($event)"
+                                #uploadDoc type="file" formControlName="file">
                                 <div class="wrapUserButton">
-                                    <button mat-button class="sendButton marginRight" (click)="uploadDoc.click()">
+                                    <button mat-button class="sendButton marginRight" [class.addButton]="!fileUploadButtonDisabled" [disabled]="fileUploadButtonDisabled" (click)="uploadDoc.click()">
                                         <span>בחירת קובץ</span>
                                         <mat-icon>attach_file</mat-icon>
                                     </button>
                                 </div>
-                                <span *ngIf="uploadDoc.value">{{uploadDoc.value}}</span>
+                                <span [hidden]="false" id="file-upload-filename" >{{filename}}</span>
+                                <mat-error *ngIf="excelFileError != ''">{{excelFileError}}</mat-error>
+                                <div>                                
+                                    <a href="../assets/Files/Template.xls" class="getForExampleExcelFile" (click)="getTemplateExcel()">קובץ אקסל לדוגמא</a>
+                                </div>
                             </div>
                         </div>
                         <div class="sendButtonWrap">
-                            <button mat-button class="addButton">שלח</button>
+                            <button mat-button class="addButton" (click)="goToExcelView()">
+                                שלח
+                            </button>
+                            <mat-error *ngIf="excelSendError != ''">{{excelSendError}}</mat-error>
                         </div>
                     </form>
                 </div>
             </div>
-
         </mat-tab>
 
         <!-- manual card creating -->
@@ -88,9 +107,8 @@
                             </div>
                             <div class="buttonAny alignRight">
                                 <div class="wrapUserButton">
-                                    <button mat-button class="addButton flexB" (click)="test()"
-                                        [routerLink]="['/public/newOrder', manualCardgroup.get('selectedCustomerControl').value != undefined ?  manualCardgroup.get('selectedCustomerControl').value['id'] : '-1' ]">הכנס
-                                    </button>
+                                    <button mat-button class="addButton flexB" (click)="checkFormValidity()">הכנס</button>
+                                    <div class="error">{{manualError}}</div>
                                     <!-- <button mat-button class="addButton" (click)="test()"
                                         [routerLink]="'/public/newOrder'" [state]="{data: manualCardgroup.get('selectedCustomerControl').value}">הכנס
                                     </button> -->
@@ -119,8 +137,7 @@
                             <div>
                                 <mat-form-field class="marginSelectTop">
                                     <mat-label>בחירת לקוח</mat-label>
-                                    <mat-select formControlName="selectedCustomerControl"
-                                        (selectionChange)="optionChange()">
+                                    <mat-select formControlName="selectedCustomerControl">
                                         <ng-container *ngFor="let customer of customers; let i = index">
                                             <mat-option [value]="customer">
                                                 {{customer.organizationName}}
@@ -132,28 +149,6 @@
                             </div>
                             <div></div>
                             <div></div>
-                            <!-- <div>
-                                <mat-form-field class="example-full-width inputPadding">
-                                    <mat-label>מספר לקוח *</mat-label>
-                                    <input placeholder="הזדהות המשתמש" matInput formControlName="userId" pattern="^[0-9]*$">
-                                    <button class="clearButton" *ngIf="this.loadingCardGroup.get('userId').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.loadingCardGroup.get('userId').setValue('')">
-                                        <mat-icon>close</mat-icon>
-                                    </button>
-     
-                                    <mat-error *ngIf="loadingCardGroup.get('userId').hasError('pattern')">
-                                        נא להזין רק מספרים*
-                                    </mat-error>
-                                    <mat-error *ngIf="loadingCardGroup.get('userId').hasError('required')">
-                                        נא להזין מספר לקוח *
-                                    </mat-error>
-                                </mat-form-field>
-                            </div>
-                            <div class="buttonAny alignRight">
-                                <div class="wrapUserButton">
-                                    <button mat-button class="addButton" (click)="indentityUser()">הכנס</button><br>
-                                </div>
-                                <mat-error *ngIf="loadingCardUserExist" [class.error]="loadingCardUserExist">תקלה בהזנת נתונים</mat-error>
-                            </div> -->
                         </div>
   
                         <div *ngIf="showHiddenLoadingCardContent || loadingCardGroup.get('selectedCustomerControl').value != ''"  class="hiddenLoadingCardContent">

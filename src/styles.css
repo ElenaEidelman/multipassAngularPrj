@@ -477,7 +477,7 @@ dialog-content-example-dialog div.innerElement{
   display: flex;
   color: #7F7F7F;
   font-weight: bold;
-  box-shadow: 0px 0px 3px #7F7F7F;
+  box-shadow: 0px 0px 2px #7F7F7F;
   /* color:#fff; */
 }
 .tableOrderStatusWaiting{
@@ -491,7 +491,7 @@ dialog-content-example-dialog div.innerElement{
   padding: 5px;
   display: flex;
   color:#267491;
-  box-shadow: 0px 0px 3px #267491;
+  box-shadow: 0px 0px 2px #267491;
   /* color:#fff; */
 }
 .tableOrderStatusFiftin{
@@ -501,7 +501,7 @@ dialog-content-example-dialog div.innerElement{
   color:#fff;
   color:#FF6347  !important;
   font-weight: bold;
-  box-shadow: 0px 0px 3px #FF6347;
+  box-shadow: 0px 0px 2px #FF6347;
 }
 .radioButton label.mat-radio-label  span.mat-radio-label-content{
   margin: 0 15px;
@@ -514,6 +514,9 @@ dialog-content-example-dialog div.innerElement{
   padding: 15px 15px 0;
   border-radius: 10px;
 }
+.width100{
+  width: 100%;
+}
  .mat-select{/*.mat-form-field.datePicker*/
   direction: rtl;
 }
@@ -522,6 +525,9 @@ dialog-content-example-dialog div.innerElement{
 }
 .formWrapRow mat-form-field.datePickerPadding div.mat-form-field-wrapper{
   /* margin-left: 83px; */
+}
+.svg-inline--fa.fa-w-12 {
+  color: #fff !important;
 }
 .selectedFormFieldWidth{
   width: 180px !important;
@@ -617,13 +623,13 @@ svg{
 /* Handle */
 ::-webkit-scrollbar-thumb {
   background: #8FC636; 
-  border-radius: 10px;
+  border-radius: 4px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: #77B613; 
-  border-radius: 10px;
+  border-radius:4px;
 }
 .check-box-flex{
   display: flex;
@@ -667,6 +673,12 @@ mat-form-field.Picker input.mat-datepicker-input ~ span.mat-form-field-label-wra
     color: #676766 !important;
 }
 
+mat-spinner{
+  position: absolute;
+}
+.noDataSpinner{
+  margin: auto;
+}
 .mat-progress-spinner circle, .mat-spinner circle {
   stroke: #8AC443;
 }
@@ -680,6 +692,39 @@ mat-spinner.orangeSp > svg > circle {
 .enableSpinner{
   display: block;
 }
+
+textarea.multipassTextArea{
+  min-height: 8em;
+  padding: 10px !important;
+  border: 1px solid #DDE0E0;
+  border-radius: 10px;
+  background: #fff;
+}
+textarea.multipassTextArea + span > label{
+  padding: 5px 10px;
+}
+
+.mainSpinner{
+  position: absolute;
+  background: rgba(0,0,0,0.2);
+  width: 100%;
+  height: 100%;
+  top: 0;
+  z-index: 9999999999999;
+}
+.mainSpinner > mat-spinner{
+  margin: auto;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+div.time-container{
+  direction: ltr;
+}
+
 /* rewrite */
 /* .mat-form-field-appearance-fill .mat-form-field-label{
   margin-top: 0;
@@ -739,7 +784,10 @@ textarea.mat-input-element{
   text-align: center;
   padding: 6px;
 }
-.mat-tab-group.mat-primary .mat-ink-bar, .mat-tab-nav-bar.mat-primary .mat-ink-bar {
+
+.mat-tab-group.mat-primary .mat-ink-bar, .mat-tab-nav-bar.mat-primary .mat-ink-bar,
+.mat-checkbox-indeterminate.mat-accent .mat-checkbox-background, .mat-checkbox-checked.mat-accent .mat-checkbox-background
+  {
   background-color: #8FC636;
 }
 

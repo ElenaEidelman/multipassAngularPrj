@@ -16,10 +16,23 @@ export class DataServiceService implements OnInit {
 
 
 
-  baseUrl = 'http://tempdomain-test-4.mltp.co.il';
-  //baseUrl = 'http://localhost:45036';
-  //test
- 
+//baseUrl = 'http://tempdomain-test-3.mltp.co.il';
+baseUrl = 'http://localhost:45036';
+
+  //test main
+  /**
+   * 
+$ git checkout master
+$ git branch new-branch
+$ git checkout new-branch
+
+# ...develop some code...
+
+$ git add –A
+$ git commit –m "Some commit message"
+$ git checkout master
+$ git merge new-branch
+   */
   
 
   constructor(private http: HttpClient, private sharedService: SharedService) { }
@@ -54,6 +67,9 @@ export class DataServiceService implements OnInit {
     return this.http.post(`${this.baseUrl}/api/Orders/GetOrders`, objToApi, httpOptions).pipe(
       map(result => {
         return result;
+      }),
+      catchError(err => {
+        return of(err.message);
       })
     );
   }
@@ -95,6 +111,18 @@ export class DataServiceService implements OnInit {
   }
   GetCardsByOrderId(objToApi){
     return this.http.post(`${this.baseUrl}/api/InsertUpdateOrder/GetCardsByOrderId`, objToApi).pipe(
+      map(result => {
+        return result;
+      }),
+      catchError(err => {
+        return of(err.message);
+      })
+
+    );
+  }
+
+  GetCardInfoById(objToApi){
+    return this.http.post(`${this.baseUrl}/api/AllCards/GetCardInfoById`, objToApi).pipe(
       map(result => {
         return result;
       }),
@@ -272,6 +300,7 @@ export class DataServiceService implements OnInit {
     );
   }
 
+
   
   GetSMSFormats(objToApi){
     return this.http.post(`${this.baseUrl}/api/SMS/GetSMSFormats`,objToApi).pipe(
@@ -307,11 +336,78 @@ export class DataServiceService implements OnInit {
   }
 
   SendSampleMessage(objToApi){
-    return this.http.post(`${this.baseUrl}//api/SMS/SendSampleMessage`,objToApi).pipe(
+    return this.http.post(`${this.baseUrl}/api/SMS/SendSampleMessage`,objToApi).pipe(
       map(result => {
         return result;
       }),
       catchError(error => {
+        return of(error.message);
+      })
+    );
+  }
+
+  
+  SendSMSByOrderLine(objToApi){
+    return this.http.post(`${this.baseUrl}/api/SMS/SendSMSByOrderLine`,objToApi).pipe(
+      map(result => {
+        return result;
+      }),
+      catchError(error => {
+        return of(error.message);
+      })
+    );
+  }
+
+  InsertUpdateOrderByExcel(objToApi){
+    //debugger
+    return this.http.post(`${this.baseUrl}/api/InsertUpdateOrder/InsertUpdateOrderByExcel`,objToApi).pipe(
+      map(result => {
+        //debugger
+        return result;
+      }),
+      catchError(error => {
+        //debugger
+        return of(error.message);
+      })
+    );
+  }
+
+  ActivateCards(objToApi){
+    //debugger
+    return this.http.post(`${this.baseUrl}/api/AllCards/ActivateCards`,objToApi).pipe(
+      map(result => {
+        //debugger
+        return result;
+      }),
+      catchError(error => {
+        //debugger
+        return of(error.message);
+      })
+    );
+  }
+  VoidCards(objToApi){
+    //debugger
+    return this.http.post(`${this.baseUrl}/api/AllCards/VoidCards`,objToApi).pipe(
+      map(result => {
+        //debugger
+        return result;
+      }),
+      catchError(error => {
+        //debugger
+        return of(error.message);
+      })
+    );
+  }
+
+  UpdateCards(objToApi){
+    //debugger
+    return this.http.post(`${this.baseUrl}/api/AllCards/UpdateCards`,objToApi).pipe(
+      map(result => {
+        //debugger
+        return result;
+      }),
+      catchError(error => {
+        //debugger
         return of(error.message);
       })
     );

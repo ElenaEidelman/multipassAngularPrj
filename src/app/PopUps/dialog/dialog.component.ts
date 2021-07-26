@@ -4,7 +4,9 @@ import { Router } from '@angular/router';
 
 
 export interface DialogData{
-  message: any
+  title: any,
+  message: any,
+  subTitle: any
 }
 
 @Component({
