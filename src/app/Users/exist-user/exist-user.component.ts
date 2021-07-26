@@ -39,7 +39,7 @@ export class ExistUserComponent implements OnInit {
     FName: (''), // new  V ---------FName
     LName: (''), // new  V ---------LName
     Email: ['', [Validators.required, Validators.email]],// -----------Email
-    StatusId: [{ value: '', disabled: true }, Validators.required], // -------------StatusDescription
+    StatusId: (''), // -------------StatusDescription
     // Tz: (''),//מספר משתמש של המערכת -------------Tz
     // Id: (''),//מספר עובד -----------id
     Phone: ['', Validators.required],//------------Phone
@@ -124,6 +124,8 @@ export class ExistUserComponent implements OnInit {
         if(result.obj != null && result.obj != undefined && Object.keys(result.obj).length > 0){
           
         this.statusList = [...result.obj];
+
+
         /**
          * Description: "ממתין לאישור"
           StatusId: 1
@@ -144,7 +146,7 @@ export class ExistUserComponent implements OnInit {
     Object.keys(this.userDataForm.controls).forEach(control => {
       if(control == 'StatusId'){
         let statusDesc = this.statusList.filter(status => status.StatusId == user.StatusId);
-        this.userDataForm.get(control).setValue(statusDesc[0]['Description']);
+        this.userDataForm.get(control).setValue(statusDesc[0]['StatusId']);
       }
       if(control != 'Permission' && control != 'StatusId'){
         this.userDataForm.get(control).setValue(user[control]);
@@ -163,8 +165,7 @@ export class ExistUserComponent implements OnInit {
       Object.keys(this.userDataForm.controls).forEach(control => {
         if(this.userDataForm.get(control).value != ''){
           if(control == 'StatusId'){
-            let statusId = this.statusList.filter(status => status.Description == this.userDataForm.get(control).value)[0]['StatusId']
-            objToApi[control] = statusId.toString();
+            objToApi[control] = this.userDataForm.get(control).value;
 
           }
           else{

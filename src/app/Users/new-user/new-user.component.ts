@@ -49,7 +49,7 @@ export class NewUserComponent implements OnInit {
     FName: (''), // new  V ---------FName
     LName: (''), // new  V ---------LName
     Email: ['', [Validators.required, Validators.email]],// -----------Email
-    StatusId: [{ value: 'פעיל', disabled: true }, Validators.required], // -------------StatusDescription
+    StatusId: (''), // -------------StatusDescription
     // Tz: (''),//מספר משתמש של המערכת -------------Tz
     Id: (''),//מספר עובד -----------id
     Phone: ['', Validators.required],//------------Phone
@@ -64,10 +64,8 @@ export class NewUserComponent implements OnInit {
 
   ngOnInit(): void {
     window.scroll(0,0);
-
     this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
-
-    // this.getUserStatus();
+    this.getUserStatus();
   }
 
   saveData(){
@@ -80,14 +78,7 @@ export class NewUserComponent implements OnInit {
       debugger
       Object.keys(this.userDataForm.controls).forEach(control => {
         if(this.userDataForm.get(control).value != ''){
-          if(control == 'StatusId'){
-            // let statusId = this.statusList.filter(status => status.Description == this.userDataForm.get(control).value)[0]['StatusId']
-            objToApi[control] = '2';
-  
-          }
-          else{
-            objToApi[control] = this.userDataForm.get(control).value;
-          }
+          objToApi[control] = this.userDataForm.get(control).value;
         }
       });
       objToApi['OrganizationName'] = '';
@@ -146,7 +137,6 @@ export class NewUserComponent implements OnInit {
     }
 
     this.dataService.GetUserStatus(objToApi).subscribe(result => {
-      debugger
       if (result['Token'] != undefined || result['Token'] != null) {
         //set new token
         let tempObjUser = JSON.parse(localStorage.getItem('user'));
@@ -157,6 +147,7 @@ export class NewUserComponent implements OnInit {
         if(result.obj != null && result.obj != undefined && Object.keys(result.obj).length > 0){
           
         this.statusList = [...result.obj];
+        this.userDataForm.get('StatusId').setValue(2);
         /**
          * Description: "ממתין לאישור"
           StatusId: 1

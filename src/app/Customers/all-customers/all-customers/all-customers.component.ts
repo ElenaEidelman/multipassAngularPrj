@@ -74,7 +74,7 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
 
   customerLabelForTable = [
     { value: 'organizationName', viewValue: 'שם לקוח' },
-    { value: 'id', viewValue: 'תז/ח.פ.' },
+    { value: 'Tz', viewValue: 'תז/ח.פ.' },
     { value: 'OrdersCount', viewValue: 'סה"כ הזמנות' },
     { value: 'StatusDescription', viewValue: 'סטטוס' }
   ];

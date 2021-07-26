@@ -73,9 +73,17 @@
                                         <input matInput placeholder="שם*" formControlName="FName" tabindex="1" pattern="^([^0-9]*)$">
                                         <mat-error *ngIf="userDataForm.get('FName').errors?.pattern">{{MsgList.lettersValidationErr}}</mat-error>
                                     </mat-form-field>
-                                    <mat-form-field class="selectedFormFieldWidth">
+                                    <!-- <mat-form-field class="selectedFormFieldWidth">
                                         <mat-label>סטטוס*</mat-label>
                                         <input matInput formControlName="StatusId" tabindex="4" >
+                                    </mat-form-field> -->
+                                    <mat-form-field class="formWrapColumn selectedFormFieldWidth">
+                                        <mat-label>סטטוס</mat-label>
+                                        <mat-select formControlName="StatusId" tabindex="4">
+                                            <mat-option *ngFor="let status of statusList" [value]="status.StatusId">
+                                                {{status.Description}}
+                                            </mat-option>
+                                        </mat-select>
                                     </mat-form-field>
                                 </div>
                                 <div class="formWrapColumn">
