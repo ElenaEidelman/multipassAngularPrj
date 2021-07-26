@@ -1,17 +1,18 @@
 import { Route } from '@angular/compiler/src/core';
 import { typeWithParameters } from '@angular/compiler/src/render3/util';
-import { Component, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChildren, ViewEncapsulation } from '@angular/core';
+import { Component, Inject, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChildren, ViewEncapsulation } from '@angular/core';
 import { tick } from '@angular/core/testing';
 import { ControlContainer, FormBuilder, FormControl, Validators } from '@angular/forms';
-import { MatDialog, throwMatDialogContentAlreadyAttachedError } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, throwMatDialogContentAlreadyAttachedError } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Data, Router, RouterModule } from '@angular/router';
 import * as moment from 'moment';
 import { resourceUsage } from 'process';
+import { element } from 'protractor';
 import { elementAt } from 'rxjs/operators';
 import { DataServiceService } from 'src/app/data-service.service';
 import { DialogConfirmComponent } from 'src/app/PopUps/dialog-confirm/dialog-confirm.component';
-import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
+import { DialogComponent, DialogData } from 'src/app/PopUps/dialog/dialog.component';
 import { SharedService } from 'src/app/shared.service';
 import { AlertMessage } from 'src/assets/alertMessage';
 
@@ -47,6 +48,10 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   orderMsgDelete: string = '';
   errorMsgDelete: string = '';
   addOrderLineErrMsg: string = '';
+  orderRefMsg: string = '';
+  errorRefMsg: string = '';
+
+  chagesToServer = [];
 
 
   minDate: any;
@@ -61,6 +66,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   newOrder: boolean = false;
+  saveChangesSpinner: boolean = false;
   //translate customer data value to hebrew
   CustomerLangObj = [
     { value: 'FName', viewValue: 'שם' },
@@ -118,7 +124,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   addToExecOrderForm = this.fb.group({
     ticketCount: ['', [Validators.required, Validators.min(1), Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
     chargeAmount: ['', [Validators.required, Validators.min(1), Validators.max(1000), Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
-    validity: [this.getLastDateOfCurrentMonth(), Validators.required],
+    validity: [this.getLastDateOfCurrentMonthAnd5Years(), Validators.required],
     TotalForItem: [{ value: '', disabled: true }]
   });
 
@@ -129,7 +135,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     window.scroll(0, 0);
     let url = this.router.url;
 
-    this.getCalendarFilter();
+    // this.getCalendarFilter();
 
     this.idUnsubscribe = this.activeRoute.params.subscribe(param => {
       this.userToken = JSON.parse(localStorage.getItem('user')).Token;
@@ -160,8 +166,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
               this.orderStatus.description = statusData[0].Description;
 
               this.dataByPage = result['obj'][0];
-
-              debugger
+              this.RefControl.setValue(this.dataByPage.CrmOrderId);//Reference
 
               //get customer data
               this.Customer = result['obj'][0];
@@ -252,16 +257,19 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         }
         this.dataService.GetCustomersByFilter(objToApiForCustomerData).subscribe(result => {
           if (result['Token'] != undefined || result['Token'] != null) {
+
             //set new token
             let tempObjUser = JSON.parse(localStorage.getItem('user'));
             tempObjUser['Token'] = result['Token'];
             localStorage.setItem('user', JSON.stringify(tempObjUser));
             this.userToken = result['Token'];
+            
 
             if (typeof result == 'object' && result.obj != null) {
               this.orderStatus.description = 'הזמנה חדשה';
               this.Customer = result.obj[0];
               this.dataByPage = result.obj[0];
+              this.RefControl.setValue(this.dataByPage.CrmOrderId);//Reference
             }
             if (result.Token == null && result.errdesc != null && result.errdesc != '') {
               // alert(result.errdesc);
@@ -300,8 +308,8 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
               this.orderDetails = [
                 { id: 0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem: 0 }
               ];
-
               this.orderDetails.unshift(...result['obj'][0]['Lines']);
+              debugger
               this.orderDetailsTable = new MatTableDataSource(this.orderDetails);
 
               //set status data
@@ -333,28 +341,28 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     this.totalData();
   }
 
-  getCalendarFilter() {
-    let lastDateOfMonth = this.addToExecOrderForm.get('validity').value;//last day of current month
-    let fiveYFromCurrDate = new Date(lastDateOfMonth.getFullYear() + 5, lastDateOfMonth.getMonth(), lastDateOfMonth.getDate());
-    // const currentYear = new Date().getFullYear();
+  // getCalendarFilter() {
+  //   let lastDateOfMonth = this.addToExecOrderForm.get('validity').value;//last day of current month
+  //   let fiveYFromCurrDate = new Date(lastDateOfMonth.getFullYear() + 5, lastDateOfMonth.getMonth(), lastDateOfMonth.getDate());
+  //   // const currentYear = new Date().getFullYear();
 
-    const day = lastDateOfMonth.getDate();
-    const month = lastDateOfMonth.getMonth();
-    const year = lastDateOfMonth.getFullYear();
+  //   const day = lastDateOfMonth.getDate();
+  //   const month = lastDateOfMonth.getMonth();
+  //   const year = lastDateOfMonth.getFullYear();
 
 
 
-    const Fday = fiveYFromCurrDate.getDate();
-    const Fmonth = fiveYFromCurrDate.getMonth();
-    const Fyear = fiveYFromCurrDate.getFullYear();
+  //   const Fday = fiveYFromCurrDate.getDate();
+  //   const Fmonth = fiveYFromCurrDate.getMonth();
+  //   const Fyear = fiveYFromCurrDate.getFullYear();
 
-    this.minDate = new Date(year, month, day);
-    this.maxDate = new Date(Fyear, +Fmonth, +Fday);
-  }
+  //   this.minDate = new Date(year, month, day);
+  //   this.maxDate = new Date(Fyear, +Fmonth, +Fday);
+  // }
 
-  getLastDateOfCurrentMonth() {
+  getLastDateOfCurrentMonthAnd5Years() {
     let date = new Date();
-    let lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59);
+    let lastDay = new Date(date.getFullYear() + 5, date.getMonth() + 1, 0, 23, 59, 59);
     return lastDay;
   }
 
@@ -499,7 +507,8 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
           this.dataService.InsertUpdateLines(objToApi).subscribe(result => {
             debugger
             this.insertOrderLineSpinner = false;
-            this.addToExecOrderForm.get('validity').setValue(this.getLastDateOfCurrentMonth());
+            this.addToExecOrderForm.get('validity').setValue(this.getLastDateOfCurrentMonthAnd5Years());
+            debugger
             if (result['Token'] != undefined || result['Token'] != null) {
 
               //set new token
@@ -539,7 +548,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         //insert first line, create new order
         else {
           this.dataService.InsertUpdateOrder(objToApi).subscribe(result => {
-            this.addToExecOrderForm.get('validity').setValue(this.getLastDateOfCurrentMonth());
+            this.addToExecOrderForm.get('validity').setValue(this.getLastDateOfCurrentMonthAnd5Years());
             if (result['Token'] != undefined || result['Token'] != null) {
               this.insertOrderLineSpinner = false;
 
@@ -736,6 +745,93 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     return this.CustomerLangObj.filter(el => el.value == value)[0].viewValue;
   }
 
+  saveChanges(){
+    if(this.RefControl.value != ''){
+      this.saveChangesSpinner = true;
+      let objToApi = {
+        Token: this.userToken,
+        UserID:this.customerId,
+        OrderID:this.orderId,
+        Reference:this.RefControl.value
+      }
+
+      this.chagesToServer = [];
+
+      /**
+       * data for order date change
+       * ValidationDate : ''
+       * orderId: ''
+       * 
+       */
+      debugger
+
+      this.dataService.InsertUpdateOrder(objToApi).subscribe(result => {
+        debugger
+        this.saveChangesSpinner = false;
+        if (result['Token'] != undefined || result['Token'] != null) {
+
+          //set new token
+          let tempObjUser = JSON.parse(localStorage.getItem('user'));
+          tempObjUser['Token'] = result['Token'];
+          localStorage.setItem('user', JSON.stringify(tempObjUser));
+          this.userToken = result['Token'];
+  
+          if (typeof result == 'object' && result.obj != null && result.obj.length > 0) {
+            this.orderRefMsg = 'שינויים נשמרו בהצלחה';
+
+            setTimeout(()=>{
+              this.orderRefMsg = '';
+            }, 2000);
+          }
+        }
+        else {
+          this.dialog.open(DialogComponent, {
+            data: {message: result.errdesc}
+          })
+          this.sharedService.exitSystemEvent();
+        }
+      });
+    }
+    else{
+      this.errorRefMsg = 'נא להזין מספר אסמכתא';
+
+      setTimeout(()=> {
+        this.errorMsg = '';
+      }, 2000);
+    }
+  }
+
+  changeDateOfRow(element, controlName){
+    this.dialog.open(DatePickerDialog, {
+      data: {
+        date: this.addToExecOrderForm.get('validity').value,
+        element: element,
+        control: controlName
+      }
+    }).afterClosed().subscribe(dialogResult => {
+      let det = this.orderDetails;
+      let el = element;
+      let test = det.filter(detail => detail.id == el.id)
+
+      debugger
+      // this.addToExecOrderForm.get('validation').setValue(this.getLastDateOfCurrentMonthAnd5Years());
+      debugger
+      this.orderDetails.forEach(order => {
+        if(order.id == element.id){
+          debugger
+          let newDate = new Date(dialogResult.result.date);
+
+          let day = newDate.getDate() < 10 ? '0' + newDate.getDate() : newDate.getDate();
+          let month = newDate.getMonth() < 10 ? '0' + newDate.getMonth() : newDate.getMonth();
+          let year = newDate.getFullYear();
+          // new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate());
+
+          order.ValidationDate = day + '/' + month + '/' + year;
+        }
+      });
+      //this.orderDetails.filter(order => order.id == result.id)['ValidationDate'] = new Date(result);
+    });
+  }
 
   ngOnChanges(changes: SimpleChanges) {
 
@@ -744,5 +840,80 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   ngOnDestroy() {
     this.idUnsubscribe.unsubscribe();
   }
+}
 
+export interface DatePickerDialogData {
+  date: '',
+  element: '',
+  control: ''
+}
+
+@Component({
+  selector: 'dialog-datePicker',
+  templateUrl: './datePickerDialog.html',
+  styleUrls: ['./datePickerStyle.css'],
+})
+export class DatePickerDialog implements OnInit {
+
+  
+
+  constructor(
+    public dialog: MatDialog,
+              public dialogRef: MatDialogRef<DatePickerDialog>, 
+              @Inject(MAT_DIALOG_DATA) public data: DatePickerDialogData, 
+              private route: Router
+  ) { 
+    // this.setCalendarFilter();
+  }
+  ngOnInit(): void {
+    this.validity.setValue(this.data.date);//new Date
+    debugger
+  }
+
+
+  validity = new FormControl()
+  // minDate: any;
+  // maxDate: any;
+
+
+
+  // setCalendarFilter() {
+  //   let date = new Date();
+
+  //   let lastDateOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59);//last day of current month
+  //   let fiveYFromCurrDate = new Date(lastDateOfMonth.getFullYear() + 5, lastDateOfMonth.getMonth(), lastDateOfMonth.getDate());
+  //   // const currentYear = new Date().getFullYear();
+
+  //   const day = lastDateOfMonth.getDate();
+  //   const month = lastDateOfMonth.getMonth();
+  //   const year = lastDateOfMonth.getFullYear();
+
+
+
+  //   const Fday = fiveYFromCurrDate.getDate();
+  //   const Fmonth = fiveYFromCurrDate.getMonth();
+  //   const Fyear = fiveYFromCurrDate.getFullYear();
+
+  //   // this.minDate = new Date(year, month, day);
+  //   // this.maxDate = new Date(Fyear, +Fmonth, +Fday);
+  // }
+
+  // getLastDateOfCurrentMonth() {
+  //   let date = new Date();
+  //   let lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59);
+  //   return lastDay;
+  // }
+  
+  dialogClose(){
+    this.dialogRef.close();
+  }
+  select(){
+    this.dialogRef.close({
+      result: {
+        date: this.validity.value,
+        element: this.data.element,
+        control: this.data.control
+      },
+    }); 
+  }
 }

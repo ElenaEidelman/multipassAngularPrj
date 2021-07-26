@@ -39,8 +39,7 @@ import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
 import { MainMenuComponent } from './main-menu/main-menu.component';
 import { MainViewComponent } from './main-view/main-view.component';
-import { ExecOrderComponent } from './Orders/exec-order/exec-order.component';
-import { ExcelOrderComponent } from './Orders/excel-order/excel-order.component';
+import { ExecOrderComponent, DatePickerDialog } from './Orders/exec-order/exec-order.component';
 import { AllOrdersComponent } from './Orders/all-orders/all-orders.component';
 import { MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
 import { DialogConfirmComponent } from './PopUps/dialog-confirm/dialog-confirm.component';
@@ -90,7 +89,6 @@ import { LoweUppCaseCheckPipe } from './Pipes/LowerUpperCaseCheck/lowe-upp-case-
     MainMenuComponent,
     MainViewComponent,
     ExecOrderComponent,
-    ExcelOrderComponent,
     AllOrdersComponent,
     DialogConfirmComponent,
     AllCustomersComponent,
@@ -122,7 +120,8 @@ import { LoweUppCaseCheckPipe } from './Pipes/LowerUpperCaseCheck/lowe-upp-case-
     FormatDatePipe,
     PhoneConfirmComponent,
     ExcelFileViewComponent,
-    LoweUppCaseCheckPipe
+    LoweUppCaseCheckPipe,
+    DatePickerDialog
   ],
   imports: [
     BrowserModule,

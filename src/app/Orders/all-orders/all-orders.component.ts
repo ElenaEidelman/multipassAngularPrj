@@ -245,6 +245,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     })
   }
+
   blockOrder(order){
     debugger
     this.dialog.open(DialogConfirmComponent, {
@@ -252,7 +253,6 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     }).afterClosed().subscribe(response => {
 
       if (response.result == 'yes') {
-
         ///api/InsertUpdateOrder/DeleteVoidOrder
         let objToApi = {
           Token: this.userToken,
@@ -263,7 +263,6 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
 
         debugger
         this.dataService.DeleteVoidOrder(objToApi).subscribe(result => {
-          debugger
           if (result['Token'] != undefined) {
 
             //set new token
@@ -327,6 +326,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
   }
+
   filterTable() {
 
     this.noTableData = false;
@@ -384,8 +384,6 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
       })
     }
   }
-
-  
 
   ngAfterViewInit() {
     if (this.dataSource != undefined) {

@@ -10,6 +10,7 @@ import { DataServiceService } from 'src/app/data-service.service';
 import {CdkTextareaAutosize} from '@angular/cdk/text-field';
 import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { SharedService } from 'src/app/shared.service';
 
 @Component({
   selector: 'app-order-cards',
@@ -92,7 +93,8 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
     private activeRoute: ActivatedRoute,
     private dataService: DataServiceService,
     private router: Router,
-    private dialog: MatDialog) { }
+    private dialog: MatDialog,
+    private sharedService: SharedService) { }
 
 
   ngOnInit(): void {
@@ -175,25 +177,16 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
     // }
   }
 
-  // excelOptionChange() {
-  //   debugger
-  //   if (this.excelCardCreatingForm.get('customer').value) {
-  //     this.excelCustomerId = this.excelCardCreatingForm.get('customer').value.id;
-  //     this.showHiddenLoadingCardContent = true;
-  //   }
-  // }
-
   fileOptionChange(event) {
-    debugger
     if(this.excelCardCreatingForm.get('customer').value.id != undefined){
       if (event.target.files.length > 0) {
         const file = event.target.files[0];
         // this.filename = file.name;
   
-        this.excelFileError = 'excel file: ' + file.type.includes('excel');
-        setTimeout(() => {
-          this.excelFileError = '';
-        }, 2000);
+        // this.excelFileError = 'excel file: ' + file.type.includes('excel');
+        // setTimeout(() => {
+        //   this.excelFileError = '';
+        // }, 2000);
   
         if (!file.type.includes('excel')) {
           this.fileUplodadeValid = false;
@@ -207,6 +200,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
           formData.append('Description', this.excelCardCreatingForm.get('fileDesc').value);
           formData.append('ExcelFile', file);
   
+          
           this.dataService.InsertUpdateOrderByExcel(formData).subscribe(result => {
             debugger
             this.fileUplodadeValid = false;
@@ -220,22 +214,24 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
 
               if(result.obj != undefined && Object.keys(result.obj).length > 0){
 
-                if(result.errdesc != null && result.errdesc.includes('Excel File already Exist')){
-                  this.excelFileError = result.errdesc;
-                }
-                else{
                   this.fileUplodadeValid = true;
                   this.filename = result.obj[0].NewFileName;
-                  debugger
                   let objGetFile = {
                     excelName: this.filename,
                     customerId: this.excelCardCreatingForm.get('customer').value.id,
                     fileData: JSON.stringify(result)
                   }
                   localStorage.setItem('excelFileData', JSON.stringify(objGetFile));
-                }
+                
               }
-              if(typeof result == 'string'){
+              if(result.obj == null && result.errdesc != null && result.errdesc != ''){
+                this.excelFileError = result.errdesc;
+
+                setTimeout(() => {
+                  this.excelFileError = '';
+                }, 2000);
+              }
+              else if(typeof result == 'string'){
                 this.excelFileError = result;
               }
             }
@@ -243,6 +239,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
               this.dialog.open(DialogComponent,{
                 data: {message: result.errdesc != undefined ? result.errdesc : result}
               })
+              // this.sharedService.exitSystemEvent();
             }
           });
         }
@@ -255,6 +252,12 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
         this.excelCustomerError = '';
       }, 2000);
     }
+  }
+  getTemplateExcel(){
+    // const blob = new Blob(['../src/assets/Files/Template.xls'], { type: 'text/xls' });
+    // debugger
+    // const url= window.URL.createObjectURL(blob);
+    // let file = new File()
   }
 
   loadingCardGroupChange() {

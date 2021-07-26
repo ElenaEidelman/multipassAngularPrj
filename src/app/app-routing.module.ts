@@ -18,7 +18,6 @@ import { HomeComponent } from './home/home.component';
 import { LogInComponent } from './log-in/log-in.component';
 import { AllOrdersComponent } from './Orders/all-orders/all-orders.component';
 import { ExecOrderComponent } from './Orders/exec-order/exec-order.component';
-import { ExcelOrderComponent } from './Orders/excel-order/excel-order.component';
 import { OrderLinesComponent } from './Orders/order-lines/order-lines.component';
 import { TestExpandingTableComponent } from './Orders/test-expanding-table/test-expanding-table.component';
 import { PublicComponent } from './public/public.component';

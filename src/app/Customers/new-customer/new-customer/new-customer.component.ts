@@ -49,7 +49,7 @@ export class NewCustomerComponent implements OnInit {
     floor: (''), // -------------------------
     ApartmentNo: (''),//v
     ZIP: (''), // -----------------------
-    StatusId: [{ value: 'פעיל', disabled: true }],
+    StatusId: (''),
     // MultipassIclientID: (''),
     Tz: ['', Validators.required], //, Validators.required
     Notes: (''),
@@ -59,14 +59,15 @@ export class NewCustomerComponent implements OnInit {
 
   ngOnInit(): void {
     window.scroll(0, 0);
-
     this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
+    this.getUserStatus();
   }
 
   getUserStatus(){
     let objToApi = {
       Token: this.userToken
     }
+
     this.dataService.GetUserStatus(objToApi).subscribe(result => {
       if (result['Token'] != undefined || result['Token'] != null) {
         //set new token
@@ -78,13 +79,20 @@ export class NewCustomerComponent implements OnInit {
         if(result.obj != null && result.obj != undefined && Object.keys(result.obj).length > 0){
           
         this.statusList = [...result.obj];
+        debugger
+
+        let statusSet = this.statusList.filter(status => {
+          return status.StatusId == 2;
+        });
+
+        this.newCustomerForm.get('StatusId').setValue(statusSet[0]['StatusId']);
         }
       }
       else {
         this.dialog.open(DialogComponent,{
           data: {message: result.errdesc != undefined ? result.errdesc : result}
         });
-        this.sharedService.exitSystemEvent();
+        // this.sharedService.exitSystemEvent();
       }
     })
   }
@@ -103,7 +111,8 @@ export class NewCustomerComponent implements OnInit {
           objToApi[control] = this.newCustomerForm.get(control).value
         }
         else if(control == 'StatusId'){
-          objToApi[control] = this.statusList.filter(status => status.Description == this.newCustomerForm.get(control).value)['StatusId']
+          debugger
+          objToApi[control] = this.statusList.filter(status => status.StatusId == this.newCustomerForm.get(control).value)[0]['StatusId']
         }
       });
 
@@ -147,7 +156,7 @@ export class NewCustomerComponent implements OnInit {
           this.dialog.open(DialogComponent, {
             data: {message: result.errdesc}
           })
-          this.sharedService.exitSystemEvent();
+          // this.sharedService.exitSystemEvent();
         }
       });
     }

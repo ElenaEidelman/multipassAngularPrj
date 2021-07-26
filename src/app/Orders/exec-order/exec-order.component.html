@@ -7,10 +7,11 @@
         <div><span class="subTitle">סטטוס הזמנה: </span> {{orderStatus.description}}</div>
     </div>
 </div>
+<span *ngIf="dataByPage == null">
+    <mat-spinner></mat-spinner>
+  </span>
 <div class="page-wrap">
-    <!-- <span *ngIf="!dataByPage">
-        <mat-spinner></mat-spinner>
-      </span> -->
+
     <!-- <div class="headerPage">
         <div class="main-title">{{dataByPage[0].companyName}}</div>
         <div class="sub-title">ID: {{id}}</div>
@@ -98,12 +99,12 @@
                     
                 </div>
                 <div class="wrapAprDel">
-                    <button mat-button class="addButton">שמור שינויים
+                    <button mat-button class="addButton" (click)="saveChanges()">שמור שינויים
                         <mat-icon>save</mat-icon>
                     </button>
-                    <mat-spinner class="spinner orangeSp" *ngIf="createCardsSpinner"></mat-spinner>
-                    <div class="error" *ngIf="errorMsg != ''">{{errorMsg}}</div>
-                    <div class="saveMessage" *ngIf="orderMsg != ''">{{orderMsg}}</div>
+                    <mat-spinner class="spinner orangeSp" *ngIf="saveChangesSpinner"></mat-spinner>
+                    <div class="error" *ngIf="errorRefMsg != ''">{{errorRefMsg}}</div>
+                    <div class="saveMessage" *ngIf="orderRefMsg != ''">{{orderRefMsg}}</div>
                     
                 </div>
             </div>
@@ -125,8 +126,11 @@
 
 
                                 <!-- all rows before last -->
-                                <div *ngIf="rowNum != orderDetails.length-1" class="dataRows">
+                                <div *ngIf="obj != 'ValidationDate' && rowNum != orderDetails.length-1" class="dataRows">
                                     {{element[obj]}}
+                                </div>
+                                <div *ngIf="obj == 'ValidationDate' && rowNum != orderDetails.length-1" class="dataRows">
+                                    <div class="changeDate" (click)="changeDateOfRow(element, obj)"> {{element[obj]}} </div>
                                 </div>
 
                                 
@@ -169,7 +173,7 @@
                                             <mat-form-field class="datePicker datePickerPadding marginTop-1"
                                                 appearance="fill" dir="ltr">
                                                 <input matInput formControlName="validity"
-                                                     [matDatepicker]="picker" [min]="minDate" [max]="maxDate">
+                                                     [matDatepicker]="picker">
                                                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                                                 <mat-datepicker #picker></mat-datepicker>
                                                   

@@ -56,17 +56,25 @@ mat-spinner >  svg{
     flex-grow: 1;
     flex-basis: 0;
 }
+
 .refBlock{
     flex-grow: 2;
 }
+
 .refBlock > mat-form-field{
     width: 100%;
 }
+
 .subTitle{
     margin-left: 10px;
     font-size: 1.3rem;
     color: #8989a4;
 }
+
+mat-spinner{
+    margin: auto;
+}
+
 .inputValue{
     width: 100%;
     text-align: center;
@@ -113,6 +121,19 @@ tr.example-element-row:not(.example-expanded-row):hover {
     justify-content: center;
     margin-top: auto;
   }
+
+  .changeDate{
+      text-decoration: underline;
+  }
+  .changeDate:hover{
+      cursor: pointer;
+  }
+
+
+
+
+
+
 
 @media screen and (max-width: 1024px){
     /* .customer-data{

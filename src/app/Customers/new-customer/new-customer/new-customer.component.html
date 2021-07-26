@@ -245,20 +245,21 @@
                             <div class="wrapFormElement">
                                 <div class="wrapFlexTwoCol">
                                     <div class="formWrapColumn">
-                                        <mat-form-field>
+                                        <!-- <mat-form-field>
                                             <mat-label>סטטוס</mat-label>
                                             <input matInput placeholder="סטטוס" formControlName="StatusId">
-                                            <!-- <button class="clearButton" *ngIf="this.newCustomerForm.get('StatusId').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('StatusId').setValue('')">
-                                                <mat-icon>close</mat-icon>
-                                            </button> -->
-                                        </mat-form-field>
-                                        <!-- <mat-form-field>
-                                            <mat-label>מזה לקוח</mat-label>
-                                            <input matInput placeholder="מזה לקוח" formControlName="MultipassIclientID" tabindex="17" >
-                                            <button class="clearButton" *ngIf="this.newCustomerForm.get('MultipassIclientID').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('MultipassIclientID').setValue('')">
-                                                <mat-icon>close</mat-icon>
-                                            </button>
+
                                         </mat-form-field> -->
+
+                                        <mat-form-field class="formWrapColumn selectedFormFieldWidth">
+                                            <mat-label>סטטוס</mat-label>
+                                            <mat-select formControlName="StatusId">
+                                                <mat-option *ngFor="let status of statusList" [value]="status.StatusId">
+                                                    {{status.Description}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+
                                     </div>
                                     <div class="formWrapColumn">
                                     <mat-form-field>

@@ -175,6 +175,7 @@ export class ExistUserComponent implements OnInit {
 
       objToApi['OrganizationName'] = '';
       objToApi['BusinessFile'] = '';
+      objToApi['BackOfficeUserId'] = this.id;
 
       debugger
       this.dataService.InsertUpdateBackOfficeUsers(objToApi).subscribe(result => {

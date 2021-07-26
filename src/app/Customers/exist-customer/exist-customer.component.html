@@ -31,7 +31,7 @@
                             <mat-spinner *ngIf="saveFormSpinner" class="saveFormSpinner"></mat-spinner>
                         </div>
                     </div>
-                    <div class=" textAlignCenter" *ngIf="errorActionButtons != ''">{{errorActionButtons}}</div>
+                    <div class="error textAlignCenter" *ngIf="errorActionButtons != ''">{{errorActionButtons}}</div>
                     <div class="saveMessage textAlignCenter" *ngIf="msgActionButtons != ''">{{msgActionButtons}}</div>
                 </div>
 
@@ -316,13 +316,17 @@
                                 <div class="wrapFlexTwoCol">
 
                                     <div class="formWrapColumn">
-                                        <mat-form-field>
+
+
+                                        <mat-form-field class="formWrapColumn selectedFormFieldWidth">
                                             <mat-label>סטטוס</mat-label>
-                                            <input matInput placeholder="סטטוס" formControlName="StatusId">
-                                            <!-- <button class="clearButton" *ngIf="this.CustomerForm.get('StatusId').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('StatusId').setValue('')">
-                                                <mat-icon>close</mat-icon>
-                                            </button> -->
+                                            <mat-select formControlName="StatusId">
+                                                <mat-option *ngFor="let status of statusList" [value]="status.StatusId">
+                                                    {{status.Description}}
+                                                </mat-option>
+                                            </mat-select>
                                         </mat-form-field>
+
                                     </div>
 
                                     <div class="formWrapColumn">

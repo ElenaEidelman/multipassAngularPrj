@@ -233,10 +233,7 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
           localStorage.setItem('user', JSON.stringify(tempObjUser));
           this.userToken = result['Token'];
 
-          if (typeof result == 'string') {
-            alert(result);
-          }
-          else {
+
             if (typeof result == 'object' && result['obj'] != null && result['obj'].length > 0) {
               this.dataSource = new MatTableDataSource(result['obj']);
             }
@@ -247,7 +244,12 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
                 this.errorMsg = '';
               }, 3000);
             }
-          }
+
+        }
+        if (typeof result == 'string') {
+          this.dialog.open(DialogComponent, {
+            data: {message: result}
+          });
         }
       });
     }
@@ -302,10 +304,10 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
             localStorage.setItem('user', JSON.stringify(tempObjUser));
             this.userToken = result['Token'];
 
-            if (result.errdesc.includes('User Deleted Successfully')) {
+            if (result.errdesc.includes('Successfully')) {
               this.getAllCustomers();
               this.dialog.open(DialogComponent, {
-                data: { message: 'לקוח נמחק בהצלחה' }
+                data: { message: result.errdesc }
               });
             }
             else {

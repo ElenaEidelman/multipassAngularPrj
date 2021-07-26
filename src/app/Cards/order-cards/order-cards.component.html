@@ -63,12 +63,12 @@
                                 </div>
                                 <span [hidden]="false" id="file-upload-filename" >{{filename}}</span>
                                 <mat-error *ngIf="excelFileError != ''">{{excelFileError}}</mat-error>
+                                <div>                                
+                                    <a href="../assets/Files/Template.xls" class="getForExampleExcelFile" (click)="getTemplateExcel()">קובץ אקסל לדוגמא</a>
+                                </div>
                             </div>
                         </div>
                         <div class="sendButtonWrap">
-                          <!-- <button mat-button class="addButton"
-                          [routerLink]="['/public/excelOrder', excelCardCreatingForm.get('customer').value != undefined ?  excelCardCreatingForm.get('customer').value['id'] : '-1' ]"
-                          >שלח</button> -->
                             <button mat-button class="addButton" (click)="goToExcelView()">
                                 שלח
                             </button>
@@ -149,28 +149,6 @@
                             </div>
                             <div></div>
                             <div></div>
-                            <!-- <div>
-                                <mat-form-field class="example-full-width inputPadding">
-                                    <mat-label>מספר לקוח *</mat-label>
-                                    <input placeholder="הזדהות המשתמש" matInput formControlName="userId" pattern="^[0-9]*$">
-                                    <button class="clearButton" *ngIf="this.loadingCardGroup.get('userId').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.loadingCardGroup.get('userId').setValue('')">
-                                        <mat-icon>close</mat-icon>
-                                    </button>
-     
-                                    <mat-error *ngIf="loadingCardGroup.get('userId').hasError('pattern')">
-                                        נא להזין רק מספרים*
-                                    </mat-error>
-                                    <mat-error *ngIf="loadingCardGroup.get('userId').hasError('required')">
-                                        נא להזין מספר לקוח *
-                                    </mat-error>
-                                </mat-form-field>
-                            </div>
-                            <div class="buttonAny alignRight">
-                                <div class="wrapUserButton">
-                                    <button mat-button class="addButton" (click)="indentityUser()">הכנס</button><br>
-                                </div>
-                                <mat-error *ngIf="loadingCardUserExist" [class.error]="loadingCardUserExist">תקלה בהזנת נתונים</mat-error>
-                            </div> -->
                         </div>
   
                         <div *ngIf="showHiddenLoadingCardContent || loadingCardGroup.get('selectedCustomerControl').value != ''"  class="hiddenLoadingCardContent">

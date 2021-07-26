@@ -394,7 +394,7 @@ Json:
 
       if((newTmp && templateValid) || !newTmp){
         this.dialog.open(PhoneConfirmComponent, {
-          data: { message: '   מה מספר טלפון לשליחת SMS  ?' }
+          data: { message: '? SMS מה מספר טלפון לשליחת' }
         }).afterClosed().subscribe(result => {
           if (result.result.includes('phone')) {
   

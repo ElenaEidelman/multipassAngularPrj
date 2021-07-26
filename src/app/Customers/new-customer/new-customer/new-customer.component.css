@@ -28,6 +28,10 @@ mat-accordion mat-expansion-panel mat-expansion-panel-header .mat-icon{
     text-align: center;
   }
 
+  .selectedFormFieldWidth{
+    width: 100% !important;
+  }
+
   @media screen and (max-width: 1024px){
     .flexData {
       flex-direction: row-reverse;
