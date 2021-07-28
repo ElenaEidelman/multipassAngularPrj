@@ -14,23 +14,31 @@
                     </div>
                 </ng-template>
                 <div class="wrap-content">
-                    <div class="element-page-title">הפקת דוח מימושים</div>
+                    <div class="element-page-title">הפקת דוח מימושים
+                        <mat-spinner class="noDataSpinner" *ngIf="spinner"></mat-spinner>
+                    </div>
                     <div class="formBorder formElement">
-                        <form [formGroup]="Report1Form">
+                        <form [formGroup]="Report3Form">
                             <div class="wrapReportForm formWrap">
                                 <div class="formWrapRow">
                                     <div >
                                         <div>
                                             <mat-form-field>
                                                 <mat-label>שם לקוח</mat-label>
-                                                <input matInput placeholder = "שם לקוח">
-                                                
+                                                <mat-select formControlName="customer" (selectionChange)="optionChange($event)">
+                                                    <ng-container *ngFor="let customer of customers; let i = index">
+                                                        <mat-option [value]="customer">
+                                                            {{customer.organizationName}}
+                                                            <!-- {{customer}} -->
+                                                        </mat-option>
+                                                    </ng-container>
+                                                </mat-select>                                                 
                                             </mat-form-field>
                                         </div>
                                         <div>
                                             <mat-form-field>
                                                 <mat-label>מייל לשליחה</mat-label>
-                                                <input matInput placeholder = " mail@gmail.com :לדוגמא">
+                                                <input matInput placeholder = " mail@gmail.com :לדוגמא" formControlName="CustomerEmail">
                                             </mat-form-field>
                                         </div>
                                     </div>
@@ -38,7 +46,7 @@
                                         <div>
                                             <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
                                                 <mat-label>מתאריך</mat-label>
-                                                <input matInput [matDatepicker]="picker">
+                                                <input matInput [matDatepicker]="picker" formControlName="FDate">
                                                 <!-- <button class="clearButton" *ngIf="Report1Form.get('ValidateDate').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('ValidateDate').setValue('')">
                                                     <mat-icon>close</mat-icon>
                                                 </button> -->
@@ -49,7 +57,7 @@
                                         <div>
                                             <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
                                                 <mat-label>עד תאריך</mat-label>
-                                                <input matInput [matDatepicker]="picker2">
+                                                <input matInput [matDatepicker]="picker2" formControlName="TDate">
                                                 <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
                                                 <mat-datepicker #picker2></mat-datepicker>
                                             </mat-form-field>
@@ -60,6 +68,7 @@
                                             <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
                                                 <mat-label>תאריך ושעת שליחה</mat-label>
                                                 <input matInput 
+                                                    formControlName="scheduleDate"
                                                     [ngxMatDatetimePicker]="pickerTest" 
                                                     placeholder="תאריך ושעת שליחה"
                                                     disabled="false">
@@ -96,7 +105,7 @@
                             </div>
                         </form>
                         <div class="buttonsWrap">
-                            <button mat-button class="addButton">שלח</button>
+                            <button mat-button class="addButton"  (click) = "realizationReport()">שלח</button>
                         </div>
                     </div>
                 </div>
@@ -111,22 +120,31 @@
                     </div>
                 </ng-template>
                 <div class="wrap-content">
-                    <div class="element-page-title">הפקת דוח יתרות</div>
+                    <div class="element-page-title">הפקת דוח יתרות
+                        <mat-spinner class="noDataSpinner" *ngIf="spinner"></mat-spinner>
+                    </div>
                     <div class="formBorder formElement">
-                        <form [formGroup]="Report1Form">
+                        <form [formGroup]="Report2Form">
                             <div class="wrapReportForm formWrap">
                                 <div class="formWrapRow">
                                     <div>
                                         <div>
                                             <mat-form-field>
                                                 <mat-label>שם לקוח</mat-label>
-                                                <input matInput placeholder = "שם לקוח">
-                                            </mat-form-field>
+                                                <mat-select formControlName="customer" (selectionChange)="optionChange($event)">
+                                                    <ng-container *ngFor="let customer of customers; let i = index">
+                                                        <mat-option [value]="customer">
+                                                            {{customer.organizationName}}
+                                                            <!-- {{customer}} -->
+                                                        </mat-option>
+                                                    </ng-container>
+                                                </mat-select>                                           
+                                             </mat-form-field>
                                         </div>
                                         <div>
                                             <mat-form-field>
                                                 <mat-label>מייל לשליחה</mat-label>
-                                                <input matInput placeholder = " mail@gmail.com :לדוגמא">
+                                                <input matInput placeholder = " mail@gmail.com :לדוגמא" formControlName="CustomerEmail">
                                             </mat-form-field>
                                         </div>
                                     </div>
@@ -134,7 +152,7 @@
                                         <div>
                                             <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
                                                 <mat-label>מתאריך</mat-label>
-                                                <input matInput [matDatepicker]="picker3">
+                                                <input matInput [matDatepicker]="picker3" formControlName="FDate">
                                                 <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
                                                 <mat-datepicker #picker3></mat-datepicker>
                                             </mat-form-field>
@@ -142,7 +160,7 @@
                                         <div>
                                             <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
                                                 <mat-label>עד תאריך</mat-label>
-                                                <input matInput [matDatepicker]="picker4">
+                                                <input matInput [matDatepicker]="picker4" formControlName="TDate">
                                                 <mat-datepicker-toggle matSuffix [for]="picker4"></mat-datepicker-toggle>
                                                 <mat-datepicker #picker4></mat-datepicker>
                                             </mat-form-field>
@@ -153,6 +171,7 @@
                                             <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
                                                 <mat-label>תאריך ושעת שליחה</mat-label>
                                                 <input matInput 
+                                                    formControlName="scheduleDate"
                                                     [ngxMatDatetimePicker]="picker5" 
                                                     placeholder="תאריך ושעת שליחה"
                                                     disabled="false">
@@ -181,7 +200,7 @@
                             </div>
                         </form>
                         <div class="buttonsWrap">
-                            <button mat-button class="addButton">שלח</button>
+                            <button mat-button class="addButton" (click) = "balanceReport()">שלח</button>
                         </div>
                     </div>
                 </div>
@@ -195,7 +214,9 @@
                     </div>
                 </ng-template>
                 <div class="wrap-content">
-                    <div class="element-page-title">הפקת דוח הנפקות</div>
+                    <div class="element-page-title" #report1>הפקת דוח הנפקות
+                        <mat-spinner class="noDataSpinner" *ngIf="spinner"></mat-spinner>
+                    </div>
                     <div class="formBorder formElement">
                         <form [formGroup]="Report1Form">
                             <div class="wrapReportForm formWrap">
@@ -204,13 +225,21 @@
                                         <div>
                                             <mat-form-field>
                                                 <mat-label>שם לקוח</mat-label>
-                                                <input matInput placeholder = "שם לקוח">
+                                                <mat-select formControlName="customer" (selectionChange)="optionChange($event)">
+                                                    <ng-container *ngFor="let customer of customers; let i = index">
+                                                        <mat-option [value]="customer">
+                                                            {{customer.organizationName}}
+                                                            <!-- {{customer}} -->
+                                                        </mat-option>
+                                                    </ng-container>
+                                                </mat-select>
+                                                <!-- <input matInput placeholder = "שם לקוח" formControlName="name"> -->
                                             </mat-form-field>
                                         </div>
                                         <div>
                                             <mat-form-field>
                                                 <mat-label>מייל לשליחה</mat-label>
-                                                <input matInput placeholder = " mail@gmail.com :לדוגמא">
+                                                <input matInput placeholder = " mail@gmail.com :לדוגמא" formControlName="CustomerEmail">
                                             </mat-form-field>
                                         </div>
                                     </div>
@@ -218,7 +247,7 @@
                                         <div>
                                             <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
                                                 <mat-label>מתאריך</mat-label>
-                                                <input matInput [matDatepicker]="picker6">
+                                                <input matInput [matDatepicker]="picker6" formControlName="FDate">
                                                 <mat-datepicker-toggle matSuffix [for]="picker6"></mat-datepicker-toggle>
                                                 <mat-datepicker #picker6></mat-datepicker>
                                             </mat-form-field>
@@ -226,7 +255,7 @@
                                         <div>
                                             <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
                                                 <mat-label>עד תאריך</mat-label>
-                                                <input matInput [matDatepicker]="picker7">
+                                                <input matInput [matDatepicker]="picker7" formControlName="TDate">
                                                 <mat-datepicker-toggle matSuffix [for]="picker7"></mat-datepicker-toggle>
                                                 <mat-datepicker #picker7></mat-datepicker>
                                             </mat-form-field>
@@ -239,9 +268,9 @@
                                                 <input matInput 
                                                     [ngxMatDatetimePicker]="picker8" 
                                                     placeholder="תאריך ושעת שליחה"
-                                                    disabled="false">
+                                                    disabled="false" formControlName="scheduleDate">
                                                 <mat-datepicker-toggle matSuffix [for]="picker8"></mat-datepicker-toggle>
-                                                <ngx-mat-datetime-picker #picker8 
+                                                <ngx-mat-datetime-picker #picker8
                                                                         [showSpinners]="true" 
                                                                         [showSeconds]="false"
                                                                         [stepHour]="1" 
@@ -250,7 +279,7 @@
                                                                         color="primary" 
                                                                         [enableMeridian]="true"
                                                                         [hideTime]="false" 
-                                                                        [disableMinute]="false" 
+                                                                        [disableMinute]="false"
                                                                         >
                                                 </ngx-mat-datetime-picker>
                                             </mat-form-field>
@@ -266,7 +295,7 @@
                             </div>
                         </form>
                         <div class="buttonsWrap">
-                            <button mat-button class="addButton">שלח</button>
+                            <button mat-button class="addButton" (click) = "loadingReport()">שלח</button>
                         </div>
                     </div>
                 </div>
