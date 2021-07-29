@@ -71,7 +71,7 @@
                             </div>
                         </div>
                     </div>
-                    <div *ngIf="orderStatus.id > '1'">
+                    <div *ngIf="orderStatus.id > '1' || dataByPage.DigitalBatch > 0">
                         <div class="viewCodeButton">
                                 <button mat-button class="linkButton" [routerLink]="['/public/orderLines/',orderId,customerId]">צפה בקודים
                                     <mat-icon>preview</mat-icon>
@@ -130,7 +130,9 @@
                                     {{element[obj]}}
                                 </div>
                                 <div *ngIf="obj == 'ValidationDate' && rowNum != orderDetails.length-1" class="dataRows">
-                                    <div class="changeDate" (click)="changeDateOfRow(element, obj)"> {{element[obj]}} </div>
+                                    <div *ngIf="orderStatus.id != '4'" class="changeDate" (click)="changeDateOfRow(element, obj)"> {{element[obj]}} </div>
+                                    <div *ngIf="orderStatus.id == 4 && dataByPage.DigitalBatch == 0"> {{element[obj]}} </div>
+                                    <div *ngIf="orderStatus.id == '4' && dataByPage.DigitalBatch > 0" class="changeDate" (click)="changeDateOfRow(element, obj)"> {{element[obj]}} </div>
                                 </div>
 
                                 

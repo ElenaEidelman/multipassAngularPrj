@@ -33,7 +33,7 @@
                 <button mat-button class="deleteButton" (click)="cancelOrder()">בטל</button>
                 <!-- <mat-spinner *ngIf="filterActionButtonSpinner" class="filterActionButton"></mat-spinner> -->
                 <button mat-button class="addButton" (click)="goToCreateOrder()">ליצור</button>
-                <!-- <mat-spinner *ngIf="filterActionButtonSpinner" class="filterActionButton"></mat-spinner> -->
+                <mat-spinner *ngIf="createOrderSpinner" class="createOrderSpinner"></mat-spinner>
             </div>
         </div>
     </div>

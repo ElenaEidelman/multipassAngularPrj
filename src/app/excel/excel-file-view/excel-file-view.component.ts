@@ -1,5 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { DataServiceService } from 'src/app/data-service.service';
+import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
 
 @Component({
   selector: 'app-excel-file-view',
@@ -9,7 +12,9 @@ import { Router } from '@angular/router';
 export class ExcelFileViewComponent implements OnInit, OnDestroy {
 
   constructor(
-              private router: Router
+              private router: Router,
+              private dataService: DataServiceService,
+              private dialog: MatDialog
               ) { }
   excelData;
   userToken: string;
@@ -17,6 +22,7 @@ export class ExcelFileViewComponent implements OnInit, OnDestroy {
   tableSource;
   tableLabels;
   excelFileData;
+  createOrderSpinner: boolean = false;
 
   ngOnInit(): void {
 
@@ -39,13 +45,48 @@ export class ExcelFileViewComponent implements OnInit, OnDestroy {
 
 
   goToCreateOrder(){
-    let localStorageObj = {
-      UserID: this.customerId,
-      FileName: this.excelFileData.excelName
-    }
-    localStorage.setItem('createOrderByExcel', JSON.stringify(localStorageObj));
-    localStorage.removeItem('excelFileData');
-    this.router.navigate(['/public/excelOrder/', this.customerId]);
+    // let localStorageObj = {
+    //   UserID: this.customerId,
+    //   FileName: this.excelFileData.excelName
+    // }
+    // localStorage.setItem('createOrderByExcel', JSON.stringify(localStorageObj));
+    // localStorage.removeItem('excelFileData');
+    // this.router.navigate(['/public/excelOrder/', this.customerId]);
+
+
+    // let forNewOrderData = JSON.parse(localStorage.getItem('createOrderByExcel'));
+
+    //object for insert orderLines
+
+    this.createOrderSpinner = true;
+    let formDataForOrdersLine = new FormData();
+    formDataForOrdersLine.append('Token', this.userToken)
+    formDataForOrdersLine.append('UserID', this.customerId)
+    formDataForOrdersLine.append('Description', this.excelFileData.excelName)
+    formDataForOrdersLine.append('OpCode', 'create')
+
+    this.dataService.InsertUpdateOrderByExcel(formDataForOrdersLine).subscribe(result => {
+      this.createOrderSpinner = false;
+      if (result['Token'] != undefined || result['Token'] != null) {
+
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
+
+
+        if (result.obj != undefined && result.obj != null && Object.keys(result.obj).length > 0) {
+          this.router.navigate(['/public/order/',  result.obj[0].orderid,this.customerId]);
+        }
+
+      }
+      else {
+        this.dialog.open(DialogComponent, {
+          data: { message: result.errdesc != undefined ? result.errdesc : result }
+        })
+      }
+    });
   }
 
   createTableToViewExcelFile(fileData){

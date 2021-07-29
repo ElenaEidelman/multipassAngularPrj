@@ -200,7 +200,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
           formData.append('Description', this.excelCardCreatingForm.get('fileDesc').value);
           formData.append('ExcelFile', file);
   
-          
+          debugger
           this.dataService.InsertUpdateOrderByExcel(formData).subscribe(result => {
             debugger
             this.fileUplodadeValid = false;

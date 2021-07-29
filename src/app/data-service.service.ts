@@ -3,6 +3,7 @@ import { Injectable, EventEmitter, OnInit } from '@angular/core';
 import { map, catchError } from 'rxjs/operators';
 import { Observable, of, Subject, throwError} from 'rxjs';
 import { SharedService } from './shared.service';
+import { environment } from '../../src/environments/environment';
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -16,8 +17,13 @@ export class DataServiceService implements OnInit {
 
 
 
-//baseUrl = 'http://tempdomain-test-3.mltp.co.il';
-baseUrl = 'http://localhost:45036';
+// baseUrl = 'http://tempdomain-test-3.mltp.co.il';
+//baseUrl = 'http://localhost:45036';
+
+baseUrl = environment.apiUrl;
+
+
+
 
   //test beforeMerge
   /**

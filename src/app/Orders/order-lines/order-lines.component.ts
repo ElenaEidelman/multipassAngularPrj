@@ -14,6 +14,7 @@ import {CdkTextareaAutosize} from '@angular/cdk/text-field';
 
 import { Workbook } from 'exceljs';
 import * as fs from 'file-saver';
+import { debug, table } from 'console';
 
 
 @Component({
@@ -52,12 +53,13 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
   additionalOptionDelete: boolean = false;
   cardsDeletedError: string = '';
   cardsDeletedMsg: string = '';
+  DigitalBatch = '';
 
   voidCardSpinner: boolean = false;
 
   OrderCreatedFromExcel: boolean = false;
 
-  public dataTable = new MatTableDataSource([]);;
+  public dataTable = new MatTableDataSource([]);
 
   public tabelLabels = [
     { value: 'ItemId', viewValue: "מס''ד" },
@@ -146,19 +148,29 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
         this.userToken = result['Token'];
 
         if (typeof result == 'object') {
+
+          debugger
+          //order id to preview
           this.orderIdToPreview = result['obj'][2];
           debugger
           this.dataTable.data = result['obj'][0];
+
+          //DigitalBatch number, only if order created from excel
           this.OrderCreatedFromExcel = result['obj'][1] != '' ? true : false;
+          this.DigitalBatch = result['obj'][1];
 
         }
         else {
-          alert(result);
+          this.dialog.open(DialogComponent, {
+            data: {message: result}
+          })
         }
       }
       else {
-        alert(result.errdesc);
-        this.sharedService.exitSystemEvent();
+        this.dialog.open(DialogComponent, {
+          data: {message: result.errdesc}
+        })
+        // this.sharedService.exitSystemEvent();
       }
     });
   }
@@ -272,7 +284,7 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
         this.dialog.open(DialogComponent, {
           data: {message: result.errdesc}
         })
-        this.sharedService.exitSystemEvent();
+        // this.sharedService.exitSystemEvent();
       }
     });
 
@@ -328,11 +340,16 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
           }, 2000)
         }
       }
+      else if(typeof result == 'string'){
+        this.dialog.open(DialogComponent, {
+          data: {message: result}
+        });
+      }
       else {
         this.dialog.open(DialogComponent, {
           data: {message: result.errdesc}
         })
-        this.sharedService.exitSystemEvent();
+        // this.sharedService.exitSystemEvent();
       }
     });
 
@@ -369,15 +386,21 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
         this.dialog.open(DialogComponent, {
           data: {message: result.errdesc}
         })
-        this.sharedService.exitSystemEvent();
+        // this.sharedService.exitSystemEvent();
       }
     });
   }
 
   excelFileExport(){
     let tableLabels = this.tabelLabels;
-    let tableData = this.dataTable.data;
+    
 
+    //add another column to file if order created from excel file
+    if(this.DigitalBatch != ''){
+      tableLabels.push({value: 'ValidationField', viewValue: 'שדה אימות'})
+    }
+    let tableData = JSON.parse(JSON.stringify(this.dataTable.data));;
+    
     let workbook = new Workbook();
     let worksheet = workbook.addWorksheet('ProductSheet');
  
@@ -387,10 +410,18 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
     });
 
     worksheet.columns = worksheetArr;
+
+    for(let data of Object.values(tableData)){
+      for(let element of Object.keys(data)){
+        if(element == 'CardId'){
+          let oldData = data[element];
+          data[element] = oldData + '' + data['PinCode']
+        }
+      }
+    }
     worksheet.addRows(tableData, "n")
    
     let userData = JSON.parse(localStorage.getItem('user')).obj;
-    debugger
     workbook.xlsx.writeBuffer().then((data) => {
       let blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
       fs.saveAs(blob, userData['Fname'] + '_' + userData['Lname']  + '_' + this.orderId + '.xlsx');
