@@ -38,7 +38,9 @@
                                         <div>
                                             <mat-form-field>
                                                 <mat-label>מייל לשליחה</mat-label>
-                                                <input matInput placeholder = " mail@gmail.com :לדוגמא" formControlName="CustomerEmail">
+                                                <input matInput disabled="false"
+                                                placeholder = " mail@gmail.com :לדוגמא"
+                                                formControlName="CustomerEmail">
                                             </mat-form-field>
                                         </div>
                                     </div>
@@ -46,7 +48,7 @@
                                         <div>
                                             <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
                                                 <mat-label>מתאריך</mat-label>
-                                                <input matInput [matDatepicker]="picker" formControlName="FDate">
+                                                <input matInput [matDatepicker]="picker" disabled="false" formControlName="FDate">
                                                 <!-- <button class="clearButton" *ngIf="Report1Form.get('ValidateDate').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('ValidateDate').setValue('')">
                                                     <mat-icon>close</mat-icon>
                                                 </button> -->
@@ -57,7 +59,7 @@
                                         <div>
                                             <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
                                                 <mat-label>עד תאריך</mat-label>
-                                                <input matInput [matDatepicker]="picker2" formControlName="TDate">
+                                                <input matInput [matDatepicker]="picker2" disabled="false" formControlName="TDate">
                                                 <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
                                                 <mat-datepicker #picker2></mat-datepicker>
                                             </mat-form-field>
@@ -68,7 +70,7 @@
                                             <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
                                                 <mat-label>תאריך ושעת שליחה</mat-label>
                                                 <input matInput 
-                                                    formControlName="scheduleDate"
+                                                    formControlName="ScheduleDate"
                                                     [ngxMatDatetimePicker]="pickerTest" 
                                                     placeholder="תאריך ושעת שליחה"
                                                     disabled="false">
@@ -89,14 +91,14 @@
                                         
                                         <!-- <div>
                                             <section class="check-box-flex">
-                                                <mat-checkbox class="example-margin" formControlName="canceledCheckB">כולל מבוטלים</mat-checkbox>
+                                                <mat-checkbox class="example-margin" formControlName="CanceledCheckB">כולל מבוטלים</mat-checkbox>
                                             </section>
                                         </div> -->
                                     </div>
                                     <div>
                                         <div class="checkBoxWrap">
                                             <section class="check-box-flex">
-                                                <mat-checkbox class="example-margin" formControlName="canceledCheckB">כולל מבוטלים</mat-checkbox>
+                                                <mat-checkbox class="example-margin" (change)='checkBoxvalue($event)' formControlName="CanceledCheckB">כולל מבוטלים</mat-checkbox>
                                                 <!-- <mat-checkbox class="example-margin" formControlName="sendImmedCheckB">שלח מייד</mat-checkbox> -->
                                             </section>
                                         </div>
@@ -144,7 +146,9 @@
                                         <div>
                                             <mat-form-field>
                                                 <mat-label>מייל לשליחה</mat-label>
-                                                <input matInput placeholder = " mail@gmail.com :לדוגמא" formControlName="CustomerEmail">
+                                                <input matInput disabled="false"
+                                                placeholder = " mail@gmail.com :לדוגמא"
+                                                formControlName="CustomerEmail">
                                             </mat-form-field>
                                         </div>
                                     </div>
@@ -152,7 +156,7 @@
                                         <div>
                                             <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
                                                 <mat-label>מתאריך</mat-label>
-                                                <input matInput [matDatepicker]="picker3" formControlName="FDate">
+                                                <input matInput [matDatepicker]="picker3" disabled="false" formControlName="FDate">
                                                 <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
                                                 <mat-datepicker #picker3></mat-datepicker>
                                             </mat-form-field>
@@ -160,7 +164,7 @@
                                         <div>
                                             <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
                                                 <mat-label>עד תאריך</mat-label>
-                                                <input matInput [matDatepicker]="picker4" formControlName="TDate">
+                                                <input matInput [matDatepicker]="picker4" disabled="false" formControlName="TDate">
                                                 <mat-datepicker-toggle matSuffix [for]="picker4"></mat-datepicker-toggle>
                                                 <mat-datepicker #picker4></mat-datepicker>
                                             </mat-form-field>
@@ -171,7 +175,7 @@
                                             <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
                                                 <mat-label>תאריך ושעת שליחה</mat-label>
                                                 <input matInput 
-                                                    formControlName="scheduleDate"
+                                                    formControlName="ScheduleDate"
                                                     [ngxMatDatetimePicker]="picker5" 
                                                     placeholder="תאריך ושעת שליחה"
                                                     disabled="false">
@@ -191,7 +195,7 @@
                                         </div>
                                         <div>
                                             <section class="check-box-flex">
-                                                <!-- <mat-checkbox class="example-margin" formControlName="canceledCheckB">כולל מבוטלים</mat-checkbox> -->
+                                                <!-- <mat-checkbox class="example-margin" formControlName="CanceledCheckB">כולל מבוטלים</mat-checkbox> -->
                                                 <!-- <mat-checkbox class="example-margin" formControlName="sendImmedCheckB">שלח מייד</mat-checkbox> -->
                                             </section>
                                         </div>
@@ -239,7 +243,9 @@
                                         <div>
                                             <mat-form-field>
                                                 <mat-label>מייל לשליחה</mat-label>
-                                                <input matInput placeholder = " mail@gmail.com :לדוגמא" formControlName="CustomerEmail">
+                                                <input matInput disabled="false"
+                                                placeholder = " mail@gmail.com :לדוגמא"
+                                                formControlName="CustomerEmail">
                                             </mat-form-field>
                                         </div>
                                     </div>
@@ -247,7 +253,7 @@
                                         <div>
                                             <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
                                                 <mat-label>מתאריך</mat-label>
-                                                <input matInput [matDatepicker]="picker6" formControlName="FDate">
+                                                <input matInput [matDatepicker]="picker6" disabled="false" formControlName="FDate">
                                                 <mat-datepicker-toggle matSuffix [for]="picker6"></mat-datepicker-toggle>
                                                 <mat-datepicker #picker6></mat-datepicker>
                                             </mat-form-field>
@@ -255,7 +261,7 @@
                                         <div>
                                             <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
                                                 <mat-label>עד תאריך</mat-label>
-                                                <input matInput [matDatepicker]="picker7" formControlName="TDate">
+                                                <input matInput [matDatepicker]="picker7" disabled="false" formControlName="TDate">
                                                 <mat-datepicker-toggle matSuffix [for]="picker7"></mat-datepicker-toggle>
                                                 <mat-datepicker #picker7></mat-datepicker>
                                             </mat-form-field>
@@ -268,7 +274,7 @@
                                                 <input matInput 
                                                     [ngxMatDatetimePicker]="picker8" 
                                                     placeholder="תאריך ושעת שליחה"
-                                                    disabled="false" formControlName="scheduleDate">
+                                                    disabled="false" formControlName="ScheduleDate">
                                                 <mat-datepicker-toggle matSuffix [for]="picker8"></mat-datepicker-toggle>
                                                 <ngx-mat-datetime-picker #picker8
                                                                         [showSpinners]="true" 
@@ -286,7 +292,7 @@
                                         </div>
                                         <div>
                                             <section class="check-box-flex">
-                                                <!-- <mat-checkbox class="example-margin" formControlName="canceledCheckB">כולל מבוטלים</mat-checkbox> -->
+                                                <!-- <mat-checkbox class="example-margin" formControlName="CanceledCheckB">כולל מבוטלים</mat-checkbox> -->
                                                 <!-- <mat-checkbox class="example-margin" formControlName="sendImmedCheckB">שלח מייד</mat-checkbox> -->
                                             </section>
                                         </div>

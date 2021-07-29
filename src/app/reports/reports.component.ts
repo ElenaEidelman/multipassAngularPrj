@@ -18,52 +18,47 @@ export class ReportsComponent implements OnInit, AfterViewInit {
   errorMsg = '';
   customers;
   indexId;
-  scheduleDate;
+  ScheduleDate;
   fDate;
   tDate;
   newTime;
   report1;
+  checkBoxValue:boolean = false;
 
   Report1Form = this.fb.group({
-      canceledCheckB: ('true'),
-      // sendImmedCheckB: (''),
+      // sendImmedCheckB:[{ value: '', disabled: false }],
       CurrentReport: "Loading",
-      FDate: (''),
-      TDate:  (''),
-      CustomerEmail:  (''),
-      scheduleDate:  (''),
-      OpCode: "cancel",
-      Checkedsend:  (''),
-      customer : (''),
-      UserId: (''),
+      FDate: [{ value: '', disabled: false }],
+      TDate: [{ value: '', disabled: false }],
+      CustomerEmail: [{ value: '', disabled: false }],
+      ScheduleDate: [{ value: '', disabled: false }],
+      Checkedsend: [{ value: '', disabled: false }],
+      customer :[{ value: '', disabled: false }],
+      UserId: [{ value: '', disabled: false }],
   });
 
   Report2Form = this.fb.group({
-    canceledCheckB: ('true'),
-    // sendImmedCheckB: (''),
+    // sendImmedCheckB:[{ value: '', disabled: false }],
     CurrentReport: "Balance",
-    FDate: (''),
-    TDate:  (''),
-    CustomerEmail:  (''),
-    scheduleDate:  (''),
-    OpCode: "cancel",
-    Checkedsend:  (''),
-    customer : (''),
-    UserId: (''),
+    FDate:[{ value: '', disabled: false }],
+    TDate: [{ value: '', disabled: false }],
+    CustomerEmail: [{ value: '', disabled: false }],
+    ScheduleDate: [{ value: '', disabled: false }],
+    Checkedsend: [{ value: '', disabled: false }],
+    customer :[{ value: '', disabled: false }],
+    UserId:[{ value: '', disabled: false }],
 });
 
 Report3Form = this.fb.group({
-  canceledCheckB: ('true'),
-  // sendImmedCheckB: (''),
+  // sendImmedCheckB:[{ value: '', disabled: false }],
   CurrentReport: "Realization",
-  FDate: (''),
-  TDate:  (''),
-  CustomerEmail:  (''),
-  scheduleDate:  (''),
-  OpCode: "cancel",
-  Checkedsend:  (''),
-  customer : (''),
-  UserId: (''),
+  FDate:[{ value: '', disabled: false }],
+  TDate: [{ value: '', disabled: false }],
+  CustomerEmail: [{ value: '', disabled: false }],
+  ScheduleDate: [{ value: '', disabled: false }],
+  Checkedsend: [{ value: '', disabled: false }],
+  customer :[{ value: '', disabled: false }],
+  UserId:[{ value: '', disabled: false }],
 });
 
   spinner: boolean = false;
@@ -91,13 +86,14 @@ Report3Form = this.fb.group({
   }
 
   loadingReport(){
-    let stime = this.Report1Form.get('scheduleDate').value?.toLocaleString()
-    this.newTime = stime.slice(16,24); 
+    let stime = this.Report1Form.get('ScheduleDate').value?.toLocaleString()
+    this.newTime = stime.slice(16,24);
 
     let objToApi = {
       Token: this.userToken,
       UserId: this.userId,
-      scheduleTime: this.newTime
+      ScheduleTime: this.newTime,
+      CanceledCheckB: false
     }
 
     Object.keys(this.Report1Form.value).forEach(val => {
@@ -125,13 +121,14 @@ Report3Form = this.fb.group({
   }
 
   balanceReport(){
-    let stime = this.Report2Form.get('scheduleDate').value?.toLocaleString()
-    this.newTime = stime.slice(16,24); 
+    let stime = this.Report2Form.get('ScheduleDate').value?.toLocaleString()
+    this.newTime = stime.slice(16,24);
 
     let objToApi = {
       Token: this.userToken,
       UserId: this.userId,
-      scheduleTime: this.newTime
+      ScheduleTime: this.newTime,
+      CanceledCheckB: false
     }
 
     Object.keys(this.Report2Form.value).forEach(val => {
@@ -159,13 +156,14 @@ Report3Form = this.fb.group({
   }
 
   realizationReport(){
-    let stime = this.Report3Form.get('scheduleDate').value?.toLocaleString()
+    let stime = this.Report3Form.get('ScheduleDate').value?.toLocaleString()
     this.newTime = stime.slice(16,24); 
 
     let objToApi = {
       Token: this.userToken,
       UserId: this.userId,
-      scheduleTime: this.newTime
+      ScheduleTime: this.newTime,
+      CanceledCheckB: this.checkBoxValue
     }
 
     Object.keys(this.Report3Form.value).forEach(val => {
@@ -233,6 +231,11 @@ Report3Form = this.fb.group({
 
   optionChange(event) {
     this.userId = event.value.id;
+  }
+
+  checkBoxvalue(event){
+    console.log(event.checked);
+    this.checkBoxValue = event.checked;
   }
 
   ngAfterViewInit(){
