@@ -15,7 +15,7 @@ export class DataServiceService implements OnInit {
 
 
 
-
+  
 //baseUrl = 'http://tempdomain-test-3.mltp.co.il';
 baseUrl = 'http://localhost:45036';
 
@@ -398,7 +398,19 @@ $ git merge new-branch
       })
     );
   }
-
+  CreateRealizationReports(objToApi){
+    //debugger
+    return this.http.post(`${this.baseUrl}/api/AllReports/CreateRealizationReports`,objToApi).pipe(
+      map(result => {
+        //debugger
+        return result;
+      }),
+      catchError(error => {
+        //debugger
+        return of(error.message);
+      })
+    );
+  }
   UpdateCards(objToApi){
     //debugger
     return this.http.post(`${this.baseUrl}/api/AllCards/UpdateCards`,objToApi).pipe(
