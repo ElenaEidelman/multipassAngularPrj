@@ -21,9 +21,9 @@ export class DataServiceService implements OnInit {
 
   
 // baseUrl = 'http://tempdomain-test-3.mltp.co.il';
-//baseUrl = 'http://localhost:45036';
+baseUrl = 'http://localhost:45036';
 
-baseUrl = environment.apiUrl;
+// baseUrl = environment.apiUrl;
 
   //test beforeMerge
   /**
