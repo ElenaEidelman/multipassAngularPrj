@@ -475,7 +475,7 @@ dialog-content-example-dialog div.innerElement{
 .tableOrderStatusOpen{
   padding: 5px;
   display: flex;
-  color: #7F7F7F;
+  color: #7F7F7F !important;
   font-weight: bold;
   box-shadow: 0px 0px 2px #7F7F7F;
   /* color:#fff; */
@@ -483,14 +483,14 @@ dialog-content-example-dialog div.innerElement{
 .tableOrderStatusWaiting{
   padding: 5px;
   display: flex;
-  color:#F7B32B;
+  color:#F7B32B !important;
   box-shadow: 0px 0px 3px #F7B32B;
   /* color:#fff; */
 }
 .tableOrderStatusFour{
   padding: 5px;
   display: flex;
-  color:#267491;
+  color:#267491 !important;
   box-shadow: 0px 0px 2px #267491;
   /* color:#fff; */
 }
@@ -498,7 +498,6 @@ dialog-content-example-dialog div.innerElement{
   padding: 5px;
   display: flex;
   background:transparent;
-  color:#fff;
   color:#FF6347  !important;
   font-weight: bold;
   box-shadow: 0px 0px 2px #FF6347;

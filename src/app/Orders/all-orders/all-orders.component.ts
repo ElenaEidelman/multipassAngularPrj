@@ -249,7 +249,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   blockOrder(order){
     debugger
     this.dialog.open(DialogConfirmComponent, {
-      data: { message: 'האם לחסום הזמנה מספר ' + ' ' + order.idex + ' ?' }
+      data: { message: 'האם לחסום הזמנה מספר ' + ' ' + order.idex + ' ?', eventButton: 'לחסום' }
     }).afterClosed().subscribe(response => {
 
       if (response.result == 'yes') {
@@ -263,6 +263,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
 
         debugger
         this.dataService.DeleteVoidOrder(objToApi).subscribe(result => {
+          debugger
           if (result['Token'] != undefined) {
 
             //set new token
@@ -272,7 +273,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
             this.userToken = result['Token'];
 
             debugger
-            if (typeof result == 'object' && result.obj != null && result.errdesc == 'Order is Voided Successfully') {
+            if (typeof result == 'object' && result.obj != null && result.errdesc.includes('Successfully')) {
               debugger
               this.dialog.open(DialogComponent, {
                 data: { message: 'ההזמנה נחסמה בהצלחה' }
@@ -287,6 +288,11 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
                 data: { message: result.errdesc }
               });
             }
+          }
+          else if(typeof result == 'string'){
+            this.dialog.open(DialogComponent, {
+              data: {message: result}
+            })
           }
           else {
             this.dialog.open(DialogComponent, {
@@ -356,9 +362,10 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this.filterActionButtonSpinner = true;
       this.dataService.GetOrdersByFilter(objToApi).subscribe(result => {
+        debugger
         this.filterActionButtonSpinner = false;
 
-        if (result['Token'] != undefined || result['Token'] != null) {
+        if (result['Token'] != undefined || result['Token'] != null && Object.keys(result.obj).length > 0) {
           if (typeof result == 'object' && result.obj != null) {
             this.dataSource.data = [...result['obj']];
           }
@@ -368,7 +375,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
             this.dataSource.data = [];
           }
         }
-        if (typeof result == 'string') {
+        else  if (typeof result == 'string') {
           this.errorMsg = result;
 
           setTimeout(() => {

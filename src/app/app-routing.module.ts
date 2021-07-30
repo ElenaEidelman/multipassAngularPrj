@@ -39,7 +39,7 @@ const routes: Routes = [
     {path: 'order/:id', component: ExecOrderComponent},
     {path: 'order/:id/:customerId', component: ExecOrderComponent},
     {path: 'newOrder/:customerId', component: ExecOrderComponent},
-    {path: 'excelOrder/:customerId', component: ExecOrderComponent},
+    // {path: 'excelOrder/:customerId', component: ExecOrderComponent},
     // {path: 'excelOrder/:customerId', component: ExcelOrderComponent},
     {path: 'allOrders', component: AllOrdersComponent},
     {path: 'allOrders/:customerName', component: AllOrdersComponent},

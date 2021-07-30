@@ -3,7 +3,8 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { Router } from '@angular/router';
 
 export interface DialogData{
-  message: any
+  message: any,
+  eventButton: any
 }
 @Component({
   selector: 'app-dialog-confirm',

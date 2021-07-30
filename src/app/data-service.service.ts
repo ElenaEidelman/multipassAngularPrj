@@ -3,8 +3,7 @@ import { Injectable, EventEmitter, OnInit } from '@angular/core';
 import { map, catchError } from 'rxjs/operators';
 import { Observable, of, Subject, throwError} from 'rxjs';
 import { SharedService } from './shared.service';
-import {  } from '../environments/environment'
-import { environment } from '../environments/environment';
+import { environment } from '../../src/environments/environment';
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -19,9 +18,10 @@ export class DataServiceService implements OnInit {
   //git fetch subBranch
   //git merge origin/subBranch
 
+  baseUrl = '';
   
 // baseUrl = 'http://tempdomain-test-3.mltp.co.il';
-baseUrl = 'http://localhost:45036';
+// baseUrl = 'http://localhost:45036';
 
 // baseUrl = environment.apiUrl;
 
@@ -41,9 +41,17 @@ $ git merge new-branch
    */
   
 
-  constructor(private http: HttpClient, private sharedService: SharedService) { }
+  constructor(private http: HttpClient, private sharedService: SharedService) { 
 
+    this.getHost().subscribe(result => {
+        debugger
+        this.baseUrl = result['baseUrl'];
+      });
+  }
 
+  getHost(){
+    return this.http.get('../../assets/Files/HostFile.json');
+}
 
   ngOnInit(){
 
