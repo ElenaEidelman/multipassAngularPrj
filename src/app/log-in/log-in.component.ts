@@ -79,7 +79,6 @@ export class LogInComponent implements OnInit {
   // }
 
   SendOtp(){
-    debugger
     if(this.loginForm.valid){
       this.loginSpinner = true;
       let objToApi = {
@@ -87,16 +86,18 @@ export class LogInComponent implements OnInit {
         CompanyId: this.loginForm.get('CompanyId').value
       }
 
-      debugger
       this.dataService.SendOtp(objToApi).subscribe(result => {
-        debugger
         this.loginSpinner = false;
         if (result['Token'] != undefined || result['Token'] != null) {
           if(Object.values(result).length > 0){
             this.validKind = 'ValidateOtp';
      
-            this.loginForm.get('OtpKey').setValue(result['Token']);
-            this.loginForm.get('OtpKey').setValidators(Validators.required);
+            this.dataService.getHost().subscribe(hostResult => {
+              if(hostResult['DevMode'] == 'true'){
+                this.loginForm.get('OtpKey').setValue(result['Token']);
+                this.loginForm.get('OtpKey').setValidators(Validators.required);
+              }
+            });
   
           }
           else{

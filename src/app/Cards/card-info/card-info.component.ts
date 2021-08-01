@@ -5,6 +5,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, RouterLinkActive } from '@angular/router';
 import { CustomerData } from 'src/app/Classes/customerData';
 import { DataServiceService } from 'src/app/data-service.service';
+import { DatePickerDialog } from 'src/app/Orders/exec-order/exec-order.component';
 import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
 import { SharedService } from 'src/app/shared.service';
 
@@ -72,16 +73,6 @@ export class CardInfoComponent implements OnInit {
       { value: 'sendRecently', viewValue: '	נשלח לאחרונה' }
     ];
 
-    // this.newOrderDataSource = new MatTableDataSource([
-    //   { cNumber: '1', digitalCode: '15280433', recipName: '', recipPhomeNumber: '', firstChargeAmount: '100.00', validity: '31/03/2026', chargVaucherType: 'דיגיטלים', sendRecently: '' },
-    //   { cNumber: '2', digitalCode: '15280433', recipName: '', recipPhomeNumber: '', firstChargeAmount: '100.00', validity: '31/03/2026', chargVaucherType: 'דיגיטלים', sendRecently: '' },
-    //   { cNumber: '3', digitalCode: '15280433', recipName: '', recipPhomeNumber: '', firstChargeAmount: '100.00', validity: '31/03/2026', chargVaucherType: 'דיגיטלים', sendRecently: '' },
-    //   { cNumber: '4', digitalCode: '15280433', recipName: '', recipPhomeNumber: '', firstChargeAmount: '100.00', validity: '31/03/2026', chargVaucherType: 'דיגיטלים', sendRecently: '' },
-    //   { cNumber: '5', digitalCode: '15280433', recipName: '', recipPhomeNumber: '', firstChargeAmount: '100.00', validity: '31/03/2026', chargVaucherType: 'דיגיטלים', sendRecently: '' },
-    //   { cNumber: '6', digitalCode: '15280433', recipName: '', recipPhomeNumber: '', firstChargeAmount: '100.00', validity: '31/03/2026', chargVaucherType: 'דיגיטלים', sendRecently: '' },
-    //   { cNumber: '7', digitalCode: '15280433', recipName: '', recipPhomeNumber: '', firstChargeAmount: '100.00', validity: '31/03/2026', chargVaucherType: 'דיגיטלים', sendRecently: '' },
-    //   { cNumber: '8', digitalCode: '15280433', recipName: '', recipPhomeNumber: '', firstChargeAmount: '100.00', validity: '31/03/2026', chargVaucherType: 'דיגיטלים', sendRecently: '' }
-    // ]);
     this.newOrderDataSource = new MatTableDataSource([]);
 
     let objToApi = {
@@ -92,7 +83,6 @@ export class CardInfoComponent implements OnInit {
 
     this.dataService.GetCardInfoById(objToApi).subscribe(result => {
       if (result['Token'] != undefined || result['Token'] != null) {
-        debugger
         //set new token
         let tempObjUser = JSON.parse(localStorage.getItem('user'));
         tempObjUser['Token'] = result['Token'];
@@ -102,9 +92,6 @@ export class CardInfoComponent implements OnInit {
         if (typeof result == 'object' && result.obj != null) {
           this.CardInfo = result.obj[1][0];
           this.OrderDetails = result.obj[3];
-
-          debugger
-
           this.userDetailsForm.get('FullName').setValue(this.CardInfo.FullName);
           this.userDetailsForm.get('PhoneNumber').setValue(this.CardInfo.PhoneNumber);
           this.Note.setValue(result.obj[1][0]['RemarkNotes']);
@@ -113,11 +100,16 @@ export class CardInfoComponent implements OnInit {
           //implement data
         }
       }
+      else if(typeof result == 'string'){
+        this.dialog.open(DialogComponent, {
+          data: { message: result }
+        });
+      }
       else {
         this.dialog.open(DialogComponent, {
           data: { message: result.errdesc }
         });
-        this.sharedService.exitSystemEvent();
+        // this.sharedService.exitSystemEvent();
       }
     });
   }
@@ -137,9 +129,7 @@ export class CardInfoComponent implements OnInit {
       OrderId: this.OrderDetails.IdForDisplay
     }
 
-    debugger
     this.dataService.UpdateCards(objToApi).subscribe(result => {
-      debugger
       this.saveUserDataSpinner = false;
       if (result['Token'] != undefined || result['Token'] != null) {
         //set new token
@@ -191,10 +181,9 @@ export class CardInfoComponent implements OnInit {
       }
 
       this.dataService.VoidCards(objToApi).subscribe(result => {
-        debugger
         this.spinnerActiveVoidCard = false;
         if (result['Token'] != undefined || result['Token'] != null) {
-          debugger
+          
           //set new token
           let tempObjUser = JSON.parse(localStorage.getItem('user'));
           tempObjUser['Token'] = result['Token'];
@@ -214,7 +203,7 @@ export class CardInfoComponent implements OnInit {
           this.dialog.open(DialogComponent, {
             data: { message: result.errdesc }
           });
-          this.sharedService.exitSystemEvent();
+          // this.sharedService.exitSystemEvent();
         }
       })
     }
@@ -231,7 +220,6 @@ export class CardInfoComponent implements OnInit {
       this.dataService.ActivateCards(objToApi).subscribe(result => {
         this.spinnerActiveVoidCard = false;
         if (result['Token'] != undefined || result['Token'] != null) {
-          debugger
           //set new token
           let tempObjUser = JSON.parse(localStorage.getItem('user'));
           tempObjUser['Token'] = result['Token'];
@@ -252,11 +240,81 @@ export class CardInfoComponent implements OnInit {
           this.dialog.open(DialogComponent, {
             data: { message: result.errdesc }
           });
-          this.sharedService.exitSystemEvent();
+          // this.sharedService.exitSystemEvent();
         }
       })
     }
 
   }
 
+  changeDate(dateForChange){
+      // debugger
+      let date = new Date(dateForChange);
+      let day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
+      let month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
+      let year = date.getFullYear();
+      this.dialog.open(DatePickerDialog, {
+        data: {
+          date: day +'/' + month + '/' + year
+        }
+      }).afterClosed().subscribe(dialogResult => {
+ 
+        debugger
+        let validityDate = new Date(dialogResult.result.date);
+        validityDate.setHours(23, 59, 59);
+
+        let dateForApi = new Date(validityDate);
+        let day = dateForApi.getDate() < 10 ? '0' + dateForApi.getDate() : dateForApi.getDate();
+        let month = (dateForApi.getMonth() + 1) < 10 ? '0' + (dateForApi.getMonth() + 1) : (dateForApi.getMonth() + 1);
+        let year = dateForApi.getFullYear();
+
+        let objToApi = {
+          Token: this.userToken,
+          CardLst:[this.CardInfo.CardId + ''],
+          OrderId:this.OrderDetails.Id,
+          UserId: +this.userId,
+          ValidationDate: day + '/' + month + '/' + year
+        }
+
+        debugger
+        this.dataService.UpdateExpirationDateOfCards(objToApi).subscribe(result => {
+          debugger
+          if (result['Token'] != undefined || result['Token'] != null) {
+
+            //set new token
+            let tempObjUser = JSON.parse(localStorage.getItem('user'));
+            tempObjUser['Token'] = result['Token'];
+            localStorage.setItem('user', JSON.stringify(tempObjUser));
+            this.userToken = result['Token'];
+    
+            if (typeof result == 'object' && result.obj != null) {
+              debugger
+              let respDate = new Date(result.obj.ValidationDate);
+
+              this.CardInfo.ExpirationDate = new Date(respDate.getFullYear(), respDate.getMonth(), respDate.getDate());
+            }
+            else if(result.obj == null){
+              this.dialog.open(DialogComponent, {
+                data: {message: result.errdesc}
+              });
+            }
+          }
+
+          else if(typeof result == 'string'){
+            this.dialog.open(DialogComponent, {
+              data: {message: result}
+            })
+          }
+          else {
+            this.dialog.open(DialogComponent, {
+              data: {message: result.errdesc}
+            })
+            // this.sharedService.exitSystemEvent();
+          }
+        });
+
+
+      });
+
+  }
 }

@@ -147,7 +147,6 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
       //manual order
       if (url.includes('order')) {
-        debugger
         this.orderId = param['id'];
         this.customerId = param['customerId'];
         this.newOrder = false;
@@ -156,9 +155,9 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
           Token: this.userToken,
           CoreOrderID: this.orderId
         }
-        debugger
+        
         this.dataService.GetOrderDetails(objToApi).subscribe(result => {
-          debugger
+          
           if (result['Token'] != undefined || result['Token'] != null) {
 
             //set new token
@@ -206,7 +205,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
       //new order
       if (url.includes('newOrder')) {
-        debugger
+        
         this.orderStatus.description = 'הזמנה חדשה';
         this.customerId = param['customerId'];
         this.newOrder = true;
@@ -216,7 +215,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
           CustomerId: param['customerId']
         }
         this.dataService.GetCustomersByFilter(objToApi).subscribe(result => {
-          debugger
+          
           if (result['Token'] != undefined || result['Token'] != null) {
 
             //set new token
@@ -316,7 +315,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   totalData() {
     this.totalTicketCount = 0;
     this.totalOrderSum = 0;
-    //debugger
+    //
 
     this.orderDetails.forEach(el => {
       this.totalTicketCount += el.QTY;
@@ -415,12 +414,12 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         if (this.orderDetailsTable.data.length > 1) {
 
           objToApi['OrderId'] = this.orderId;
-          // debugger
+          // 
           this.dataService.InsertUpdateLines(objToApi).subscribe(result => {
-            // debugger
+            // 
             this.insertOrderLineSpinner = false;
             this.addToExecOrderForm.get('validity').setValue(this.getLastDateOfCurrentMonthAnd5Years());
-            // debugger
+            // 
             if (result['Token'] != undefined || result['Token'] != null) {
 
               //set new token
@@ -444,7 +443,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
                 //set status data
                 let statusData = this.statusListArr.filter(status => status.StatusId == result.obj[0].OrderStatus);
                 this.orderStatus.id = statusData[0].OrderStatus != undefined ? statusData[0].OrderStatus : statusData[0].StatusId;
-                // debugger
+                // 
                 this.orderStatus.description = statusData[0].Description;
               }
             }
@@ -472,7 +471,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
                 this.orderIdToPreview = result.obj[0].idex;
 
                 this.orderDetails.unshift(result['obj'][0]['Lines'][0]);
-                // debugger
+                // 
                 this.orderDetailsTable = new MatTableDataSource(this.orderDetails);
 
                 //after created new order, set order id
@@ -531,9 +530,9 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         UserID: this.customerId
       }
 
-      debugger
+      
       this.dataService.ApproveOrder(objToApi).subscribe(result => {
-        debugger
+        
         this.createCardsSpinner = false;
 
         if (result['Token'] != undefined || result['Token'] != null) {
@@ -651,7 +650,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     let chargeAmount = this.addToExecOrderForm.get('chargeAmount').value;
 
     this.addToExecOrderForm.get('TotalForItem').setValue(ticketCount * chargeAmount);
-    //debugger
+    //
   }
 
   returnHebTranslation(value) {
@@ -676,10 +675,10 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
        * orderId: ''
        * 
        */
-      // debugger
+      // 
 
       this.dataService.InsertUpdateOrder(objToApi).subscribe(result => {
-        // debugger
+        // 
         this.saveChangesSpinner = false;
         if (result['Token'] != undefined || result['Token'] != null) {
 
@@ -715,8 +714,9 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   changeDateOfRow(element, controlName) {
-    // debugger
-
+    // 
+    let t = element.ValidationDate;
+    
 
     this.dialog.open(DatePickerDialog, {
       data: {
@@ -815,10 +815,12 @@ export class DatePickerDialog implements OnInit {
 
 
   ngOnInit(): void {
+    
     this.validity.setValue(this.validityChangeFormat());//new Date
   }
 
   validityChangeFormat() {
+    
     let date = this.data.date.split('/');
     let year = date[2];
     let month = date[0];

@@ -11,6 +11,9 @@
 .padd{
     padding-left: 10px;
 }
+.changeDate{
+    text-decoration: underline;
+}
 .innerElement{
     margin: 1.5rem 0;
     position: relative;

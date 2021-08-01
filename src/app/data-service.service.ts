@@ -4,6 +4,7 @@ import { map, catchError } from 'rxjs/operators';
 import { Observable, of, Subject, throwError} from 'rxjs';
 import { SharedService } from './shared.service';
 import { environment } from '../../src/environments/environment';
+// import * as urlData from 'src/assets/Files/HostFile.json';
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -18,10 +19,14 @@ export class DataServiceService implements OnInit {
   //git fetch subBranch
   //git merge origin/subBranch
 
-  baseUrl = '';
+  // baseUrl = '';
   
 // baseUrl = 'http://tempdomain-test-3.mltp.co.il';
 // baseUrl = 'http://localhost:45036';
+// baseUrl = 'http://tempdomain-test-3.mltp.co.il7777';
+// baseUrl = '';
+baseUrl = '';
+
 
 // baseUrl = environment.apiUrl;
 
@@ -42,28 +47,32 @@ $ git merge new-branch
   
 
   constructor(private http: HttpClient, private sharedService: SharedService) { 
-
     this.getHost().subscribe(result => {
-        debugger
-        this.baseUrl = result['baseUrl'];
-      });
+     this.baseUrl = result['baseUrl'];
+    });
+    // this.baseUrl = urlData['baseUrl'];
+    // debugger
+  }
+
+
+
+  ngOnInit(){
   }
 
   getHost(){
-    return this.http.get('../../assets/Files/HostFile.json');
+    return this.http.get('/assets/Files/config.txt');
 }
 
-  ngOnInit(){
-
-  }
-
   SendOtp(obj){
+    debugger
       return this.http.post(`${this.baseUrl}/api/Users/SendOtp`,obj).pipe(
         map(result => {
           return result;
         }),
         catchError(err => {
+          // localStorage.removeItem('baseUrl');
           return of(err.message);
+
         })
       );
   }
@@ -228,11 +237,11 @@ $ git merge new-branch
   GetAllUsers(objToApi){
     return this.http.post(`${this.baseUrl}/api/AllUsers/GetAllUsers`,objToApi).pipe(
       map(result => {
-        debugger
+        // debugger
         return result;
       }),
       catchError(error => {
-        debugger
+        // debugger
         return of(error.message);
       })
     );
@@ -439,4 +448,20 @@ $ git merge new-branch
     );
   }
 
+  UpdateExpirationDateOfCards(objToApi){
+    //debugger
+    return this.http.post(`${this.baseUrl}/api/AllCards/UpdateExpirationDateOfCards`,objToApi).pipe(
+      map(result => {
+        //debugger
+        return result;
+      }),
+      catchError(error => {
+        //debugger
+        return of(error.message);
+      })
+    );
+  }
+
+
+  
 }

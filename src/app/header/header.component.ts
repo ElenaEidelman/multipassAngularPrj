@@ -7,6 +7,7 @@ import {Subscription} from 'rxjs'
 import { SharedService } from '../shared.service';
 import { MatDialog } from '@angular/material/dialog';
 import { AdminLogInComponent } from '../PopUps/admin-log-in/admin-log-in.component';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-header',
@@ -20,7 +21,8 @@ export class HeaderComponent implements OnInit {
                 private route: Router, 
                 private dataService: DataServiceService, 
                 private sharedService: SharedService,
-                private dialog: MatDialog) 
+                private dialog: MatDialog,
+                private http: HttpClient) 
                 { 
                   this.clickEventSubscription = this.sharedService.getExitSystemEvent().subscribe((el)=>{
                     this.exitSystem();
@@ -41,6 +43,10 @@ export class HeaderComponent implements OnInit {
 
 
   exitSystem(){
+    // localStorage.removeItem('baseUrl');
+    //  this.http.get('../../assets/Files/HostFile.json').subscribe(result => {
+    //   localStorage.setItem('baseUrl', result['baseUrl']);
+    //  })
     localStorage.removeItem('user');
 
     this.route.navigate(['/logIn']);
