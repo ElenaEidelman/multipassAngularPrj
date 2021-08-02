@@ -50,8 +50,6 @@ $ git merge new-branch
     this.getHost().subscribe(result => {
      this.baseUrl = result['baseUrl'];
     });
-    // this.baseUrl = urlData['baseUrl'];
-    // debugger
   }
 
 
@@ -60,7 +58,8 @@ $ git merge new-branch
   }
 
   getHost(){
-    return this.http.get('/assets/Files/config.txt');
+    return this.http.get('../assets/Files/HostFile.json');
+
 }
 
   SendOtp(obj){
