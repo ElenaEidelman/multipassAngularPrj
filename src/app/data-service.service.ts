@@ -25,7 +25,7 @@ export class DataServiceService implements OnInit {
 // baseUrl = 'http://localhost:45036';
 // baseUrl = 'http://tempdomain-test-3.mltp.co.il7777';
 // baseUrl = '';
-baseUrl = '';
+baseUrl = localStorage.getItem('baseUrl');
 
 
 // baseUrl = environment.apiUrl;
@@ -48,13 +48,15 @@ $ git merge new-branch
 
   constructor(private http: HttpClient, private sharedService: SharedService) { 
     this.getHost().subscribe(result => {
-     this.baseUrl = result['baseUrl'];
+      debugger
+      localStorage.setItem('baseUrl',result['baseUrl']);
     });
   }
 
 
 
   ngOnInit(){
+    
   }
 
   getHost(){
