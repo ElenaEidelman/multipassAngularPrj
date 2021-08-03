@@ -27,6 +27,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
   newTime;
   report1;
   checkBoxValue: boolean = false;
+  
 
   Report1Form = this.fb.group({
     // sendImmedCheckB:[{ value: '', disabled: false }],
@@ -127,11 +128,6 @@ export class ReportsComponent implements OnInit, AfterViewInit {
           this.formErrorMsg = '';
         }, 3000);
       }
-      this.activateRoute.params.subscribe(param => {
-        Object.keys(this.Report1Form.controls).forEach(control => {
-          this.Report1Form.get(control).setValue('');
-        });
-      });
     })
   }
 
@@ -173,11 +169,6 @@ export class ReportsComponent implements OnInit, AfterViewInit {
           this.formErrorMsg = '';
         }, 3000);
       }
-      this.activateRoute.params.subscribe(param => {
-        Object.keys(this.Report2Form.controls).forEach(control => {
-          this.Report2Form.get(control).setValue('');
-        });
-      });
     })
   }
 
@@ -286,15 +277,6 @@ export class ReportsComponent implements OnInit, AfterViewInit {
 
     });
   }
-
-  // resetForm() {
-
-  //   this.activateRoute.params.subscribe(param => {
-  //     Object.keys(this.Report1Form.controls).forEach(control => {
-  //       this.Report1Form.get(control).setValue('');
-  //     });
-  //   });
-  //   }
 
   fillteringUserData(userId) {
     return this.customers.filter(customer => customer.id == userId)[0];
