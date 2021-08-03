@@ -41,6 +41,11 @@
                                                 <input matInput disabled="false"
                                                 placeholder = " mail@gmail.com :לדוגמא"
                                                 formControlName="CustomerEmail">
+                                                <!-- <button class="clearButton" *ngIf="this.Report1Form.get('CustomerEmail').value != ''"
+                                                mat-button  matPrefix mat-icon-button aria-label="Clear"
+                                                (click)="this.Report1Form.get('CustomerEmail').setValue('')">
+                                                <mat-icon>close</mat-icon>
+                                                </button> -->
                                             </mat-form-field>
                                         </div>
                                     </div>
@@ -107,6 +112,7 @@
                             </div>
                         </form>
                         <div class="buttonsWrap">
+                            <button mat-button class="linkButton" (click) = "resetForm()">אפס</button>
                             <button mat-button class="addButton"  (click) = "realizationReport()">שלח</button>
                         </div>
                     </div>
@@ -204,6 +210,7 @@
                             </div>
                         </form>
                         <div class="buttonsWrap">
+                            <button mat-button class="linkButton" (click) = "resetForm()">אפס</button>
                             <button mat-button class="addButton" (click) = "balanceReport()">שלח</button>
                         </div>
                     </div>
@@ -301,6 +308,7 @@
                             </div>
                         </form>
                         <div class="buttonsWrap">
+                            <button mat-button class="linkButton" (click) = "resetForm()">אפס</button>
                             <button mat-button class="addButton" (click) = "loadingReport()">שלח</button>
                         </div>
                     </div>
