@@ -27,6 +27,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
   newTime;
   report1;
   checkBoxValue: boolean = false;
+  
 
   Report1Form = this.fb.group({
     // sendImmedCheckB:[{ value: '', disabled: false }],
