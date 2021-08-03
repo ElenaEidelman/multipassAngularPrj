@@ -121,7 +121,7 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
         this.dialog.open(DialogComponent, {
           data: {message: result.errdesc}
         })
-        this.sharedService.exitSystemEvent();
+        // this.sharedService.exitSystemEvent();
       }
     });
   }
@@ -145,15 +145,6 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
         localStorage.setItem('user', JSON.stringify(tempObjUser));
         this.userToken = result['Token'];
 
-        if (typeof result == 'string') {
-          this.errorMsg = result;
-          setTimeout(() => {
-            this.errorMsg = '';
-          }, 5000)
-        }
-        if (result.errdesc != '' && result.errdesc != null) {
-          alert(result.errdesc);
-        }
         if (typeof result == 'object' && result['obj'] != null && result['obj'].length > 0) {
           this.allCustomersDataSpare = result['obj'];
           this.dataSource.data = result['obj'];
@@ -165,10 +156,16 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
         //   },3000);
         // }
       }
+      else if(typeof result == 'string'){
+        this.dialog.open(DialogComponent, {
+          data: {message: result}
+        })
+      }
       else {
-        debugger
-        alert(result.errdesc);
-        this.sharedService.exitSystemEvent();
+        this.dialog.open(DialogComponent, {
+          data: {message: result.errdesc}
+        })
+        // this.sharedService.exitSystemEvent();
       }
     });
   }
@@ -317,8 +314,10 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
             }
           }
           else {
-            alert(result.errdesc);
-            this.sharedService.exitSystemEvent();
+            this.dialog.open(DialogComponent, {
+              data: { message: result.errdesc }
+            });
+            // this.sharedService.exitSystemEvent();
           }
         });
       }

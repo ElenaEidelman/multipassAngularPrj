@@ -1,4 +1,0 @@
-{
-    "baseUrl": "http://tempdomain-test-3.mltp.co.il",
-    "DevMode" : "true"
-}
