@@ -79,7 +79,7 @@ export class NewCustomerComponent implements OnInit {
         if(result.obj != null && result.obj != undefined && Object.keys(result.obj).length > 0){
           
         this.statusList = [...result.obj];
-        debugger
+      
 
         let statusSet = this.statusList.filter(status => {
           return status.StatusId == 2;
@@ -111,14 +111,14 @@ export class NewCustomerComponent implements OnInit {
           objToApi[control] = this.newCustomerForm.get(control).value
         }
         else if(control == 'StatusId'){
-          debugger
+        
           objToApi[control] = this.statusList.filter(status => status.StatusId == this.newCustomerForm.get(control).value)[0]['StatusId']
         }
       });
 
-      debugger
+    
       this.dataService.InsertUpdateUser(objToApi).subscribe(result => {
-        debugger
+      
         this.saveFormSpinner = false;
         if (result['Token'] != undefined || result['Token'] != null) {
 
@@ -136,7 +136,7 @@ export class NewCustomerComponent implements OnInit {
             }, 3000);
           }
           if (typeof result == 'object' && result.obj != null) {
-            debugger
+          
             this.msgActionButtons = 'לקוח חדש נשמר בהצלחה';
 
             setTimeout(() => {

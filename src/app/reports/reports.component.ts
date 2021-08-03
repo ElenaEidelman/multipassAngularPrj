@@ -132,7 +132,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
   }
 
   balanceReport() {
-    debugger
+    
     let stime = this.Report2Form.get('ScheduleDate').value?.toLocaleString()
     this.newTime = stime.slice(16, 24);
 
@@ -149,9 +149,9 @@ export class ReportsComponent implements OnInit, AfterViewInit {
       }
     })
 
-    debugger
+    
     this.dataService.CreateRealizationReports(objToApi).subscribe(result => {
-      debugger
+      
       if(typeof result == 'string'){
         this.dialog.open(DialogComponent, {
           data: {message: result}

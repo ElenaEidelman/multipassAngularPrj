@@ -152,9 +152,9 @@ export class AllUsersComponent implements OnInit {
           Token: this.userToken,
           BackUserId: user.id.toString()
         }
-        debugger
+        
         this.dataService.DeleteSuspendBackOfficeUsers(objToApi).subscribe(result => {
-          debugger
+          
           if (result['Token'] != undefined || result['Token'] != null) {
 
             //set new token

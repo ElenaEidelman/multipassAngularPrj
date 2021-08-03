@@ -98,7 +98,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
 
 
   ngOnInit(): void {
-    //debugger
+
     window.scroll(0, 0);
 
     this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
@@ -168,8 +168,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
 
   optionChange() {
 
-    this.fileUploadButtonDisabled = false;
-    debugger
+    this.fileUploadButtonDisabled = false
     // if (this.loadingCardGroup.get('selectedCustomerControl').value) {
     //   this.showHiddenLoadingCardContent = true;
     //   // this.getCardsData();
@@ -200,9 +199,9 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
           formData.append('Description', this.excelCardCreatingForm.get('fileDesc').value);
           formData.append('ExcelFile', file);
   
-          debugger
+  
           this.dataService.InsertUpdateOrderByExcel(formData).subscribe(result => {
-            debugger
+    
             this.fileUplodadeValid = false;
             if (result['Token'] != undefined || result['Token'] != null) {
             
@@ -255,7 +254,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
   }
   getTemplateExcel(){
     // const blob = new Blob(['../src/assets/Files/Template.xls'], { type: 'text/xls' });
-    // debugger
+  
     // const url= window.URL.createObjectURL(blob);
     // let file = new File()
   }

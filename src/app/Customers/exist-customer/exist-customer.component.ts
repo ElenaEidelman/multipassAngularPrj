@@ -95,9 +95,9 @@ export class ExistCustomerComponent implements OnInit {
         CustomerId: param['id']
       }
 
-      debugger
+  
       this.dataService.GetCustomersByFilter(objToApi).subscribe(result => {
-        debugger
+    
         if (result['Token'] != undefined || result['Token'] != null) {
 
           if (typeof result == 'object' && result.obj != null) {
@@ -217,7 +217,7 @@ export class ExistCustomerComponent implements OnInit {
 
         if(result.obj != null && result.obj != undefined && Object.keys(result.obj).length > 0){
           
-          debugger
+      
         this.statusList = [...result.obj];
         }
       }
@@ -232,7 +232,7 @@ export class ExistCustomerComponent implements OnInit {
 
   saveForm() {
     if (this.CustomerForm.valid) {
-      debugger
+  
       this.saveFormSpinner = true;
 
       let data = this.CustomerForm.value;
@@ -249,7 +249,7 @@ export class ExistCustomerComponent implements OnInit {
 
         //?????
         if (data[key] != '' && key == 'StatusId') {
-          debugger
+      
           objToApi[key] = data[key]
         }
         if (data[key] != '') {
@@ -260,9 +260,9 @@ export class ExistCustomerComponent implements OnInit {
       //change to numeric
       // objToApi['Tz'] = +objToApi['Tz'];
 
-      debugger
+  
       this.dataService.InsertUpdateUser(objToApi).subscribe(result => {
-        debugger
+    
         this.saveFormSpinner = false;
 
         if (result['Token'] != undefined || result['Token'] != null) {
@@ -325,9 +325,9 @@ export class ExistCustomerComponent implements OnInit {
           UserId: this.userId
         }
 
-        debugger
+    
         this.dataService.DeleteSuspendUsers(objToApi).subscribe(result => {
-          debugger
+      
           if (result['Token'] != undefined || result['Token'] != null) {
 
             //set new token
@@ -335,7 +335,7 @@ export class ExistCustomerComponent implements OnInit {
             tempObjUser['Token'] = result['Token'];
             localStorage.setItem('user', JSON.stringify(tempObjUser));
             this.userToken = result['Token'];
-            debugger
+        
             if (result.errdesc.includes('Successfully')) {
               this.router.navigate(['/public/allCustomers']);
               this.dialog.open(DialogComponent, {
@@ -357,7 +357,7 @@ export class ExistCustomerComponent implements OnInit {
     });
 
     // dialogRef.afterClosed().subscribe(result => {
-    //   debugger
+    // 
     //   console.log(`Dialog result: ${result}`);
     // });
 

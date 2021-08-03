@@ -133,9 +133,9 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
     let objToApi = {
       Token: token
     }
-    debugger
+  
     this.dataService.GetAllCustomers(objToApi).subscribe(result => {
-      debugger
+    
       this.filterSpinner = false;
       if (result['Token'] != undefined || result['Token'] != null) {
 
@@ -217,9 +217,9 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
     if (fieldFilled) {
       this.filterSpinner = true;
 
-      debugger
+    
       this.dataService.GetCustomersByFilter(objToApi).subscribe(result => {
-        debugger
+      
         this.filterSpinner = false;
 
         if (result['Token'] != undefined || result['Token'] != null) {
@@ -267,13 +267,13 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
   }
 
   resetStatusField(obj) {
-    // debugger
+    //
     this.filterCustomerForm.get('OrderStatus').setValue('');
 
   }
 
   closeMatSelect() {
-    // debugger
+    //
     // this.closeSelect.open();  //to open the list  
 
     this.closeSelect.close();  //to close the list  
@@ -291,7 +291,7 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
           Token: this.userToken,
           UserId: element.id.toString()
         }
-        debugger
+      
         this.dataService.DeleteSuspendUsers(objToApi).subscribe(result => {
           if (result['Token'] != undefined || result['Token'] != null) {
 

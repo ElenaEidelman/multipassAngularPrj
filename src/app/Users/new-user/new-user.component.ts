@@ -75,7 +75,7 @@ export class NewUserComponent implements OnInit {
         Token: this.userToken
       }
 
-      debugger
+      
       Object.keys(this.userDataForm.controls).forEach(control => {
         if(this.userDataForm.get(control).value != ''){
           objToApi[control] = this.userDataForm.get(control).value;
@@ -84,7 +84,7 @@ export class NewUserComponent implements OnInit {
       objToApi['OrganizationName'] = '';
       objToApi['BusinessFile'] = '';
 
-      debugger
+      
       this.dataService.InsertUpdateBackOfficeUsers(objToApi).subscribe(result => {
         this.saveFormSpinner = false;
         if (result['Token'] != undefined || result['Token'] != null) {
@@ -94,9 +94,9 @@ export class NewUserComponent implements OnInit {
           tempObjUser['Token'] = result['Token'];
           localStorage.setItem('user', JSON.stringify(tempObjUser));
           this.userToken = result['Token'];
-          debugger
+          
           if(result.obj != undefined && result.obj != null && Object.keys(result.obj).length > 0){
-            debugger
+            
             this.msgActionButtons = 'נשמר בהצלחה';
 
             setTimeout(()=>{

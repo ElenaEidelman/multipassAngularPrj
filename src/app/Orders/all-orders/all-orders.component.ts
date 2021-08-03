@@ -81,7 +81,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     window.scroll(0, 0);
-    debugger
+    
     this.filterActionButtonSpinner = true;
     this.userToken = JSON.parse(localStorage.getItem('user')).Token
     this.getStatusList();
@@ -123,7 +123,9 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
       else {
-        alert(result.errdesc);
+        this.dialog.open(DialogComponent, {
+          data: { message: result.errdesc }
+        });
         this.sharedService.exitSystemEvent();
       }
     });
@@ -131,7 +133,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
 
   }
   getOrdersList() {
-    //debugger
+    //
     this.filterActionButtonSpinner = true;
     let objToApi = {
       Token: this.userToken
@@ -139,9 +141,9 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.filterActionButtonSpinner = true;
     //GetOrdersByFilter
-    debugger
+    
     this.dataService.getAllOrders(objToApi).subscribe(result => {
-      debugger
+      
 
       this.filterActionButtonSpinner = false;
 
@@ -175,7 +177,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
         this.dialog.open(DialogComponent, {
           data: {message: result.errdesc}
         }); 
-        // this.sharedService.exitSystemEvent();
+        this.sharedService.exitSystemEvent();
       }
     })
   }
@@ -187,11 +189,11 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
 
     //add additional column
     this.displayedColumns.push('delC');
-    //debugger
+    //
   }
 
   deleteOrder(order) {
-    debugger
+    
     this.dialog.open(DialogConfirmComponent, {
       data: { message: 'האם למחוק הזמנה מספר ' + ' ' + order.idex + ' ?' }
     }).afterClosed().subscribe(response => {
@@ -206,9 +208,9 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
           OpCode: "delete"
         }
 
-        debugger
+        
         this.dataService.DeleteVoidOrder(objToApi).subscribe(result => {
-          debugger
+          
           if (result['Token'] != undefined) {
 
             //set new token
@@ -217,9 +219,9 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
             localStorage.setItem('user', JSON.stringify(tempObjUser));
             this.userToken = result['Token'];
 
-            debugger
+            
             if (typeof result == 'object' && result.obj != null && Object.values(result.obj[0]).includes('Order is deleted Successfully')) {
-              debugger
+              
               this.dialog.open(DialogComponent, {
                 data: { message: 'ההזמנה נמחקה בהצלחה' }
               });
@@ -227,9 +229,9 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
               this.dataSource.data = [];
               this.getOrdersList();
             }
-            debugger
+            
             if(result.obj == null && result.errdesc != ''){
-              debugger
+              
               this.dialog.open(DialogComponent, {
                 data: { message: result.errdesc }
               });
@@ -239,7 +241,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
             this.dialog.open(DialogComponent, {
               data: {message: result.errdesc}
             });  
-            // this.sharedService.exitSystemEvent();
+            this.sharedService.exitSystemEvent();
           }
         });
       }
@@ -247,7 +249,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   blockOrder(order){
-    debugger
+    
     this.dialog.open(DialogConfirmComponent, {
       data: { message: 'האם לחסום הזמנה מספר ' + ' ' + order.idex + ' ?', eventButton: 'לחסום' }
     }).afterClosed().subscribe(response => {
@@ -261,9 +263,9 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
           OpCode: "delete"
         }
 
-        debugger
+        
         this.dataService.DeleteVoidOrder(objToApi).subscribe(result => {
-          debugger
+          
           if (result['Token'] != undefined) {
 
             //set new token
@@ -272,9 +274,9 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
             localStorage.setItem('user', JSON.stringify(tempObjUser));
             this.userToken = result['Token'];
 
-            debugger
+            
             if (typeof result == 'object' && result.obj != null && result.errdesc.includes('Successfully')) {
-              debugger
+              
               this.dialog.open(DialogComponent, {
                 data: { message: 'ההזמנה נחסמה בהצלחה' }
               });
@@ -282,7 +284,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
               this.dataSource.data = [];
               this.getOrdersList();
             }
-            debugger
+            
             if(result.obj == null && result.errdesc != ''){
               this.dialog.open(DialogComponent, {
                 data: { message: result.errdesc }
@@ -298,7 +300,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
             this.dialog.open(DialogComponent, {
               data: {message: result.errdesc}
             });  
-            // this.sharedService.exitSystemEvent();
+            this.sharedService.exitSystemEvent();
           }
         });
       }
@@ -362,7 +364,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this.filterActionButtonSpinner = true;
       this.dataService.GetOrdersByFilter(objToApi).subscribe(result => {
-        debugger
+        
         this.filterActionButtonSpinner = false;
 
         if (result['Token'] != undefined || result['Token'] != null && Object.keys(result.obj).length > 0) {
@@ -386,7 +388,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
           this.dialog.open(DialogComponent, {
             data: {message: result.errdesc}
           });  
-          // this.sharedService.exitSystemEvent();
+          this.sharedService.exitSystemEvent();
         }
       })
     }
