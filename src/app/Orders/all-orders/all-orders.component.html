@@ -24,7 +24,7 @@
                         <div>
                             <mat-form-field>
                                 <mat-label>מספר הזמנה</mat-label>
-                                <input matInput placeholder = "" formControlName = "CoreOrderId" pattern="[0-9]*">
+                                <input matInput placeholder = "" formControlName = "CoreOrderId" pattern="[0-9]*" numbersOnly>
                                 <button class="clearButton" *ngIf="this.filterTableGroup.get('CoreOrderId').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.filterTableGroup.get('CoreOrderId').setValue('')">
                                     <mat-icon>close</mat-icon>
                                 </button>
@@ -59,7 +59,7 @@
                         <div>
                             <mat-form-field>
                                 <mat-label>סכום טעינה ראשוני</mat-label>
-                                <input matInput placeholder = "" formControlName = "InitialAmount" pattern="[0-9]*">
+                                <input matInput placeholder = "" formControlName = "InitialAmount" pattern="[0-9]*" numbersOnly>
                                 <button class="clearButton" *ngIf="this.filterTableGroup.get('InitialAmount').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.filterTableGroup.get('InitialAmount').setValue('')">
                                     <mat-icon>close</mat-icon>
                                 </button>

@@ -17,7 +17,7 @@
                         <div>
                             <mat-form-field>
                                 <mat-label>מזהה לקוח</mat-label>
-                                <input matInput placeholder="שם לקוח, ח.פ" formControlName="customerId" pattern="[0-9]*">
+                                <input matInput placeholder="שם לקוח, ח.פ" formControlName="customerId" pattern="[0-9]*" numbersOnly>
                                 <mat-icon matPrefix *ngIf="this.filterCustomerForm.get('customerId').value == ''">person</mat-icon>
                                 <button class="clearButton" *ngIf="this.filterCustomerForm.get('customerId').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.filterCustomerForm.get('customerId').setValue('')">
                                     <mat-icon>close</mat-icon>

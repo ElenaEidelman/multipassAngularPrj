@@ -80,7 +80,8 @@ import { DialogComponent } from './PopUps/dialog/dialog.component';
 import { FormatDatePipe } from './Pipes/format-date.pipe';
 import { ExcelFileViewComponent } from './excel/excel-file-view/excel-file-view.component';
 import { LoweUppCaseCheckPipe } from './Pipes/LowerUpperCaseCheck/lowe-upp-case-check.pipe';
-
+import { NumberDirective } from './directives/numbers-only.directive';
+import { AlphabetOnlyDirective } from './directives/letters-only.directive';
 
 @NgModule({
   declarations: [
@@ -121,7 +122,9 @@ import { LoweUppCaseCheckPipe } from './Pipes/LowerUpperCaseCheck/lowe-upp-case-
     PhoneConfirmComponent,
     ExcelFileViewComponent,
     LoweUppCaseCheckPipe,
-    DatePickerDialog
+    DatePickerDialog,
+    NumberDirective,
+    AlphabetOnlyDirective
   ],
   imports: [
     BrowserModule,
@@ -153,6 +156,10 @@ import { LoweUppCaseCheckPipe } from './Pipes/LowerUpperCaseCheck/lowe-upp-case-
     MatCardModule,
     HttpClientModule,
     MatProgressSpinnerModule
+  ],
+  exports: [
+    NumberDirective,
+    AlphabetOnlyDirective
   ],
   providers: [DataServiceService, { provide: MatPaginatorIntl, useClass: MatPaginatorIntlCro},{ provide: MAT_DATE_LOCALE, useValue: 'en-GB' }
 ],

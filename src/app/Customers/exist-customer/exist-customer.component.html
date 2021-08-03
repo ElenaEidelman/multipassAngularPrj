@@ -137,7 +137,7 @@
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>מספר טלפון*</mat-label>
-                                            <input matInput placeholder="מספר טלפון" formControlName="Phone" tabindex="5" pattern="[0-9]*">
+                                            <input matInput placeholder="מספר טלפון" formControlName="Phone" tabindex="5" pattern="[0-9]*" numbersOnly>
                                             <button class="clearButton" *ngIf="this.CustomerForm.get('Phone').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('Phone').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
@@ -156,7 +156,7 @@
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>מספר טלפון נוסף</mat-label>
-                                            <input matInput placeholder="מספר טלפון נוסף" formControlName="Phone1" tabindex="6" pattern="[0-9]*">
+                                            <input matInput placeholder="מספר טלפון נוסף" formControlName="Phone1" tabindex="6" pattern="[0-9]*" numbersOnly>
                                             <button class="clearButton" *ngIf="this.CustomerForm.get('Phone1').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('Phone1').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
@@ -197,7 +197,7 @@
 
                                         <mat-form-field>
                                             <mat-label>ח.פ.</mat-label>
-                                            <input matInput placeholder="ח.פ." formControlName="Tz" tabindex="8" pattern="[0-9]*">
+                                            <input matInput placeholder="ח.פ." formControlName="Tz" tabindex="8" pattern="[0-9]*" numbersOnly>
                                             <button class="clearButton" *ngIf="CustomerForm.get('Tz').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('Tz').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
@@ -237,7 +237,7 @@
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>מספר דירה</mat-label>
-                                            <input matInput placeholder="מספר דירה" formControlName="ApartmentNo" tabindex="13" pattern="[0-9]*" >
+                                            <input matInput placeholder="מספר דירה" formControlName="ApartmentNo" tabindex="13" pattern="[0-9]*" numbersOnly>
                                             <button class="clearButton" *ngIf="CustomerForm.get('ApartmentNo').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('ApartmentNo').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
@@ -255,7 +255,7 @@
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>קומה</mat-label>
-                                            <input matInput placeholder="קומה" formControlName="floor" tabindex="14" pattern="[0-9]*">
+                                            <input matInput placeholder="קומה" formControlName="floor" tabindex="14" pattern="[0-9]*" numbersOnly>
                                             <button class="clearButton" *ngIf="CustomerForm.get('floor').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('floor').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
@@ -265,7 +265,7 @@
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>מספר בית</mat-label>
-                                            <input matInput placeholder="מספר בית" formControlName="HouseNumber" tabindex="11" pattern="[0-9]*"  >
+                                            <input matInput placeholder="מספר בית" formControlName="HouseNumber" tabindex="11" pattern="[0-9]*" numbersOnly>
                                             <button class="clearButton" *ngIf="CustomerForm.get('HouseNumber').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('HouseNumber').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
@@ -273,7 +273,7 @@
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>מיקוד</mat-label>
-                                            <input matInput placeholder="מיקוד" formControlName="ZIP" tabindex="15" pattern="[0-9]*"  >
+                                            <input matInput placeholder="מיקוד" formControlName="ZIP" tabindex="15" pattern="[0-9]*"  numbersOnly>
                                             <button class="clearButton" *ngIf="CustomerForm.get('ZIP').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('ZIP').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>

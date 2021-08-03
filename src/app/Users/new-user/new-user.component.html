@@ -90,8 +90,8 @@
                                     </mat-form-field>
                                     <mat-form-field>
                                         <mat-label>מספר טלפון*</mat-label>
-                                        <input matInput placeholder="מספר טלפון" formControlName="Phone" tabindex="5" pattern="[0-9]*" >
-                                        <mat-error *ngIf="userDataForm.get('Phone').errors?.pattern">{{MsgList.lettersValidationErr}}</mat-error>
+                                        <input matInput placeholder="מספר טלפון" formControlName="Phone" tabindex="5" pattern="[0-9]*" numbersOnly>
+                                        <mat-error *ngIf="userDataForm.get('Phone').errors?.pattern">{{MsgList.numbersValidationErr}}</mat-error>
                                     </mat-form-field>
                                     <!-- <mat-form-field>
                                         <mat-label>מספר משתמש של המערכת</mat-label>
@@ -152,7 +152,7 @@
                                     </mat-form-field>
                                     <mat-form-field>
                                         <mat-label>מספר טלפון נוסף</mat-label>
-                                        <input matInput placeholder="מספר טלפון נוסף" formControlName="Phone1" tabindex="10" pattern="[0-9]*" >
+                                        <input matInput placeholder="מספר טלפון נוסף" formControlName="Phone1" tabindex="10" pattern="[0-9]*" numbersOnly>
                                         <mat-error *ngIf="userDataForm.get('Phone1').errors?.pattern">{{MsgList.numbersValidationErr}}</mat-error>
                                     </mat-form-field>
 
@@ -160,12 +160,12 @@
                                 <div class="formWrapColumn">
                                     <mat-form-field>
                                         <mat-label>מספר בית</mat-label>
-                                        <input matInput placeholder="מספר בית" formControlName="ApartmentNo" tabindex="8" pattern="[0-9]*" >
+                                        <input matInput placeholder="מספר בית" formControlName="ApartmentNo" tabindex="8" pattern="[0-9]*" numbersOnly>
                                         <mat-error *ngIf="userDataForm.get('ApartmentNo').errors?.pattern">{{MsgList.numbersValidationErr}}</mat-error>
                                     </mat-form-field>
                                     <mat-form-field>
                                         <mat-label>מיקוד</mat-label>
-                                        <input matInput placeholder="מיקוד" formControlName="ZIP" tabindex="11" pattern="[0-9]*" >
+                                        <input matInput placeholder="מיקוד" formControlName="ZIP" tabindex="11" pattern="[0-9]*" numbersOnly>
                                         <mat-error *ngIf="userDataForm.get('ZIP').errors?.pattern">{{MsgList.lettersValidationErr}}</mat-error>
                                     </mat-form-field>
 
