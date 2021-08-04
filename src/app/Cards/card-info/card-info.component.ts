@@ -248,7 +248,7 @@ export class CardInfoComponent implements OnInit {
   }
 
   changeDate(dateForChange){
-      // debugger
+      // 
       let date = new Date(dateForChange);
       let day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
       let month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
@@ -259,7 +259,7 @@ export class CardInfoComponent implements OnInit {
         }
       }).afterClosed().subscribe(dialogResult => {
  
-        debugger
+        
         let validityDate = new Date(dialogResult.result.date);
         validityDate.setHours(23, 59, 59);
 
@@ -276,9 +276,9 @@ export class CardInfoComponent implements OnInit {
           ValidationDate: day + '/' + month + '/' + year
         }
 
-        debugger
+        
         this.dataService.UpdateExpirationDateOfCards(objToApi).subscribe(result => {
-          debugger
+          
           if (result['Token'] != undefined || result['Token'] != null) {
 
             //set new token
@@ -288,7 +288,7 @@ export class CardInfoComponent implements OnInit {
             this.userToken = result['Token'];
     
             if (typeof result == 'object' && result.obj != null) {
-              debugger
+              
               let respDate = new Date(result.obj.ValidationDate);
 
               this.CardInfo.ExpirationDate = new Date(respDate.getFullYear(), respDate.getMonth(), respDate.getDate());

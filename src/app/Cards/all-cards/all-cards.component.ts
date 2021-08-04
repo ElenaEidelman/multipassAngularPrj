@@ -58,7 +58,7 @@ export class AllCardsComponent implements OnInit {
   }
 
   getFilteredCards(){
-    debugger
+  
     this.cardsDataSource = new MatTableDataSource([]);
     this.cardsDataSource.data = [];
     this.viewTable = false;
@@ -78,7 +78,7 @@ export class AllCardsComponent implements OnInit {
 
     if(formSearchFiled){
       this.spinner = true;
-      debugger
+    
       this.dataService.GetAllCards(objToApi).subscribe(result => {
         this.spinner = false;
         if(typeof result == 'object' &&  result['obj'] != null && result['obj'].length > 0){
@@ -110,10 +110,11 @@ export class AllCardsComponent implements OnInit {
 
 
   createTableData(obj){
-
-    //if table have links, need to fill this parameter
+        //if table have links, need to fill this parameter
+    let userId = JSON.parse(localStorage.getItem('user')).obj.Id;
+    debugger
     this.linksListById = [
-      {linkName: 'CardId', linkSrc: '/cardInfo',linkIdName:'CardId'},
+      {linkName: 'CardId', linkSrc: '/cardInfo',linkIdName: 'CardId'},
       {linkName: 'CompanyName', linkSrc: '/customer', linkIdName:'CustomerId'},
       {linkName: 'OrderId', linkSrc: '/order', linkIdName:'OrderId'}
     ];

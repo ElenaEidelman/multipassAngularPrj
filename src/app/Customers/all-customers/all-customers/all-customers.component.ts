@@ -121,7 +121,7 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
         this.dialog.open(DialogComponent, {
           data: {message: result.errdesc}
         })
-        this.sharedService.exitSystemEvent();
+        // this.sharedService.exitSystemEvent();
       }
     });
   }
@@ -133,9 +133,9 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
     let objToApi = {
       Token: token
     }
-    debugger
+  
     this.dataService.GetAllCustomers(objToApi).subscribe(result => {
-      debugger
+    
       this.filterSpinner = false;
       if (result['Token'] != undefined || result['Token'] != null) {
 
@@ -145,15 +145,6 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
         localStorage.setItem('user', JSON.stringify(tempObjUser));
         this.userToken = result['Token'];
 
-        if (typeof result == 'string') {
-          this.errorMsg = result;
-          setTimeout(() => {
-            this.errorMsg = '';
-          }, 5000)
-        }
-        if (result.errdesc != '' && result.errdesc != null) {
-          alert(result.errdesc);
-        }
         if (typeof result == 'object' && result['obj'] != null && result['obj'].length > 0) {
           this.allCustomersDataSpare = result['obj'];
           this.dataSource.data = result['obj'];
@@ -165,10 +156,16 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
         //   },3000);
         // }
       }
+      else if(typeof result == 'string'){
+        this.dialog.open(DialogComponent, {
+          data: {message: result}
+        })
+      }
       else {
-        debugger
-        alert(result.errdesc);
-        this.sharedService.exitSystemEvent();
+        this.dialog.open(DialogComponent, {
+          data: {message: result.errdesc}
+        })
+        // this.sharedService.exitSystemEvent();
       }
     });
   }
@@ -220,9 +217,9 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
     if (fieldFilled) {
       this.filterSpinner = true;
 
-      debugger
+    
       this.dataService.GetCustomersByFilter(objToApi).subscribe(result => {
-        debugger
+      
         this.filterSpinner = false;
 
         if (result['Token'] != undefined || result['Token'] != null) {
@@ -270,13 +267,13 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
   }
 
   resetStatusField(obj) {
-    // debugger
+    //
     this.filterCustomerForm.get('OrderStatus').setValue('');
 
   }
 
   closeMatSelect() {
-    // debugger
+    //
     // this.closeSelect.open();  //to open the list  
 
     this.closeSelect.close();  //to close the list  
@@ -294,7 +291,7 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
           Token: this.userToken,
           UserId: element.id.toString()
         }
-        debugger
+      
         this.dataService.DeleteSuspendUsers(objToApi).subscribe(result => {
           if (result['Token'] != undefined || result['Token'] != null) {
 
@@ -317,8 +314,10 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
             }
           }
           else {
-            alert(result.errdesc);
-            this.sharedService.exitSystemEvent();
+            this.dialog.open(DialogComponent, {
+              data: { message: result.errdesc }
+            });
+            // this.sharedService.exitSystemEvent();
           }
         });
       }

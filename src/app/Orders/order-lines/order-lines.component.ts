@@ -134,9 +134,9 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
     // this.dataTable = new MatTableDataSource([
     //   {ItemId:'1',CardId: '2',DSendName: '3', DSendPhone: '4', LoadSum: '5', ValidationDate: '6', KindOfLoadSumDesc: '7', DSendLastSent: '8'}
     // ]);
-    debugger
+    
     this.dataService.GetCardsByOrderId(objToAPI).subscribe(result => {
-      debugger
+      
       this.tableSpinner = false;
 
       if (result['Token'] != undefined || result['Token'] != null) {
@@ -149,10 +149,10 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
 
         if (typeof result == 'object') {
 
-          debugger
+          
           //order id to preview
           this.orderIdToPreview = result['obj'][2];
-          debugger
+          
           this.dataTable.data = result['obj'][0];
 
           //DigitalBatch number, only if order created from excel
@@ -198,7 +198,7 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
 
     }
     else {
-      debugger
+      
       this.smsIcon = 'cancel';
       this.getSmsTemplates();
       this.tabelLabelsList.unshift('selectSMS');
@@ -211,7 +211,7 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
 
     // let listOfBlockedCards = this.dataTable.data.filter(el => el.StatusDescriptionRM == 'מבוטל');
     
-    debugger
+    
 
 
     //close all that relevan for sms
@@ -225,7 +225,7 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
 
     }
     else {
-      debugger
+      
       this.deleteIcon = 'cancel';
       this.getSmsTemplates();
       this.tabelLabelsList.unshift('selectDeleteCards');
@@ -269,7 +269,7 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
         this.userToken = result['Token'];
 
         if (result.errdesc == 'OK') {
-          debugger
+          
           this.dialog.open(DialogComponent, {
             data: {title: 'ההודעות נשלחות ברקע', message: this.previewSmsTemplate.value ,subTitle: ' ההודעה נשלחה ל ' + selectedRows.length  + ' נמענים '  }
           })
@@ -296,7 +296,7 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
   voidCards(){
-    debugger
+    
 
     let selectedRows = this.selection.selected;
     if(selectedRows.length > 0){
@@ -312,10 +312,10 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
       UserId: this.userId,
       CardLst: selectedCards,
     }
-    debugger
+    
 
     this.dataService.VoidCards(objToApi).subscribe(result => {
-      debugger
+      
       this.voidCardSpinner = false;
       if (result['Token'] != undefined || result['Token'] != null) {
 
@@ -368,7 +368,7 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     this.dataService.GetSMSFormats(objToApi).subscribe(result => {
-      debugger
+      
 
       if (result['Token'] != undefined || result['Token'] != null) {
 

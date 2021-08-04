@@ -31,7 +31,7 @@ export class LogInComponent implements OnInit {
   //   // this.validKind = 'checkUser'
   //   // this.validKind = validKind;
   //   // if(validKind == 'SendOtp'){
-  //     //debugger
+  //     
   //     if(this.loginForm.valid){
   //       this.loginSpinner = true;
   //       // let mail = this.loginForm.get('mail').value;
@@ -41,18 +41,18 @@ export class LogInComponent implements OnInit {
   //         Mail: this.loginForm.get('phone').value,
   //         Password: this.loginForm.get('companyId').value
   //       }
-  //       debugger
+  //     
   //       this.dataService.checkUser(objToApi).subscribe(result => {
 
   //             this.loginSpinner = false;
   //             if(result['obj'] != null){
   //               this.validKind = 'ValidateOtp';
   //               localStorage.setItem('user', JSON.stringify(result));
-  //               //debugger
+  //               
   //               this.route.navigate(['/public/home']);
   //             }
   //             else{
-  //               //debugger
+  //               
   //               this.msgAlert = ' * משתמש לא קיים';
   //               setTimeout(() =>{
   //                 this.msgAlert = '';
@@ -63,7 +63,7 @@ export class LogInComponent implements OnInit {
   //       })
   //     }
   //     else{
-  //       //debugger
+  //       
   //       // localStorage.setItem('userExist','false');
   //       this.msgAlert = '* נא למלא את כל השדות';
   //       setTimeout(() =>{
@@ -133,10 +133,10 @@ export class LogInComponent implements OnInit {
         OtpKey: this.loginForm.get('OtpKey').value
       }
       this.dataService.ValidateOtp(objToApi).subscribe(result => {
-        debugger
+    
         if(result['Token'] != '' && result['obj'] != null){
           localStorage.setItem('user', JSON.stringify(result));
-          //debugger
+          
           this.route.navigate(['/public/home']);
           this.validKind = 'SendOtp';
         }
@@ -161,8 +161,8 @@ export class LogInComponent implements OnInit {
   }
   editPhoneNumber(){
     // alert('editPhoneNumber');
-    debugger
+
     this.validKind = 'SendOtp';
-    debugger
+
   }
 }

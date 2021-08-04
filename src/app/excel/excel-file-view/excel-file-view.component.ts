@@ -90,7 +90,6 @@ export class ExcelFileViewComponent implements OnInit, OnDestroy {
   }
 
   createTableToViewExcelFile(fileData){
-    debugger
     // this.tableLabels = Object.keys(fileData[0]).filter(key => key != 'NewFileName');
     this.tableLabels = Object.keys(fileData[0]).filter(key => key == 'סכום' || key == "סה''כ" || key == 'כמות' );
 

@@ -23,9 +23,8 @@ export class DataServiceService implements OnInit {
   
 // baseUrl = 'http://tempdomain-test-3.mltp.co.il';
 // baseUrl = 'http://localhost:45036';
-// baseUrl = 'http://tempdomain-test-3.mltp.co.il7777';
 // baseUrl = '';
-baseUrl = '';
+baseUrl = localStorage.getItem('baseUrl');
 
 
 // baseUrl = environment.apiUrl;
@@ -48,19 +47,20 @@ $ git merge new-branch
 
   constructor(private http: HttpClient, private sharedService: SharedService) { 
     this.getHost().subscribe(result => {
-     this.baseUrl = result['baseUrl'];
+      debugger
+      localStorage.setItem('baseUrl',result['baseUrl']);
     });
-    // this.baseUrl = urlData['baseUrl'];
-    // debugger
   }
 
 
 
   ngOnInit(){
+    
   }
 
   getHost(){
-    return this.http.get('/assets/Files/config.txt');
+    return this.http.get('../assets/Files/HostFile.json');
+
 }
 
   SendOtp(obj){
@@ -422,7 +422,7 @@ $ git merge new-branch
     );
   }
   CreateRealizationReports(objToApi){
-    //debugger
+    debugger
     return this.http.post(`${this.baseUrl}/api/AllReports/CreateRealizationReports`,objToApi).pipe(
       map(result => {
         //debugger

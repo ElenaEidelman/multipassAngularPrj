@@ -156,6 +156,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
           CoreOrderID: this.orderId
         }
         
+        
         this.dataService.GetOrderDetails(objToApi).subscribe(result => {
           
           if (result['Token'] != undefined || result['Token'] != null) {
@@ -186,18 +187,23 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
               this.orderDetailsTable = new MatTableDataSource(this.orderDetails);
               this.totalData();
             }
-            if (result.Token == null && result.errdesc != null && result.errdesc != '') {
+            if (result.obj == null && result.errdesc != null && result.errdesc != '') {
               this.dialog.open(DialogComponent, {
                 data: { message: result.errdesc }
               });
             }
 
           }
+          else if(typeof result == 'string'){
+            this.dialog.open(DialogComponent, {
+              data: { message: result }
+            });
+          }
           else {
             this.dialog.open(DialogComponent, {
               data: { message: result.errdesc }
             });
-            // this.sharedService.exitSystemEvent();
+            this.sharedService.exitSystemEvent();
           }
 
         })
@@ -238,7 +244,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
             this.dialog.open(DialogComponent, {
               data: { message: result.errdesc }
             });
-            // this.sharedService.exitSystemEvent();
+            this.sharedService.exitSystemEvent();
           }
         });
 
@@ -304,7 +310,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         this.dialog.open(DialogComponent, {
           data: { message: result.errdesc }
         });
-        // this.sharedService.exitSystemEvent();
+        this.sharedService.exitSystemEvent();
       }
     });
 
@@ -385,7 +391,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         this.dialog.open(DialogComponent, {
           data: { message: result.errdesc }
         })
-        // this.sharedService.exitSystemEvent();
+        this.sharedService.exitSystemEvent();
       }
     });
 
@@ -451,7 +457,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
               this.dialog.open(DialogComponent, {
                 data: { message: result.errdesc }
               });
-              // this.sharedService.exitSystemEvent();
+              this.sharedService.exitSystemEvent();
             }
           });
         }
@@ -490,7 +496,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
               this.dialog.open(DialogComponent, {
                 data: { message: result.errdesc }
               });
-              // this.sharedService.exitSystemEvent();
+              this.sharedService.exitSystemEvent();
             }
           });
         }
@@ -569,7 +575,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
           this.dialog.open(DialogComponent, {
             data: { message: result.errdesc }
           })
-          // this.sharedService.exitSystemEvent();
+          this.sharedService.exitSystemEvent();
         }
       })
     }
@@ -637,7 +643,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
             this.dialog.open(DialogComponent, {
               data: { message: result.errdesc }
             });
-            // this.sharedService.exitSystemEvent();
+            this.sharedService.exitSystemEvent();
           }
         });
       }

@@ -79,9 +79,9 @@ export class ExistUserComponent implements OnInit {
       BackUserId: id
     }
 
-    debugger
+    
     this.dataService.GetUsersByFilter(objToApi).subscribe(result => {
-      debugger
+      
       if (result['Token'] != undefined || result['Token'] != null) {
 
         //set new token
@@ -178,9 +178,9 @@ export class ExistUserComponent implements OnInit {
       objToApi['BusinessFile'] = '';
       objToApi['BackOfficeUserId'] = this.id;
 
-      debugger
+      
       this.dataService.InsertUpdateBackOfficeUsers(objToApi).subscribe(result => {
-        debugger
+        
         this.saveFormSpinner = false;
         if (result['Token'] != undefined || result['Token'] != null) {
   
@@ -233,9 +233,9 @@ export class ExistUserComponent implements OnInit {
           Token: this.userToken,
           BackUserId: this.userData.Id.toString()
         }
-        debugger
+        
         this.dataService.DeleteSuspendBackOfficeUsers(objToApi).subscribe(result => {
-          debugger
+          
           if (result['Token'] != undefined || result['Token'] != null) {
 
             //set new token

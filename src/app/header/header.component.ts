@@ -43,10 +43,10 @@ export class HeaderComponent implements OnInit {
 
 
   exitSystem(){
-    // localStorage.removeItem('baseUrl');
-    //  this.http.get('../../assets/Files/HostFile.json').subscribe(result => {
-    //   localStorage.setItem('baseUrl', result['baseUrl']);
-    //  })
+    localStorage.removeItem('baseUrl');
+     this.http.get('../../assets/Files/HostFile.json').subscribe(result => {
+      localStorage.setItem('baseUrl', result['baseUrl']);
+     })
     localStorage.removeItem('user');
 
     this.route.navigate(['/logIn']);
