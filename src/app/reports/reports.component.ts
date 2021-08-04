@@ -120,7 +120,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
 
         if (result.errdesc == 'OK') {
           this.dialog.open(DialogComponent, {
-            data: {message: 'Report Sent Successfully'}
+            data: {message: 'דוח נשלח בהצלחה'}
           });
         }
         if(result.errdesc != 'OK'){
@@ -170,7 +170,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
 
         if (result.errdesc == 'OK') {
           this.dialog.open(DialogComponent, {
-            data: {message: 'Report Sent Successfully'}
+            data: {message: 'דוח נשלח בהצלחה'}
           });
         }
         if(result.errdesc != 'OK'){
@@ -218,7 +218,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
 
         if (result.errdesc == 'OK') {
           this.dialog.open(DialogComponent, {
-            data: {message: 'Report Sent Successfully'}
+            data: {message: 'דוח נשלח בהצלחה'}
           });
         }
         if(result.errdesc != 'OK'){
