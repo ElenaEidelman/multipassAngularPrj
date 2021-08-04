@@ -110,10 +110,11 @@ export class AllCardsComponent implements OnInit {
 
 
   createTableData(obj){
-
-    //if table have links, need to fill this parameter
+        //if table have links, need to fill this parameter
+    let userId = JSON.parse(localStorage.getItem('user')).obj.Id;
+    debugger
     this.linksListById = [
-      {linkName: 'CardId', linkSrc: '/cardInfo',linkIdName:'CardId'},
+      {linkName: 'CardId', linkSrc: '/cardInfo',linkIdName: 'CardId'},
       {linkName: 'CompanyName', linkSrc: '/customer', linkIdName:'CustomerId'},
       {linkName: 'OrderId', linkSrc: '/order', linkIdName:'OrderId'}
     ];

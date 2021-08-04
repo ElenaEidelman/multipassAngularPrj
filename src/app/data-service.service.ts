@@ -23,7 +23,6 @@ export class DataServiceService implements OnInit {
   
 // baseUrl = 'http://tempdomain-test-3.mltp.co.il';
 // baseUrl = 'http://localhost:45036';
-// baseUrl = 'http://tempdomain-test-3.mltp.co.il7777';
 // baseUrl = '';
 baseUrl = localStorage.getItem('baseUrl');
 
@@ -423,7 +422,7 @@ $ git merge new-branch
     );
   }
   CreateRealizationReports(objToApi){
-    //debugger
+    debugger
     return this.http.post(`${this.baseUrl}/api/AllReports/CreateRealizationReports`,objToApi).pipe(
       map(result => {
         //debugger

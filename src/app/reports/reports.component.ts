@@ -27,7 +27,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
   newTime;
   report1;
   checkBoxValue: boolean = false;
-  
+
 
   Report1Form = this.fb.group({
     // sendImmedCheckB:[{ value: '', disabled: false }],
@@ -111,17 +111,25 @@ export class ReportsComponent implements OnInit, AfterViewInit {
     })
 
     this.dataService.CreateRealizationReports(objToApi).subscribe(result => {
-      if(typeof result == 'string'){
-        this.dialog.open(DialogComponent, {
-          data: {message: result}
-        });
-      }
-      else {
-        this.dialog.open(DialogComponent, {
+      if (result['Token'] != undefined || result['Token'] != null) {
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
+
+        if (result.errdesc == 'OK') {
+          this.dialog.open(DialogComponent, {
+            data: {message: 'Report Sent Successfully'}
+          });
+        }
+        if(result.errdesc != 'OK'){
+          this.dialog.open(DialogComponent, {
           data: { message: result.errdesc }
         })
-        this.sharedService.exitSystemEvent();
+        }
       }
+      
       if (typeof result == 'object' && result['obj'] == null) {
         this.formErrorMsg = 'No Data Found';
         setTimeout(() => {
@@ -149,20 +157,29 @@ export class ReportsComponent implements OnInit, AfterViewInit {
       }
     })
 
-    
+    debugger
     this.dataService.CreateRealizationReports(objToApi).subscribe(result => {
-      
-      if(typeof result == 'string'){
-        this.dialog.open(DialogComponent, {
-          data: {message: result}
-        });
-      }
-      else {
-        this.dialog.open(DialogComponent, {
+      debugger
+      if (result['Token'] != undefined || result['Token'] != null) {
+
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
+
+        if (result.errdesc == 'OK') {
+          this.dialog.open(DialogComponent, {
+            data: {message: 'Report Sent Successfully'}
+          });
+        }
+        if(result.errdesc != 'OK'){
+          this.dialog.open(DialogComponent, {
           data: { message: result.errdesc }
         })
-        this.sharedService.exitSystemEvent();
+        }  
       }
+      
       if (typeof result == 'object' && result['obj'] == null) {
         this.formErrorMsg = 'No Data Found';
         setTimeout(() => {
@@ -189,23 +206,27 @@ export class ReportsComponent implements OnInit, AfterViewInit {
       if (this.Report3Form.get(val).value != '') {
         objToApi[val] = this.Report3Form.get(val).value;
       }
-    })
+    });
 
-     
-    this.dataService.CreateRealizationReports(objToApi).subscribe(result => {
-       
-      if(typeof result == 'string'){
-        this.dialog.open(DialogComponent, {
-          data: {message: result}
-        });
-      }
-      else {
-        this.dialog.open(DialogComponent, {
+    this.dataService.CreateRealizationReports(objToApi).subscribe(result => {  
+      if (result['Token'] != undefined || result['Token'] != null) {
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
+
+        if (result.errdesc == 'OK') {
+          this.dialog.open(DialogComponent, {
+            data: {message: 'Report Sent Successfully'}
+          });
+        }
+        if(result.errdesc != 'OK'){
+          this.dialog.open(DialogComponent, {
           data: { message: result.errdesc }
         })
-        this.sharedService.exitSystemEvent();
+        }
       }
-      
     })
   }
 
@@ -238,7 +259,6 @@ export class ReportsComponent implements OnInit, AfterViewInit {
       this.spinner = false;
 
       if (result['Token'] != undefined || result['Token'] != null) {
-
         //set new token
         let tempObjUser = JSON.parse(localStorage.getItem('user'));
         tempObjUser['Token'] = result['Token'];

@@ -678,6 +678,15 @@ mat-spinner{
 .noDataSpinner{
   margin: auto;
 }
+
+.mat-progress-spinner{
+  position: absolute !important;
+  right: 0;
+  left: 0;
+  margin: auto;
+  top: 0;
+  bottom: 0;
+}
 .mat-progress-spinner circle, .mat-spinner circle {
   stroke: #8AC443;
 }
@@ -1084,6 +1093,7 @@ th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:
 .buttonsWrap{
   text-align: center;
   margin: 1em 0;
+  position: relative;
 }
 .darkGreyButton{
   background: rgb(72 73 73) !important;
