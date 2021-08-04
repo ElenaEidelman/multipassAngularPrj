@@ -462,6 +462,18 @@ $ git merge new-branch
     );
   }
 
-
+  GetDigitalFilesList(objToApi){
+    //debugger
+    return this.http.post(`${this.baseUrl}/api/DigitalFilesList/GetDigitalFilesList`,objToApi).pipe(
+      map(result => {
+        //debugger
+        return result;
+      }),
+      catchError(error => {
+        //debugger
+        return of(error.message);
+      })
+    );
+  }
   
 }

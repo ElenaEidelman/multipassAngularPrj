@@ -109,8 +109,9 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         objToApi[val] = this.Report1Form.get(val).value;
       }
     })
-
+    debugger
     this.dataService.CreateRealizationReports(objToApi).subscribe(result => {
+      debugger
       if (result['Token'] != undefined || result['Token'] != null) {
         //set new token
         let tempObjUser = JSON.parse(localStorage.getItem('user'));

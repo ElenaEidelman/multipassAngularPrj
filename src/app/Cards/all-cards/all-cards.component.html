@@ -21,7 +21,9 @@
                             <mat-form-field>
                                 <mat-label>מספר שובר</mat-label>
                                 <input matInput placeholder = "מספר שובר" formControlName="CardId">
-                                <button class="clearButton" *ngIf="this.cardsForm.get('CardId').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.cardsForm.get('CardId').setValue('')">
+                                <!-- <a [routerLink]="['/public/cardInfo',row['CardId'], userId]"
+                                *ngIf="column['value'] == 'CardId'">{{row[column['value']]}}</a> -->
+                                <button class="clearButton" *ngIf="this.cardsForm.get('CardId').value != ''" routerLink="/public/cardInfo/CardId" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.cardsForm.get('CardId').setValue('')">
                                     <mat-icon>close</mat-icon>
                                 </button>
                             </mat-form-field>

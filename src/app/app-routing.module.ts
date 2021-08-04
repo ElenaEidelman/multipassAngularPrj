@@ -49,7 +49,7 @@ const routes: Routes = [
     {path: 'customer/:id', component: ExistCustomerComponent  },
     {path: 'allCards', component: AllCardsComponent},
     {path: 'orderCards', component: OrderCardsComponent},
-    {path: 'cardInfo/:id/:userId', component: CardInfoComponent},
+    {path: 'cardInfo/:id', component: CardInfoComponent},
     {path: 'orderLines/:orderId/:userId', component: OrderLinesComponent},
     {path: 'orderCards/:indexId/:userId', component: OrderCardsComponent},
     {path: 'digitalFilesList', component: DigitalFilesListComponent},
