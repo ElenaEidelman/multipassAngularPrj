@@ -39,6 +39,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
     Checkedsend: [{ value: '', disabled: false }],
     customer: [{ value: '', disabled: false }],
     UserId: [{ value: '', disabled: false }],
+    CanceledCheckB: [{ value: '', disabled: true }],
   });
 
   Report2Form = this.fb.group({
@@ -51,6 +52,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
     Checkedsend: [{ value: '', disabled: false }],
     customer: [{ value: '', disabled: false }],
     UserId: [{ value: '', disabled: false }],
+    CanceledCheckB: [{ value: '', disabled: true }],
   });
 
   Report3Form = this.fb.group({
@@ -209,7 +211,9 @@ export class ReportsComponent implements OnInit, AfterViewInit {
       }
     });
 
+    debugger
     this.dataService.CreateRealizationReports(objToApi).subscribe(result => {  
+      debugger
       if (result['Token'] != undefined || result['Token'] != null) {
         //set new token
         let tempObjUser = JSON.parse(localStorage.getItem('user'));
