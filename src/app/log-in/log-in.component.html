@@ -36,9 +36,7 @@
           <div class="wrap-button-login">
             <div *ngIf="msgAlert != ''" class="error msgAlert">{{msgAlert}}</div>
             <button mat-button type="submit" class="addButton">כניסה</button>
-            <span *ngIf="loginSpinner">
-              <mat-spinner></mat-spinner>
-            </span>
+              <mat-spinner *ngIf="loginSpinner"></mat-spinner>
           </div>
         </form>
 <!-- 

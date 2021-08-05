@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { catchError } from 'rxjs/operators';
 import { DataServiceService } from 'src/app/data-service.service';
+import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
+import { SharedService } from 'src/app/shared.service';
 
 
 @Component({
@@ -18,9 +21,13 @@ export class AllCardsComponent implements OnInit {
       {value: 'block', viewValue: 'חסום'}
     ];
 
+    displayedColumns: string[] = [];
+
   viewTable: boolean = false;
   spinner: boolean = false;
-  constructor(private fb: FormBuilder, private dataService: DataServiceService) { }
+  userToken;
+  userId;
+  constructor(private fb: FormBuilder, private dataService: DataServiceService, private dialog: MatDialog, private sharedService: SharedService) { }
 
   cardsForm = this.fb.group({
     CardId: (''),
@@ -46,27 +53,39 @@ export class AllCardsComponent implements OnInit {
     // byDate: ('dateIssue')
   });
 
-  public cardsLabelForTable;
-  public cardsDataSource: MatTableDataSource<any>;
+  cardsDataSource = new MatTableDataSource([]);
   public linksListById;
 
   formErrorMsg: string = '';
+
+  cardsLabelForTable = [
+    {value: 'CardId', viewValue: 'מספר שובר'},
+    {value: 'CompanyName', viewValue: 'שם לקוח'},
+    {value: 'PhoneNo', viewValue: 'מספר טלפון'},
+    {value: 'balance', viewValue: 'יתרה'},// no data !!!!
+    {value: 'OrderId', viewValue: 'מספר הזמנה'},
+    {value: 'CreationDate', viewValue: 'תאריך הנפקה'},
+    // {value: 'dataSend', viewValue: 'תאריך שליחה'},
+    {value: 'Status', viewValue: 'סטטוס שובר'}
+  ];
   ngOnInit(): void {
     window.scroll(0,0);
+    this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
+    this.userId = JSON.parse(localStorage.getItem('user')).obj.Id;
     // this.getCardsFilteredData();
     // this.getFilteredCards();
   }
 
   getFilteredCards(){
   
-    this.cardsDataSource = new MatTableDataSource([]);
-    this.cardsDataSource.data = [];
+    // this.cardsDataSource = new MatTableDataSource([]);
+    // this.cardsDataSource.data = [];
     this.viewTable = false;
 
-    let token = JSON.parse(localStorage.getItem('user'))['Token'];
+    // let token = JSON.parse(localStorage.getItem('user'))['Token'];
     let formSearchFiled = false;
     let objToApi = {
-      Token: token
+      Token: this.userToken
     }
     
     Object.keys(this.cardsForm.value).forEach(val => {
@@ -76,26 +95,60 @@ export class AllCardsComponent implements OnInit {
       }
     })
 
+    debugger
     if(formSearchFiled){
       this.spinner = true;
     
+      debugger
       this.dataService.GetAllCards(objToApi).subscribe(result => {
+        debugger
         this.spinner = false;
-        if(typeof result == 'object' &&  result['obj'] != null && result['obj'].length > 0){
-          this.createTableData(result['obj']);
+
+        if (result['Token'] != undefined || result['Token'] != null) {
+
+          //set new token
+          let tempObjUser = JSON.parse(localStorage.getItem('user'));
+          tempObjUser['Token'] = result['Token'];
+          localStorage.setItem('user', JSON.stringify(tempObjUser));
+          this.userToken = result['Token'];
+  
+          if (typeof result == 'object' && result.obj != null && result.obj.length > 0) {
+            this.createTableData(result['obj']);
+          }
+          else if(result.obj == null && result.errdesc.includes('No Data Found')){
+            this.formErrorMsg = result.errdesc;
+            setTimeout(()=>{
+              this.formErrorMsg = '';
+            },10000);
+          }
         }
-        if(typeof result == 'string'){
+        else if(typeof result == 'string'){
           this.formErrorMsg = result;
           setTimeout(()=>{
             this.formErrorMsg = '';
           },10000);
         }
-        if(typeof result == 'object' &&  result['obj'] == null){
-          this.formErrorMsg = 'No Data Found';
-          setTimeout(()=>{
-            this.formErrorMsg = '';
-          },3000);
+        else {
+          this.dialog.open(DialogComponent, {
+            data: {message: result.errdesc}
+          })
+          // this.sharedService.exitSystemEvent();
         }
+        // if(typeof result == 'object' &&  result['obj'] != null && result['obj'].length > 0){
+        //   this.createTableData(result['obj']);
+        // }
+        // if(typeof result == 'string'){
+        //   this.formErrorMsg = result;
+        //   setTimeout(()=>{
+        //     this.formErrorMsg = '';
+        //   },10000);
+        // }
+        // if(typeof result == 'object' &&  result['obj'] == null){
+        //   this.formErrorMsg = 'No Data Found';
+        //   setTimeout(()=>{
+        //     this.formErrorMsg = '';
+        //   },3000);
+        // }
       })
     }
 
@@ -111,27 +164,18 @@ export class AllCardsComponent implements OnInit {
 
   createTableData(obj){
         //if table have links, need to fill this parameter
-    let userId = JSON.parse(localStorage.getItem('user')).obj.Id;
-    debugger
-    this.linksListById = [
-      {linkName: 'CardId', linkSrc: '/cardInfo',linkIdName: 'CardId'},
-      {linkName: 'CompanyName', linkSrc: '/customer', linkIdName:'CustomerId'},
-      {linkName: 'OrderId', linkSrc: '/order', linkIdName:'OrderId'}
-    ];
+
+    // this.linksListById = [
+    //   {linkName: 'CardId', linkSrc: '/cardInfo',linkIdName: 'CardId'},
+    //   {linkName: 'CompanyName', linkSrc: '/customer', linkIdName:'CustomerId'},
+    //   {linkName: 'OrderId', linkSrc: '/order', linkIdName:'OrderId'}
+    // ];
 
     
-    this.cardsLabelForTable = [
-      {value: 'CardId', viewValue: 'מספר שובר'},
-      {value: 'CompanyName', viewValue: 'שם לקוח'},
-      {value: 'PhoneNo', viewValue: 'מספר טלפון'},
-      {value: 'balance', viewValue: 'יתרה'},// no data !!!!
-      {value: 'OrderId', viewValue: 'מספר הזמנה'},
-      {value: 'CreationDate', viewValue: 'תאריך הנפקה'},
-      // {value: 'dataSend', viewValue: 'תאריך שליחה'},
-      {value: 'Status', viewValue: 'סטטוס שובר'}
-    ];
 
-    this.cardsDataSource = new MatTableDataSource(obj);
+    this.createDisplayedColumns(this.cardsLabelForTable);
+    this.cardsDataSource.data = obj;
+    debugger
     this.viewTable = true;
   }
 
@@ -178,4 +222,23 @@ export class AllCardsComponent implements OnInit {
   //   this.viewTable = true;
   // }
 
+  returnHebTranslation(obj,value){
+    return obj.filter(el => el.value == value)[0].viewValue;
+  }
+
+  createDisplayedColumns(columns){
+    columns.forEach( el => {
+      this.displayedColumns.unshift(el.value);
+    });
+  }
+
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.cardsDataSource.filter = filterValue.trim().toLowerCase();
+
+    if (this.cardsDataSource.paginator) {
+      this.cardsDataSource.paginator.firstPage();
+    }
+  }
 }
