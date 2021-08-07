@@ -292,6 +292,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     this.dataService.GetOrdersStatus(objToApi).subscribe(result => {
+      debugger
 
       if (result['Token'] != undefined || result['Token'] != null) {
 
@@ -714,7 +715,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       this.errorRefMsg = 'נא להזין מספר אסמכתא';
 
       setTimeout(() => {
-        this.errorMsg = '';
+        this.errorRefMsg = '';
       }, 2000);
     }
   }

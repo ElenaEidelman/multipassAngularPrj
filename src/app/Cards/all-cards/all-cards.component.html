@@ -14,7 +14,7 @@
     <div class="page-element width-block-auto">
         <div class="element-page-title">חיפוש שוברים </div>
         <div class="formBorder formElement">
-            <form [formGroup]="cardsForm">
+            <form [formGroup]="cardsForm" *ngIf="cardsFilterFormView">
                 <div class="formWrap">
                     <div class="formWrapRow idNumber">
                         <div>
