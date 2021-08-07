@@ -1,10 +1,11 @@
 import { Component, OnInit, AfterViewInit, ViewEncapsulation } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { DataServiceService } from 'src/app/data-service.service';
 import { ActivatedRoute, RouterLinkActive } from '@angular/router';
 import { DialogComponent } from '../PopUps/dialog/dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { SharedService } from '../shared.service';
+import { MsgList } from '../Classes/msgsList';
 @Component({
   selector: 'app-reports',
   templateUrl: './reports.component.html',
@@ -27,17 +28,21 @@ export class ReportsComponent implements OnInit, AfterViewInit {
   newTime;
   report1;
   checkBoxValue: boolean = false;
+  MsgList = MsgList;
+  Report1FormView: boolean = true;
+  Report2FormView: boolean = true;
+  Report3FormView: boolean = true;
 
 
   Report1Form = this.fb.group({
     // sendImmedCheckB:[{ value: '', disabled: false }],
     CurrentReport: "Loading",
-    FDate: [{ value: '', disabled: false }],
-    TDate: [{ value: '', disabled: false }],
-    CustomerEmail: [{ value: '', disabled: false }],
-    ScheduleDate: [{ value: '', disabled: false }],
+    FDate: [{ value: '', disabled: false }, Validators.required],
+    TDate: [{ value: '', disabled: false }, Validators.required],
+    CustomerEmail: [{ value: '', disabled: false }, [Validators.required, Validators.email]],
+    ScheduleDate: [{ value: '', disabled: false }, Validators.required],
     Checkedsend: [{ value: '', disabled: false }],
-    customer: [{ value: '', disabled: false }],
+    customer: [{ value: '', disabled: false }, Validators.required],
     UserId: [{ value: '', disabled: false }],
     CanceledCheckB: [{ value: '', disabled: true }],
   });
@@ -45,12 +50,12 @@ export class ReportsComponent implements OnInit, AfterViewInit {
   Report2Form = this.fb.group({
     // sendImmedCheckB:[{ value: '', disabled: false }],
     CurrentReport: "Balance",
-    FDate: [{ value: '', disabled: false }],
-    TDate: [{ value: '', disabled: false }],
-    CustomerEmail: [{ value: '', disabled: false }],
-    ScheduleDate: [{ value: '', disabled: false }],
+    FDate: [{ value: '', disabled: false }, Validators.required],
+    TDate: [{ value: '', disabled: false }, Validators.required],
+    CustomerEmail: [{ value: '', disabled: false }, [Validators.required, Validators.email]],
+    ScheduleDate: [{ value: '', disabled: false }, Validators.required],
     Checkedsend: [{ value: '', disabled: false }],
-    customer: [{ value: '', disabled: false }],
+    customer: [{ value: '', disabled: false }, Validators.required],
     UserId: [{ value: '', disabled: false }],
     CanceledCheckB: [{ value: '', disabled: true }],
   });
@@ -58,12 +63,12 @@ export class ReportsComponent implements OnInit, AfterViewInit {
   Report3Form = this.fb.group({
     // sendImmedCheckB:[{ value: '', disabled: false }],
     CurrentReport: "Realization",
-    FDate: [{ value: '', disabled: false }],
-    TDate: [{ value: '', disabled: false }],
-    CustomerEmail: [{ value: '', disabled: false }],
-    ScheduleDate: [{ value: '', disabled: false }],
+    FDate: [{ value: '', disabled: false }, Validators.required],
+    TDate: [{ value: '', disabled: false }, Validators.required],
+    CustomerEmail: [{ value: '', disabled: false }, [Validators.required, Validators.email]],
+    ScheduleDate: [{ value: '', disabled: false }, Validators.required],
     Checkedsend: [{ value: '', disabled: false }],
-    customer: [{ value: '', disabled: false }],
+    customer: [{ value: '', disabled: false }, Validators.required],
     UserId: [{ value: '', disabled: false }],
     CanceledCheckB: [{ value: '', disabled: false }],
   });
@@ -96,6 +101,10 @@ export class ReportsComponent implements OnInit, AfterViewInit {
   }
 
   loadingReport() {
+    debugger
+
+    if(this.Report1Form.valid){
+
     let stime = this.Report1Form.get('ScheduleDate').value?.toLocaleString()
     this.newTime = stime.slice(16, 24);
 
@@ -107,10 +116,13 @@ export class ReportsComponent implements OnInit, AfterViewInit {
     }
 
     Object.keys(this.Report1Form.value).forEach(val => {
+
       if (this.Report1Form.get(val).value != '') {
         objToApi[val] = this.Report1Form.get(val).value;
       }
     })
+    objToApi['CanceledCheckB'] = false;
+
     debugger
     this.dataService.CreateRealizationReports(objToApi).subscribe(result => {
       debugger
@@ -123,27 +135,36 @@ export class ReportsComponent implements OnInit, AfterViewInit {
 
         if (result.errdesc == 'OK') {
           this.dialog.open(DialogComponent, {
-            data: {message: 'דוח נשלח בהצלחה'}
+            data: { message: 'דוח נשלח בהצלחה' }
           });
+          this.resetForm('Report1Form');
         }
-        if(result.errdesc != 'OK'){
+        if (result.errdesc != 'OK') {
           this.dialog.open(DialogComponent, {
-          data: { message: result.errdesc }
-        })
+            data: { message: result.errdesc }
+          })
         }
       }
-      
-      if (typeof result == 'object' && result['obj'] == null) {
-        this.formErrorMsg = 'No Data Found';
-        setTimeout(() => {
-          this.formErrorMsg = '';
-        }, 3000);
+
+      else if (typeof result == 'string') {
+        this.dialog.open(DialogComponent, {
+          data: { message: result }
+        })
+      }
+      else {
+        this.dialog.open(DialogComponent, {
+          data: { message: result.errdesc }
+        })
+        this.sharedService.exitSystemEvent();
       }
     })
   }
+  }
 
   balanceReport() {
-    
+
+    if(this.Report2Form.valid){
+
     let stime = this.Report2Form.get('ScheduleDate').value?.toLocaleString()
     this.newTime = stime.slice(16, 24);
 
@@ -159,8 +180,8 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         objToApi[val] = this.Report2Form.get(val).value;
       }
     })
+    objToApi['CanceledCheckB'] = false;
 
-    debugger
     this.dataService.CreateRealizationReports(objToApi).subscribe(result => {
       debugger
       if (result['Token'] != undefined || result['Token'] != null) {
@@ -173,84 +194,102 @@ export class ReportsComponent implements OnInit, AfterViewInit {
 
         if (result.errdesc == 'OK') {
           this.dialog.open(DialogComponent, {
-            data: {message: 'דוח נשלח בהצלחה'}
+            data: { message: 'דוח נשלח בהצלחה' }
           });
+          this.resetForm('Report2Form');
         }
-        if(result.errdesc != 'OK'){
+        if (result.errdesc != 'OK') {
           this.dialog.open(DialogComponent, {
+            data: { message: result.errdesc }
+          })
+        }
+      }
+      else if (typeof result == 'string') {
+        this.dialog.open(DialogComponent, {
+          data: { message: result }
+        })
+      }
+      else {
+        this.dialog.open(DialogComponent, {
           data: { message: result.errdesc }
         })
-        }  
+        this.sharedService.exitSystemEvent();
       }
-      
-      if (typeof result == 'object' && result['obj'] == null) {
-        this.formErrorMsg = 'No Data Found';
-        setTimeout(() => {
-          this.formErrorMsg = '';
-        }, 3000);
-      }
+
+      // if (typeof result == 'object' && result['obj'] == null) {
+      //   this.formErrorMsg = 'No Data Found';
+      //   setTimeout(() => {
+      //     this.formErrorMsg = '';
+      //   }, 3000);
+      // }
     })
+  }
   }
 
   realizationReport() {
-    let stime = this.Report3Form.get('ScheduleDate').value?.toLocaleString();
-    this.newTime = stime.slice(16, 24);
-    let cancelCheckValue = this.Report3Form.get('CanceledCheckB').value?.toLocaleString();
-    console.log("cancelCheckValue", cancelCheckValue);
 
-    let objToApi = {
-      Token: this.userToken,
-      UserId: this.userId,
-      ScheduleTime: this.newTime,
-      CanceledCheckB: cancelCheckValue
+    if (this.Report3Form.valid) {
+
+      let stime = this.Report3Form.get('ScheduleDate').value?.toLocaleString();
+      this.newTime = stime.slice(16, 24);
+      let cancelCheckValue = this.Report3Form.get('CanceledCheckB').value?.toLocaleString();
+
+      let objToApi = {
+        Token: this.userToken,
+        UserId: this.userId,
+        ScheduleTime: this.newTime,
+        CanceledCheckB: cancelCheckValue == '' ? 'false' : cancelCheckValue.toString()
+      }
+
+      Object.keys(this.Report3Form.value).forEach(val => {
+        if (this.Report3Form.get(val).value != '') {
+          objToApi[val] = this.Report3Form.get(val).value;
+        }
+      });
+
+      this.dataService.CreateRealizationReports(objToApi).subscribe(result => {
+        if (result['Token'] != undefined || result['Token'] != null) {
+          //set new token
+          let tempObjUser = JSON.parse(localStorage.getItem('user'));
+          tempObjUser['Token'] = result['Token'];
+          localStorage.setItem('user', JSON.stringify(tempObjUser));
+          this.userToken = result['Token'];
+
+          if (result.errdesc == 'OK') {
+            this.dialog.open(DialogComponent, {
+              data: { message: 'דוח נשלח בהצלחה' }
+            });
+
+            this.resetForm('Report3Form');
+          }
+          if (result.errdesc != 'OK') {
+            this.dialog.open(DialogComponent, {
+              data: { message: result.errdesc }
+            })
+          }
+        }
+        else if (typeof result == 'string') {
+          this.dialog.open(DialogComponent, {
+            data: { message: result }
+          })
+        }
+        else {
+          this.dialog.open(DialogComponent, {
+            data: { message: result.errdesc }
+          })
+          this.sharedService.exitSystemEvent();
+        }
+      })
     }
-
-    Object.keys(this.Report3Form.value).forEach(val => {
-      if (this.Report3Form.get(val).value != '') {
-        objToApi[val] = this.Report3Form.get(val).value;
-      }
-    });
-
-    debugger
-    this.dataService.CreateRealizationReports(objToApi).subscribe(result => {  
-      debugger
-      if (result['Token'] != undefined || result['Token'] != null) {
-        //set new token
-        let tempObjUser = JSON.parse(localStorage.getItem('user'));
-        tempObjUser['Token'] = result['Token'];
-        localStorage.setItem('user', JSON.stringify(tempObjUser));
-        this.userToken = result['Token'];
-
-        if (result.errdesc == 'OK') {
-          this.dialog.open(DialogComponent, {
-            data: {message: 'דוח נשלח בהצלחה'}
-          });
-        }
-        if(result.errdesc != 'OK'){
-          this.dialog.open(DialogComponent, {
-          data: { message: result.errdesc }
-        })
-        }
-      }
-    })
   }
 
-  resetForm(){
-    this.activateRoute.params.subscribe(param => {
-      Object.keys(this.Report1Form.controls).forEach(control => {
-        this.Report1Form.get(control).setValue('');
-      });
-    });
-    this.activateRoute.params.subscribe(param => {
-      Object.keys(this.Report2Form.controls).forEach(control => {
-        this.Report2Form.get(control).setValue('');
-      });
-    });
-    this.activateRoute.params.subscribe(param => {
-      Object.keys(this.Report3Form.controls).forEach(control => {
-        this.Report3Form.get(control).setValue('');
-      });
-    });
+  resetForm(form) {
+    this[form].reset();
+    this[form + 'View'] = false;
+
+    setTimeout(() => {
+      this[form + 'View'] = true;
+    }, 0);
   }
 
   getAllCustomers() {
@@ -258,9 +297,9 @@ export class ReportsComponent implements OnInit, AfterViewInit {
     let objToApi = {
       Token: this.userToken
     }
-     
+
     this.dataService.GetAllCustomers(objToApi).subscribe(result => {
-       
+
       this.spinner = false;
 
       if (result['Token'] != undefined || result['Token'] != null) {
@@ -282,15 +321,15 @@ export class ReportsComponent implements OnInit, AfterViewInit {
           }
         }
         else if (typeof result == 'object' && result['obj'] == null) {
-            this.errorMsg = 'No Data Found';
-            setTimeout(() => {
-              this.errorMsg = '';
-            }, 3000);
-          }
+          this.errorMsg = 'No Data Found';
+          setTimeout(() => {
+            this.errorMsg = '';
+          }, 3000);
+        }
       }
-      else if(typeof result == 'string'){
+      else if (typeof result == 'string') {
         this.dialog.open(DialogComponent, {
-          data: {message: result}
+          data: { message: result }
         });
       }
       else {

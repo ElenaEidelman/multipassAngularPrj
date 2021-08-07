@@ -47,7 +47,7 @@ $ git merge new-branch
 
   constructor(private http: HttpClient, private sharedService: SharedService) { 
     this.getHost().subscribe(result => {
-      debugger
+      // debugger
       localStorage.setItem('baseUrl',result['baseUrl']);
     });
   }
@@ -67,6 +67,7 @@ $ git merge new-branch
     debugger
       return this.http.post(`${this.baseUrl}/api/Users/SendOtp`,obj).pipe(
         map(result => {
+          debugger
           return result;
         }),
         catchError(err => {
@@ -422,7 +423,6 @@ $ git merge new-branch
     );
   }
   CreateRealizationReports(objToApi){
-    debugger
     return this.http.post(`${this.baseUrl}/api/AllReports/CreateRealizationReports`,objToApi).pipe(
       map(result => {
         //debugger

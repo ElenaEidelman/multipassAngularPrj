@@ -18,7 +18,7 @@
                         <mat-spinner class="noDataSpinner" *ngIf="spinner"></mat-spinner>
                     </div>
                     <div class="formBorder formElement">
-                        <form [formGroup]="Report3Form">
+                        <form [formGroup]="Report3Form" (submit)="realizationReport()" *ngIf="Report3FormView">
                             <div class="wrapReportForm formWrap">
                                 <div class="formWrapRow">
                                     <div >
@@ -32,7 +32,8 @@
                                                             <!-- {{customer}} -->
                                                         </mat-option>
                                                     </ng-container>
-                                                </mat-select>                                                 
+                                                </mat-select>
+                                                <mat-error *ngIf="Report3Form.get('customer').hasError('required')">{{MsgList.requiredField}}</mat-error>
                                             </mat-form-field>
                                         </div>
                                         <div>
@@ -46,6 +47,8 @@
                                                 (click)="this.Report1Form.get('CustomerEmail').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                                 </button> -->
+                                                <mat-error *ngIf="Report3Form.get('CustomerEmail').hasError('required')">{{MsgList.requiredField}}</mat-error>
+                                                <mat-error *ngIf="Report3Form.get('CustomerEmail').hasError('email')">{{MsgList.emailFormatValidationErr}}</mat-error>
                                             </mat-form-field>
                                         </div>
                                     </div>
@@ -59,6 +62,8 @@
                                                 </button> -->
                                                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                                                 <mat-datepicker #picker></mat-datepicker>
+                                                <mat-error *ngIf="Report3Form.get('FDate').hasError('required')">{{MsgList.requiredField}}</mat-error>
+
                                             </mat-form-field>
                                         </div>
                                         <div>
@@ -67,6 +72,7 @@
                                                 <input matInput [matDatepicker]="picker2" disabled="false" formControlName="TDate">
                                                 <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
                                                 <mat-datepicker #picker2></mat-datepicker>
+                                                <mat-error *ngIf="Report3Form.get('TDate').hasError('required')">{{MsgList.requiredField}}</mat-error>
                                             </mat-form-field>
                                         </div>
                                     </div>
@@ -91,6 +97,7 @@
                                                                         [disableMinute]="false" 
                                                                         [hideTime]="false">
                                                 </ngx-mat-datetime-picker>
+                                                <mat-error *ngIf="Report3Form.get('ScheduleDate').hasError('required')">{{MsgList.requiredField}}</mat-error>
                                             </mat-form-field>
                                         </div>
                                         
@@ -110,11 +117,12 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="buttonsWrap">
+                                <button mat-button class="linkButton" (click) = "resetForm('Report3Form')">אפס</button>
+                                <button type="submit" mat-button class="addButton">שלח</button>
+                            </div>
                         </form>
-                        <div class="buttonsWrap">
-                            <button mat-button class="linkButton" (click) = "resetForm()">אפס</button>
-                            <button mat-button class="addButton"  (click) = "realizationReport()">שלח</button>
-                        </div>
+
                     </div>
                 </div>
 
@@ -132,7 +140,7 @@
                         <mat-spinner class="noDataSpinner" *ngIf="spinner"></mat-spinner>
                     </div>
                     <div class="formBorder formElement">
-                        <form [formGroup]="Report2Form">
+                        <form [formGroup]="Report2Form" (submit)="balanceReport()" *ngIf="Report2FormView">
                             <div class="wrapReportForm formWrap">
                                 <div class="formWrapRow">
                                     <div>
@@ -146,7 +154,9 @@
                                                             <!-- {{customer}} -->
                                                         </mat-option>
                                                     </ng-container>
-                                                </mat-select>                                           
+                                                </mat-select>   
+                                                <mat-error *ngIf="Report2Form.get('customer').hasError('required')">{{MsgList.requiredField}}</mat-error>
+                                        
                                              </mat-form-field>
                                         </div>
                                         <div>
@@ -155,6 +165,8 @@
                                                 <input matInput disabled="false"
                                                 placeholder = " mail@gmail.com :לדוגמא"
                                                 formControlName="CustomerEmail">
+                                                <mat-error *ngIf="Report2Form.get('CustomerEmail').hasError('required')">{{MsgList.requiredField}}</mat-error>
+                                                <mat-error *ngIf="Report2Form.get('CustomerEmail').hasError('email')">{{MsgList.emailFormatValidationErr}}</mat-error>
                                             </mat-form-field>
                                         </div>
                                     </div>
@@ -165,6 +177,8 @@
                                                 <input matInput [matDatepicker]="picker3" disabled="false" formControlName="FDate">
                                                 <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
                                                 <mat-datepicker #picker3></mat-datepicker>
+                                                <mat-error *ngIf="Report2Form.get('FDate').hasError('required')">{{MsgList.requiredField}}</mat-error>
+
                                             </mat-form-field>
                                         </div>
                                         <div>
@@ -173,6 +187,8 @@
                                                 <input matInput [matDatepicker]="picker4" disabled="false" formControlName="TDate">
                                                 <mat-datepicker-toggle matSuffix [for]="picker4"></mat-datepicker-toggle>
                                                 <mat-datepicker #picker4></mat-datepicker>
+                                                <mat-error *ngIf="Report2Form.get('TDate').hasError('required')">{{MsgList.requiredField}}</mat-error>
+
                                             </mat-form-field>
                                         </div>
                                     </div>
@@ -197,6 +213,8 @@
                                                                         [disableMinute]="false" 
                                                                         [hideTime]="false">
                                                 </ngx-mat-datetime-picker>
+                                                <mat-error *ngIf="Report2Form.get('ScheduleDate').hasError('required')">{{MsgList.requiredField}}</mat-error>
+
                                             </mat-form-field>
                                         </div>
                                         <div>
@@ -208,11 +226,11 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="buttonsWrap">
+                                <button mat-button class="linkButton" (click) = "resetForm('Report2Form')">אפס</button>
+                                <button type="submit" mat-button class="addButton">שלח</button>
+                            </div>
                         </form>
-                        <div class="buttonsWrap">
-                            <button mat-button class="linkButton" (click) = "resetForm()">אפס</button>
-                            <button mat-button class="addButton" (click) = "balanceReport()">שלח</button>
-                        </div>
                     </div>
                 </div>
             </mat-tab>
@@ -229,7 +247,7 @@
                         <mat-spinner class="noDataSpinner" *ngIf="spinner"></mat-spinner>
                     </div>
                     <div class="formBorder formElement">
-                        <form [formGroup]="Report1Form">
+                        <form [formGroup]="Report1Form" (submit)="loadingReport()" *ngIf="Report1FormView">
                             <div class="wrapReportForm formWrap">
                                 <div class="formWrapRow">
                                     <div>
@@ -245,6 +263,8 @@
                                                     </ng-container>
                                                 </mat-select>
                                                 <!-- <input matInput placeholder = "שם לקוח" formControlName="name"> -->
+                                                <mat-error *ngIf="Report1Form.get('customer').hasError('required')">{{MsgList.requiredField}}</mat-error>
+
                                             </mat-form-field>
                                         </div>
                                         <div>
@@ -253,6 +273,8 @@
                                                 <input matInput disabled="false"
                                                 placeholder = " mail@gmail.com :לדוגמא"
                                                 formControlName="CustomerEmail">
+                                                <mat-error *ngIf="Report1Form.get('CustomerEmail').hasError('required')">{{MsgList.requiredField}}</mat-error>
+                                                <mat-error *ngIf="Report1Form.get('CustomerEmail').hasError('email')">{{MsgList.emailFormatValidationErr}}</mat-error>
                                             </mat-form-field>
                                         </div>
                                     </div>
@@ -263,6 +285,8 @@
                                                 <input matInput [matDatepicker]="picker6" disabled="false" formControlName="FDate">
                                                 <mat-datepicker-toggle matSuffix [for]="picker6"></mat-datepicker-toggle>
                                                 <mat-datepicker #picker6></mat-datepicker>
+                                                <mat-error *ngIf="Report1Form.get('FDate').hasError('required')">{{MsgList.requiredField}}</mat-error>
+
                                             </mat-form-field>
                                         </div>
                                         <div>
@@ -271,6 +295,8 @@
                                                 <input matInput [matDatepicker]="picker7" disabled="false" formControlName="TDate">
                                                 <mat-datepicker-toggle matSuffix [for]="picker7"></mat-datepicker-toggle>
                                                 <mat-datepicker #picker7></mat-datepicker>
+                                                <mat-error *ngIf="Report1Form.get('TDate').hasError('required')">{{MsgList.requiredField}}</mat-error>
+
                                             </mat-form-field>
                                         </div>
                                     </div>
@@ -295,6 +321,8 @@
                                                                         [disableMinute]="false"
                                                                         >
                                                 </ngx-mat-datetime-picker>
+                                                <mat-error *ngIf="Report1Form.get('ScheduleDate').hasError('required')">{{MsgList.requiredField}}</mat-error>
+
                                             </mat-form-field>
                                         </div>
                                         <div>
@@ -306,11 +334,12 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="buttonsWrap">
+                                <button mat-button class="linkButton" (click) = "resetForm('Report1Form')">אפס</button>
+                                <button mat-button type="submit" class="addButton">שלח</button>
+                            </div>
                         </form>
-                        <div class="buttonsWrap">
-                            <button mat-button class="linkButton" (click) = "resetForm()">אפס</button>
-                            <button mat-button class="addButton" (click) = "loadingReport()">שלח</button>
-                        </div>
+
                     </div>
                 </div>
             </mat-tab>

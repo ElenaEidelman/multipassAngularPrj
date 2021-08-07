@@ -51,6 +51,7 @@ export class CardInfoComponent implements OnInit {
 
 
   unsubscribeId;
+
   ngOnInit(): void {
     window.scroll(0, 0);
     this.unsubscribeId = this.activateRoute.params.subscribe(param => {
@@ -81,7 +82,9 @@ export class CardInfoComponent implements OnInit {
       UserId: this.userId
     }
 
+    debugger
     this.dataService.GetCardInfoById(objToApi).subscribe(result => {
+      debugger
       if (result['Token'] != undefined || result['Token'] != null) {
         //set new token
         let tempObjUser = JSON.parse(localStorage.getItem('user'));
