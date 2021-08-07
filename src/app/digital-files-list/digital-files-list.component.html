@@ -18,76 +18,9 @@
 
                             <span *ngIf="obj == 'dateOfAbs'">{{element['DateInsert'] | formatDate}}</span>
 
-                            <!-- <span *ngFor="let file of newArr; let i = index">{{file.filename}}</span> -->
-                              
-
-
-                            <!-- <span *ngIf="obj == 'idex'">
-                                <a [routerLink]="['/public/order',element['id'], element['UserId']]">{{element[obj]}}</a><br>
-                            </span>
-                            <span *ngIf="obj == 'OrganizationName'">
-                                <a [routerLink]="['/public/customer',element['UserId']]">{{element[obj]}}</a><br>
-                            </span>
-                            <div mat-button *ngIf="obj == 'Status'"
-                                [class.tableOrderStatusOpen] ="element['StatusId'] == 1 || element['OrderStatus'] == 1"
-                                [class.tableOrderStatusWaiting] = "element['StatusId'] == 2 || element['StatusId'] == 0 || element['OrderStatus'] == 2"
-                                [class.tableOrderStatusClose] = "element['StatusId'] == 3 || element['OrderStatus'] == 3"
-                                [class.tableOrderStatusFour] = "element['StatusId'] == 4 || element['OrderStatus'] == 4"
-                                [class.tableOrderStatusFiftin] = "element['StatusId'] == 50 || element['OrderStatus'] == 50">
-
-                                <div class="tableCageFlex" *ngIf="element['StatusId'] == 0">
-                                    <div class="iconB">
-                                        <mat-icon>hourglass_empty</mat-icon>
-                                    </div>
-                                    <div class="textB">
-                                        {{element['Description']}}
-                                    </div>
-                                </div>
-                                <div class="tableCageFlex" *ngIf="element['StatusId'] == 1">
-                                    <div class="iconB">
-                                        <mat-icon>watch_later</mat-icon>
-                                    </div>
-                                    <div class="textB">{{element['Description']}}</div>
-                                </div>
-                                <div class="tableCageFlex" *ngIf="element['StatusId'] == 2">
-                                    <div class="iconB">
-                                        <mat-icon>pending_actions</mat-icon>
-                                    </div>
-                                    <div class="textB">
-                                        {{element['Description']}}
-                                    </div>
-                                </div>
-                                <div class="tableCageFlex" *ngIf="element['StatusId'] == 3">
-                                    <div class="iconB">
-                                        <mat-icon>local_printshop</mat-icon>
-                                    </div>
-                                    <div class="textB">{{element['Description']}}</div>
-                                </div>
-                                <div class="tableCageFlex" *ngIf="element['StatusId'] == 4">
-                                    <div class="iconB">
-                                        <mat-icon>delivery_dining</mat-icon>
-                                    </div>
-                                    <div class="textB">
-                                        {{element['Description']}}
-                                    </div>
-                                </div>
-                                <div class="tableCageFlex" *ngIf="element['StatusId'] == 50">
-                                    <div class="iconB">
-                                        <mat-icon>cancel</mat-icon>
-                                    </div>
-                                    <div class="textB">{{element['Description']}}</div>
-                                </div>
-                            </div>
-                            <span *ngIf="obj == 'ApproveDate' || obj == 'MDate'">{{element[obj] | formatDate}}</span>
-                            <span *ngIf="
-                                        obj != 'idex' && 
-                                        obj != 'OrganizationName' && 
-                                        obj != 'StatusDesc' &&
-                                        obj != 'ApproveDate' && 
-                                        obj != 'MDate'">{{element[obj]}}
-                            </span> -->
-
+                            <span *ngIf="obj == 'fileName'">{{element['FilePath']}}</span>                           
                         </td>
+
                     </ng-container>
                 </ng-container>
 
@@ -95,22 +28,6 @@
                 <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
                 
               </table>
-              <!-- <div *ngIf="dataSource.filteredData.length === 0 || noTableData" class="tableEmptyMsg">אין נתונים</div> -->
-
               <mat-paginator [pageSizeOptions]="[25, 50, 100]" class="mat-paginator-sticky"></mat-paginator>
         </div>
     </div>
-        <!-- table -->
-        <!-- <div class="page-element width-block-auto">
-            <div class="wrapTables">
-                <div>
-                    <div class="element-page-title">רשימת קבצים דיגיטלים</div>
-                    <app-table
-                             [dataLabelsList]="excelFilesLabelForTable"
-                             [data_Source]="excelFilesDataSource"
-                             [linksList]="linksList"
-                    ></app-table>
-                </div>
-            </div>
-        </div> -->
-</div>
