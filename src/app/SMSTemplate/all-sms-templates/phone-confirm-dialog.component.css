@@ -138,6 +138,9 @@ mat-label{
     }
 
   @media screen and (max-width: 1024px){
+    .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+      text-align: left;
+  }
     .dialog-content-wrap
     {
         margin: auto;

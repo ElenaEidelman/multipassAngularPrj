@@ -1,0 +1,8 @@
+.getForExampleExcelFile{
+    /* color: #757575; */
+    text-decoration: underline;
+}
+.getForExampleExcelFile:hover{
+    cursor: pointer;
+    color: #272626;
+}

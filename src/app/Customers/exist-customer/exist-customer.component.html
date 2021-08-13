@@ -58,46 +58,50 @@
                                 </mat-panel-description>
                             </mat-expansion-panel-header>
 
-                            <div class="graph-buttons-wrap">
+                            <!-- <div class="graph-buttons-wrap">
                                 <div class="element-page-title">הזמנות אחרונות</div>
                                 <div class="element-page-title">זימון שוברים</div>
 
-                            </div>
+                            </div> -->
                             <div class="graph-buttons-wrap">
+                                    <div >
+                                        <div class="element-page-title">הזמנות אחרונות</div>
+                                        <div class="innerElement graphWrap">
+                                            <app-bar-chart 
+                                                            *ngIf="customerOrders != undefined" 
+                                                            chartTitle="" 
+                                                            [chartData]="recOrdersChartData"
+                                                            [chartLabels]="recOrdersChartLabels" 
+                                                            chartColor="#88C43E">
 
-                                    <div class="innerElement graphWrap">
-                                        <app-bar-chart 
-                                                        *ngIf="customerOrders != undefined" 
-                                                        chartTitle="הזמנות אחרונות" 
-                                                        [chartData]="recOrdersChartData"
-                                                        [chartLabels]="recOrdersChartLabels" 
-                                                        chartColor="#88C43E">
-
-                                        </app-bar-chart>
+                                            </app-bar-chart>
+                                        </div>
                                     </div>
+                                    <div >
+                                        <div class="element-page-title">זימון שוברים</div>
+                                        <div class="buttonInElement innerElement createOrdersButtonsWrap">
 
-                                    <div class="buttonInElement innerElement createOrdersButtonsWrap">
-
-                                        <div [routerLink]="['/public/orderCards',0,customerData.id]" mat-button
-                                        class="addButton">
-                                                <span>הזמנת שוברים דיגיטלים מאקסל </span>
-                                                <fa-icon [icon]="faFileExcel"></fa-icon>
-          
-                                        </div>
-                                        <div [routerLink]="['/public/orderCards',1,customerData.id]" mat-button
-                                        class="addButton">
-                                                <span>הזמנת שוברים דיגיטלים ידנית </span>
-                                                <mat-icon> settings </mat-icon>
-                                        </div>
-                                        <div [routerLink]="['/public/orderCards',2,customerData.id]" mat-button
-                                        class="addButton">
-                                                <span>טעינת שוברים</span>
-                                                <mat-icon> file_upload</mat-icon>
-                                        </div>
-                                        <div mat-button class="addButton"
-                                        [routerLink]="['/public/allOrders',customerData.OrganizationName]">
-                                                <span>לכל הזמנות הלקוח</span>
-                                                <mat-icon>list</mat-icon>
+                                            <div [routerLink]="['/public/orderCards',0,customerData.id]" mat-button
+                                            class="sendButton">
+                                                    <span>הזמנת שוברים דיגיטלים מאקסל </span>
+                                                    <fa-icon [icon]="faFileExcel"></fa-icon>
+            
+                                            </div>
+                                            <div [routerLink]="['/public/orderCards',1,customerData.id]" mat-button
+                                            class="sendButton">
+                                                    <span>הזמנת שוברים דיגיטלים ידנית </span>
+                                                    <mat-icon> settings </mat-icon>
+                                            </div>
+                                            <div [routerLink]="['/public/orderCards',2,customerData.id]" mat-button
+                                            class="sendButton">
+                                                    <span>טעינת שוברים</span>
+                                                    <mat-icon> file_upload</mat-icon>
+                                            </div>
+                                            <div mat-button class="sendButton"
+                                            [routerLink]="['/public/allOrders',customerData.OrganizationName]">
+                                                    <span>לכל הזמנות הלקוח</span>
+                                                    <mat-icon>list</mat-icon>
+                                            </div>
                                         </div>
                                     </div>
                             </div>
@@ -137,11 +141,11 @@
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>מספר טלפון*</mat-label>
-                                            <input matInput placeholder="מספר טלפון" formControlName="Phone" tabindex="5" pattern="[0-9]*" numbersOnly>
+                                            <input matInput placeholder="מספר טלפון" formControlName="Phone" tabindex="5" numbersOnly>
                                             <button class="clearButton" *ngIf="this.CustomerForm.get('Phone').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('Phone').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
-                                            <mat-error *ngIf="CustomerForm.get('Phone').errors?.pattern">{{MsgList.numbersValidationErr}}</mat-error>
+                                            <mat-error *ngIf="CustomerForm.get('Phone').errors?.pattern">{{MsgList.phonePatternErr}}</mat-error>
                                         </mat-form-field>
 
                                     </div>
@@ -196,8 +200,15 @@
                                         </mat-form-field>
 
                                         <mat-form-field>
-                                            <mat-label>ח.פ.</mat-label>
-                                            <input matInput placeholder="ח.פ." formControlName="Tz" tabindex="8" pattern="[0-9]*" numbersOnly>
+                                            <mat-label>ח.פ./עוסק מורש</mat-label>
+                                            <input  matInput 
+                                                    placeholder="ח.פ./עוסק מורש" 
+                                                    formControlName="Tz" 
+                                                    tabindex="8" 
+                                                    pattern="[0-9]*" 
+                                                    numbersOnly
+                                                    [maxlength]="9" numbersOnly>
+
                                             <button class="clearButton" *ngIf="CustomerForm.get('Tz').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('Tz').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>

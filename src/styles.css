@@ -328,6 +328,9 @@ table.tableInsideElement tr th, tr td{
 form.addToExecOrderForm > table > tbody > tr > td{
   padding: 5px;
 }
+table.digitalFilesTable td{
+  padding: 10px;
+}
 .mat-form-field-flex{
   direction: ltr;
 }
@@ -812,6 +815,7 @@ textarea.mat-input-element{
 .wrapGraphs canvas{
   width: 100% !important
 }
+
 .mat-elevation-z8{
   overflow-x: auto;
 }
@@ -971,7 +975,7 @@ th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:
     flex-direction: column;
   }
   .main2-title > div{
-    text-align: right;
+    text-align: center;
     margin: 5px 0;
   }
   .wrapFlexTwoCol{

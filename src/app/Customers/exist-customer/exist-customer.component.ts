@@ -1,7 +1,7 @@
 import { Route } from '@angular/compiler/src/core';
 import { Component, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild, ViewEncapsulation } from '@angular/core';
 import { tick } from '@angular/core/testing';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, MaxLengthValidator, Validators } from '@angular/forms';
 import { MatDialog, throwMatDialogContentAlreadyAttachedError } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { MatTableDataSource } from '@angular/material/table';
@@ -62,9 +62,9 @@ export class ExistCustomerComponent implements OnInit {
     FName: (''),
     LName: (''),
     Email: ['', [Validators.required, Validators.email]], //v
-    Phone: ['', Validators.required], //v
+    Phone: ['', [Validators.required, Validators.pattern('[0]{1}[0-9]{2,3}[0-9]{7}')]], //v
     Permission: ['', Validators.required],//v
-    Phone1: (''), //v
+    Phone1: ['',   Validators.pattern('[0]{1}[0-9]{2,3}[0-9]{7}')],
     userNumber: [{ value: '', disabled: true }], //v
     CityName: (''),//v
     Streetno: (''),//v
@@ -126,7 +126,7 @@ export class ExistCustomerComponent implements OnInit {
         }
         else {
           this.dialog.open(DialogComponent, {
-            data: {message: result.errdesc}
+            data: {message: MsgList.exitSystemAlert}
           })
           this.sharedService.exitSystemEvent();
         }
@@ -195,7 +195,7 @@ export class ExistCustomerComponent implements OnInit {
       }
       else {
         this.dialog.open(DialogComponent, {
-          data: {message: result.errdesc}
+          data: {message: MsgList.exitSystemAlert}
         })
         this.sharedService.exitSystemEvent();
       }
@@ -223,7 +223,7 @@ export class ExistCustomerComponent implements OnInit {
       }
       else {
         this.dialog.open(DialogComponent,{
-          data: {message: result.errdesc != undefined ? result.errdesc : result}
+          data: {message: MsgList.exitSystemAlert}
         });
         this.sharedService.exitSystemEvent();
       }

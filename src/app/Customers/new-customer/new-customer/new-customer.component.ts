@@ -38,9 +38,9 @@ export class NewCustomerComponent implements OnInit {
     FName: (''),
     LName: (''),
     Email: ['', [Validators.email, Validators.required]], //Validators.required,
-    Phone: ['', Validators.required],
+    Phone: ['',  [Validators.required, Validators.pattern('[0]{1}[0-9]{2,3}[0-9]{7}')]],
     Permission: ['', Validators.required], // Validators.required
-    Phone1: (''),
+    Phone1: ['', Validators.pattern('[0]{1}[0-9]{2,3}[0-9]{7}')],
     userNumber: [{ value: '', disabled: true }], //?
     CityName: (''),//v
     Streetno: (''),//v
@@ -89,10 +89,10 @@ export class NewCustomerComponent implements OnInit {
         }
       }
       else {
-        this.dialog.open(DialogComponent,{
-          data: {message: result.errdesc != undefined ? result.errdesc : result}
-        });
-        // this.sharedService.exitSystemEvent();
+        this.dialog.open(DialogComponent, {
+          data: {message: MsgList.exitSystemAlert}
+        })
+        this.sharedService.exitSystemEvent();
       }
     })
   }
@@ -154,9 +154,9 @@ export class NewCustomerComponent implements OnInit {
         }
         else {
           this.dialog.open(DialogComponent, {
-            data: {message: result.errdesc}
+            data: {message: MsgList.exitSystemAlert}
           })
-          // this.sharedService.exitSystemEvent();
+          this.sharedService.exitSystemEvent();
         }
       });
     }

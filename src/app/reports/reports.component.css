@@ -20,8 +20,8 @@ mat-form-field{
     margin-top: 0;
 }
 @media screen and (max-width: 1024px){
-    .fullWidth{
-        width: 100% !important;
+    .formWrap > div.formWrapRow > div {
+        flex-direction: column;
     }
     .wrapReportForm{
         flex-direction:column;
@@ -40,5 +40,7 @@ mat-form-field{
     }
     .wrapReportForm > div > div > div{
         margin: 0px 9px;
+        flex-grow: 1;
+        flex-basis: 0;
     }
 }

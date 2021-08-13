@@ -10,6 +10,7 @@ import * as moment from 'moment';
 import { resourceUsage } from 'process';
 import { element } from 'protractor';
 import { elementAt } from 'rxjs/operators';
+import { MsgList } from 'src/app/Classes/msgsList';
 import { DataServiceService } from 'src/app/data-service.service';
 import { DialogConfirmComponent } from 'src/app/PopUps/dialog-confirm/dialog-confirm.component';
 import { DialogComponent, DialogData } from 'src/app/PopUps/dialog/dialog.component';
@@ -201,8 +202,8 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
           }
           else {
             this.dialog.open(DialogComponent, {
-              data: { message: result.errdesc }
-            });
+              data: {message: MsgList.exitSystemAlert}
+            })
             this.sharedService.exitSystemEvent();
           }
 
@@ -242,8 +243,8 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
           }
           else {
             this.dialog.open(DialogComponent, {
-              data: { message: result.errdesc }
-            });
+              data: {message: MsgList.exitSystemAlert}
+            })
             this.sharedService.exitSystemEvent();
           }
         });
@@ -292,7 +293,6 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     this.dataService.GetOrdersStatus(objToApi).subscribe(result => {
-      debugger
 
       if (result['Token'] != undefined || result['Token'] != null) {
 
@@ -309,8 +309,8 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       }
       else {
         this.dialog.open(DialogComponent, {
-          data: { message: result.errdesc }
-        });
+          data: {message: MsgList.exitSystemAlert}
+        })
         this.sharedService.exitSystemEvent();
       }
     });
@@ -390,7 +390,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       }
       else {
         this.dialog.open(DialogComponent, {
-          data: { message: result.errdesc }
+          data: {message: MsgList.exitSystemAlert}
         })
         this.sharedService.exitSystemEvent();
       }
@@ -456,8 +456,8 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
             }
             else {
               this.dialog.open(DialogComponent, {
-                data: { message: result.errdesc }
-              });
+                data: {message: MsgList.exitSystemAlert}
+              })
               this.sharedService.exitSystemEvent();
             }
           });
@@ -495,8 +495,8 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
             }
             else {
               this.dialog.open(DialogComponent, {
-                data: { message: result.errdesc }
-              });
+                data: {message: MsgList.exitSystemAlert}
+              })
               this.sharedService.exitSystemEvent();
             }
           });
@@ -574,7 +574,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         }
         else {
           this.dialog.open(DialogComponent, {
-            data: { message: result.errdesc }
+            data: {message: MsgList.exitSystemAlert}
           })
           this.sharedService.exitSystemEvent();
         }
@@ -642,8 +642,8 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
           }
           else {
             this.dialog.open(DialogComponent, {
-              data: { message: result.errdesc }
-            });
+              data: {message: MsgList.exitSystemAlert}
+            })
             this.sharedService.exitSystemEvent();
           }
         });
@@ -705,7 +705,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         }
         else {
           this.dialog.open(DialogComponent, {
-            data: { message: result.errdesc }
+            data: {message: MsgList.exitSystemAlert}
           })
           this.sharedService.exitSystemEvent();
         }
@@ -774,7 +774,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         }
         else {
           this.dialog.open(DialogComponent, {
-            data: { message: result.errdesc }
+            data: {message: MsgList.exitSystemAlert}
           })
           this.sharedService.exitSystemEvent();
         }

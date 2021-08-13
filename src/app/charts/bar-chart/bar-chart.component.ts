@@ -18,15 +18,19 @@ export class BarChartComponent implements OnInit {
 
   public barChartOptions: ChartOptions = {
     responsive: true,
-
-    // maintainAspectRatio: false,
-    // We use these empty structures as placeholders for dynamic theming.
+    maintainAspectRatio: true,
     scales: { 
               xAxes: [{
                         // barPercentage: 0.2,
                         gridLines: {
                           display: false
-                        }
+                        },
+                        ticks: {
+                          autoSkip: false,
+                          maxRotation: 90,
+                          minRotation: 0,
+                          // padding: 5
+                      }
                       }], 
               yAxes: [{
                         ticks: {
@@ -62,7 +66,6 @@ export class BarChartComponent implements OnInit {
     if(this.chartData != undefined && this.chartLabels != undefined){
       this.barChartData = this.chartData;
       this.barChartLabels = this.chartLabels;
-      debugger
       this.setColorForChart();
     }
   }

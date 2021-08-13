@@ -1,8 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { MsgList } from 'src/app/Classes/msgsList';
 import { DataServiceService } from 'src/app/data-service.service';
 import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
+import { SharedService } from 'src/app/shared.service';
 
 @Component({
   selector: 'app-excel-file-view',
@@ -14,7 +16,8 @@ export class ExcelFileViewComponent implements OnInit, OnDestroy {
   constructor(
               private router: Router,
               private dataService: DataServiceService,
-              private dialog: MatDialog
+              private dialog: MatDialog,
+              private sharedService: SharedService
               ) { }
   excelData;
   userToken: string;
@@ -62,8 +65,9 @@ export class ExcelFileViewComponent implements OnInit, OnDestroy {
     let formDataForOrdersLine = new FormData();
     formDataForOrdersLine.append('Token', this.userToken)
     formDataForOrdersLine.append('UserID', this.customerId)
-    formDataForOrdersLine.append('Description', this.excelFileData.excelName)
+    formDataForOrdersLine.append('Description', this.excelFileData.fileDescription)
     formDataForOrdersLine.append('OpCode', 'create')
+    formDataForOrdersLine.append('FileName', this.excelFileData.excelName)
 
     this.dataService.InsertUpdateOrderByExcel(formDataForOrdersLine).subscribe(result => {
       this.createOrderSpinner = false;
@@ -83,8 +87,9 @@ export class ExcelFileViewComponent implements OnInit, OnDestroy {
       }
       else {
         this.dialog.open(DialogComponent, {
-          data: { message: result.errdesc != undefined ? result.errdesc : result }
+          data: {message: MsgList.exitSystemAlert}
         })
+        this.sharedService.exitSystemEvent();
       }
     });
   }

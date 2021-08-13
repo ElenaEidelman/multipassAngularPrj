@@ -127,6 +127,9 @@ mat-card-title > div{
 }
 
   @media screen and (max-width: 1024px){
+    .mat-card-sms{
+      flex-direction: column;
+    }
     .edit-buttons-wrap > button{
       width: 29%;
     }

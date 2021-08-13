@@ -5,7 +5,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class FormatDatePipe implements PipeTransform {
 
-  transform(value: unknown, ...args: unknown[]): unknown { 
+  transform(value: unknown, ...args: unknown[]): unknown {
+// debugger  
     if(value != undefined){
       let date = new Date(value.toString());
       let day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();

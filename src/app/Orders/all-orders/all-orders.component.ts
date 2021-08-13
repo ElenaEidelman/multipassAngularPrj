@@ -46,7 +46,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   noTableData: boolean = false;
 
   activeRouteUnsubscribe;
-
+  userId;
   statusListArr = [];
   MsgList = MsgList;
 
@@ -88,6 +88,8 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     this.createDisplayedColumns(this.orderLabelForTable);
 
     this.activeRouteUnsubscribe = this.acivatedRoute.params.subscribe(param => {
+      this.userId = param['userId'];
+      console.log(" this.userId", this.userId)
       if (param['customerName'] != undefined) {
         this.filterTableGroup.get('OrganizationName').setValue(param['customerName']);
         this.filterTable();
@@ -124,8 +126,8 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       else {
         this.dialog.open(DialogComponent, {
-          data: { message: result.errdesc }
-        });
+          data: {message: MsgList.exitSystemAlert}
+        })
         this.sharedService.exitSystemEvent();
       }
     });
@@ -134,6 +136,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   getOrdersList() {
     //
+
     this.filterActionButtonSpinner = true;
     let objToApi = {
       Token: this.userToken
@@ -175,8 +178,8 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       else {
         this.dialog.open(DialogComponent, {
-          data: {message: result.errdesc}
-        }); 
+          data: {message: MsgList.exitSystemAlert}
+        })
         this.sharedService.exitSystemEvent();
       }
     })
@@ -239,8 +242,8 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
           }
           else {
             this.dialog.open(DialogComponent, {
-              data: {message: result.errdesc}
-            });  
+              data: {message: MsgList.exitSystemAlert}
+            })
             this.sharedService.exitSystemEvent();
           }
         });
@@ -298,8 +301,8 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
           }
           else {
             this.dialog.open(DialogComponent, {
-              data: {message: result.errdesc}
-            });  
+              data: {message: MsgList.exitSystemAlert}
+            })
             this.sharedService.exitSystemEvent();
           }
         });
@@ -386,8 +389,8 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         else {
           this.dialog.open(DialogComponent, {
-            data: {message: result.errdesc}
-          });  
+            data: {message: MsgList.exitSystemAlert}
+          })
           this.sharedService.exitSystemEvent();
         }
       })

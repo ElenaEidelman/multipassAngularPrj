@@ -16,12 +16,14 @@
         <div class="formBorder formElement">
             <form [formGroup]="cardsForm" *ngIf="cardsFilterFormView">
                 <div class="formWrap">
-                    <div class="formWrapRow idNumber">
+                    <div class="formWrapRow">
                         <div>
                             <mat-form-field>
                                 <mat-label>מספר שובר</mat-label>
                                 <input matInput placeholder = "מספר שובר" formControlName="CardId">
-                                <button class="clearButton" *ngIf="this.cardsForm.get('CardId').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.cardsForm.get('CardId').setValue('')">
+                                <!-- <a [routerLink]="['/public/cardInfo',row['CardId'], userId]"
+                                *ngIf="column['value'] == 'CardId'">{{row[column['value']]}}</a> -->
+                                <button class="clearButton" *ngIf="this.cardsForm.get('CardId').value != ''" routerLink="/public/cardInfo/CardId" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.cardsForm.get('CardId').setValue('')">
                                     <mat-icon>close</mat-icon>
                                 </button>
                             </mat-form-field>
@@ -89,7 +91,7 @@
                         <div>
                             <mat-form-field>
                                 <mat-label>ח"פ לקוח</mat-label>
-                                <input matInput placeholder = "שם לקוח" formControlName="CustomerId">
+                                <input matInput placeholder = 'ח"פ לקוח' formControlName="CustomerId">
                                 <button class="clearButton" *ngIf="cardsForm.get('CustomerId').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.cardsForm.get('CustomerId').setValue('')">
                                     <mat-icon>close</mat-icon>
                                 </button>
@@ -138,7 +140,7 @@
                 [linksListById]="linksListById"
             ></app-table> -->
                 
-            <table mat-table [dataSource]="cardsDataSource" matSort class="tableView">
+            <table mat-table [dataSource]="cardsDataSource" matSort class="tableView" dir="ltr">
 
                 <!-- ID Column -->
                 <ng-container *ngFor="let data of displayedColumns">
@@ -190,8 +192,9 @@
                 </tr> -->
             </table>
             <!-- <div *ngIf="cardsDataSource.filteredData.length === 0" class="tableEmptyMsg">אין נתונים</div> -->
-            <mat-paginator [pageSizeOptions]="[25, 55, 85, 100]" class="mat-paginator-sticky"></mat-paginator>
+            <mat-paginator [length] = 'cardsDataSource.data.length' [pageSizeOptions]="[25, 55, 85, 100]" class="mat-paginator-sticky"></mat-paginator>
 
         </div>
     </div>
 </div>
+

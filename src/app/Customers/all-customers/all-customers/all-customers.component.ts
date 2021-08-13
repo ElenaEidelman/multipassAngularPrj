@@ -119,9 +119,9 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
       }
       else {
         this.dialog.open(DialogComponent, {
-          data: {message: result.errdesc}
+          data: {message: MsgList.exitSystemAlert}
         })
-        // this.sharedService.exitSystemEvent();
+        this.sharedService.exitSystemEvent();
       }
     });
   }
@@ -163,9 +163,9 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
       }
       else {
         this.dialog.open(DialogComponent, {
-          data: {message: result.errdesc}
+          data: {message: MsgList.exitSystemAlert}
         })
-        // this.sharedService.exitSystemEvent();
+        this.sharedService.exitSystemEvent();
       }
     });
   }
@@ -315,9 +315,9 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
           }
           else {
             this.dialog.open(DialogComponent, {
-              data: { message: result.errdesc }
-            });
-            // this.sharedService.exitSystemEvent();
+              data: {message: MsgList.exitSystemAlert}
+            })
+            this.sharedService.exitSystemEvent();
           }
         });
       }

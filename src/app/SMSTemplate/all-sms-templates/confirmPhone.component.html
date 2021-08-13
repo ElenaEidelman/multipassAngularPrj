@@ -10,9 +10,10 @@
           <div class="wrapInput">
             <mat-form-field appearance="outline">
                 <mat-label>{{data.message}}</mat-label>
-                <input matInput placeholder="{{data.message}}" [formControl]='phoneControl'>
+                <input matInput placeholder="{{data.message}}" [formControl]='phoneControl' pattern="[0-9]*" numbersOnly>
                 <mat-icon matPrefix>phone</mat-icon>
                 <!-- <mat-hint>Hint</mat-hint> -->
+                <mat-error *ngIf="phoneControl.errors?.pattern">{{MsgList.numbersValidationErr}}</mat-error>
               </mat-form-field>
           </div>
             <div class="wrapSendButton">

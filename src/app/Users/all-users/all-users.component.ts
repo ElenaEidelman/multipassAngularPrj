@@ -6,6 +6,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table/';
 import { CustomerData } from 'src/app/Classes/customerData';
+import { MsgList } from 'src/app/Classes/msgsList';
 import { DataServiceService } from 'src/app/data-service.service';
 import { DialogConfirmComponent } from 'src/app/PopUps/dialog-confirm/dialog-confirm.component';
 import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
@@ -95,8 +96,8 @@ export class AllUsersComponent implements OnInit {
         this.dataSource.data = result.obj;
       }
       else {
-        this.dialog.open(DialogComponent,{
-          data: {message: result.errdesc}
+        this.dialog.open(DialogComponent, {
+          data: {message: MsgList.exitSystemAlert}
         })
         this.sharedService.exitSystemEvent();
       }
@@ -176,9 +177,9 @@ export class AllUsersComponent implements OnInit {
             }
           }
           else {
-            this.dialog.open(DialogComponent,{
-              data: {message: result.errdesc != undefined ? result.errdesc : result}
-            });
+            this.dialog.open(DialogComponent, {
+              data: {message: MsgList.exitSystemAlert}
+            })
             this.sharedService.exitSystemEvent();
           }
         });

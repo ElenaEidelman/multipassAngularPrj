@@ -153,7 +153,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
       }
       else {
         this.dialog.open(DialogComponent, {
-          data: { message: result.errdesc }
+          data: {message: MsgList.exitSystemAlert}
         })
         this.sharedService.exitSystemEvent();
       }
@@ -211,7 +211,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
       }
       else {
         this.dialog.open(DialogComponent, {
-          data: { message: result.errdesc }
+          data: {message: MsgList.exitSystemAlert}
         })
         this.sharedService.exitSystemEvent();
       }
@@ -275,7 +275,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         }
         else {
           this.dialog.open(DialogComponent, {
-            data: { message: result.errdesc }
+            data: {message: MsgList.exitSystemAlert}
           })
           this.sharedService.exitSystemEvent();
         }
@@ -334,7 +334,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
       }
       else {
         this.dialog.open(DialogComponent, {
-          data: { message: result.errdesc }
+          data: {message: MsgList.exitSystemAlert}
         })
         this.sharedService.exitSystemEvent();
       }

@@ -1,4 +1,5 @@
 .routerWrap{
     flex-grow: 1;
     min-height: calc(100vh - 150px);
+    border-right: 0.15em solid #8FC636;
 }

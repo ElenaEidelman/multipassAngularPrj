@@ -1,10 +1,16 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { faFileExcel } from '@fortawesome/free-solid-svg-icons';
-import { ChartDataSets } from 'chart.js';
+import { ChartDataSets, ChartOptions } from 'chart.js';
 import { Label } from 'ng2-charts';
 import { CustomerData } from '../Classes/customerData';
+import { MsgList } from '../Classes/msgsList';
+import { DataServiceService } from '../data-service.service';
+import { DialogComponent } from '../PopUps/dialog/dialog.component';
+import { SharedService } from '../shared.service';
 
 
 
@@ -16,21 +22,43 @@ import { CustomerData } from '../Classes/customerData';
 })
 export class HomeComponent implements OnInit {
 
-  constructor(public dialog: MatDialog) { }
+  userToken;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+
+  constructor(
+                public dialog: MatDialog, 
+                private dataService: DataServiceService,
+                private sharedService: SharedService) { }
 
   // data table
-  public newOrderLabelForTable;
+  // public newOrderLabelForTable;
   public newOrderDataSource: MatTableDataSource<CustomerData>;  
+
+  private labelTemp = [
+    {value: 'UserName', viewValue: 'שם לקוח'},
+    {value: 'UserId', viewValue: 'תז/ח.פ.'},
+    {value: 'Total', viewValue: 'הזמנות'},
+    {value: 'StatusDesc', viewValue: 'סטטוס'}
+  ];
+  public newOrderLabelForTable = [];
   
-  public lastCustomersLabelForTable;
+  public lastCustomersLabelForTable = [];
+  private lastCustomersLabelTemp = [
+      {value: 'UserName', viewValue: 'שם לקוח'},
+      {value: 'CreationDate', viewValue: 'תאריך הצתרפות'},
+      {value: 'StatusName', viewValue: 'סטטוס'}
+    ];
   public lastCustomersDataSource: MatTableDataSource<any>;
+
+
 
 
  
 
   // data chart
-  public newCustomersChartData: ChartDataSets[];
-  public newCustomersChartLabels:Label[];
+  public newUsersChartData: ChartDataSets[];
+  public newUsersChartLabel:Label[];
 
   public newOrdersChartData: ChartDataSets[];
   public newOrdersChartLabels:Label[];
@@ -41,93 +69,129 @@ export class HomeComponent implements OnInit {
   public activeCustomersChartData: ChartDataSets[];
   public activeCustomersChartLabels:Label[];
 
+  
+
 
 
   ngOnInit(): void {
     window.scroll(0,0);
-    this.getTablesData();
-    this.getChartsData();
+
+    this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
+
+    this.GetHomeData();
   }
 
-  getChartsData(){
-    this.newCustomersChartData = [
-      { data: [100000,200000,300000,400000,500000, 600000], label: 'סיכום הזמנות ללקוח' }
-    ];
-    this.newCustomersChartLabels = ['לקוח 1', 'לקוח 2' , 'לקוח 3' , 'לקוח 4' , 'לקוח 5' , 'לקוח 6'];
+  GetHomeData(){
+
+    let objToApi = {
+      Token: this.userToken
+    }
 
 
 
-    this.newOrdersChartData = [
-      { data: [8000, 4000, 2500, 7000, 200,5000, 4900], label: 'הזמנות חדשות' }
-    ];
-    this.newOrdersChartLabels = ['חברה 1', 'חברה 7', 'חברה 6', 'חברה 5', 'חברה 4', 'חברה 3', 'חברה 2'];
-    
+    this.dataService.GetHomeData(objToApi).subscribe(result => {
+      if (result['Token'] != undefined || result['Token'] != null) {
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
 
-    this.hotOrdersChartData = [
-      { data: [2000, 10000, 11000, 2300, 5000, 9000.11000], label: 'הזמנות חמות' }
-    ];
-    this.hotOrdersChartLabels = ['חברה 1', 'חברה 7', 'חברה 6', 'חברה 5', 'חברה 4', 'חברה 3', 'חברה 2'];
+        if (typeof result == 'object' && result.obj != null && result.obj.length > 0) {
+          
+          debugger
+          //create tables
+          this.createDisplayedColumns('newOrderLabelForTable', this.labelTemp);
+          this.createDisplayedColumns('lastCustomersLabelForTable', this.lastCustomersLabelTemp);
+          this.newOrderDataSource = new MatTableDataSource(result.obj[1]);
+          this.lastCustomersDataSource = new MatTableDataSource(result.obj[5]);
 
 
-    this.activeCustomersChartData = [
-      { data: [2000, 5000, 4000, 5500, 11000, 15000, 20000], label: 'לקוחות פעילים' }
-    ];
-    this.activeCustomersChartLabels = ['חברה 1', 'חברה 7', 'חברה 6', 'חברה 5', 'חברה 4', 'חברה 3', 'חברה 2'];
 
+          //create graphs
+
+          //new users
+          let usersData = result.obj[5].map(o => o.TotalOrders);
+          let usersLabels = result.obj[5].map(o => o.UserName);
+          this.newUsersChartData = [
+            { data: usersData, label: 'סיכום הזמנות ללקוח' }
+          ];
+          this.newUsersChartLabel = usersLabels;
+      
+      
+          //new orders
+          let ordersData = result.obj[1].map(o => o.Total);
+          let ordersLabels = result.obj[1].map(o => o.OrganizationName);
+          this.newOrdersChartData = [
+            { data: ordersData, label: 'הזמנות חדשות' }
+          ];
+          this.newOrdersChartLabels = ordersLabels;
+
+
+          //hot orders
+          let hotOrdersData = result.obj[7].map(o => o.Total);
+          let hotOrdersLabels = result.obj[7].map(o => o.OrganizationName);
+          this.hotOrdersChartData = [
+            { data: hotOrdersData, label: 'הזמנות חמות' }
+          ];
+          this.hotOrdersChartLabels = hotOrdersLabels;
+      
+      
+          //active users
+          let activeUsersData = result.obj[9].map(o => o.Total);
+          let activeUsersLabels = result.obj[9].map(o => o.OrganizationName);
+          this.activeCustomersChartData = [
+            { data: activeUsersData, label: 'לקוחות פעילים' }
+          ];
+          this.activeCustomersChartLabels = activeUsersLabels;
+        }
+      }
+      else {
+          this.dialog.open(DialogComponent, {
+            data: {message: MsgList.exitSystemAlert}
+          })
+          this.sharedService.exitSystemEvent();
+      }
+    })
   }
 
-  getTablesData(){
-    this.newOrderLabelForTable = [
-      {value: 'customerName', viewValue: 'שם לקוח'},
-      {value: 'customerId', viewValue: 'תז/ח.פ.'},
-      {value: 'orders', viewValue: 'הזמנות'},
-      {value: 'status', viewValue: 'סטטוס'}
-    ];
-  
-    this.newOrderDataSource = new MatTableDataSource([
-      new CustomerData('multipass1','11111','26','פעיל'),
-      new CustomerData('multipass2','22222','2','ליד'),
-      new CustomerData('multipass3','33333','3','ממתין לאישור'),
-      new CustomerData('multipass4','44444','4','מסורב'),
-      new CustomerData('multipass5','55555','5','מושהה'),
-      new CustomerData('multipass6','66666','6','מושהה'),
-      new CustomerData('multipass7','77777','26','פעיל'),
-      new CustomerData('multipass8','88888','2','ליד'),
-      new CustomerData('multipass9','99999','3','ממתין לאישור'),
-      new CustomerData('multipass12','12121','4','מסורב'),
-      new CustomerData('multipass13','13131','4','מושהה'),
-      new CustomerData('multipass14','14141','6','מושהה')
-    ]);
-
-    this.lastCustomersLabelForTable = [
-      {value: 'companyName', viewValue: 'שם חברה'},
-      {value: 'addDataDate', viewValue: 'תאריך הצתרפות'},
-      {value: 'status', viewValue: 'סטטוס'}
-    ];
-  
-    this.lastCustomersDataSource = new MatTableDataSource([
-      {customerId: '11111',companyName: 'multipass1', addDataDate:'10/02/2021 13:52:36',status:'פעיל'},
-      {customerId: '22222',companyName: 'multipass2', addDataDate:'10/03/2021 13:52:36',status:'פעיל'},
-      {customerId: '33333',companyName: 'multipass3', addDataDate:'10/04/2021 13:52:36',status:'פעיל'},
-      {customerId: '44444',companyName: 'multipass4', addDataDate:'10/05/2021 13:52:36',status:'פעיל'},
-      {customerId: '55555',companyName: 'multipass5', addDataDate:'10/06/2021 13:52:36',status:'פעיל'},
-      {customerId: '66666',companyName: 'multipass6', addDataDate:'10/07/2021 13:52:36',status:'פעיל'},
-      {customerId: '77777',companyName: 'multipass7', addDataDate:'10/08/2021 13:52:36',status:'פעיל'},
-      {customerId: '88888',companyName: 'multipass8', addDataDate:'10/08/2021 13:52:36',status:'פעיל'},
-      {customerId: '99999',companyName: 'multipass9', addDataDate:'10/09/2021 13:52:36',status:'פעיל'},
-      {customerId: '12121',companyName: 'multipass12', addDataDate:'10/10/2021 13:52:36',status:'פעיל'},
-      {customerId: '13131',companyName: 'multipass13', addDataDate:'10/11/2021 13:52:36',status:'פעיל'},
-    ]);
-  }
-  openDialogNewOrder(){
-    const dialogRef = this.dialog.open(DialogContentExampleDialog, {
-      data: this.lastCustomersDataSource
+  createDisplayedColumns(colObj, columns) {
+    columns.forEach(el => {
+      this[colObj].push(el.value);
     });
-
-    dialogRef.afterClosed().subscribe(result => {
-      console.log(`Dialog result: ${result}`);
-    });
   }
+
+
+
+
+  ngAfterViewInit() {
+    if(this.newOrderDataSource != undefined){
+      this.newOrderDataSource.paginator = this.paginator;
+      this.newOrderDataSource.sort = this.sort;
+    }
+  }
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.newOrderDataSource.filter = filterValue.trim().toLowerCase();
+
+    if (this.newOrderDataSource.paginator) {
+      this.newOrderDataSource.paginator.firstPage();
+    }
+  }
+
+  returnHebTranslation(obj,value){
+    return obj.filter(el => el.value == value)[0].viewValue;
+  }
+
+  // openDialogNewOrder(){
+  //   const dialogRef = this.dialog.open(DialogContentExampleDialog, {
+  //     data: this.lastCustomersDataSource
+  //   });
+
+  //   dialogRef.afterClosed().subscribe(result => {
+  //     console.log(`Dialog result: ${result}`);
+  //   });
+  // }
 
 }
 

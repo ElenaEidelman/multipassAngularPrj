@@ -15,6 +15,7 @@ import {CdkTextareaAutosize} from '@angular/cdk/text-field';
 import { Workbook } from 'exceljs';
 import * as fs from 'file-saver';
 import { debug, table } from 'console';
+import { MsgList } from 'src/app/Classes/msgsList';
 
 
 @Component({
@@ -168,9 +169,9 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       else {
         this.dialog.open(DialogComponent, {
-          data: {message: result.errdesc}
+          data: {message: MsgList.exitSystemAlert}
         })
-        // this.sharedService.exitSystemEvent();
+        this.sharedService.exitSystemEvent();
       }
     });
   }
@@ -282,9 +283,9 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       else {
         this.dialog.open(DialogComponent, {
-          data: {message: result.errdesc}
+          data: {message: MsgList.exitSystemAlert}
         })
-        // this.sharedService.exitSystemEvent();
+        this.sharedService.exitSystemEvent();
       }
     });
 
@@ -347,9 +348,9 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       else {
         this.dialog.open(DialogComponent, {
-          data: {message: result.errdesc}
+          data: {message: MsgList.exitSystemAlert}
         })
-        // this.sharedService.exitSystemEvent();
+        this.sharedService.exitSystemEvent();
       }
     });
 
@@ -384,9 +385,9 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       else {
         this.dialog.open(DialogComponent, {
-          data: {message: result.errdesc}
+          data: {message: MsgList.exitSystemAlert}
         })
-        // this.sharedService.exitSystemEvent();
+        this.sharedService.exitSystemEvent();
       }
     });
   }

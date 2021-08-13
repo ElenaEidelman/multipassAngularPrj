@@ -3,17 +3,32 @@
 </div>
 
 <div class="page-wrap">
-        <!-- table -->
-        <div class="page-element width-block-auto">
-            <div class="wrapTables">
-                <div>
-                    <div class="element-page-title">רשימת קבצים דיגיטלים</div>
-                    <app-table
-                             [dataLabelsList]="excelFilesLabelForTable"
-                             [data_Source]="excelFilesDataSource"
-                             [linksList]="linksList"
-                    ></app-table>
-                </div>
-            </div>
+    <!--table-->
+    <div class="page-element width-block-auto">
+        <div class="element-page-title">רשימת הזמנות</div>
+        <div class="mat-elevation-z8">
+            <table mat-table [dataSource]="dataSource" class="tableView digitalFilesTable" dir="rtl" matSort>
+                <ng-container matColumnDef="{{obj}}" *ngFor="let obj of displayedColumns; let i = index;">
+                        <th mat-header-cell *matHeaderCellDef> {{returnHebTranslation(excelFilesLabelForTable,obj)}}</th>
+                        <td mat-cell  *matCellDef="let element">    
+                            <span *ngIf="obj == 'FilePath' || obj == 'BatchNum'">
+                                <!-- <a href="/ExcelFiles/{{element[obj]}}" download="true" class="getForExampleExcelFile">{{element[obj]}}</a> -->
+                                <a href="/ExcelFiles/{{element['FilePath']}}" download class="getForExampleExcelFile">{{element[obj]}}</a>
+                            </span>      
+                            <span *ngIf="obj != 'BatchNum' && obj != 'FilePath'">{{element[obj]}}</span>      
+                        </td>
+                    
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                
+              </table>
+              <div *ngIf="dataSource.filteredData.length === 0" class="tableEmptyMsg">אין נתונים</div>
+              <mat-paginator 
+                            [length]="dataSource.data.length" 
+                            [pageSizeOptions]="[25, 50, 100]" 
+                            class="mat-paginator-sticky">
+                </mat-paginator>
         </div>
-</div>
+    </div>

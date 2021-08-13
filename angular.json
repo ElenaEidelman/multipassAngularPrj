@@ -27,6 +27,7 @@
               "lodash"
            ],
             "styles": [
+            
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/custom-theme.scss",
               "src/styles.css"
@@ -96,6 +97,7 @@
               "src/assets/Files/HostFile.json"
             ],
             "styles": [
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/styles.css"
             ],
             "scripts": []

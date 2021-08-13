@@ -52,9 +52,9 @@ export class NewUserComponent implements OnInit {
     StatusId: (''), // -------------StatusDescription
     // Tz: (''),//מספר משתמש של המערכת -------------Tz
     Id: (''),//מספר עובד -----------id
-    Phone: ['', Validators.required],//------------Phone
+    Phone: ['',  [Validators.required, Validators.pattern('[0]{1}[0-9]{2,3}[0-9]{7}')]],//------------Phone
     CityName: (''),// -----------CityName
-    Phone1: (''),// ------------Phone1
+    Phone1: ['', Validators.pattern('[0]{1}[0-9]{2,3}[0-9]{7}')],// ------------Phone1
     Streetno: (''),// ---------Streetno
     Permission: [{value:'מנהל בק אופיס', disabled: true}, Validators.required],
     ZIP: (''),// --------ZIP
@@ -115,9 +115,9 @@ export class NewUserComponent implements OnInit {
           
         }
         else {
-          this.dialog.open(DialogComponent,{
-            data: {message: result.errdesc}
-          });
+          this.dialog.open(DialogComponent, {
+            data: {message: MsgList.exitSystemAlert}
+          })
           this.sharedService.exitSystemEvent();
         }
       });
@@ -156,9 +156,9 @@ export class NewUserComponent implements OnInit {
         }
       }
       else {
-        this.dialog.open(DialogComponent,{
-          data: {message: result.errdesc != undefined ? result.errdesc : result}
-        });
+        this.dialog.open(DialogComponent, {
+          data: {message: MsgList.exitSystemAlert}
+        })
         this.sharedService.exitSystemEvent();
       }
     })

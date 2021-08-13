@@ -1,8 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { catchError } from 'rxjs/operators';
+import { MsgList } from 'src/app/Classes/msgsList';
 import { DataServiceService } from 'src/app/data-service.service';
 import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
 import { SharedService } from 'src/app/shared.service';
@@ -13,7 +16,11 @@ import { SharedService } from 'src/app/shared.service';
   templateUrl: './all-cards.component.html',
   styleUrls: ['./all-cards.component.css']
 })
-export class AllCardsComponent implements OnInit {
+export class AllCardsComponent implements OnInit, AfterViewInit {
+
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+  
     //filter table by card status
     statusList = [
       {value: 'all', viewValue: 'הכל'},
@@ -21,6 +28,7 @@ export class AllCardsComponent implements OnInit {
       {value: 'block', viewValue: 'חסום'}
     ];
 
+    
     displayedColumns: string[] = [];
 
   viewTable: boolean = false;
@@ -28,7 +36,11 @@ export class AllCardsComponent implements OnInit {
   userToken;
   userId;
   cardsFilterFormView: boolean = true;
+  statusListArr = [];
+
+
   constructor(private fb: FormBuilder, private dataService: DataServiceService, private dialog: MatDialog, private sharedService: SharedService) { }
+
 
   cardsForm = this.fb.group({
     CardId: (''),
@@ -67,11 +79,14 @@ export class AllCardsComponent implements OnInit {
     {value: 'OrderId', viewValue: 'מספר הזמנה'},
     {value: 'CreationDate', viewValue: 'תאריך הנפקה'},
     // {value: 'dataSend', viewValue: 'תאריך שליחה'},
-    {value: 'Status', viewValue: 'סטטוס שובר'}
+    {value: 'CardStatusDesc', viewValue: 'סטטוס שובר'}
   ];
   ngOnInit(): void {
     window.scroll(0,0);
+
     this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
+    this.getStatusList();
+
     this.userId = JSON.parse(localStorage.getItem('user')).obj.Id;
     // this.getCardsFilteredData();
     // this.getFilteredCards();
@@ -96,7 +111,6 @@ export class AllCardsComponent implements OnInit {
       }
     })
 
-    debugger
     if(formSearchFiled){
       this.spinner = true;
     
@@ -131,7 +145,7 @@ export class AllCardsComponent implements OnInit {
         }
         else {
           this.dialog.open(DialogComponent, {
-            data: {message: result.errdesc}
+            data: {message: MsgList.exitSystemAlert}
           })
           this.sharedService.exitSystemEvent();
         }
@@ -151,8 +165,10 @@ export class AllCardsComponent implements OnInit {
   createTableData(obj){
 
     this.createDisplayedColumns(this.cardsLabelForTable);
-    this.cardsDataSource.data = obj;
     this.viewTable = true;
+    this.cardsDataSource.data = obj;
+
+
   }
 
   resetForm(){
@@ -183,6 +199,47 @@ export class AllCardsComponent implements OnInit {
 
     if (this.cardsDataSource.paginator) {
       this.cardsDataSource.paginator.firstPage();
+    }
+  }
+
+  getStatusList() {
+    //api/Orders/GetOrdersStatus
+    //Token
+
+    let objToApi = {
+      Token: this.userToken
+    }
+
+    this.dataService.GetOrdersStatus(objToApi).subscribe(result => {
+
+      if (result['Token'] != undefined || result['Token'] != null) {
+
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
+
+
+        if (typeof result == 'object' && result.obj != null) {
+          this.statusListArr = [...result.obj];
+        }
+      }
+      else {
+        this.dialog.open(DialogComponent, {
+          data: {message: MsgList.exitSystemAlert}
+        })
+        this.sharedService.exitSystemEvent();
+      }
+    });
+
+
+  }
+
+  ngAfterViewInit(): void {
+    if (this.cardsDataSource != undefined) {
+      this.cardsDataSource.paginator = this.paginator;
+      this.cardsDataSource.sort = this.sort;
     }
   }
 }

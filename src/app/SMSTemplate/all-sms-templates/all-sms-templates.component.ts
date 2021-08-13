@@ -4,6 +4,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { MatAccordion } from '@angular/material/expansion';
 import { Router } from '@angular/router';
 import { resourceUsage } from 'process';
+import { MsgList } from 'src/app/Classes/msgsList';
 import { DataServiceService } from 'src/app/data-service.service';
 import { DialogConfirmComponent } from 'src/app/PopUps/dialog-confirm/dialog-confirm.component';
 import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
@@ -71,7 +72,6 @@ export class AllSmsTemplatesComponent implements OnInit {
     }
 
     this.dataService.GetSMSFormats(objToApi).subscribe(result => {
-      debugger
       if (result['Token'] != undefined || result['Token'] != null) {
 
         //set new token
@@ -100,7 +100,7 @@ export class AllSmsTemplatesComponent implements OnInit {
       }
       else {
         this.dialog.open(DialogComponent, {
-          data: { message: result }
+          data: {message: MsgList.exitSystemAlert}
         })
         this.sharedService.exitSystemEvent();
       }
@@ -192,9 +192,9 @@ export class AllSmsTemplatesComponent implements OnInit {
           }
           else {
             this.dialog.open(DialogComponent, {
-              data: { message: result.errdesc }
+              data: {message: MsgList.exitSystemAlert}
             })
-            // this.sharedService.exitSystemEvent();
+            this.sharedService.exitSystemEvent();
           }
         });
       }
@@ -227,7 +227,6 @@ export class AllSmsTemplatesComponent implements OnInit {
             this.userToken = result['Token'];
 
             if (typeof result == 'object' && result['obj'] != null && result['obj'].length > 0 && result.errdesc == 'Template Created Successfully') {
-              debugger
               this.templatesSMS.unshift(...result.obj);
 
               this.saveMessage = 'נשמר בהצלחה';
@@ -259,9 +258,9 @@ export class AllSmsTemplatesComponent implements OnInit {
           }
           else {
             this.dialog.open(DialogComponent, {
-              data: { message: result.errdesc }
+              data: {message: MsgList.exitSystemAlert}
             })
-            // this.sharedService.exitSystemEvent();
+            this.sharedService.exitSystemEvent();
           }
         });
       }
@@ -275,7 +274,7 @@ export class AllSmsTemplatesComponent implements OnInit {
     }
   }
 
-  editTemplate(template) {
+  editTemplate(template, index) {
     this.edit = !this.edit;
     this.editingTempId = template.Id;
     this.SMSForm.get('Id-' + template.Id).get('TemplateFormat' + template.Id).enable();
@@ -283,8 +282,7 @@ export class AllSmsTemplatesComponent implements OnInit {
     this.SMSForm.get('Id-' + template.Id).get('TemplateName' + template.Id).enable();
 
     this.textAreas.find((item, idx) => {
-      debugger
-      return (idx + 1) === template.Id;
+      return (idx) === index;
     }).nativeElement.focus();
   }
   editButtonClicked(obj, buttonName) {
@@ -296,7 +294,7 @@ export class AllSmsTemplatesComponent implements OnInit {
       this.SMSForm.get('Id-' + obj.Id).get('TemplateFormat' + obj.Id).setValue(textAreaValue + ' <' + buttonName + '>');
       //focus text area
       this.textAreas.find((item, idx) => {
-        return (idx + 1) === obj.Id;
+        return (idx) === obj.Id;
       }).nativeElement.focus();
     }
 
@@ -357,9 +355,9 @@ Json:
           }
           else {
             this.dialog.open(DialogComponent, {
-              data: { message: result.errdesc }
+              data: {message: MsgList.exitSystemAlert}
             })
-            // this.sharedService.exitSystemEvent();
+            this.sharedService.exitSystemEvent();
           }
         });
       }
@@ -376,8 +374,6 @@ Json:
   }
 
   sendSMSForExample(template, newTmp: boolean) {
-
-    debugger
     let templateValid: boolean = false;
 
     if(newTmp){
@@ -394,7 +390,7 @@ Json:
 
       if((newTmp && templateValid) || !newTmp){
         this.dialog.open(PhoneConfirmComponent, {
-          data: { message: '? SMS מה מספר טלפון לשליחת' }
+          data: { message: ' ?מה מספר טלפון לשליחת SMS' }
         }).afterClosed().subscribe(result => {
           if (result.result.includes('phone')) {
   
@@ -407,7 +403,6 @@ Json:
             }
   
             this.dataService.SendSampleMessage(objToApi).subscribe(result => {
-              debugger
               if (result['Token'] != undefined || result['Token'] != null) {
   
                 //set new token
@@ -425,9 +420,9 @@ Json:
               }
               else {
                 this.dialog.open(DialogComponent, {
-                  data: { message: result.errdesc != undefined ? result.err : result }
+                  data: {message: MsgList.exitSystemAlert}
                 })
-                // this.sharedService.exitSystemEvent();
+                this.sharedService.exitSystemEvent();
               }
             });
           }
@@ -462,6 +457,7 @@ export class PhoneConfirmComponent implements OnInit {
 
   phoneControl = new FormControl('');
   errorPhone: string = '';
+  MsgList = MsgList;
 
   ngOnInit(): void {
   }

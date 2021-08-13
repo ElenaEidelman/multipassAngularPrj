@@ -64,10 +64,8 @@ $ git merge new-branch
 }
 
   SendOtp(obj){
-    debugger
       return this.http.post(`${this.baseUrl}/api/Users/SendOtp`,obj).pipe(
         map(result => {
-          debugger
           return result;
         }),
         catchError(err => {
@@ -84,6 +82,17 @@ $ git merge new-branch
         return result;
       })
     );
+}
+
+GetHomeData(objToApi){
+  return this.http.post(`${this.baseUrl}/api/DashBoard/GetHomeData`, objToApi, httpOptions).pipe(
+    map(result => {
+      return result;
+    }),
+    catchError(err => {
+      return of(err.message);
+    })
+  );
 }
 
 
@@ -462,6 +471,18 @@ $ git merge new-branch
     );
   }
 
-
+  GetDigitalFilesList(objToApi){
+    //debugger
+    return this.http.post(`${this.baseUrl}/api/DigitalFilesList/GetDigitalFilesList`,objToApi).pipe(
+      map(result => {
+        //debugger
+        return result;
+      }),
+      catchError(error => {
+        //debugger
+        return of(error.message);
+      })
+    );
+  }
   
 }

@@ -11,8 +11,8 @@
         }
       }
       else {
-        this.dialog.open(DialogComponent, {
-          data: {message: result.errdesc}
-        })
-        this.sharedService.exitSystemEvent();
+          this.dialog.open(DialogComponent, {
+            data: {message: MsgList.exitSystemAlert}
+          })
+          this.sharedService.exitSystemEvent();
       }

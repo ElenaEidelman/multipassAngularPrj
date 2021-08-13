@@ -145,6 +145,10 @@ tr.example-element-row:not(.example-expanded-row):hover {
     .customer-data > div{
         width: 50%;
         padding: 0 10px;
+        text-align: right;
+    }
+    .customerDataTitle{
+        text-align: right;
     }
     .flex-element-child{
         padding: 0;

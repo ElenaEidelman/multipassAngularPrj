@@ -38,7 +38,6 @@ export class TableComponent implements OnInit {
     this.links = this.linksList;
     this.linksById = this.linksListById;
 
-    debugger
     if(this.dataLabelsList != undefined){
       this.createDisplayedColumns(this.dataLabelsList);
     }

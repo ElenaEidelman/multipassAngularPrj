@@ -21,6 +21,9 @@ import { NgxMatDatetimePickerModule, NgxMatTimepickerModule, NgxMatNativeDateMod
 import { NgxMatMomentModule } from '@angular-material-components/moment-adapter';
 import {MatCardModule} from '@angular/material/card';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {MatGridListModule} from '@angular/material/grid-list';
+import { MDBBootstrapModule } from 'angular-bootstrap-md';
+
 
 
 
@@ -155,7 +158,9 @@ import { AlphabetOnlyDirective } from './directives/letters-only.directive';
     NgxMatMomentModule,
     MatCardModule,
     HttpClientModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatGridListModule,
+    MDBBootstrapModule
   ],
   exports: [
     NumberDirective,

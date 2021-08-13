@@ -1,9 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, RouterLinkActive } from '@angular/router';
 import { CustomerData } from 'src/app/Classes/customerData';
+import { MsgList } from 'src/app/Classes/msgsList';
 import { DataServiceService } from 'src/app/data-service.service';
 import { DatePickerDialog } from 'src/app/Orders/exec-order/exec-order.component';
 import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
@@ -14,7 +17,10 @@ import { SharedService } from 'src/app/shared.service';
   templateUrl: './card-info.component.html',
   styleUrls: ['./card-info.component.css']
 })
-export class CardInfoComponent implements OnInit {
+export class CardInfoComponent implements OnInit, AfterViewInit {
+
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
 
   constructor(
     private activateRoute: ActivatedRoute,
@@ -24,8 +30,19 @@ export class CardInfoComponent implements OnInit {
     private fb: FormBuilder) { }
 
   // data table
-  public newOrderLabelForTable;
-  public newOrderDataSource: MatTableDataSource<any>;
+  public historyTableTemplate = [
+    { value: 'empIdField', viewValue: "מספר כרטיס" },
+    { value: 'isActiveField', viewValue: 'פעיל' },
+    { value: 'activityDateField', viewValue: 'תאריך הפעלה' },
+    { value: 'operationTypeField', viewValue: '	סוג פעולה' },
+    { value: 'firstChargeAmount', viewValue: '	סכום טעינה נוכחי' },
+    { value: 'loadActualSumField', viewValue: '	סכום עיסקה' },
+    { value: 'supplierNameField', viewValue: '	שם ספק' },
+    { value: 'tranIdField', viewValue: '	מספר אסמכתה' }
+  ];
+  public historyDataSource = new  MatTableDataSource([]);
+
+  public historyLabelForTable = [];
 
   userId;
   userToken;
@@ -63,18 +80,6 @@ export class CardInfoComponent implements OnInit {
   }
 
   getTablesData() {
-    this.newOrderLabelForTable = [
-      { value: 'cNumber', viewValue: "מס''ד" },
-      { value: 'digitalCode', viewValue: 'קוד דיגיטלי' },
-      { value: 'recipName', viewValue: 'שם נמען' },
-      { value: 'recipPhomeNumber', viewValue: 'מספר נייד נמען' },
-      { value: 'firstChargeAmount', viewValue: '	סכום טעינה ראשוני' },
-      { value: 'validity', viewValue: '	תוקף' },
-      { value: 'chargVaucherType', viewValue: '	סוג שובר טעינה' },
-      { value: 'sendRecently', viewValue: '	נשלח לאחרונה' }
-    ];
-
-    this.newOrderDataSource = new MatTableDataSource([]);
 
     let objToApi = {
       Token: this.userToken,
@@ -82,7 +87,6 @@ export class CardInfoComponent implements OnInit {
       UserId: this.userId
     }
 
-    debugger
     this.dataService.GetCardInfoById(objToApi).subscribe(result => {
       debugger
       if (result['Token'] != undefined || result['Token'] != null) {
@@ -97,9 +101,21 @@ export class CardInfoComponent implements OnInit {
           this.OrderDetails = result.obj[3];
           this.userDetailsForm.get('FullName').setValue(this.CardInfo.FullName);
           this.userDetailsForm.get('PhoneNumber').setValue(this.CardInfo.PhoneNumber);
-          this.Note.setValue(result.obj[1][0]['RemarkNotes']);
+          // this.Note.setValue(result.obj[1][0]['RemarkNotes']);
 
-          this.History = result.obj[7][0];
+          let historyData = result.obj[7]['lstHistoryTranInfoField'];
+          debugger
+          this.historyDataSource.data = historyData;
+          debugger
+
+          this.createDisplayedColumns('historyLabelForTable',this.historyTableTemplate);
+
+
+          debugger
+      
+          // this.historyDataSource = new MatTableDataSource([]);
+
+          
           //implement data
         }
       }
@@ -110,9 +126,9 @@ export class CardInfoComponent implements OnInit {
       }
       else {
         this.dialog.open(DialogComponent, {
-          data: { message: result.errdesc }
-        });
-        // this.sharedService.exitSystemEvent();
+          data: {message: MsgList.exitSystemAlert}
+        })
+        this.sharedService.exitSystemEvent();
       }
     });
   }
@@ -204,9 +220,9 @@ export class CardInfoComponent implements OnInit {
         }
         else {
           this.dialog.open(DialogComponent, {
-            data: { message: result.errdesc }
-          });
-          // this.sharedService.exitSystemEvent();
+            data: {message: MsgList.exitSystemAlert}
+          })
+          this.sharedService.exitSystemEvent();
         }
       })
     }
@@ -241,13 +257,20 @@ export class CardInfoComponent implements OnInit {
 
         else {
           this.dialog.open(DialogComponent, {
-            data: { message: result.errdesc }
-          });
-          // this.sharedService.exitSystemEvent();
+            data: {message: MsgList.exitSystemAlert}
+          })
+          this.sharedService.exitSystemEvent();
         }
       })
     }
 
+  }
+
+
+  createDisplayedColumns(colObj, columns) {
+    columns.forEach(el => {
+      this[colObj].push(el.value);
+    });
   }
 
   changeDate(dateForChange){
@@ -310,14 +333,34 @@ export class CardInfoComponent implements OnInit {
           }
           else {
             this.dialog.open(DialogComponent, {
-              data: {message: result.errdesc}
+              data: {message: MsgList.exitSystemAlert}
             })
-            // this.sharedService.exitSystemEvent();
+            this.sharedService.exitSystemEvent();
           }
         });
 
 
       });
 
+  }
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.historyDataSource.filter = filterValue.trim().toLowerCase();
+
+    if (this.historyDataSource.paginator) {
+      this.historyDataSource.paginator.firstPage();
+    }
+  }
+
+  returnHebTranslation(obj,value){
+    return obj.filter(el => el.value == value)[0].viewValue;
+  }
+
+  ngAfterViewInit() {
+    if(this.historyDataSource != undefined){
+      this.historyDataSource.paginator = this.paginator;
+      this.historyDataSource.sort = this.sort;
+    }
   }
 }

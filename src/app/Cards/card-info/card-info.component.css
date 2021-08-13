@@ -118,3 +118,29 @@ textarea{
 .wrapActiveVoidButton{
     position: relative;
 }
+
+@media screen and (max-width: 1024px) {
+    .innerElement{
+        margin: 1.5rem auto;
+    }
+    .element-page-title2{
+        top: -27px;
+        font-size: 17px;
+    }
+    .wrapInnerEl > div.secondChild{
+        flex-wrap: wrap;
+    }
+    .wrapInnerEl > div.secondChild > div{
+        flex-basis: unset;
+        flex-grow: unset;
+        width: 50%;
+        margin: 0.5em 0px;
+    }
+    /*.customer-info-element{
+        display: flex;
+        flex-direction: row-reverse;
+    }
+    .detailsRow{
+        margin: 0 10px;
+    } */
+}

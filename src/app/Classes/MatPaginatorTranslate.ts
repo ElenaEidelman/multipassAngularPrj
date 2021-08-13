@@ -8,7 +8,6 @@ export class MatPaginatorIntlCro extends MatPaginatorIntl {
   previousPageLabel = 'עמוד קודם';
 
   getRangeLabel = function (page, pageSize, length) {
-    //debugger
     if (length === 0 || pageSize === 0) {
       return '0 מ ' + length;
     }

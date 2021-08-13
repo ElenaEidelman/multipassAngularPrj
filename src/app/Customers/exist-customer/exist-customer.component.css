@@ -11,6 +11,9 @@ mat-accordion mat-expansion-panel mat-expansion-panel-header .mat-icon{
       justify-content: space-between;
       flex-direction: column-reverse;
   }
+  .headerData{
+    justify-content: center;
+  }
   .buttonAny{
     margin: 10px;
     display: flex;
@@ -56,12 +59,11 @@ mat-accordion mat-expansion-panel mat-expansion-panel-header .mat-icon{
   .buttonInElement > div{
     flex-grow: 1;
     flex-basis: 0;
-    margin: 1.4em 4em;
+    margin: 1.8em 4em;
     border-radius: 4px;
     text-align: center;
     display: flex;
     justify-content: center;
-    padding: 6px;
   }
   .buttonInElement > div:hover{
     cursor: pointer;
@@ -108,17 +110,19 @@ mat-accordion mat-expansion-panel mat-expansion-panel-header .mat-icon{
     right: -5px;
   }
   .createOrdersButtonsWrap{
-    /* height: 100%; */
+    height: 90%;
     margin-top: 0;
   }
   .graphWrap {
-    /* height: 100%; */
+    height: 90%;
     width: 100%;
     margin-top: 0;
   }
 
   .element-page-title{
     padding: 0;
+    margin: 10px 0;
+
   }
   .delCustButtonWrap{
     text-align: left;
@@ -135,6 +139,13 @@ mat-accordion mat-expansion-panel mat-expansion-panel-header .mat-icon{
     .graph-buttons-wrap{
       flex-direction: column;
       margin:0;
+    }
+    .element-page-title{
+      margin: 10px auto;
+    }
+    .buttonInElement > div{
+      margin: 1em 0;
+      padding: 5px;
     }
   }
 
