@@ -1,4 +1,4 @@
-<div class="pageTitle main2-title">
+<div class="pageTitle main2-title sticky top100">
     <div>
         נתוני קובץ אקסל 
     </div>
@@ -29,10 +29,10 @@
                 </table>
             </div>
 
-            <div class="buttonsWrap actionsButton">
+            <div class="buttonsWrap actionsButton marginButtons">
                 <button mat-button class="deleteButton" (click)="cancelOrder()">בטל</button>
                 <!-- <mat-spinner *ngIf="filterActionButtonSpinner" class="filterActionButton"></mat-spinner> -->
-                <button mat-button class="addButton" (click)="goToCreateOrder()">ליצור</button>
+                <button mat-button class="addButton" (click)="goToCreateOrder()">יצירת הזמנה</button>
                 <mat-spinner *ngIf="createOrderSpinner" class="createOrderSpinner"></mat-spinner>
             </div>
         </div>

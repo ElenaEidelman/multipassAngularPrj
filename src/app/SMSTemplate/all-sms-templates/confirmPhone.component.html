@@ -10,10 +10,15 @@
           <div class="wrapInput">
             <mat-form-field appearance="outline">
                 <mat-label>{{data.message}}</mat-label>
-                <input matInput placeholder="{{data.message}}" [formControl]='phoneControl' pattern="[0-9]*" numbersOnly>
+                <input
+                         matInput 
+                         placeholder="?מה מספר טלפון לשליחת SMS" 
+                         [formControl]='phoneControl' 
+                         [attr.maxlength]="10" 
+                         >
                 <mat-icon matPrefix>phone</mat-icon>
                 <!-- <mat-hint>Hint</mat-hint> -->
-                <mat-error *ngIf="phoneControl.errors?.pattern">{{MsgList.numbersValidationErr}}</mat-error>
+                <mat-error [@openClose]="phoneControl.errors?.pattern">{{MsgList.phonePatternErr}}</mat-error>
               </mat-form-field>
           </div>
             <div class="wrapSendButton">
@@ -26,9 +31,9 @@
                     <button mat-button class="addButton" (click)="yes()" cdkFocusInitial>שלח
                         <mat-icon>send</mat-icon>
                     </button>
-                    <hint class="err" *ngIf="errorPhone != ''">{{errorPhone}}</hint>
                 </div>
             </div>
+            <mat-error [@openClose]="errorPhone != ''">{{errorPhone}}</mat-error>
         </div>
       </div>
 </div>

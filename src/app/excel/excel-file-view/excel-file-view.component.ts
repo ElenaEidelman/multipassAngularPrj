@@ -35,10 +35,11 @@ export class ExcelFileViewComponent implements OnInit, OnDestroy {
   }
 
   getExcelFile(){
+    debugger
     if(localStorage.getItem('excelFileData') != ''){
       this.excelFileData = JSON.parse(localStorage.getItem('excelFileData'));
       this.customerId = this.excelFileData.customerId;
-      this.excelData = JSON.parse(this.excelFileData.fileData).obj;
+      this.excelData = JSON.parse(this.excelFileData.fileData).obj[0];
       this.createTableToViewExcelFile(this.excelData);
     }
     else{
@@ -69,6 +70,7 @@ export class ExcelFileViewComponent implements OnInit, OnDestroy {
     formDataForOrdersLine.append('OpCode', 'create')
     formDataForOrdersLine.append('FileName', this.excelFileData.excelName)
 
+    debugger
     this.dataService.InsertUpdateOrderByExcel(formDataForOrdersLine).subscribe(result => {
       this.createOrderSpinner = false;
       if (result['Token'] != undefined || result['Token'] != null) {
@@ -98,7 +100,7 @@ export class ExcelFileViewComponent implements OnInit, OnDestroy {
     // this.tableLabels = Object.keys(fileData[0]).filter(key => key != 'NewFileName');
     this.tableLabels = Object.keys(fileData[0]).filter(key => key == 'סכום' || key == "סה''כ" || key == 'כמות' );
 
-    this.tableSource = [fileData[0]];
+    this.tableSource = [...fileData];
   }
 
   cancelOrder(){

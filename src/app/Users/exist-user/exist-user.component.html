@@ -1,4 +1,4 @@
-<div class="pageTitle main2-title">
+<div class="pageTitle main2-title sticky top100">
     <div *ngIf="userData">
         {{userData.FullName}}
     </div>
@@ -94,8 +94,14 @@
                                     </mat-form-field>
                                     <mat-form-field>
                                         <mat-label>מספר טלפון*</mat-label>
-                                        <input matInput placeholder="מספר טלפון" formControlName="Phone" tabindex="5" pattern="[0-9]*" numbersOnly>
-                                        <mat-error *ngIf="userDataForm.get('Phone').errors?.pattern">{{MsgList.numbersValidationErr}}</mat-error>
+                                        <input 
+                                                matInput 
+                                                placeholder="מספר טלפון" 
+                                                formControlName="Phone" 
+                                                tabindex="5" 
+                                                [attr.maxlength]="10"
+                                                numbersOnly>
+                                        <mat-error *ngIf="userDataForm.get('Phone').errors?.pattern">{{MsgList.phonePatternErr}}</mat-error>
                                     </mat-form-field>
                                 </div>
                                 <div class="formWrapColumn">
@@ -146,8 +152,14 @@
                                     </mat-form-field>
                                     <mat-form-field>
                                         <mat-label>מספר טלפון נוסף</mat-label>
-                                        <input matInput placeholder="מספר טלפון נוסף" formControlName="Phone1" tabindex="10" pattern="[0-9]*" numbersOnly>
-                                        <mat-error *ngIf="userDataForm.get('Phone1').errors?.pattern">{{MsgList.numbersValidationErr}}</mat-error>
+                                        <input 
+                                                matInput 
+                                                placeholder="מספר טלפון נוסף" 
+                                                formControlName="Phone1" 
+                                                tabindex="10" 
+                                                [attr.maxlength]="10"
+                                                numbersOnly>
+                                        <mat-error *ngIf="userDataForm.get('Phone1').errors?.pattern">{{MsgList.phonePatternErr}}</mat-error>
                                     </mat-form-field>
 
                                 </div>

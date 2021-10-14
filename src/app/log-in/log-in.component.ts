@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router, RouterOutlet } from '@angular/router';
-import {DataServiceService} from '../data-service.service';
+import { DataServiceService } from '../data-service.service';
 
 @Component({
   selector: 'app-log-in',
@@ -21,145 +21,111 @@ export class LogInComponent implements OnInit {
 
   loginSpinner: boolean = false;
 
-  constructor( private dataService: DataServiceService, private fb: FormBuilder, private route: Router) { }
+  constructor(private dataService: DataServiceService, private fb: FormBuilder, private route: Router) { }
 
   ngOnInit(): void {
-    window.scroll(0,0);
+    window.scroll(0, 0);
+    localStorage.removeItem('user');
+    localStorage.removeItem('excelFileData');
   }
 
-  // logIn(){
-  //   // this.validKind = 'checkUser'
-  //   // this.validKind = validKind;
-  //   // if(validKind == 'SendOtp'){
-  //     
-  //     if(this.loginForm.valid){
-  //       this.loginSpinner = true;
-  //       // let mail = this.loginForm.get('mail').value;
-  //       // let password = this.loginForm.get('password').value;
-
-  //       let objToApi = {
-  //         Mail: this.loginForm.get('phone').value,
-  //         Password: this.loginForm.get('companyId').value
-  //       }
-  //     
-  //       this.dataService.checkUser(objToApi).subscribe(result => {
-
-  //             this.loginSpinner = false;
-  //             if(result['obj'] != null){
-  //               this.validKind = 'ValidateOtp';
-  //               localStorage.setItem('user', JSON.stringify(result));
-  //               
-  //               this.route.navigate(['/public/home']);
-  //             }
-  //             else{
-  //               
-  //               this.msgAlert = ' * משתמש לא קיים';
-  //               setTimeout(() =>{
-  //                 this.msgAlert = '';
-  //               }, 3000);
-  //             }
-   
-
-  //       })
-  //     }
-  //     else{
-  //       
-  //       // localStorage.setItem('userExist','false');
-  //       this.msgAlert = '* נא למלא את כל השדות';
-  //       setTimeout(() =>{
-  //         this.msgAlert = '';
-  //       }, 3000);
-  //     }
-
-
-  //   // if(validKind == 'ValidateOtp'){
-
-  //   // }
-
-  // }
-
-  SendOtp(){
-    if(this.loginForm.valid){
+  SendOtp() {
+    if (this.loginForm.valid) {
       this.loginSpinner = true;
+
+      let phone = this.loginForm.get('PhoneNumber').value.includes('-') ? this.loginForm.get('PhoneNumber').value.replace('-', '') : this.loginForm.get('PhoneNumber').value;
+
       let objToApi = {
-        PhoneNumber: this.loginForm.get('PhoneNumber').value,
+        PhoneNumber: phone,
         CompanyId: this.loginForm.get('CompanyId').value
       }
 
+      
       this.dataService.SendOtp(objToApi).subscribe(result => {
+        debugger
         this.loginSpinner = false;
         if (result['Token'] != undefined || result['Token'] != null) {
-          if(Object.values(result).length > 0){
+          if (Object.values(result).length > 0) {
             this.validKind = 'ValidateOtp';
-     
+
             this.dataService.getHost().subscribe(hostResult => {
-              if(hostResult['DevMode'] == 'true'){
+              if (hostResult['DevMode'] == 'true') {
                 this.loginForm.get('OtpKey').setValue(result['Token']);
                 this.loginForm.get('OtpKey').setValidators(Validators.required);
               }
             });
-  
+
           }
-          else{
+          else {
             this.msgAlert = 'שגיאה, נא לנסות שוב פעם';
-            setTimeout(() =>{
+            setTimeout(() => {
               this.msgAlert = '';
             }, 3000);
           }
         }
-        else{
-          this.msgAlert = result.errdesc;
-          setTimeout(() =>{
+
+        else if (result.errdesc.includes('Could not find User with phone number')) {
+          this.msgAlert = result.errdesc.replace('Could not find User with phone number', 'לא נמצא משתמש עם מספר טלפון');
+          setTimeout(() => {
+            this.msgAlert = '';
+          }, 3000);
+        }
+        else if (typeof result == 'string') {
+          this.msgAlert = result;
+          setTimeout(() => {
             this.msgAlert = '';
           }, 3000);
         }
 
+
       });
     }
-    else{
+    else {
       this.msgAlert = '* נא למלא את כל השדות';
-      setTimeout(() =>{
+      setTimeout(() => {
         this.msgAlert = '';
       }, 3000);
     }
   }
-  
 
-  ValidateOtp(){
-    if(this.loginForm.valid){
+
+  ValidateOtp() {
+    if (this.loginForm.valid) {
       let objToApi = {
         PhoneNumber: this.loginForm.get('PhoneNumber').value,
         CompanyId: this.loginForm.get('CompanyId').value,
         OtpKey: this.loginForm.get('OtpKey').value
       }
+
+      debugger
       this.dataService.ValidateOtp(objToApi).subscribe(result => {
-    
-        if(result['Token'] != '' && result['obj'] != null){
+debugger
+        if (result['Token'] != '' && result['obj'] != null) {
           localStorage.setItem('user', JSON.stringify(result));
-          
+
           this.route.navigate(['/public/home']);
           this.validKind = 'SendOtp';
         }
-        else{
+        else {
           this.validateOtpErrorAlert = 'קוד אימות לא תקין';
-          setTimeout(()=>{
+          setTimeout(() => {
             this.validateOtpErrorAlert = '';
           }, 3000);
         }
       });
     }
-    else{
+    else {
       this.validateOtpErrorAlert = 'מספר מזהה שגוי  ';
-      setTimeout(()=>{
+      setTimeout(() => {
         this.validateOtpErrorAlert = '';
       }, 3000);
     }
   }
 
-  sendAgainCodeValidation(){
+  sendAgainCodeValidation() {
     this.SendOtp();
   }
-  editPhoneNumber(){
+  editPhoneNumber() {
     // alert('editPhoneNumber');
 
     this.validKind = 'SendOtp';

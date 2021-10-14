@@ -1,9 +1,11 @@
-<div class="pageTitle main2-title">
+<div class="pageTitle main2-title sticky top100">
     <div>רשימת לקוחות רשומים</div>
     <div>
-            <button mat-raised-button class="titleMenuButton" routerLink="/public/newCustomer">לקוח חדש
+        <a routerLink="/public/newCustomer">
+            <button mat-raised-button class="titleMenuButton">לקוח חדש
                 <mat-icon>person_add_alt_1</mat-icon>
             </button>
+        </a>
     </div>
 </div>
 <div class="page-wrap">
@@ -16,13 +18,27 @@
                     <div class="formWrapRow">
                         <div>
                             <mat-form-field>
-                                <mat-label>מזהה לקוח</mat-label>
-                                <input matInput placeholder="שם לקוח, ח.פ" formControlName="customerId">
-                                <mat-icon matPrefix *ngIf="this.filterCustomerForm.get('customerId').value == ''">person</mat-icon>
-                                <button class="clearButton" *ngIf="this.filterCustomerForm.get('customerId').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.filterCustomerForm.get('customerId').setValue('')">
+                                <mat-label>שם לקוח</mat-label>
+                                <input matInput placeholder="שם לקוח" formControlName="OrganizationName">
+                                <mat-icon matPrefix *ngIf="this.filterCustomerForm.get('OrganizationName').value == ''">person</mat-icon>
+                                <button class="clearButton" *ngIf="this.filterCustomerForm.get('OrganizationName').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.filterCustomerForm.get('customerTz').setValue('')">
                                     <mat-icon>close</mat-icon>
                                 </button>
-                                <!-- <mat-error *ngIf="filterCustomerForm.get('customerId').errors?.pattern">{{MsgList.numbersValidationErr}}</mat-error> -->
+                                <!-- <mat-error *ngIf="filterCustomerForm.get('customerTz').errors?.pattern">{{MsgList.numbersValidationErr}}</mat-error> -->
+
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="formWrapRow">
+                        <div>
+                            <mat-form-field>
+                                <mat-label>מזהה לקוח</mat-label>
+                                <input matInput placeholder="ח.פ/עוסק מורשה" formControlName="customerTz" [attr.maxlength]="9" numbersOnly>
+                                <mat-icon matPrefix *ngIf="this.filterCustomerForm.get('customerTz').value == ''">person</mat-icon>
+                                <button class="clearButton" *ngIf="this.filterCustomerForm.get('customerTz').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.filterCustomerForm.get('customerTz').setValue('')">
+                                    <mat-icon>close</mat-icon>
+                                </button>
+                                <!-- <mat-error *ngIf="filterCustomerForm.get('customerTz').errors?.pattern">{{MsgList.numbersValidationErr}}</mat-error> -->
 
                             </mat-form-field>
                         </div>
@@ -66,7 +82,7 @@
                     <button mat-button class="addButton" (click)="filterTable()">חפש</button>
                     <mat-spinner *ngIf="filterSpinner" class="filterSpinner"></mat-spinner>
                 </div>
-                <div class="error" *ngIf="filterMsg != ''">{{filterMsg}}</div>
+                <div class="error" [@openClose]="filterMsg != ''">{{filterMsg}}</div>
             </form>
         </div>
     </div>
@@ -75,7 +91,7 @@
     <div class="page-element width-block-auto">
         <div class="element-page-title">רשימת לקוחות</div>
         <div>
-            <mat-form-field>
+            <mat-form-field class="not100width">
                 <mat-label>סינון</mat-label>
                 <input matInput (keyup)="applyFilter($event)" placeholder="לדוגמה: פעיל" #input>
                 <mat-icon  matPrefix>filter_list</mat-icon>
@@ -101,7 +117,7 @@
                                         <button mat-button class="addButton tableButton" [routerLink]="['/public/orderCards',0,row['id']]">הזמנה חדשה</button>
                                     </div>
                                     <div>
-                                        <mat-icon class="deleteIcon" matTooltip="מחק" (click)="deleteCustomer(row)">delete</mat-icon>
+                                        <mat-icon class="deleteIcon" matTooltip="חסום" (click)="deleteCustomer(row)">block</mat-icon>
                                     </div>
                                 </div>
                             </td>

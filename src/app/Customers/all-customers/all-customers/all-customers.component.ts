@@ -1,3 +1,4 @@
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit, ViewChild, AfterViewInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -33,7 +34,21 @@ export class CustomerData {
   selector: 'app-all-customers',
   templateUrl: './all-customers.component.html',
   styleUrls: ['./all-customers.component.css'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  animations:[
+    trigger('openClose', [
+      state('true', style({
+        overflow: 'hidden',
+        height: '*'
+      })),
+      state('false', style({
+        opacity: '0',
+        overflow: 'hidden',
+        height: '0px',
+      })),
+      transition('false <=> true', animate('600ms ease-in-out'))
+    ])
+  ]
 })
 export class AllCustomersComponent implements OnInit, AfterViewInit {
 
@@ -63,7 +78,8 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
   MsgList = MsgList;
 
   filterCustomerForm = this.fb.group({
-    customerId: (''),
+    customerTz: (''),
+    OrganizationName: (''),
     customerEmail: ['', Validators.email],
     OrderStatus: ('')
   });
@@ -75,18 +91,20 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
   customerLabelForTable = [
     { value: 'organizationName', viewValue: 'שם לקוח' },
     { value: 'Tz', viewValue: 'תז/ח.פ.' },
-    { value: 'OrdersCount', viewValue: 'סה"כ הזמנות' },
-    { value: 'StatusDescription', viewValue: 'סטטוס' }
+    { value: 'OrderCount', viewValue: 'סה"כ הזמנות' },
+    { value: 'StatusDescription', viewValue: 'סטטוס' },
+    { value: 'Email', viewValue: 'מייל' }
   ];
 
 
   ngOnInit(): void {
     window.scroll(0, 0);
+
     this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
 
     this.idUnsubscribe = this.activeRoute.params.subscribe(param => {
       if (param['id'] != undefined) {
-        this.filterCustomerForm.get('customerId').setValue(param['id']);
+        this.filterCustomerForm.get('customerTz').setValue(param['id']);
         this.filterTable();
       }
       else {
@@ -118,9 +136,9 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
         }
       }
       else {
-        this.dialog.open(DialogComponent, {
-          data: {message: MsgList.exitSystemAlert}
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: {message: MsgList.exitSystemAlert}
+        // })
         this.sharedService.exitSystemEvent();
       }
     });
@@ -135,7 +153,7 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
     }
   
     this.dataService.GetAllCustomers(objToApi).subscribe(result => {
-    
+    debugger
       this.filterSpinner = false;
       if (result['Token'] != undefined || result['Token'] != null) {
 
@@ -148,6 +166,7 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
         if (typeof result == 'object' && result['obj'] != null && result['obj'].length > 0) {
           this.allCustomersDataSpare = result['obj'];
           this.dataSource.data = result['obj'];
+          debugger
         }
         // if(typeof result == 'object' &&  result['obj'] == null){
         //   // this.errorMsg = 'No Data Found';
@@ -162,9 +181,9 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
         })
       }
       else {
-        this.dialog.open(DialogComponent, {
-          data: {message: MsgList.exitSystemAlert}
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: {message: MsgList.exitSystemAlert}
+        // })
         this.sharedService.exitSystemEvent();
       }
     });
@@ -217,9 +236,10 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
     if (fieldFilled) {
       this.filterSpinner = true;
 
+      debugger
     
       this.dataService.GetCustomersByFilter(objToApi).subscribe(result => {
-      
+      debugger
         this.filterSpinner = false;
 
         if (result['Token'] != undefined || result['Token'] != null) {
@@ -233,6 +253,12 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
 
             if (typeof result == 'object' && result['obj'] != null && result['obj'].length > 0) {
               this.dataSource = new MatTableDataSource(result['obj']);
+
+              setTimeout(()=>{
+                this.dataSource.paginator = this.paginator;
+                this.dataSource.sort = this.sort;
+              }, 0);
+
             }
             if (typeof result == 'object' && result['obj'] == null) {
               this.dataSource.data = [];
@@ -293,6 +319,7 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
         }
       
         this.dataService.DeleteSuspendUsers(objToApi).subscribe(result => {
+          debugger
           if (result['Token'] != undefined || result['Token'] != null) {
 
             //set new token
@@ -304,7 +331,7 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
             if (result.errdesc.includes('Successfully')) {
               this.getAllCustomers();
               this.dialog.open(DialogComponent, {
-                data: { message: result.errdesc }
+                data: { message: 'הלקוח נחסם בהצלחה' }
               });
             }
             else {
@@ -314,9 +341,9 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
             }
           }
           else {
-            this.dialog.open(DialogComponent, {
-              data: {message: MsgList.exitSystemAlert}
-            })
+            // this.dialog.open(DialogComponent, {
+            //   data: {message: MsgList.exitSystemAlert}
+            // })
             this.sharedService.exitSystemEvent();
           }
         });

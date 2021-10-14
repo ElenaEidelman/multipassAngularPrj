@@ -1,5 +1,5 @@
 import { Route } from '@angular/compiler/src/core';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { Router } from '@angular/router';
 import { DataServiceService } from '../data-service.service';
@@ -8,6 +8,10 @@ import { SharedService } from '../shared.service';
 import { MatDialog } from '@angular/material/dialog';
 import { AdminLogInComponent } from '../PopUps/admin-log-in/admin-log-in.component';
 import { HttpClient } from '@angular/common/http';
+import { DialogComponent } from '../PopUps/dialog/dialog.component';
+import { MsgList } from '../Classes/msgsList';
+
+
 
 @Component({
   selector: 'app-header',
@@ -15,7 +19,11 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
+
+
+
   clickEventSubscription:Subscription;
+
 
   constructor(
                 private route: Router, 
@@ -33,6 +41,8 @@ export class HeaderComponent implements OnInit {
   NameUser: string = '';
   userLogo: string;
 
+  
+
   ngOnInit() {
     this.setUserData();
   }
@@ -48,14 +58,18 @@ export class HeaderComponent implements OnInit {
       localStorage.setItem('baseUrl', result['baseUrl']);
      })
     localStorage.removeItem('user');
+    localStorage.removeItem('excelFileData');
 
     this.route.navigate(['/logIn']);
+    this.dialog.open(DialogComponent, {
+      data: {message: MsgList.exitSystemAlert}
+    })
   }
 
   setUserData(){
     let userData = JSON.parse(localStorage.getItem('user'));
     let name = userData.obj.Fname;
-    let lname = userData.obj.Lname;
+    let lname = userData.obj.Lname == null ? '' :  userData.obj.Lname;
 
     this.NameUser = name + ' ' + lname;
 

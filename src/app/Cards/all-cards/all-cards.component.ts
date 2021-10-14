@@ -1,12 +1,15 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import { AfterViewInit, Component, OnChanges, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+
+import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { catchError } from 'rxjs/operators';
 import { MsgList } from 'src/app/Classes/msgsList';
 import { DataServiceService } from 'src/app/data-service.service';
+import { DialogConfirmComponent } from 'src/app/PopUps/dialog-confirm/dialog-confirm.component';
 import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
 import { SharedService } from 'src/app/shared.service';
 
@@ -14,9 +17,23 @@ import { SharedService } from 'src/app/shared.service';
 @Component({
   selector: 'app-all-cards',
   templateUrl: './all-cards.component.html',
-  styleUrls: ['./all-cards.component.css']
+  styleUrls: ['./all-cards.component.css'],
+  animations:[
+    trigger('openClose', [
+      state('true', style({
+        overflow: 'hidden',
+        height: '*'
+      })),
+      state('false', style({
+        opacity: '0',
+        overflow: 'hidden',
+        height: '0px',
+      })),
+      transition('false <=> true', animate('600ms ease-in-out'))
+    ])
+  ]
 })
-export class AllCardsComponent implements OnInit, AfterViewInit {
+export class AllCardsComponent implements OnInit, AfterViewInit, OnChanges {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -29,7 +46,7 @@ export class AllCardsComponent implements OnInit, AfterViewInit {
     ];
 
     
-    displayedColumns: string[] = [];
+  displayedColumns: string[] = [];
 
   viewTable: boolean = false;
   spinner: boolean = false;
@@ -37,33 +54,31 @@ export class AllCardsComponent implements OnInit, AfterViewInit {
   userId;
   cardsFilterFormView: boolean = true;
   statusListArr = [];
+  smsTemplatesData = [];
+
+  MsgList= MsgList;
 
 
-  constructor(private fb: FormBuilder, private dataService: DataServiceService, private dialog: MatDialog, private sharedService: SharedService) { }
+  constructor(
+              private fb: FormBuilder, 
+              private dataService: DataServiceService, 
+              private dialog: MatDialog, 
+              private sharedService: SharedService) { }
 
 
   cardsForm = this.fb.group({
     CardId: (''),
-    PhoneNo: (''),
-    // Name: (''),
-    // CompanyName: (''),
-    // Status: (''),
-    // OrderId: (''),
-    // FromDate: (''),
-    // ToDate: (''),
-    // userid: (''),
-    // tenantid: (''),
-
-    FName: (''),
-    LName: (''),
-    // // status: (''),
+    PhoneNo: ['', Validators.pattern('[[0][0-9]{9}]*')],
+    FullName: (''),
     OrderId: (''),
     FromDate: (''),
     ToDate: (''),
-    // CompanyName: (''),
     CustomerId: (''),
-    // documentId: (''),
-    // byDate: ('dateIssue')
+  });
+
+  sendSms = this.fb.group({
+    smsTemplates: ['', Validators.required],
+    previewSmsTemplate: ['', Validators.required]
   });
 
   cardsDataSource = new MatTableDataSource([]);
@@ -73,7 +88,7 @@ export class AllCardsComponent implements OnInit, AfterViewInit {
 
   cardsLabelForTable = [
     {value: 'CardId', viewValue: 'מספר שובר'},
-    {value: 'CompanyName', viewValue: 'שם לקוח'},
+    {value: 'FullName', viewValue: 'שם לקוח'},
     {value: 'PhoneNo', viewValue: 'מספר טלפון'},
     {value: 'balance', viewValue: 'יתרה'},// no data !!!!
     {value: 'OrderId', viewValue: 'מספר הזמנה'},
@@ -84,7 +99,9 @@ export class AllCardsComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     window.scroll(0,0);
 
+
     this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
+    this.getSmsTemplates();
     this.getStatusList();
 
     this.userId = JSON.parse(localStorage.getItem('user')).obj.Id;
@@ -93,9 +110,10 @@ export class AllCardsComponent implements OnInit, AfterViewInit {
   }
 
   getFilteredCards(){
-  
+
     // this.cardsDataSource = new MatTableDataSource([]);
-    // this.cardsDataSource.data = [];
+    this.cardsDataSource.data = [];
+    this.displayedColumns = [];
     this.viewTable = false;
 
     // let token = JSON.parse(localStorage.getItem('user'))['Token'];
@@ -113,9 +131,10 @@ export class AllCardsComponent implements OnInit, AfterViewInit {
 
     if(formSearchFiled){
       this.spinner = true;
-    
+  
       debugger
       this.dataService.GetAllCards(objToApi).subscribe(result => {
+
         debugger
         this.spinner = false;
 
@@ -144,9 +163,9 @@ export class AllCardsComponent implements OnInit, AfterViewInit {
           },10000);
         }
         else {
-          this.dialog.open(DialogComponent, {
-            data: {message: MsgList.exitSystemAlert}
-          })
+          // this.dialog.open(DialogComponent, {
+          //   data: {message: MsgList.exitSystemAlert}
+          // })
           this.sharedService.exitSystemEvent();
         }
       })
@@ -154,7 +173,7 @@ export class AllCardsComponent implements OnInit, AfterViewInit {
 
     
     else{
-      this.formErrorMsg = 'נא למלא לפחות אחד מהשדות';
+      this.formErrorMsg = 'נא למלא לפחות אחת מהשדות';
       setTimeout(()=>{
         this.formErrorMsg = '';
       },3000);
@@ -163,10 +182,15 @@ export class AllCardsComponent implements OnInit, AfterViewInit {
 
 
   createTableData(obj){
-
+    this.cardsDataSource.data = [];
     this.createDisplayedColumns(this.cardsLabelForTable);
     this.viewTable = true;
     this.cardsDataSource.data = obj;
+
+    setTimeout(()=>{
+      this.cardsDataSource.paginator = this.paginator;
+      this.cardsDataSource.sort = this.sort;
+    }, 1000);
 
 
   }
@@ -226,9 +250,9 @@ export class AllCardsComponent implements OnInit, AfterViewInit {
         }
       }
       else {
-        this.dialog.open(DialogComponent, {
-          data: {message: MsgList.exitSystemAlert}
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: {message: MsgList.exitSystemAlert}
+        // })
         this.sharedService.exitSystemEvent();
       }
     });
@@ -236,10 +260,125 @@ export class AllCardsComponent implements OnInit, AfterViewInit {
 
   }
 
+  //enable/disable send sms button
+  smsTempleteSelect(event){
+    if(event.value != undefined){
+
+      // this.smsTemplatesData;
+      this.sendSms.get('previewSmsTemplate').setValue(this.smsTemplatesData.filter(el => el.Id == event.value)[0]['TemplateFormat']);
+      //enable send sms button
+      // this.sendButtonSms = false;
+    }
+  }
+
+  getSmsTemplates(){
+
+    let objToApi = {
+      Token: this.userToken
+    }
+
+    this.dataService.GetSMSFormats(objToApi).subscribe(result => {
+      
+
+      if (result['Token'] != undefined || result['Token'] != null) {
+
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
+
+        if (typeof result == 'object' && result.obj != null && result.obj.length > 0) {
+          this.smsTemplatesData = [...result.obj];
+        }
+      }
+      else {
+        // this.dialog.open(DialogComponent, {
+        //   data: {message: MsgList.exitSystemAlert}
+        // })
+        this.sharedService.exitSystemEvent();
+      }
+    });
+  }
+
+  sendSMS(){
+
+
+    if(this.sendSms.valid){
+    this.dialog.open(DialogConfirmComponent, {
+      data: {message: 'האם לשלוח SMS?', eventButton:'שלח'}
+    }).afterClosed().subscribe(result => {
+      if(result.result == 'yes'){
+        let test = this.cardsDataSource;
+        debugger
+        // if(this.orderCardsData.length > 0){
+        //   let selectedCards = [];
+        //   this.orderCardsData.forEach(card => {
+        //     selectedCards.push(card.Id)
+        //   });
+    
+        // let objToApi = {
+        //   Token: this.userToken,
+        //   TemplateId: this.sendSms.get('smsTemplates').value,
+        //   UserId: this.userId,
+        //   OrderLineIds: selectedCards,
+        //   CoreOrderId: '',
+        //   From: this.smsTemplatesData.filter(el => el.Id == this.sendSms.get('smsTemplates').value)[0]['SenderName']
+        // }
+    
+        // this.dataService.SendSMSByOrderLine(objToApi).subscribe(result => {
+        //   if (result['Token'] != undefined || result['Token'] != null) {
+    
+        //     //set new token
+        //     let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        //     tempObjUser['Token'] = result['Token'];
+        //     localStorage.setItem('user', JSON.stringify(tempObjUser));
+        //     this.userToken = result['Token'];
+    
+        //     if (result.errdesc == 'OK') {
+              
+        //       this.dialog.open(DialogComponent, {
+        //         data: {title: '', message: 'ההודעות נשלחות ברקע' ,subTitle: ' ההודעה נשלחה ל ' + this.orderCardsData.length  + ' נמענים '  }
+        //       })
+
+        //       this.sendSmsGroup.reset();
+        //       this.openSendSmsBlock();
+        //     }
+        //     else{
+        //       this.dialog.open(DialogComponent, {
+        //         data: {message: result.errdesc}
+        //       });
+        //     }
+        //   }
+        //   else {
+        //     // this.dialog.open(DialogComponent, {
+        //     //   data: {message: MsgList.exitSystemAlert}
+        //     // })
+        //     this.sharedService.exitSystemEvent();
+        //   }
+        // });
+    
+        // }
+      }
+    })
+  }
+  else{
+    // this.errorSendSms = 'נא לבחור תבנית ההודעה';
+    // setTimeout(()=>{
+    //   this.errorSendSms = '';
+    // }, 2000)
+  }
+  }
+
   ngAfterViewInit(): void {
     if (this.cardsDataSource != undefined) {
+      debugger
       this.cardsDataSource.paginator = this.paginator;
       this.cardsDataSource.sort = this.sort;
     }
+  }
+
+  ngOnChanges(){
+    debugger
   }
 }

@@ -30,6 +30,12 @@ mat-spinner >  svg{
 .viewCodeButton{
     margin: 2rem 0 0rem 0;
     text-align: center;
+    display: flex;
+    justify-content: center;
+    flex-direction: row-reverse;
+}
+.viewCodeButton > button{
+    margin: 0 5px;
 }
 .addToExecOrderForm  > mat-form-field{
     padding: 0 3px;
@@ -121,18 +127,55 @@ tr.example-element-row:not(.example-expanded-row):hover {
     justify-content: center;
     margin-top: auto;
   }
-
   .changeDate{
+      display: flex;
+  }
+  .changeDate > mat-icon{
+      color: #88C43E;
+  }
+  .changeDate > span{
       text-decoration: underline;
   }
-  .changeDate:hover{
+  .changeDate > span:hover{
       cursor: pointer;
   }
 
+  .flex-element-child{
+    padding: 10px !important;
+}
+.formBorder{
+    padding: 0 !important;
+}
+
+.paddingB0{
+    padding-bottom: 0 !important;
+}
+.padding0{
+    padding: 0 !important
+}
+
+.additionalOptionsSMS.formBorder{
+    padding: 1.5em !important;
+    margin: 2em 0;
+}
 
 
+.smsFormWrap{
+    display: flex;
+    flex-direction: column;
+}
+.smsFormWrap > div{
+    margin: 10px;
+    flex-grow: 1;
+}
 
+.smsFormWrap mat-form-field{
+    width: 100%;
+}
 
+.buttonSendSms{
+    text-align: center;
+}
 
 
 @media screen and (max-width: 1024px){
@@ -149,9 +192,6 @@ tr.example-element-row:not(.example-expanded-row):hover {
     }
     .customerDataTitle{
         text-align: right;
-    }
-    .flex-element-child{
-        padding: 0;
     }
     .flexData{
         display: unset;

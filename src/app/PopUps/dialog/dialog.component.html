@@ -9,8 +9,8 @@
             <div class="title">
                 {{data.title}}
             </div>
-          <div class="dialogMessage">{{data.message}}</div>
-            <div>
+          <div class="dialogMessage" *ngIf="data.message != ''" [innerHTML]="data.message"></div>
+            <div *ngIf="data.subTitle != ''">
                 {{data.subTitle}}
             </div>
             <div class="wrapSendButton">

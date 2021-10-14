@@ -20,7 +20,7 @@
 }
 .additionalOptionsSMS{
     display: flex;
-    flex-direction: row-reverse;
+    flex-direction: column;
     margin: 2em 0;
 }
 .additionalOptionsSMS > div{
@@ -28,7 +28,7 @@
     flex-grow: 1;
     flex-basis: 0;
     text-align: CENTER; */
-    margin: 0 20px;
+    /* margin: 0 20px; */
 }
 
 .additionalOptionDelete{
@@ -51,15 +51,23 @@
     background:#DDE0E0;
 } */
 .checkBoxBG{
-    background:#DDE0E0;
+    background:#EFEFED;
 }
 
 .textAreaWrap{
     width: 100%;
 }
 .buttonSendSms{
-    margin: auto 2em !important;
+    text-align: center;
+    margin-bottom: 10px !important;
 }
 .selectWrap{
     margin: auto 0 !important;
+}
+
+
+@media screen and (max-width: 1024px) {
+    .tableActions{
+        justify-content: center;
+    }
 }

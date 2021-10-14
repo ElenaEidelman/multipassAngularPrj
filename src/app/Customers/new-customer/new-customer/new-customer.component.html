@@ -1,4 +1,4 @@
-<div class="pageTitle main2-title">
+<div class="pageTitle main2-title" [class.sticky]='!IfComponentDialog' [class.top100]='!IfComponentDialog'>
     <div>לקוח חדש</div>
 </div>
 <div class="page-wrap">
@@ -69,7 +69,13 @@
                                         
                                         <mat-form-field>
                                             <mat-label>מספר טלפון*</mat-label>
-                                            <input matInput placeholder="מספר טלפון" formControlName="Phone" tabindex="5" pattern="[0-9]*" numbersOnly>
+                                            <input 
+                                                    matInput 
+                                                    placeholder="מספר טלפון" 
+                                                    formControlName="Phone" 
+                                                    tabindex="5" 
+                                                    numbersOnly
+                                                    [attr.maxlength]="10">
                                             <button class="clearButton" *ngIf="this.newCustomerForm.get('Phone').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('Phone').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
@@ -87,11 +93,18 @@
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>מספר טלפון נוסף</mat-label>
-                                            <input type="text" matInput placeholder="מספר טלפון נוסף" formControlName="Phone1" tabindex="6" pattern="[0-9]*" numbersOnly>
+                                            <input 
+                                                    type="text" 
+                                                    matInput 
+                                                    placeholder="מספר טלפון נוסף" 
+                                                    formControlName="Phone1" 
+                                                    tabindex="6" 
+                                                    numbersOnly
+                                                    [attr.maxlength]="10">
                                             <button class="clearButton" *ngIf="this.newCustomerForm.get('Phone1').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('Phone1').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
-                                            <mat-error *ngIf="newCustomerForm.get('Phone1').errors?.pattern">{{MsgList.numbersValidationErr}}</mat-error>
+                                            <mat-error *ngIf="newCustomerForm.get('Phone1').errors?.pattern">{{MsgList.phonePatternErr}}</mat-error>
                                         </mat-form-field>
 
                                     </div>
@@ -106,11 +119,16 @@
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>תפקיד*</mat-label>
-                                            <input matInput placeholder="תפקיד*" formControlName="Permission" tabindex="7" pattern="^([^0-9]*)$">
-                                            <button class="clearButton" *ngIf="this.newCustomerForm.get('Permission').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('Permission').setValue('')">
+                                            <mat-select formControlName="Permission" tabindex="7">
+                                                <mat-option *ngFor="let role of rolesList" [value]="role">
+                                                    {{role}}
+                                                </mat-option>
+                                            </mat-select>
+                                            <!-- <input matInput placeholder="תפקיד*" formControlName="Permission" tabindex="7" pattern="^([^0-9]*)$"> -->
+                                            <!-- <button class="clearButton" *ngIf="this.newCustomerForm.get('Permission').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('Permission').setValue('')">
                                                 <mat-icon>close</mat-icon>
-                                            </button>
-                                            <mat-error *ngIf="newCustomerForm.get('Permission').errors?.pattern">{{MsgList.lettersValidationErr}}</mat-error>
+                                            </button> -->
+                                            <!-- <mat-error *ngIf="newCustomerForm.get('Permission').errors?.pattern">{{MsgList.lettersValidationErr}}</mat-error> -->
                                         </mat-form-field>
                                     </div>
                                     <div class="formWrapColumn">
@@ -136,9 +154,8 @@
                                                     placeholder="ח.פ./עוסק מורש*" 
                                                     formControlName="Tz" 
                                                     tabindex="8" 
-                                                    pattern="[0-9]*" 
                                                     numbersOnly
-                                                    [maxlength]="9">
+                                                    [attr.maxlength]="9">
 
                                             <button class="clearButton" *ngIf="this.newCustomerForm.get('Tz').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('Tz').setValue('')">
                                                 <mat-icon>close</mat-icon>

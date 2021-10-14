@@ -55,7 +55,7 @@ $ git merge new-branch
 
 
   ngOnInit(){
-    
+    debugger
   }
 
   getHost(){
@@ -64,6 +64,7 @@ $ git merge new-branch
 }
 
   SendOtp(obj){
+    debugger
       return this.http.post(`${this.baseUrl}/api/Users/SendOtp`,obj).pipe(
         map(result => {
           return result;
@@ -218,7 +219,7 @@ GetHomeData(objToApi){
 
   
   GetAllCustomers(objToApi){
-    //debugger
+    debugger
     return this.http.post(`${this.baseUrl}/api/AllCustomers/GetAllCustomers`,objToApi).pipe(
       map(result => {
         //debugger
@@ -379,6 +380,20 @@ GetHomeData(objToApi){
     );
   }
 
+  SendSMSByOrderId(objToApi){
+    return this.http.post(`${this.baseUrl}/api/SMSController/SendSMSByOrderId
+
+
+    `,objToApi).pipe(
+      map(result => {
+        return result;
+      }),
+      catchError(error => {
+        return of(error.message);
+      })
+    );
+  }
+
   
   SendSMSByOrderLine(objToApi){
     return this.http.post(`${this.baseUrl}/api/SMS/SendSMSByOrderLine`,objToApi).pipe(
@@ -485,4 +500,18 @@ GetHomeData(objToApi){
     );
   }
   
+  
+  UpdatePinCodeOfCards(objToApi){
+    //debugger
+    return this.http.post(`${this.baseUrl}/api/AllCards/UpdatePinCodeOfCards`,objToApi).pipe(
+      map(result => {
+        //debugger
+        return result;
+      }),
+      catchError(error => {
+        //debugger
+        return of(error.message);
+      })
+    );
+  }
 }

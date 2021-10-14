@@ -52,7 +52,7 @@ export class NewUserComponent implements OnInit {
     StatusId: (''), // -------------StatusDescription
     // Tz: (''),//מספר משתמש של המערכת -------------Tz
     Id: (''),//מספר עובד -----------id
-    Phone: ['',  [Validators.required, Validators.pattern('[0]{1}[0-9]{2,3}[0-9]{7}')]],//------------Phone
+    Phone: ['', Validators.pattern('[0]{1}[0-9]{2,3}[0-9]{7}')],//------------Phone
     CityName: (''),// -----------CityName
     Phone1: ['', Validators.pattern('[0]{1}[0-9]{2,3}[0-9]{7}')],// ------------Phone1
     Streetno: (''),// ---------Streetno
@@ -115,9 +115,9 @@ export class NewUserComponent implements OnInit {
           
         }
         else {
-          this.dialog.open(DialogComponent, {
-            data: {message: MsgList.exitSystemAlert}
-          })
+          // this.dialog.open(DialogComponent, {
+          //   data: {message: MsgList.exitSystemAlert}
+          // })
           this.sharedService.exitSystemEvent();
         }
       });
@@ -156,9 +156,9 @@ export class NewUserComponent implements OnInit {
         }
       }
       else {
-        this.dialog.open(DialogComponent, {
-          data: {message: MsgList.exitSystemAlert}
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: {message: MsgList.exitSystemAlert}
+        // })
         this.sharedService.exitSystemEvent();
       }
     })

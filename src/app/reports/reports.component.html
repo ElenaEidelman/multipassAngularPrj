@@ -1,16 +1,17 @@
-<div class="pageTitle main2-title">
+<div class="pageTitle main2-title sticky top100">
     <div>הפקת דוחות</div>
 </div>
+<div class="page-wrap">
     <div class="page-element width-block-auto">
         <!-- <div class="element-page-title">{{elementTitle}}</div> -->
 
         <mat-tab-group mat-align-tabs="start">
-            
+
             <!-- Report 1-->
             <mat-tab>
                 <ng-template mat-tab-label>
                     <div class="tab-label">
-                        <span >דוח מימושים</span>
+                        <span>דוח מימושים</span>
                     </div>
                 </ng-template>
                 <div class="wrap-content">
@@ -18,107 +19,117 @@
                         <mat-spinner class="noDataSpinner" *ngIf="spinner"></mat-spinner>
                     </div>
                     <div class="formBorder formElement">
-                        <form [formGroup]="Report3Form" (submit)="realizationReport()" *ngIf="Report3FormView">
+                        <form [formGroup]="Report1Form" (submit)="loadingReport('Report1Form')" *ngIf="Report1FormView">
                             <div class="wrapReportForm formWrap">
                                 <div class="formWrapRow">
-                                    <div >
-                                        <div>
-                                            <mat-form-field>
-                                                <mat-label>שם לקוח</mat-label>
-                                                <mat-select formControlName="customer" (selectionChange)="optionChange($event)">
-                                                    <ng-container *ngFor="let customer of customers; let i = index">
-                                                        <mat-option [value]="customer">
-                                                            {{customer.organizationName}}
-                                                            <!-- {{customer}} -->
-                                                        </mat-option>
-                                                    </ng-container>
-                                                </mat-select>
-                                                <mat-error *ngIf="Report3Form.get('customer').hasError('required')">{{MsgList.requiredField}}</mat-error>
-                                            </mat-form-field>
-                                        </div>
-                                        <div>
-                                            <mat-form-field>
-                                                <mat-label>מייל לשליחה</mat-label>
-                                                <input matInput disabled="false"
-                                                placeholder = " mail@gmail.com :לדוגמא"
+                                    <!--name customer-->
+                                    <div>
+                                        <mat-form-field>
+                                            <mat-label>שם לקוח</mat-label>
+                                            <mat-select formControlName="customer" [compareWith]="compareFunction"
+                                                (selectionChange)="optionChange($event)">
+                                                <ng-container *ngFor="let customer of customers; let i = index">
+                                                    <mat-option [value]="customer">
+                                                        {{customer.organizationName}}
+                                                        <!-- {{customer}} -->
+                                                    </mat-option>
+                                                </ng-container>
+                                            </mat-select>
+                                            <mat-error *ngIf="Report1Form.get('customer').hasError('required')">
+                                                {{MsgList.requiredField}}</mat-error>
+                                        </mat-form-field>
+                                    </div>
+                                    <!--mail-->
+                                    <div>
+                                        <mat-form-field>
+                                            <mat-label>מייל לשליחה</mat-label>
+                                            <input matInput disabled="false" placeholder=" mail@gmail.com :לדוגמא"
                                                 formControlName="CustomerEmail">
-                                                <!-- <button class="clearButton" *ngIf="this.Report1Form.get('CustomerEmail').value != ''"
-                                                mat-button  matPrefix mat-icon-button aria-label="Clear"
-                                                (click)="this.Report1Form.get('CustomerEmail').setValue('')">
-                                                <mat-icon>close</mat-icon>
-                                                </button> -->
-                                                <mat-error *ngIf="Report3Form.get('CustomerEmail').hasError('required')">{{MsgList.requiredField}}</mat-error>
-                                                <mat-error *ngIf="Report3Form.get('CustomerEmail').hasError('email')">{{MsgList.emailFormatValidationErr}}</mat-error>
-                                            </mat-form-field>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div>
-                                            <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
-                                                <mat-label>מתאריך</mat-label>
-                                                <input matInput [matDatepicker]="picker" disabled="false" formControlName="FDate">
-                                                <!-- <button class="clearButton" *ngIf="Report1Form.get('ValidateDate').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('ValidateDate').setValue('')">
+                                            <mat-error *ngIf="Report1Form.get('CustomerEmail').hasError('required')">
+                                                {{MsgList.requiredField}}</mat-error>
+                                            <mat-error *ngIf="Report1Form.get('CustomerEmail').hasError('email')">
+                                                {{MsgList.emailFormatValidationErr}}</mat-error>
+                                            <mat-hint class="error2 textAlignRight"
+                                                [@openClose]="radioCurrentDayPressed1Form">* הדוח לא יכיל מידע עבור יום
+                                                העסקים הנוכחי</mat-hint>
+                                                <button class="clearButton" *ngIf="Report1Form.get('CustomerEmail').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="Report1Form.get('CustomerEmail').setValue('')">
                                                     <mat-icon>close</mat-icon>
-                                                </button> -->
-                                                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                                                <mat-datepicker #picker></mat-datepicker>
-                                                <mat-error *ngIf="Report3Form.get('FDate').hasError('required')">{{MsgList.requiredField}}</mat-error>
+                                                </button>
+                                        </mat-form-field>
 
-                                            </mat-form-field>
-                                        </div>
-                                        <div>
-                                            <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
-                                                <mat-label>עד תאריך</mat-label>
-                                                <input matInput [matDatepicker]="picker2" disabled="false" formControlName="TDate">
-                                                <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
-                                                <mat-datepicker #picker2></mat-datepicker>
-                                                <mat-error *ngIf="Report3Form.get('TDate').hasError('required')">{{MsgList.requiredField}}</mat-error>
-                                            </mat-form-field>
-                                        </div>
                                     </div>
-                                    <div>
-                                        <div dir="rtl"  class="fullWidth">
-                                            <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
-                                                <mat-label>תאריך ושעת שליחה</mat-label>
-                                                <input matInput 
-                                                    formControlName="ScheduleDate"
-                                                    [ngxMatDatetimePicker]="pickerTest" 
-                                                    placeholder="תאריך ושעת שליחה"
-                                                    disabled="false">
-                                                <mat-datepicker-toggle matSuffix [for]="pickerTest"></mat-datepicker-toggle>
-                                                <ngx-mat-datetime-picker #pickerTest 
-                                                                        [showSpinners]="true" 
-                                                                        [showSeconds]="false"
-                                                                        [stepHour]="1" 
-                                                                        [stepMinute]="1" 
-                                                                        [touchUi]="false" 
-                                                                        color="primary" 
-                                                                        [enableMeridian]="true" 
-                                                                        [disableMinute]="false" 
-                                                                        [hideTime]="false">
-                                                </ngx-mat-datetime-picker>
-                                                <mat-error *ngIf="Report3Form.get('ScheduleDate').hasError('required')">{{MsgList.requiredField}}</mat-error>
-                                            </mat-form-field>
-                                        </div>
-                                        
-                                        <!-- <div>
-                                            <section class="check-box-flex">
-                                                <mat-checkbox class="example-margin" formControlName="CanceledCheckB">כולל מבוטלים</mat-checkbox>
-                                            </section>
-                                        </div> -->
-                                    </div>
+
+                                    <!--check box-->
                                     <div>
                                         <div class="checkBoxWrap">
                                             <section class="check-box-flex">
-                                                <mat-checkbox class="example-margin" (change)='checkBoxvalue($event)' formControlName="CanceledCheckB">כולל מבוטלים</mat-checkbox>
+                                                <mat-checkbox class="example-margin" (change)='checkBoxvalue($event)'
+                                                    formControlName="CanceledCheckB">כולל מבוטלים</mat-checkbox>
                                                 <!-- <mat-checkbox class="example-margin" formControlName="sendImmedCheckB">שלח מייד</mat-checkbox> -->
                                             </section>
                                         </div>
                                     </div>
+                                    <div></div>
                                 </div>
+                                <div class="formWrapRow marginTop-2">
+
+                                    <!--radio-->
+                                    <div>
+                                        <mat-radio-group aria-labelledby="example-radio-group-label"
+                                            class="example-radio-group" formControlName="reportData"
+                                            (change)="reportDataRadioEventChanged($event, 'Report1Form')">
+                                            <mat-radio-button class="example-radio-button"
+                                                *ngFor="let data of reportDataList" [value]="data.valEng">
+                                                {{data.valHeb}}</mat-radio-button>
+                                        </mat-radio-group>
+                                    </div>
+                                    <div class="reportDate">
+                                        <div>
+                                            <mat-form-field appearance="fill"
+                                                class="datePicker datePickerPadding marginTop-1">
+                                                <mat-label>מתאריך</mat-label>
+                                                <input matInput [matDatepicker]="picker"
+                                                    [disabled]="!rangeOfDatesDatePickerView1Form" formControlName="FDate">
+                                                <!-- <button class="clearButton" *ngIf="Report1Form.get('ValidateDate').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('ValidateDate').setValue('')">
+                                                    <mat-icon>close</mat-icon>
+                                                </button> -->
+                                                <mat-datepicker-toggle
+                                                    [class.matDatepickerDisabled]="!rangeOfDatesDatePickerView1Form"
+                                                    [disabled]="!rangeOfDatesDatePickerView1Form" matSuffix [for]="picker">
+                                                </mat-datepicker-toggle>
+                                                <mat-datepicker #picker></mat-datepicker>
+                                                <mat-error *ngIf="Report1Form.get('FDate').hasError('required')">
+                                                    {{MsgList.requiredField}}</mat-error>
+
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                    <div class="reportDate">
+                                        <mat-form-field appearance="fill"
+                                            class="datePicker datePickerPadding marginTop-1">
+                                            <mat-label>עד תאריך</mat-label>
+                                            <input matInput [matDatepicker]="picker2"
+                                                [disabled]="!rangeOfDatesDatePickerView1Form" formControlName="TDate" [max]="maxDateForReport">
+                                            <mat-datepicker-toggle
+                                                [class.matDatepickerDisabled]="!rangeOfDatesDatePickerView1Form"
+                                                [disabled]="!rangeOfDatesDatePickerView1Form" matSuffix [for]="picker2">
+                                            </mat-datepicker-toggle>
+                                            <mat-datepicker #picker2></mat-datepicker>
+                                            <mat-error *ngIf="Report1Form.get('TDate').hasError('required')">
+                                                {{MsgList.requiredField}}</mat-error>
+                                        </mat-form-field>
+                                    </div>
+
+                                    <div>
+
+                                    </div>
+
+                                </div>
+
                             </div>
+                            <!-- <div class="error textAlignRight" [@openClose]="radioCurrentDayPressed">* הדוח לא יכיל מידע עבור יום העסקים הנוכחי</div> -->
                             <div class="buttonsWrap">
-                                <button mat-button class="linkButton" (click) = "resetForm('Report3Form')">אפס</button>
+                                <button mat-button class="linkButton" (click)="resetForm('Report1Form')">אפס</button>
                                 <button type="submit" mat-button class="addButton">שלח</button>
                             </div>
                         </form>
@@ -130,7 +141,7 @@
 
             <!-- Report 2 -->
             <mat-tab>
-                <ng-template mat-tab-label >
+                <ng-template mat-tab-label>
                     <div class="tab-label">
                         <span>דוח יתרות </span>
                     </div>
@@ -147,73 +158,83 @@
                                         <div>
                                             <mat-form-field>
                                                 <mat-label>שם לקוח</mat-label>
-                                                <mat-select formControlName="customer" (selectionChange)="optionChange($event)">
+                                                <mat-select formControlName="customer" 
+                                                    (selectionChange)="optionChange($event)">
                                                     <ng-container *ngFor="let customer of customers; let i = index">
                                                         <mat-option [value]="customer">
                                                             {{customer.organizationName}}
                                                             <!-- {{customer}} -->
                                                         </mat-option>
                                                     </ng-container>
-                                                </mat-select>   
-                                                <mat-error *ngIf="Report2Form.get('customer').hasError('required')">{{MsgList.requiredField}}</mat-error>
-                                        
-                                             </mat-form-field>
+                                                </mat-select>
+                                                <mat-error *ngIf="Report2Form.get('customer').hasError('required')">
+                                                    {{MsgList.requiredField}}</mat-error>
+
+                                            </mat-form-field>
                                         </div>
                                         <div>
                                             <mat-form-field>
                                                 <mat-label>מייל לשליחה</mat-label>
-                                                <input matInput disabled="false"
-                                                placeholder = " mail@gmail.com :לדוגמא"
-                                                formControlName="CustomerEmail">
-                                                <mat-error *ngIf="Report2Form.get('CustomerEmail').hasError('required')">{{MsgList.requiredField}}</mat-error>
-                                                <mat-error *ngIf="Report2Form.get('CustomerEmail').hasError('email')">{{MsgList.emailFormatValidationErr}}</mat-error>
+                                                <input matInput disabled="false" placeholder=" mail@gmail.com :לדוגמא"
+                                                    formControlName="CustomerEmail">
+                                                <mat-error
+                                                    *ngIf="Report2Form.get('CustomerEmail').hasError('required')">
+                                                    {{MsgList.requiredField}}</mat-error>
+                                                <mat-error *ngIf="Report2Form.get('CustomerEmail').hasError('email')">
+                                                    {{MsgList.emailFormatValidationErr}}</mat-error>
+                                                    <button class="clearButton" *ngIf="Report2Form.get('CustomerEmail').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="Report2Form.get('CustomerEmail').setValue('')">
+                                                        <mat-icon>close</mat-icon>
+                                                    </button>
                                             </mat-form-field>
                                         </div>
                                     </div>
                                     <div>
                                         <div>
-                                            <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
+                                            <mat-form-field appearance="fill"
+                                                class="datePicker datePickerPadding marginTop-1">
                                                 <mat-label>מתאריך</mat-label>
-                                                <input matInput [matDatepicker]="picker3" disabled="false" formControlName="FDate">
-                                                <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
+                                                <input matInput [matDatepicker]="picker3" disabled="false"
+                                                    formControlName="FDate">
+                                                <mat-datepicker-toggle matSuffix [for]="picker3">
+                                                </mat-datepicker-toggle>
                                                 <mat-datepicker #picker3></mat-datepicker>
-                                                <mat-error *ngIf="Report2Form.get('FDate').hasError('required')">{{MsgList.requiredField}}</mat-error>
+                                                <mat-error *ngIf="Report2Form.get('FDate').hasError('required')">
+                                                    {{MsgList.requiredField}}</mat-error>
 
                                             </mat-form-field>
                                         </div>
                                         <div>
-                                            <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
+                                            <mat-form-field appearance="fill"
+                                                class="datePicker datePickerPadding marginTop-1">
                                                 <mat-label>עד תאריך</mat-label>
-                                                <input matInput [matDatepicker]="picker4" disabled="false" formControlName="TDate">
-                                                <mat-datepicker-toggle matSuffix [for]="picker4"></mat-datepicker-toggle>
+                                                <input matInput [matDatepicker]="picker4" disabled="false"
+                                                    formControlName="TDate">
+                                                <mat-datepicker-toggle matSuffix [for]="picker4">
+                                                </mat-datepicker-toggle>
                                                 <mat-datepicker #picker4></mat-datepicker>
-                                                <mat-error *ngIf="Report2Form.get('TDate').hasError('required')">{{MsgList.requiredField}}</mat-error>
+                                                <mat-error *ngIf="Report2Form.get('TDate').hasError('required')">
+                                                    {{MsgList.requiredField}}</mat-error>
 
                                             </mat-form-field>
                                         </div>
                                     </div>
                                     <div>
                                         <div dir="rtl" class="fullWidth">
-                                            <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
+                                            <mat-form-field appearance="fill"
+                                                class="datePicker datePickerPadding marginTop-1">
                                                 <mat-label>תאריך ושעת שליחה</mat-label>
-                                                <input matInput 
-                                                    formControlName="ScheduleDate"
-                                                    [ngxMatDatetimePicker]="picker5" 
-                                                    placeholder="תאריך ושעת שליחה"
+                                                <input matInput formControlName="ScheduleDate"
+                                                    [ngxMatDatetimePicker]="picker5" placeholder="תאריך ושעת שליחה"
                                                     disabled="false">
-                                                <mat-datepicker-toggle matSuffix [for]="picker5"></mat-datepicker-toggle>
-                                                <ngx-mat-datetime-picker #picker5 
-                                                                        [showSpinners]="true" 
-                                                                        [showSeconds]="false"
-                                                                        [stepHour]="1" 
-                                                                        [stepMinute]="1" 
-                                                                        [touchUi]="false" 
-                                                                        color="primary" 
-                                                                        [enableMeridian]="true" 
-                                                                        [disableMinute]="false" 
-                                                                        [hideTime]="false">
+                                                <mat-datepicker-toggle matSuffix [for]="picker5">
+                                                </mat-datepicker-toggle>
+                                                <ngx-mat-datetime-picker #picker5 [showSpinners]="true"
+                                                    [showSeconds]="false" [stepHour]="1" [stepMinute]="1"
+                                                    [touchUi]="false" color="primary" [enableMeridian]="true"
+                                                    [disableMinute]="false" [hideTime]="false">
                                                 </ngx-mat-datetime-picker>
-                                                <mat-error *ngIf="Report2Form.get('ScheduleDate').hasError('required')">{{MsgList.requiredField}}</mat-error>
+                                                <mat-error *ngIf="Report2Form.get('ScheduleDate').hasError('required')">
+                                                    {{MsgList.requiredField}}</mat-error>
 
                                             </mat-form-field>
                                         </div>
@@ -221,7 +242,7 @@
                                 </div>
                             </div>
                             <div class="buttonsWrap">
-                                <button mat-button class="linkButton" (click) = "resetForm('Report2Form')">אפס</button>
+                                <button mat-button class="linkButton" (click)="resetForm('Report2Form')">אפס</button>
                                 <button type="submit" mat-button class="addButton">שלח</button>
                             </div>
                         </form>
@@ -233,104 +254,134 @@
             <mat-tab>
                 <ng-template mat-tab-label>
                     <div class="tab-label">
-                        <span>דוח הנפקות </span>
+                        <span>דוח הנפקות</span>
                     </div>
                 </ng-template>
                 <div class="wrap-content">
-                    <div class="element-page-title" #report1>הפקת דוח הנפקות
+                    <div class="element-page-title">הפקת דוח הנפקות
                         <mat-spinner class="noDataSpinner" *ngIf="spinner"></mat-spinner>
                     </div>
                     <div class="formBorder formElement">
-                        <form [formGroup]="Report1Form" (submit)="loadingReport()" *ngIf="Report1FormView">
+                        <form [formGroup]="Report3Form" (submit)="loadingReport('Report3Form')" *ngIf="Report3FormView">
                             <div class="wrapReportForm formWrap">
                                 <div class="formWrapRow">
+                                    <!--name customer-->
                                     <div>
-                                        <div>
-                                            <mat-form-field>
-                                                <mat-label>שם לקוח</mat-label>
-                                                <mat-select formControlName="customer" (selectionChange)="optionChange($event)">
-                                                    <ng-container *ngFor="let customer of customers; let i = index">
-                                                        <mat-option [value]="customer">
-                                                            {{customer.organizationName}}
-                                                            <!-- {{customer}} -->
-                                                        </mat-option>
-                                                    </ng-container>
-                                                </mat-select>
-                                                <!-- <input matInput placeholder = "שם לקוח" formControlName="name"> -->
-                                                <mat-error *ngIf="Report1Form.get('customer').hasError('required')">{{MsgList.requiredField}}</mat-error>
-
-                                            </mat-form-field>
-                                        </div>
-                                        <div>
-                                            <mat-form-field>
-                                                <mat-label>מייל לשליחה</mat-label>
-                                                <input matInput disabled="false"
-                                                placeholder = " mail@gmail.com :לדוגמא"
+                                        <mat-form-field>
+                                            <mat-label>שם לקוח</mat-label>
+                                            <mat-select formControlName="customer" [compareWith]="compareFunction"
+                                                (selectionChange)="optionChange($event)">
+                                                <ng-container *ngFor="let customer of customers; let i = index">
+                                                    <mat-option [value]="customer">
+                                                        {{customer.organizationName}}
+                                                        <!-- {{customer}} -->
+                                                    </mat-option>
+                                                </ng-container>
+                                            </mat-select>
+                                            <mat-error *ngIf="Report3Form.get('customer').hasError('required')">
+                                                {{MsgList.requiredField}}</mat-error>
+                                        </mat-form-field>
+                                    </div>
+                                    <!--mail-->
+                                    <div>
+                                        <mat-form-field>
+                                            <mat-label>מייל לשליחה</mat-label>
+                                            <input matInput disabled="false" placeholder=" mail@gmail.com :לדוגמא"
                                                 formControlName="CustomerEmail">
-                                                <mat-error *ngIf="Report1Form.get('CustomerEmail').hasError('required')">{{MsgList.requiredField}}</mat-error>
-                                                <mat-error *ngIf="Report1Form.get('CustomerEmail').hasError('email')">{{MsgList.emailFormatValidationErr}}</mat-error>
-                                            </mat-form-field>
-                                        </div>
+                                            <mat-error *ngIf="Report3Form.get('CustomerEmail').hasError('required')">
+                                                {{MsgList.requiredField}}</mat-error>
+                                            <mat-error *ngIf="Report3Form.get('CustomerEmail').hasError('email')">
+                                                {{MsgList.emailFormatValidationErr}}</mat-error>
+                                            <mat-hint class="error2 textAlignRight"
+                                                [@openClose]="radioCurrentDayPressed3Form">* הדוח לא יכיל מידע עבור יום
+                                                העסקים הנוכחי</mat-hint>
+                                                <button class="clearButton" *ngIf="Report3Form.get('CustomerEmail').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="Report3Form.get('CustomerEmail').setValue('')">
+                                                    <mat-icon>close</mat-icon>
+                                                </button>
+                                        </mat-form-field>
+
                                     </div>
+
+                                    <!--check box-->
                                     <div>
-                                        <div>
-                                            <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
-                                                <mat-label>מתאריך</mat-label>
-                                                <input matInput [matDatepicker]="picker6" disabled="false" formControlName="FDate">
-                                                <mat-datepicker-toggle matSuffix [for]="picker6"></mat-datepicker-toggle>
-                                                <mat-datepicker #picker6></mat-datepicker>
-                                                <mat-error *ngIf="Report1Form.get('FDate').hasError('required')">{{MsgList.requiredField}}</mat-error>
-
-                                            </mat-form-field>
-                                        </div>
-                                        <div>
-                                            <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
-                                                <mat-label>עד תאריך</mat-label>
-                                                <input matInput [matDatepicker]="picker7" disabled="false" formControlName="TDate">
-                                                <mat-datepicker-toggle matSuffix [for]="picker7"></mat-datepicker-toggle>
-                                                <mat-datepicker #picker7></mat-datepicker>
-                                                <mat-error *ngIf="Report1Form.get('TDate').hasError('required')">{{MsgList.requiredField}}</mat-error>
-
-                                            </mat-form-field>
+                                        <div class="checkBoxWrap">
+                                            <section class="check-box-flex">
+                                                <mat-checkbox class="example-margin" (change)='checkBoxvalue($event)'
+                                                    formControlName="CanceledCheckB">כולל מבוטלים</mat-checkbox>
+                                                <!-- <mat-checkbox class="example-margin" formControlName="sendImmedCheckB">שלח מייד</mat-checkbox> -->
+                                            </section>
                                         </div>
                                     </div>
-                                    <div>
-                                        <div dir="rtl">
-                                            <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
-                                                <mat-label>תאריך ושעת שליחה</mat-label>
-                                                <input matInput 
-                                                    [ngxMatDatetimePicker]="picker8" 
-                                                    placeholder="תאריך ושעת שליחה"
-                                                    disabled="false" formControlName="ScheduleDate">
-                                                <mat-datepicker-toggle matSuffix [for]="picker8"></mat-datepicker-toggle>
-                                                <ngx-mat-datetime-picker #picker8
-                                                                        [showSpinners]="true" 
-                                                                        [showSeconds]="false"
-                                                                        [stepHour]="1" 
-                                                                        [stepMinute]="1" 
-                                                                        [touchUi]="false" 
-                                                                        color="primary" 
-                                                                        [enableMeridian]="true"
-                                                                        [hideTime]="false" 
-                                                                        [disableMinute]="false"
-                                                                        >
-                                                </ngx-mat-datetime-picker>
-                                                <mat-error *ngIf="Report1Form.get('ScheduleDate').hasError('required')">{{MsgList.requiredField}}</mat-error>
-
-                                            </mat-form-field>
-                                        </div>
-                                    </div>
+                                    <div></div>
                                 </div>
+                                <div class="formWrapRow marginTop-2">
+
+                                    <!--radio-->
+                                    <div>
+                                        <mat-radio-group aria-labelledby="example-radio-group-label"
+                                            class="example-radio-group" formControlName="reportData"
+                                            (change)="reportDataRadioEventChanged($event, 'Report3Form')">
+                                            <mat-radio-button class="example-radio-button"
+                                                *ngFor="let data of reportDataList" [value]="data.valEng">
+                                                {{data.valHeb}}</mat-radio-button>
+                                        </mat-radio-group>
+                                    </div>
+                                    <div class="reportDate">
+                                        <div>
+                                            <mat-form-field appearance="fill"
+                                                class="datePicker datePickerPadding marginTop-1">
+                                                <mat-label>מתאריך</mat-label>
+                                                <input matInput [matDatepicker]="picker"
+                                                    [disabled]="!rangeOfDatesDatePickerView3Form" formControlName="FDate" >
+                                                <!-- <button class="clearButton" *ngIf="Report3Form.get('ValidateDate').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('ValidateDate').setValue('')">
+                                                    <mat-icon>close</mat-icon>
+                                                </button> -->
+                                                <mat-datepicker-toggle
+                                                    [class.matDatepickerDisabled]="!rangeOfDatesDatePickerView3Form"
+                                                    [disabled]="!rangeOfDatesDatePickerView3Form" matSuffix [for]="picker">
+                                                </mat-datepicker-toggle>
+                                                <mat-datepicker #picker></mat-datepicker>
+                                                <mat-error *ngIf="Report3Form.get('FDate').hasError('required')">
+                                                    {{MsgList.requiredField}}</mat-error>
+
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                    <div class="reportDate">
+                                        <mat-form-field appearance="fill"
+                                            class="datePicker datePickerPadding marginTop-1">
+                                            <mat-label>עד תאריך</mat-label>
+                                            <input matInput [matDatepicker]="picker2"
+                                                [disabled]="!rangeOfDatesDatePickerView3Form" formControlName="TDate" [max]="maxDateForReport">
+                                            <mat-datepicker-toggle
+                                                [class.matDatepickerDisabled]="!rangeOfDatesDatePickerView3Form"
+                                                [disabled]="!rangeOfDatesDatePickerView3Form" matSuffix [for]="picker2">
+                                            </mat-datepicker-toggle>
+                                            <mat-datepicker #picker2></mat-datepicker>
+                                            <mat-error *ngIf="Report3Form.get('TDate').hasError('required')">
+                                                {{MsgList.requiredField}}</mat-error>
+                                        </mat-form-field>
+                                    </div>
+
+                                    <div>
+
+                                    </div>
+
+                                </div>
+
                             </div>
+                            <!-- <div class="error textAlignRight" [@openClose]="radioCurrentDayPressed">* הדוח לא יכיל מידע עבור יום העסקים הנוכחי</div> -->
                             <div class="buttonsWrap">
-                                <button mat-button class="linkButton" (click) = "resetForm('Report1Form')">אפס</button>
-                                <button mat-button type="submit" class="addButton">שלח</button>
+                                <button mat-button class="linkButton" (click)="resetForm('Report3Form')">אפס</button>
+                                <button type="submit" mat-button class="addButton">שלח</button>
                             </div>
                         </form>
 
                     </div>
                 </div>
+
             </mat-tab>
-          </mat-tab-group>
+        </mat-tab-group>
 
     </div>
+</div>

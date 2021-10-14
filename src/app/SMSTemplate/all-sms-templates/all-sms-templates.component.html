@@ -1,7 +1,7 @@
-<div class="pageTitle main2-title">
+<div class="pageTitle main2-title sticky top100">
     <div>SMS תבניות </div>
     <div>
-        <button mat-button class="titleMenuButton" (click)="addNewTemplate()">תבנית חדשה
+        <button mat-raised-button class="titleMenuButton" (click)="addNewTemplate()">תבנית חדשה
             <mat-icon>sms</mat-icon>
         </button>
     </div>
@@ -11,7 +11,7 @@
 
 
     <!-- new template -->
-    <div *ngIf="openNewTemplate" class="page-element width-block-auto">
+    <div [@openClose]="openNewTemplate" class="page-element width-block-auto">
         <div class="element-page-title">יצירת תבנית</div>
         <div class="card-wrap-new">
 
@@ -53,7 +53,8 @@
                                     <span>שלח לדוגמא</span>
                                     <mat-icon>send</mat-icon>
                                 </button>
-                                <div class="error" *ngIf="newTemplateSendError != ''">{{newTemplateSendError}}</div>
+                                <mat-error [@openClose]="newTemplateSendError != ''">{{newTemplateSendError}}</mat-error>
+                                <!-- <mat-hint [@openClose]="newTemplateSendSuccessfully" class="saveMessage">{{MsgList.sendSuccessfully}}</mat-hint> -->
                             </div>
                             <div class="spinnerBWrap">
                                 <button mat-button class="primaryButton" (click)="saveTemplate('newTemplate')">
@@ -62,8 +63,9 @@
                                 </button>
                                 <mat-spinner class="spinner" *ngIf="spinnerNewTemp"></mat-spinner>
                                 <div class="saveMessage">{{saveMessage}}</div>
-                                <div class="error">{{errorMessagenewSms}}</div>
+                                <mat-error>{{errorMessagenewSms}}</mat-error>
                             </div>
+                            <mat-spinner *ngIf="newSMSSend"></mat-spinner>
                         </mat-card-actions>
                     </mat-card>
                 </form>
@@ -148,11 +150,12 @@
                                 </mat-card-header>
                                     <mat-card-content>
                                         <mat-form-field>
-                                            <textarea matInput #txtArea formControlName="TemplateFormat{{temp.Id}}" placeholder="SMS תבנית" class="templateTextArea"></textarea>
+                                            <textarea 
+                                            matInput #txtArea formControlName="TemplateFormat{{temp.Id}}" placeholder="SMS תבנית" class="templateTextArea"></textarea>
                                         </mat-form-field>
                                     </mat-card-content> 
 
-                                <!-- action buttons -->
+                                <!-- action buttons all templates-->
                                 <mat-card-actions class="actionWrapB newSMSActionButtons" *ngIf="temp.Id != editingTempId || !edit">
 
                                     <div>
@@ -172,11 +175,13 @@
                                             <!-- <span>מחק</span> -->
                                             <mat-icon class="deleteIcon" (click)="deleteTemplate(temp)" matTooltip="מחק תבנית">delete</mat-icon>
                                     </div>
+
+                                    <mat-spinner *ngIf="spinnerById[0] == temp.Id"></mat-spinner>
                                 </mat-card-actions>
 
                                 <!-- edit template -->
-                                <div *ngIf="temp.Id == editingTempId && edit">
-                                    <mat-card-actions class="edit-buttons-wrap">
+                                  <div [@openClose]="temp.Id == editingTempId && edit" >
+                                    <mat-card-actions class="edit-buttons-wrap" style="margin-right: -7px">
                                         <button mat-button class="linkButton" (click)="editButtonClicked(temp,'שם פרטי')">
                                             <span><שם פרטי></span>
                                         </button>

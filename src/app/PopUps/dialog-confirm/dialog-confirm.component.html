@@ -10,10 +10,10 @@
           <div class="dialogMessage">{{data.message}}</div>
             <div class="wrapSendButton">
                 <div>
-                    <button mat-button class="addButton" (click)="no()">סגור</button>
+                    <button mat-button class="linkButton" (click)="no()">סגור</button>
                 </div>
                 <div>
-                    <button mat-button class="deleteButton" (click)="yes()" cdkFocusInitial>{{data.eventButton != undefined ? data.eventButton : 'למחוק'}}</button>
+                    <button mat-button class="addButton" (click)="yes()" cdkFocusInitial>{{data.eventButton != undefined ? data.eventButton : 'למחוק'}}</button>
                 </div>
             </div>
         </div>

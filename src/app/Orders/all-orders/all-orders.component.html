@@ -1,9 +1,11 @@
-<div class="pageTitle main2-title">
+<div class="pageTitle main2-title sticky top100">
     <div>רשימת הזמנות</div>
     <div>
-        <button mat-raised-button class="titleMenuButton" routerLink="/public/digitalFilesList">קבצים דיגיטלים
-            <mat-icon>folder</mat-icon>
-        </button>
+        <a routerLink="/public/digitalFilesList">
+            <button mat-raised-button class="titleMenuButton">קבצים דיגיטלים
+                <fa-icon [icon]="faFileExcel"></fa-icon>
+            </button>
+        </a>
     </div>
 </div>
 
@@ -33,6 +35,19 @@
                         </div> 
                         <div>
                             <mat-form-field>
+                                <mat-label>מספר אסמכתא</mat-label>
+                                <input matInput placeholder="" formControlName="CrmOrderId">
+                                <button class="clearButton" *ngIf="filterTableGroup.get('CrmOrderId').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="filterTableGroup.get('CrmOrderId').setValue('')">
+                                    <mat-icon>close</mat-icon>
+                                </button>
+                            </mat-form-field>
+                        </div>
+                        <div></div>
+                    </div>
+                    <div class="formWrapRow">
+
+                        <div>
+                            <mat-form-field>
                                 <mat-label>שם הלקוח</mat-label>
                                 <input matInput placeholder = "" formControlName = "OrganizationName" pattern="^([^0-9]*)$">
                                 <button class="clearButton" *ngIf="this.filterTableGroup.get('OrganizationName').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.filterTableGroup.get('OrganizationName').setValue('')">
@@ -40,22 +55,7 @@
                                 </button>
                                 <mat-error *ngIf="filterTableGroup.get('CoreOrderId').errors?.pattern">{{MsgList.lettersValidationErr}}</mat-error>
                             </mat-form-field>
-                        </div>                     
-                        <div>
-                            <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
-                                <mat-label>מתאריך</mat-label>
-                                <input matInput [matDatepicker]="picker" formControlName = "FromDate">
-                                <button class="clearButton" *ngIf="this.filterTableGroup.get('FromDate').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.filterTableGroup.get('FromDate').setValue('')">
-                                    <mat-icon>close</mat-icon>
-                                </button>
-                                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                                <mat-datepicker #picker></mat-datepicker>
-                                <mat-error>{{MsgList.dateFormatValidationErr}}</mat-error>
-                            </mat-form-field>
-                        </div>
-
-                    </div>
-                    <div class="formWrapRow">
+                        </div>   
                         <div>
                             <mat-form-field>
                                 <mat-label>סכום טעינה ראשוני</mat-label>
@@ -71,9 +71,24 @@
                                 <mat-label>סטטוס</mat-label>
                                 <mat-select formControlName="Status">
                                     <mat-option *ngFor="let status of statusListArr" [value]="status.StatusId">
-                                        {{status.Description}}
+                                        {{status.DescriptionRM}}
                                     </mat-option>
                                 </mat-select>
+                            </mat-form-field>
+                        </div>                  
+
+                    </div>
+                    <div class="formWrapRow">
+                        <div>
+                            <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
+                                <mat-label>מתאריך</mat-label>
+                                <input matInput [matDatepicker]="picker" formControlName = "FromDate">
+                                <button class="clearButton" *ngIf="this.filterTableGroup.get('FromDate').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.filterTableGroup.get('FromDate').setValue('')">
+                                    <mat-icon>close</mat-icon>
+                                </button>
+                                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                <mat-datepicker #picker></mat-datepicker>
+                                <mat-error>{{MsgList.dateFormatValidationErr}}</mat-error>
                             </mat-form-field>
                         </div>
                         <div>
@@ -88,6 +103,7 @@
                                 <mat-error>{{MsgList.dateFormatValidationErr}}</mat-error>
                             </mat-form-field>
                         </div>
+                        <div></div>
                     </div>
                 </div>
             </form>
@@ -97,7 +113,7 @@
                 <button mat-button class="addButton" (click) = "filterTable()">חפש</button>
                 <mat-spinner *ngIf="filterActionButtonSpinner" class="filterActionButton"></mat-spinner>
             </div>
-            <div class="error" *ngIf="errorMsg != ''">{{errorMsg}}</div>
+            <div class="error" [@openClose]="errorMsg != ''">{{errorMsg}}</div>
         </div>
     </div>
 
@@ -135,35 +151,35 @@
                                     <div class="iconB">
                                         <mat-icon>watch_later</mat-icon>
                                     </div>
-                                    <div class="textB">{{element['Description']}}</div>
+                                    <div class="textB">{{element['DescriptionRM']}}</div>
                                 </div>
                                 <div class="tableCageFlex" *ngIf="element['StatusId'] == 2">
                                     <div class="iconB">
                                         <mat-icon>pending_actions</mat-icon>
                                     </div>
                                     <div class="textB">
-                                        {{element['Description']}}
+                                        {{element['DescriptionRM']}}
                                     </div>
                                 </div>
                                 <div class="tableCageFlex" *ngIf="element['StatusId'] == 3">
                                     <div class="iconB">
                                         <mat-icon>local_printshop</mat-icon>
                                     </div>
-                                    <div class="textB">{{element['Description']}}</div>
+                                    <div class="textB">{{element['DescriptionRM']}}</div>
                                 </div>
                                 <div class="tableCageFlex" *ngIf="element['StatusId'] == 4">
                                     <div class="iconB">
-                                        <mat-icon>delivery_dining</mat-icon>
+                                        <mat-icon>check</mat-icon>
                                     </div>
                                     <div class="textB">
-                                        {{element['Description']}}
+                                        {{element['DescriptionRM']}}
                                     </div>
                                 </div>
                                 <div class="tableCageFlex" *ngIf="element['StatusId'] == 50">
                                     <div class="iconB">
                                         <mat-icon>cancel</mat-icon>
                                     </div>
-                                    <div class="textB">{{element['Description']}}</div>
+                                    <div class="textB">{{element['DescriptionRM']}}</div>
                                 </div>
                             </div>
                             <span *ngIf="obj == 'ApproveDate' || obj == 'MDate'">{{element[obj] | formatDate}}</span>
@@ -180,11 +196,11 @@
                 </ng-container>
 
                 <ng-container matColumnDef="delC">
-                    <th mat-header-cell *matHeaderCellDef></th>
+                    <th mat-header-cell *matHeaderCellDef>חסימה</th>
                     <td mat-cell *matCellDef="let element; let rowNum = index;">
                         <div *ngIf="element['StatusId'] == 4">
                             <!-- <button mat-icon-button class="deleteButton" (click)="deleteOrder(element)">מחק -->
-                                <mat-icon class="deleteIcon" (click)="blockOrder(element)" matTooltip="חסם הזמנה">block</mat-icon>
+                                <mat-icon class="deleteIcon" (click)="blockOrder(element)" matTooltip="חסום הזמנה">block</mat-icon>
                             <!-- </button> -->
                         </div>
                     </td>

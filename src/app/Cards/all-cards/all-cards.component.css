@@ -1,27 +1,18 @@
-/* .mobileTwoCol{
+.hiddenBlockWrap{
     display: flex;
     flex-direction: row-reverse;
-    flex-wrap: wrap;
+    align-items: flex-start;
 }
-.mobileTwoCol > div{
-    margin: 0px 30px;
+
+.hiddenBlockWrap > div{
     flex-grow: 1;
 }
 
-.spinner{
-    position: absolute;
-    margin: auto;
-    right: 0;
-    left: 0;
-    top: -18px;
-}
-
-.buttonsWrap{
-    position: relative;
-} */
-
 .formWrap{
     flex-direction: column;
+}
+.smsFormWrap mat-form-field{
+    width:100%;
 }
 
 @media screen and (max-width: 1024px){

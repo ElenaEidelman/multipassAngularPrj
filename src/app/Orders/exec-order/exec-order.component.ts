@@ -1,11 +1,13 @@
 import { Route } from '@angular/compiler/src/core';
 import { typeWithParameters } from '@angular/compiler/src/render3/util';
-import { Component, Inject, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChildren, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, Inject, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChildren, ViewEncapsulation } from '@angular/core';
 import { tick } from '@angular/core/testing';
 import { ControlContainer, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, throwMatDialogContentAlreadyAttachedError } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Data, Router, RouterModule } from '@angular/router';
+import { faFileExcel } from '@fortawesome/free-solid-svg-icons';
+import { Workbook } from 'exceljs';
 import * as moment from 'moment';
 import { resourceUsage } from 'process';
 import { element } from 'protractor';
@@ -16,6 +18,7 @@ import { DialogConfirmComponent } from 'src/app/PopUps/dialog-confirm/dialog-con
 import { DialogComponent, DialogData } from 'src/app/PopUps/dialog/dialog.component';
 import { SharedService } from 'src/app/shared.service';
 import { AlertMessage } from 'src/assets/alertMessage';
+import * as fs from 'file-saver';
 
 @Component({
   selector: 'app-exec-order',
@@ -27,6 +30,8 @@ import { AlertMessage } from 'src/assets/alertMessage';
 
 export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   @ViewChildren('orderLinesChildren') orderLinesChildren;
+  faFileExcel = faFileExcel;
+
 
 
   // OrderData;
@@ -43,6 +48,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   createCardsSpinner: boolean = false;
   deleteCardsSpinner: boolean = false;
   orderFromExcel: boolean = false;
+  additionalOptionsSMS: boolean = false;
 
 
   errorMsg: string = '';
@@ -52,8 +58,18 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   addOrderLineErrMsg: string = '';
   orderRefMsg: string = '';
   errorRefMsg: string = '';
+  errorSendSms: string = '';
+  infoMsg: string = '';
+  descriptionStatusInjected: string = '';
+
+  newCustomer = {}; //set all parameters to lowerCase
 
   chagesToServer = [];
+  DigitalBatch;
+  orderCardsData;
+
+  manualOrder: boolean = false;
+  excelOrder: boolean = false;
 
 
   minDate: any;
@@ -71,16 +87,25 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   saveChangesSpinner: boolean = false;
   //translate customer data value to hebrew
   CustomerLangObj = [
-    { value: 'FName', viewValue: 'שם' },
-    { value: 'LName', viewValue: 'שם משפחה' },
-    { value: 'Tz', viewValue: 'ח.פ' },
-    { value: 'Email', viewValue: 'מייל' },
-    { value: 'Phone', viewValue: 'טלפון' },
-    { value: 'Phone1', viewValue: 'טלפון נוסף' }
+    { value: 'organizationname', viewValue: 'חברה' },
+    { value: 'fname', viewValue: 'שם' },
+    { value: 'lname', viewValue: 'שם משפחה' },
+    { value: 'tz', viewValue: 'ח.פ' },
+    { value: 'email', viewValue: 'מייל' },
+    { value: 'phone', viewValue: 'טלפון' },
+    { value: 'phone1', viewValue: 'טלפון נוסף' }
   ];
 
   statusListArr;
   Customer;
+
+  
+  sendSmsGroup = this.fb.group({
+    smsTemplates: ['', Validators.required],
+    previewSmsTemplate: ['', Validators.required]
+  });
+  
+  smsTemplatesData = [];
 
   //orderDetail must contain one row with empty data
   orderDetails = [
@@ -152,62 +177,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         this.customerId = param['customerId'];
         this.newOrder = false;
 
-        let objToApi = {
-          Token: this.userToken,
-          CoreOrderID: this.orderId
-        }
-        
-        
-        this.dataService.GetOrderDetails(objToApi).subscribe(result => {
-          
-          if (result['Token'] != undefined || result['Token'] != null) {
-
-            //set new token
-            let tempObjUser = JSON.parse(localStorage.getItem('user'));
-            tempObjUser['Token'] = result['Token'];
-            localStorage.setItem('user', JSON.stringify(tempObjUser));
-            this.userToken = result['Token'];
-
-            if (typeof result == 'object' && result.obj != null) {
-              this.orderIdToPreview = result.obj[0].idex;
-              let statusData = this.statusListArr.filter(status => status.StatusId == result.obj[0].StatusId);
-              this.orderStatus.id = statusData[0].StatusId;
-              this.orderStatus.description = statusData[0].Description;
-
-              this.dataByPage = result['obj'][0];
-              this.RefControl.setValue(this.dataByPage.CrmOrderId);//Reference
-
-              //get customer data
-              this.Customer = result['obj'][0];
-
-              this.Orders = new MatTableDataSource(result['obj'][0]['Lines']);
-              this.Orders.data.forEach((element, index) => {
-                this.orderDetails.unshift(element);
-              });
-
-              this.orderDetailsTable = new MatTableDataSource(this.orderDetails);
-              this.totalData();
-            }
-            if (result.obj == null && result.errdesc != null && result.errdesc != '') {
-              this.dialog.open(DialogComponent, {
-                data: { message: result.errdesc }
-              });
-            }
-
-          }
-          else if(typeof result == 'string'){
-            this.dialog.open(DialogComponent, {
-              data: { message: result }
-            });
-          }
-          else {
-            this.dialog.open(DialogComponent, {
-              data: {message: MsgList.exitSystemAlert}
-            })
-            this.sharedService.exitSystemEvent();
-          }
-
-        })
+        this.GetOrderDetails();
       }
 
       //new order
@@ -222,7 +192,6 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
           CustomerId: param['customerId']
         }
         this.dataService.GetCustomersByFilter(objToApi).subscribe(result => {
-          
           if (result['Token'] != undefined || result['Token'] != null) {
 
             //set new token
@@ -233,7 +202,17 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
             if (typeof result == 'object' && result.obj != null) {
               this.Customer = result.obj[0];
+
+              //set all parameters of customer to lowercase
+              Object.keys(this.Customer).forEach(element => {
+                this.newCustomer[element.toLowerCase()] = this.Customer[element]
+              });
+              
               this.dataByPage = result.obj[0];
+              debugger
+
+              //if order created from excel file
+              this.excelOrder = (this.dataByPage.DigitalBatch > 0 || this.dataByPage.DigitalBatch != 0) && this.dataByPage.DigitalBatch != null;
             }
             if (result.Token == null && result.errdesc != null && result.errdesc != '') {
               this.dialog.open(DialogComponent, {
@@ -242,9 +221,9 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
             }
           }
           else {
-            this.dialog.open(DialogComponent, {
-              data: {message: MsgList.exitSystemAlert}
-            })
+            // this.dialog.open(DialogComponent, {
+            //   data: {message: MsgList.exitSystemAlert}
+            // })
             this.sharedService.exitSystemEvent();
           }
         });
@@ -253,10 +232,11 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         this.orderDetailsTable = new MatTableDataSource(orderDetails);
       }
     })
-
+    this.GetCards();
     this.getStatusList();
     // this.RefControl.setValue(this.orderId);
     this.totalData();
+    this.getSmsTemplates();
   }
 
   // getCalendarFilter() {
@@ -277,6 +257,74 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   //   this.minDate = new Date(year, month, day);
   //   this.maxDate = new Date(Fyear, +Fmonth, +Fday);
   // }
+
+  GetOrderDetails(){
+    let objToApi = {
+      Token: this.userToken,
+      CoreOrderID: this.orderId
+    }
+  
+    this.dataService.GetOrderDetails(objToApi).subscribe(result => {
+      if (result['Token'] != undefined || result['Token'] != null) {
+
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
+
+        if (typeof result == 'object' && result.obj != null) {
+          this.orderIdToPreview = result.obj[0].idex;
+          let statusData = this.statusListArr.filter(status => status.StatusId == result.obj[0].StatusId);
+          this.orderStatus.id = statusData[0].StatusId;
+          this.orderStatus.description = statusData[0].Description;
+
+          this.dataByPage = result['obj'][0];
+          debugger
+
+          //if order created from excel file
+          this.excelOrder = (this.dataByPage.DigitalBatch > 0 || this.dataByPage.DigitalBatch != 0) && this.dataByPage.DigitalBatch != null;
+
+          this.RefControl.setValue(this.dataByPage.CrmOrderId);//Reference
+
+          //get customer data
+          this.Customer = result['obj'][0]['User'];
+          //set all parameters of customer to lowercase
+          Object.keys(this.Customer).forEach(element => {
+            this.newCustomer[element.toLowerCase()] = this.Customer[element]
+          });
+
+          this.Orders = new MatTableDataSource(result['obj'][0]['Lines']);
+          this.orderDetails = [];
+          this.Orders.data.forEach((element, index) => {
+            this.orderDetails.push(element);
+          });
+          this.orderDetails.push({ id: 0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem: 0 })
+
+          this.orderDetailsTable = new MatTableDataSource(this.orderDetails);
+          this.totalData();
+        }
+        if (result.obj == null && result.errdesc != null && result.errdesc != '') {
+          this.dialog.open(DialogComponent, {
+            data: { message: result.errdesc }
+          });
+        }
+
+      }
+      else if(typeof result == 'string'){
+        this.dialog.open(DialogComponent, {
+          data: { message: result }
+        });
+      }
+      else {
+        // this.dialog.open(DialogComponent, {
+        //   data: {message: MsgList.exitSystemAlert}
+        // })
+        this.sharedService.exitSystemEvent();
+      }
+
+    })
+  }
 
   getLastDateOfCurrentMonthAnd5Years() {
     let date = new Date();
@@ -308,9 +356,9 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         }
       }
       else {
-        this.dialog.open(DialogComponent, {
-          data: {message: MsgList.exitSystemAlert}
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: {message: MsgList.exitSystemAlert}
+        // })
         this.sharedService.exitSystemEvent();
       }
     });
@@ -389,16 +437,16 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         // this.orderDetails = filteringObj;
       }
       else {
-        this.dialog.open(DialogComponent, {
-          data: {message: MsgList.exitSystemAlert}
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: {message: MsgList.exitSystemAlert}
+        // })
         this.sharedService.exitSystemEvent();
       }
     });
 
   }
   addOrderLine() {
-    if (this.newOrder) {
+    if (this.newOrder || !this.excelOrder) {
       if (this.addToExecOrderForm.valid) {
         this.insertOrderLineSpinner = true;
         let ticketCount = +this.addToExecOrderForm.get('ticketCount').value;
@@ -455,9 +503,9 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
               }
             }
             else {
-              this.dialog.open(DialogComponent, {
-                data: {message: MsgList.exitSystemAlert}
-              })
+              // this.dialog.open(DialogComponent, {
+              //   data: {message: MsgList.exitSystemAlert}
+              // })
               this.sharedService.exitSystemEvent();
             }
           });
@@ -494,9 +542,9 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
               }
             }
             else {
-              this.dialog.open(DialogComponent, {
-                data: {message: MsgList.exitSystemAlert}
-              })
+              // this.dialog.open(DialogComponent, {
+              //   data: {message: MsgList.exitSystemAlert}
+              // })
               this.sharedService.exitSystemEvent();
             }
           });
@@ -528,9 +576,15 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  ApproveOrder() {
+  ApproveOrder(element) {
+    let buttonClicked = element.currentTarget;
     if (this.orderDetails.length > 1) {
+      buttonClicked.disabled = true;
       this.createCardsSpinner = true;
+      this.descriptionStatusInjected = 'בייצור'
+      this.infoMsg = 'פעולה יכולה לקחת כמה דקות';
+
+
       let objToApi = {
         Token: this.userToken,
         OrderId: this.orderId.toString(),
@@ -540,7 +594,10 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       
       this.dataService.ApproveOrder(objToApi).subscribe(result => {
         
+        this.descriptionStatusInjected = '';
+        buttonClicked.disabled = false;
         this.createCardsSpinner = false;
+        this.infoMsg = '';
 
         if (result['Token'] != undefined || result['Token'] != null) {
 
@@ -558,13 +615,14 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
             setTimeout(() => {
               this.orderMsg = '';
               this.router.navigate(['/public/order/', result.obj[0]['orderid'], this.customerId]);
-            }, 3000);
+              this.ngOnInit();
+            }, 2000);
 
           }
           // if (result.obj == null) {
           //   alert('order already created => orderId: ' + this.orderId);
           // }
-          if (result.errdesc != null && result.errdesc != '') {
+         else if (result.errdesc != null && result.errdesc != '') {
             this.errorMsg = result.errdesc;
 
             setTimeout(() => {
@@ -573,9 +631,9 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
           }
         }
         else {
-          this.dialog.open(DialogComponent, {
-            data: {message: MsgList.exitSystemAlert}
-          })
+          // this.dialog.open(DialogComponent, {
+          //   data: {message: MsgList.exitSystemAlert}
+          // })
           this.sharedService.exitSystemEvent();
         }
       })
@@ -603,6 +661,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         }
 
         this.deleteCardsSpinner = true;
+
         this.dataService.DeleteVoidOrder(objToApi).subscribe(result => {
           this.deleteCardsSpinner = false;
 
@@ -640,10 +699,16 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
               }, 3000);
             }
           }
+          else if(typeof result == 'string'){
+            this.errorMsgDelete = result;
+            setTimeout(() => {
+              this.errorMsgDelete = '';
+            }, 2000);
+          }
           else {
-            this.dialog.open(DialogComponent, {
-              data: {message: MsgList.exitSystemAlert}
-            })
+            // this.dialog.open(DialogComponent, {
+            //   data: {message: MsgList.exitSystemAlert}
+            // })
             this.sharedService.exitSystemEvent();
           }
         });
@@ -665,25 +730,16 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   saveChanges() {
-    if (this.RefControl.value != '') {
       this.saveChangesSpinner = true;
+      
       let objToApi = {
         Token: this.userToken,
         UserID: this.customerId,
         OrderID: this.orderId,
-        Reference: this.RefControl.value
+        Reference: this.RefControl.value == '' ? 0 : this.RefControl.value
       }
 
       this.chagesToServer = [];
-
-      /**
-       * data for order date change
-       * ValidationDate : ''
-       * orderId: ''
-       * 
-       */
-      // 
-
       this.dataService.InsertUpdateOrder(objToApi).subscribe(result => {
         // 
         this.saveChangesSpinner = false;
@@ -697,27 +753,20 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
           if (typeof result == 'object' && result.obj != null && result.obj.length > 0) {
             this.orderRefMsg = 'שינויים נשמרו בהצלחה';
-
+            this.GetOrderDetails();
             setTimeout(() => {
               this.orderRefMsg = '';
             }, 2000);
           }
         }
         else {
-          this.dialog.open(DialogComponent, {
-            data: {message: MsgList.exitSystemAlert}
-          })
+          // this.dialog.open(DialogComponent, {
+          //   data: {message: MsgList.exitSystemAlert}
+          // })
           this.sharedService.exitSystemEvent();
         }
       });
-    }
-    else {
-      this.errorRefMsg = 'נא להזין מספר אסמכתא';
 
-      setTimeout(() => {
-        this.errorRefMsg = '';
-      }, 2000);
-    }
   }
 
   changeDateOfRow(element, controlName) {
@@ -773,14 +822,217 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
           }
         }
         else {
-          this.dialog.open(DialogComponent, {
-            data: {message: MsgList.exitSystemAlert}
-          })
+          // this.dialog.open(DialogComponent, {
+          //   data: {message: MsgList.exitSystemAlert}
+          // })
           this.sharedService.exitSystemEvent();
         }
       })
     });
+  }  
+
+
+
+
+  getSmsTemplates(){
+
+    let objToApi = {
+      Token: this.userToken
+    }
+
+    this.dataService.GetSMSFormats(objToApi).subscribe(result => {
+      
+
+      if (result['Token'] != undefined || result['Token'] != null) {
+
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
+
+        if (typeof result == 'object' && result.obj != null && result.obj.length > 0) {
+          this.smsTemplatesData = [...result.obj];
+        }
+      }
+      else {
+        // this.dialog.open(DialogComponent, {
+        //   data: {message: MsgList.exitSystemAlert}
+        // })
+        this.sharedService.exitSystemEvent();
+      }
+    });
   }
+  
+  sendSMS(){
+
+
+    if(this.sendSmsGroup.valid){
+    this.dialog.open(DialogConfirmComponent, {
+      data: {message: 'האם לשלוח SMS?', eventButton:'שלח'}
+    }).afterClosed().subscribe(result => {
+      debugger
+      if(result.result == 'yes'){
+        if(this.orderCardsData.length > 0){
+          let selectedCards = [];
+          this.orderCardsData.forEach(card => {
+            selectedCards.push(card.Id)
+          });
+    
+        let objToApi = {
+          Token: this.userToken,
+          TemplateId: this.sendSmsGroup.get('smsTemplates').value,
+          UserId: this.customerId,
+          OrderLineIds: selectedCards,
+          CoreOrderId: this.orderId,
+          From: this.smsTemplatesData.filter(el => el.Id == this.sendSmsGroup.get('smsTemplates').value)[0]['SenderName']
+        }
+    
+        debugger
+        this.dataService.SendSMSByOrderLine(objToApi).subscribe(result => {
+          if (result['Token'] != undefined || result['Token'] != null) {
+    
+            //set new token
+            let tempObjUser = JSON.parse(localStorage.getItem('user'));
+            tempObjUser['Token'] = result['Token'];
+            localStorage.setItem('user', JSON.stringify(tempObjUser));
+            this.userToken = result['Token'];
+    
+            if (result.errdesc == 'OK') {
+              
+              this.dialog.open(DialogComponent, {
+                data: {title: '', message: 'ההודעות נשלחות ברקע' ,subTitle: ' ההודעה נשלחה ל ' + this.orderCardsData.length  + ' נמענים '  }
+              })
+
+              this.sendSmsGroup.reset();
+              this.openSendSmsBlock();
+            }
+            else{
+              this.dialog.open(DialogComponent, {
+                data: {message: result.errdesc}
+              });
+            }
+          }
+          else {
+            // this.dialog.open(DialogComponent, {
+            //   data: {message: MsgList.exitSystemAlert}
+            // })
+            this.sharedService.exitSystemEvent();
+          }
+        });
+    
+        }
+      }
+    })
+  }
+  else{
+    this.errorSendSms = 'נא לבחור תבנית ההודעה';
+    setTimeout(()=>{
+      this.errorSendSms = '';
+    }, 2000)
+  }
+  }
+
+  //enable/disable send sms button
+  smsTempleteSelect(event){
+    if(event.value != undefined){
+
+      // this.smsTemplatesData;
+      this.sendSmsGroup.get('previewSmsTemplate').setValue(this.smsTemplatesData.filter(el => el.Id == event.value)[0]['TemplateFormat']);
+      //enable send sms button
+      // this.sendButtonSms = false;
+    }
+  }
+
+  GetCards() {
+
+    let objToAPI = {
+      Token: this.userToken,
+      OrderId: this.orderId,
+      userId: this.customerId
+    }
+    
+    this.dataService.GetCardsByOrderId(objToAPI).subscribe(result => {
+      if (result['Token'] != undefined || result['Token'] != null) {
+
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
+
+        if (typeof result == 'object') {
+          this.orderCardsData = result['obj'][0];
+          this.DigitalBatch = result['obj'][1];
+
+        }
+        else {
+          this.dialog.open(DialogComponent, {
+            data: {message: result}
+          })
+        }
+      }
+      else {
+        // this.dialog.open(DialogComponent, {
+        //   data: {message: MsgList.exitSystemAlert}
+        // })
+        this.sharedService.exitSystemEvent();
+      }
+    });
+  }
+
+
+  openSendSmsBlock(){
+
+    this.additionalOptionsSMS = !this.additionalOptionsSMS;
+  }
+
+  excelFileExport(){
+    let tableLabels = [
+      { value: 'ItemId', viewValue: "מס''ד" },
+      { value: 'CardId', viewValue: 'קוד דיגיטלי' },
+      { value: 'DSendName', viewValue: 'שם נמען' },
+      { value: 'DSendPhone', viewValue: 'מספר נייד נמען	' },
+      { value: 'LoadSum', viewValue: 'סכום טעינה ראשוני		' },
+      { value: 'ValidationDate', viewValue: '	תוקף	' },
+      { value: 'KindOfLoadSumDesc', viewValue: 'סוג שובר טעינה	' },
+      { value: 'DSendLastSent', viewValue: 'נשלח לאחרונה' }
+    ];
+    
+    //add another column to file if order created from excel file
+    if(this.DigitalBatch != ''){
+      tableLabels.push({value: 'ValidationField', viewValue: 'שדה אימות'})
+    }
+
+    let tableData = JSON.parse(JSON.stringify(this.orderCardsData));
+    
+    let workbook = new Workbook();
+    let worksheet = workbook.addWorksheet('ProductSheet');
+ 
+    var worksheetArr = [];
+    tableLabels.forEach(label => {
+      worksheetArr.push({header: label.viewValue, key: label.value, width: 20});
+    });
+
+    worksheet.columns = worksheetArr;
+
+    for(let data of Object.values(tableData)){
+      for(let element of Object.keys(data)){
+        if(element == 'CardId'){
+          let oldData = data[element];
+          data[element] = oldData + '' + data['PinCode']
+        }
+      }
+    }
+    worksheet.addRows(tableData, "n")
+   
+    let userData = JSON.parse(localStorage.getItem('user')).obj;
+    workbook.xlsx.writeBuffer().then((data) => {
+      let blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      fs.saveAs(blob, userData['Fname'] + '_' + userData['Lname']  + '_' + this.orderId + '.xlsx');
+    })
+  }
+
 
   ngOnChanges(changes: SimpleChanges) {
 
@@ -806,9 +1058,6 @@ export interface DatePickerDialogData {
   styleUrls: ['./datePickerStyle.css'],
 })
 export class DatePickerDialog implements OnInit {
-
-
-
   constructor(
     public dialog: MatDialog,
     public dialogRef: MatDialogRef<DatePickerDialog>,
@@ -835,38 +1084,6 @@ export class DatePickerDialog implements OnInit {
 
     return new Date(day + '/' + month + '/' + year + ' 23:59:59');
   }
-
-  // minDate: any;
-  // maxDate: any;
-
-
-
-  // setCalendarFilter() {
-  //   let date = new Date();
-
-  //   let lastDateOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59);//last day of current month
-  //   let fiveYFromCurrDate = new Date(lastDateOfMonth.getFullYear() + 5, lastDateOfMonth.getMonth(), lastDateOfMonth.getDate());
-  //   // const currentYear = new Date().getFullYear();
-
-  //   const day = lastDateOfMonth.getDate();
-  //   const month = lastDateOfMonth.getMonth();
-  //   const year = lastDateOfMonth.getFullYear();
-
-
-
-  //   const Fday = fiveYFromCurrDate.getDate();
-  //   const Fmonth = fiveYFromCurrDate.getMonth();
-  //   const Fyear = fiveYFromCurrDate.getFullYear();
-
-  //   // this.minDate = new Date(year, month, day);
-  //   // this.maxDate = new Date(Fyear, +Fmonth, +Fday);
-  // }
-
-  // getLastDateOfCurrentMonth() {
-  //   let date = new Date();
-  //   let lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59);
-  //   return lastDay;
-  // }
 
   dialogClose() {
     this.dialogRef.close();

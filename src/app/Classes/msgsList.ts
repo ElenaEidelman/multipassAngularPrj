@@ -5,5 +5,6 @@ export const MsgList =  {
     emailFormatValidationErr: 'כתובת אימייל לא תקינה',
     requiredField: 'שדה חובה',
     exitSystemAlert: 'התנתקת מהמערכת, נא להתחבר שוב',
-    phonePatternErr: 'מספר טלפון שגוי'
+    phonePatternErr: 'מספר טלפון שגוי',
+    sendSuccessfully: 'נשלח בהצלחה'
 }

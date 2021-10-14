@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, Inject, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatTabChangeEvent } from '@angular/material/tabs';
@@ -9,9 +9,10 @@ import { CustomerData } from 'src/app/Classes/customerData';
 import { DataServiceService } from 'src/app/data-service.service';
 import {CdkTextareaAutosize} from '@angular/cdk/text-field';
 import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { SharedService } from 'src/app/shared.service';
 import { MsgList } from 'src/app/Classes/msgsList';
+import { DialogWithTableDataComponent } from './Dialogs/dialog-with-table-data/dialog-with-table-data.component';
 
 @Component({
   selector: 'app-order-cards',
@@ -26,6 +27,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
 
   @ViewChild('autosize') autosize: CdkTextareaAutosize;
   @ViewChild('uploadDoc') uploadDoc: ElementRef;
+
 
 
   userDataUnsubscribe;
@@ -51,22 +53,24 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
   filename;
   excelfileName;
   excelCustomerId;
+  fileUploading: boolean = false;
 
   manualError: string = '';
   excelFileError: string = '';
   excelSendError: string = '';
-  excelCustomerError: string = '';
+  // excelCustomerError: string = '';
 
   fileUplodadeValid: boolean = false;
 
   excelCardCreatingForm = this.fb.group({
     customer: ['', Validators.required],
     fileDesc: (''),
-    file: ('')
+    file: ['', Validators.required]
   });
 
   manualCardgroup = this.fb.group({
-    selectedCustomerControl: ('')
+    selectedCustomerControl: (''),
+    orderDescription: ('')
   });
 
   loadingCardGroup = this.fb.group({
@@ -115,17 +119,22 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
   }
 
   getAllCustomers() {
-    let token = JSON.parse(localStorage.getItem('user'))['Token'];
+
     let objToApi = {
-      Token: token
+      Token: this.userToken
     }
     this.dataService.GetAllCustomers(objToApi).subscribe(result => {
-
       if (typeof result == 'string') {
         // this.errorMsg = result;
         setTimeout(() => {
           // this.errorMsg = '';
         }, 5000)
+      }
+      else if(result.Token == null){
+        // this.dialog.open(DialogComponent, {
+        //   data: {message: MsgList.exitSystemAlert}
+        // })
+        this.sharedService.exitSystemEvent();
       }
       else {
         if (typeof result == 'object' && result['obj'] != null && result['obj'].length > 0) {
@@ -169,7 +178,9 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
 
   optionChange() {
 
-    this.fileUploadButtonDisabled = false
+    
+
+    // this.fileUploadButtonDisabled = false
     // if (this.loadingCardGroup.get('selectedCustomerControl').value) {
     //   this.showHiddenLoadingCardContent = true;
     //   // this.getCardsData();
@@ -178,20 +189,25 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
   }
 
   fileOptionChange(event) {
-    if(this.excelCardCreatingForm.get('customer').value.id != undefined){
+    
+    debugger
+    if(this.excelCardCreatingForm.get('customer').valid){
       if (event.target.files.length > 0) {
+        debugger
         const file = event.target.files[0];
-        // this.filename = file.name;
-  
-        // this.excelFileError = 'excel file: ' + file.type.includes('excel');
-        // setTimeout(() => {
-        //   this.excelFileError = '';
-        // }, 2000);
-  
-        if (!file.type.includes('excel')) {
+        if (!file.type.includes('excel') && !file.type.includes('sheet')) {
           this.fileUplodadeValid = false;
+          this.dialog.open(DialogComponent, {
+            data: {
+              title: '',
+              subTitle: '',
+              message: 'נא להעלות רק קבצי אקסל'
+            }
+          });
+          this.uploadDoc.nativeElement.value = '';
         }
         else {
+          this.fileUploading = true;
   
           const formData = new FormData();
           formData.append('Token', this.userToken);
@@ -200,8 +216,10 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
           formData.append('Description', this.excelCardCreatingForm.get('fileDesc').value);
           formData.append('ExcelFile', file);
   
+          debugger
           this.dataService.InsertUpdateOrderByExcel(formData).subscribe(result => {
-            debugger
+
+            this.fileUploading = false;
             this.fileUplodadeValid = false;
             if (result['Token'] != undefined || result['Token'] != null) {
             
@@ -211,10 +229,9 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
               localStorage.setItem('user', JSON.stringify(tempObjUser));
               this.userToken = result['Token'];
 
-              if(result.obj != undefined && Object.keys(result.obj).length > 0){
-
+              if(result.err != -1){
                   this.fileUplodadeValid = true;
-                  this.filename = result.obj[0].NewFileName;
+                  this.filename = result.obj[1][0].NewFileName;
                   let objGetFile = {
                     excelName: this.filename,
                     customerId: this.excelCardCreatingForm.get('customer').value.id,
@@ -222,23 +239,63 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
                     fileDescription: this.excelCardCreatingForm.get('fileDesc').value
                   }
                   localStorage.setItem('excelFileData', JSON.stringify(objGetFile));
+                  this.uploadDoc.nativeElement.value = '';
+                  debugger
                 
               }
-              if(result.obj == null && result.errdesc != null && result.errdesc != ''){
-                this.excelFileError = result.errdesc;
+              if(result.err == -1){
 
-                setTimeout(() => {
-                  this.excelFileError = '';
-                }, 2000);
+                let data_Source = new MatTableDataSource([]);
+                let data = [];
+                let dataLabelsList = ['FirstName', 'LastName', 'Cellular', 'Amount'];
+                // let dataLabelsList = [
+                //                       {engLabel: 'FirstName', hebLabel: 'שם'},
+                //                       {engLabel: 'LastName', hebLabel: 'שם משפחה'},
+                //                       {engLabel: 'Cellular', hebLabel: 'טלפון'},
+                //                     ];
+
+                if(result.obj.length > 0){
+                  let dataOBJ = {};
+                  result.obj[0].forEach(element => {
+                      dataLabelsList.forEach(labels => {
+                        dataOBJ[labels] = element[labels]
+                      })
+                      data.push(dataOBJ);
+                  });
+                }
+
+                data_Source.data = data;
+                this.dialog.open(DialogWithTableDataComponent, {
+                  maxHeight: '200px',
+                  data: {
+                    title: result.errdesc,
+                    data_Source: data,
+                    dataLabelsList: dataLabelsList
+                  }
+                });
+
+                this.uploadDoc.nativeElement.value = '';
+                this.filename = '';
+
+                // this.excelFileError = result.errdesc;
+
+                // setTimeout(() => {
+                //   this.excelFileError = '';
+                // }, 2000);
               }
               else if(typeof result == 'string'){
-                this.excelFileError = result;
+
+                this.dialog.open(DialogComponent, {
+                  data: {
+                    title: '',
+                    subTitle: '',
+                    message: result
+                  }
+                });
+                // this.excelFileError = result;
               }
             }
             else{
-              this.dialog.open(DialogComponent, {
-                data: {message: MsgList.exitSystemAlert}
-              })
               this.sharedService.exitSystemEvent();
             }
           });
@@ -247,10 +304,12 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
       }
     }
     else{
-      this.excelCustomerError = 'נא לבחור לקוח';
-      setTimeout(()=>{
-        this.excelCustomerError = '';
-      }, 2000);
+      this.excelCardCreatingForm.get('file').setValue('');
+      // this.excelCustomerError = 'נא לבחור לקוח';
+      // this.uploadDoc.nativeElement.value = '';
+      // setTimeout(()=>{
+      //   this.excelCustomerError = '';
+      // }, 2000);
     }
   }
 
@@ -346,11 +405,12 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
 
   goToExcelView(){
     ///public/excelView
-    if(this.excelCardCreatingForm.valid && this.fileUplodadeValid){
+    debugger
+    if(this.excelCardCreatingForm.valid){
       this.router.navigate(['/public/excelView']);
     }
     else{
-        this.excelSendError = 'לא הוזנו כל שדות חובה';
+        this.excelSendError = 'נא לבחור את הקובץ';
         setTimeout(() => {
           this.excelSendError = '';
         }, 2000)
@@ -361,8 +421,52 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
     alert();
   }
 
+  openAddCustomerDialog(){
+    this.dialog.open(AddCustomerDialogComponent, {
+      data: {data: 'test'}
+    }).afterClosed().subscribe(result => {
+      // debugger
+      // this.ngOnInit();
+      this.getAllCustomers();
+    });
+  }
+
   ngOnDestroy() {
     this.userDataUnsubscribe.unsubscribe();
     // localStorage.setItem('excelFileData', '')
+  }
+}
+
+
+
+
+
+
+// add new customer dialog
+@Component({
+  selector: 'dialog-addNewCust',
+  templateUrl: './addNewCustomerDialog.html',
+  styleUrls: ['./addNewCustomerStyle.css'],
+})
+export class AddCustomerDialogComponent implements OnInit {
+
+  IfComponentDialog: boolean = true;
+
+  constructor(
+    public dialog: MatDialog,
+    public dialogRef: MatDialogRef<AddCustomerDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private route: Router
+  ) {
+  }
+
+
+
+  ngOnInit(): void {
+  }
+
+
+  dialogClose() {
+    this.dialogRef.close();
   }
 }

@@ -14,9 +14,9 @@
           <p>
             <mat-form-field>
               <mat-label>מספר טלפון</mat-label>
-              <input type="phone" matInput placeholder="מספר טלפון" formControlName="PhoneNumber">
+              <input type="phone" matInput placeholder="מספר טלפון" formControlName="PhoneNumber" numbersOnly>
               <mat-icon matPrefix>phone</mat-icon>
-              <mat-hint>מספר טלפון</mat-hint>
+              <!-- <mat-hint>מספר טלפון</mat-hint> -->
               <mat-error *ngIf="loginForm.get('PhoneNumber').hasError('required')">
                 נא להכניס את מספר טלפון
               </mat-error>
@@ -27,7 +27,7 @@
               <mat-label>מזהה</mat-label>
               <input type="text" matInput placeholder="מזהה" formControlName="CompanyId">
               <mat-icon matPrefix>domain</mat-icon>
-              <mat-hint>מזהה</mat-hint>
+              <!-- <mat-hint>מזהה</mat-hint> -->
               <mat-error *ngIf="loginForm.get('CompanyId').hasError('required')">
                 נא להזין מזהה החברה
               </mat-error>
@@ -35,7 +35,7 @@
           </p>
           <div class="wrap-button-login">
             <div *ngIf="msgAlert != ''" class="error msgAlert">{{msgAlert}}</div>
-            <button mat-button type="submit" class="addButton">כניסה</button>
+            <button mat-button type="submit" class="addButton width-block">כניסה</button>
               <mat-spinner *ngIf="loginSpinner"></mat-spinner>
           </div>
         </form>
@@ -56,16 +56,14 @@
           </p>
           <div class="wrap-button-login">
             <!-- <div *ngIf="msgAlert != ''" class="error msgAlert">{{msgAlert}}</div> -->
-            <button mat-button type="submit" class="addButton">לאמת</button>
+            <button mat-button type="submit" class="addButton width-block">כניסה</button>
             <mat-error *ngIf="validateOtpErrorAlert != ''">{{validateOtpErrorAlert}}</mat-error>
-            <span *ngIf="loginSpinner">
-              <mat-spinner></mat-spinner>
-            </span>
+            <mat-spinner *ngIf="loginSpinner"></mat-spinner>
           </div>
 
           <div class="wrapUndButtons">
-            <span class="undButton" (click)="sendAgainCodeValidation()">נסה שוב</span> | 
-            <span class="undButton" (click)="editPhoneNumber()">תיקון מספר טלפון</span>
+            <!-- <span class="undButton" (click)="sendAgainCodeValidation()">נסה שוב</span> |  -->
+            <span class="undButton" (click)="editPhoneNumber()">חזרה למסך הכניסה</span>
           </div>
         </form>
       </div>

@@ -14,6 +14,8 @@ import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogConfirmComponent } from 'src/app/PopUps/dialog-confirm/dialog-confirm.component';
 import { MsgList } from 'src/app/Classes/msgsList';
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import { faFileExcel } from '@fortawesome/free-solid-svg-icons';
 
 
 
@@ -21,7 +23,21 @@ import { MsgList } from 'src/app/Classes/msgsList';
 @Component({
   selector: 'app-all-orders',
   templateUrl: './all-orders.component.html',
-  styleUrls: ['./all-orders.component.css']
+  styleUrls: ['./all-orders.component.css'],
+  animations:[
+    trigger('openClose', [
+      state('true', style({
+        overflow: 'hidden',
+        height: '*'
+      })),
+      state('false', style({
+        opacity: '0',
+        overflow: 'hidden',
+        height: '0px',
+      })),
+      transition('false <=> true', animate('600ms ease-in-out'))
+    ])
+  ]
 })
 export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
 
@@ -33,6 +49,8 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     private acivatedRoute: ActivatedRoute,
     private sharedService: SharedService,
     private dialog: MatDialog) { }
+
+    faFileExcel = faFileExcel;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -59,6 +77,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     ToDate: (''),
     InitialAmount: (''),
     Status: (''),
+    CrmOrderId: ('')
   });
 
   dataSource = new MatTableDataSource([]);
@@ -74,7 +93,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     { value: 'CardsQty', viewValue: 'כמות שוברים בהזמנה' },
     { value: 'MDate', viewValue: 'תאריך יצירת הזמנה' },
     { value: 'ApproveDate', viewValue: 'תאריך שליחה' },//v
-    { value: 'UserId', viewValue: 'מספר לקוח בהנה"ח' },//v
+    { value: 'CrmOrderId', viewValue: 'מספר אסמכתא' },//v
     { value: 'Status', viewValue: 'סטטוס הזמנה' },
   ];
 
@@ -121,13 +140,14 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
         if (typeof result == 'object' && result.obj != null) {
+          debugger
           this.statusListArr = [...result.obj];
         }
       }
       else {
-        this.dialog.open(DialogComponent, {
-          data: {message: MsgList.exitSystemAlert}
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: {message: MsgList.exitSystemAlert}
+        // })
         this.sharedService.exitSystemEvent();
       }
     });
@@ -137,6 +157,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   getOrdersList() {
     //
 
+    
     this.filterActionButtonSpinner = true;
     let objToApi = {
       Token: this.userToken
@@ -144,6 +165,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.filterActionButtonSpinner = true;
     //GetOrdersByFilter
+    
     
     this.dataService.getAllOrders(objToApi).subscribe(result => {
       
@@ -162,6 +184,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
         if (typeof result == 'object' && result.obj != null) {
           this.dataSourceSpare.data = result['obj'];
           this.dataSource.data = result['obj'];
+          debugger
         }
         // if(result.errdesc == 'No Data Found'){
         //   this.noTableData = true;
@@ -177,9 +200,9 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
 
       }
       else {
-        this.dialog.open(DialogComponent, {
-          data: {message: MsgList.exitSystemAlert}
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: {message: MsgList.exitSystemAlert}
+        // })
         this.sharedService.exitSystemEvent();
       }
     })
@@ -241,9 +264,9 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
             }
           }
           else {
-            this.dialog.open(DialogComponent, {
-              data: {message: MsgList.exitSystemAlert}
-            })
+            // this.dialog.open(DialogComponent, {
+            //   data: {message: MsgList.exitSystemAlert}
+            // })
             this.sharedService.exitSystemEvent();
           }
         });
@@ -300,9 +323,9 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
             })
           }
           else {
-            this.dialog.open(DialogComponent, {
-              data: {message: MsgList.exitSystemAlert}
-            })
+            // this.dialog.open(DialogComponent, {
+            //   data: {message: MsgList.exitSystemAlert}
+            // })
             this.sharedService.exitSystemEvent();
           }
         });
@@ -339,7 +362,6 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   filterTable() {
-
     this.noTableData = false;
     let inputSelected = false;
 
@@ -358,7 +380,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
     if (!inputSelected) {
-      this.errorMsg = 'נא למלא לפחות אחד מהשדות';
+      this.errorMsg = 'נא למלא לפחות אחת מהשדות';
       setTimeout(() => {
         this.errorMsg = '';
       }, 3000);
@@ -366,8 +388,10 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     else {
 
       this.filterActionButtonSpinner = true;
+
+      debugger
       this.dataService.GetOrdersByFilter(objToApi).subscribe(result => {
-        
+        debugger
         this.filterActionButtonSpinner = false;
 
         if (result['Token'] != undefined || result['Token'] != null && Object.keys(result.obj).length > 0) {
@@ -388,9 +412,9 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
           }, 3000);
         }
         else {
-          this.dialog.open(DialogComponent, {
-            data: {message: MsgList.exitSystemAlert}
-          })
+          // this.dialog.open(DialogComponent, {
+          //   data: {message: MsgList.exitSystemAlert}
+          // })
           this.sharedService.exitSystemEvent();
         }
       })

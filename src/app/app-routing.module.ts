@@ -27,6 +27,7 @@ import { AllUsersComponent } from './Users/all-users/all-users.component';
 import { ExistUserComponent } from './Users/exist-user/exist-user.component';
 import { NewUserComponent } from './Users/new-user/new-user.component';
 import { ExcelFileViewComponent } from './excel/excel-file-view/excel-file-view.component';
+import { TestComponent } from './test/test.component';
 
 const routes: Routes = [
   {path:'', redirectTo: 'logIn', pathMatch: 'full'},
@@ -64,12 +65,15 @@ const routes: Routes = [
     {path: 'admin', component: AdminComponent, children: [
       {path: 'createNewUser', component: AdminNewUserComponent},
       {path: 'createNewCard', component: AdminNewCardComponent},
-    ]}
+    ]},
+    {path: 'test', component: TestComponent}
   ]},
+
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' })],
   exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {
+ }

@@ -30,7 +30,7 @@ export class DigitalFilesListComponent implements OnInit, AfterViewInit {
 
   excelFilesLabelForTable = [
     {value: 'BatchNum', viewValue: 'מספר טעינה'},
-    {value: 'Description', viewValue: 'תאור הקובץ'},
+    {value: 'Description', viewValue: 'תאור  ההזמנה'},
     {value: 'DateInsert', viewValue: 'תאריך קליטה'},
     {value: 'FilePath', viewValue: 'שם הקובץ'}
   ];
@@ -68,6 +68,7 @@ export class DigitalFilesListComponent implements OnInit, AfterViewInit {
     }
      
     this.dataService.GetDigitalFilesList(objToApi).subscribe(result => {
+      debugger
       this.spinner = false;
       if (result['Token'] != undefined || result['Token'] != null) {
         //set new token
@@ -99,9 +100,9 @@ export class DigitalFilesListComponent implements OnInit, AfterViewInit {
         });
       }
       else {
-        this.dialog.open(DialogComponent, {
-          data: {message: MsgList.exitSystemAlert}
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: {message: MsgList.exitSystemAlert}
+        // })
         this.sharedService.exitSystemEvent();
       }
     });

@@ -25,7 +25,15 @@
     margin: auto 2em;
 }
 .wrapUserButton{
-    text-align-last: end;
+    display: flex;
+    flex-direction: row-reverse;
+}
+.wrapUserButton > *{
+    margin: auto auto 0;
+    text-align: CENTER;
+}
+.downloadButton:hover{
+    text-decoration: none;
 }
 .bWrap{
     margin: 0 30px;
@@ -40,7 +48,7 @@
     /* flex-direction: column; */
 }
 .linkButton  mat-icon{
-    color: #686866;
+    /* color: #686866; */
 }
 mat-hint{
     display: block;
@@ -91,11 +99,10 @@ mat-hint{
     color: #272626;
 }
 
-.addButton {
-    /* background: #267491; */
+/* .addButton {
     background: #88C43E !important;
     color: #fff !important;
-}
+} */
 @media screen and (max-width: 1024px){
     .textA .mat-form-field-infix{
         padding-top: 0px;

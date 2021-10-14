@@ -1,3 +1,4 @@
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, ElementRef, Inject, Input, OnInit, QueryList, ViewChild, ViewChildren, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormControl, NgControl, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -13,7 +14,21 @@ import { SharedService } from 'src/app/shared.service';
 @Component({
   selector: 'app-all-sms-templates',
   templateUrl: './all-sms-templates.component.html',
-  styleUrls: ['./all-sms-templates.component.css']
+  styleUrls: ['./all-sms-templates.component.css'],
+  animations:[
+    trigger('openClose', [
+      state('true', style({
+        overflow: 'hidden',
+        height: '*'
+      })),
+      state('false', style({
+        opacity: '0',
+        overflow: 'hidden',
+        height: '0px',
+      })),
+      transition('false <=> true', animate('600ms ease-in-out'))
+    ])
+  ]
 })
 export class AllSmsTemplatesComponent implements OnInit {
 
@@ -22,12 +37,17 @@ export class AllSmsTemplatesComponent implements OnInit {
   @ViewChild(MatAccordion) accordion: MatAccordion;
   @ViewChild('newTemplate') newTemplate: ElementRef;
 
+  spinnerId = -1;
+  spinnerById = [];
+  newSMSSend: boolean = false;
 
+  
   userToken;
   userId;
   errorMessagenewSms: string = '';
   spinnerNewTemp: boolean = false;
   newTemplateSendError: string = '';
+  MsgList = MsgList;
 
   templatesSMS = [];
 
@@ -99,9 +119,9 @@ export class AllSmsTemplatesComponent implements OnInit {
         }
       }
       else {
-        this.dialog.open(DialogComponent, {
-          data: {message: MsgList.exitSystemAlert}
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: {message: MsgList.exitSystemAlert}
+        // })
         this.sharedService.exitSystemEvent();
       }
 
@@ -191,9 +211,9 @@ export class AllSmsTemplatesComponent implements OnInit {
 
           }
           else {
-            this.dialog.open(DialogComponent, {
-              data: {message: MsgList.exitSystemAlert}
-            })
+            // this.dialog.open(DialogComponent, {
+            //   data: {message: MsgList.exitSystemAlert}
+            // })
             this.sharedService.exitSystemEvent();
           }
         });
@@ -257,9 +277,9 @@ export class AllSmsTemplatesComponent implements OnInit {
             }
           }
           else {
-            this.dialog.open(DialogComponent, {
-              data: {message: MsgList.exitSystemAlert}
-            })
+            // this.dialog.open(DialogComponent, {
+            //   data: {message: MsgList.exitSystemAlert}
+            // })
             this.sharedService.exitSystemEvent();
           }
         });
@@ -354,9 +374,9 @@ Json:
             }
           }
           else {
-            this.dialog.open(DialogComponent, {
-              data: {message: MsgList.exitSystemAlert}
-            })
+            // this.dialog.open(DialogComponent, {
+            //   data: {message: MsgList.exitSystemAlert}
+            // })
             this.sharedService.exitSystemEvent();
           }
         });
@@ -374,60 +394,58 @@ Json:
   }
 
   sendSMSForExample(template, newTmp: boolean) {
-    let templateValid: boolean = false;
-
-    if(newTmp){
-      if(this.newTemplateForm.valid){
-        templateValid = this.newTemplateForm.valid;
-      }
-      else{
+    debugger
+    if(newTmp && !this.newTemplateForm.valid){
         this.newTemplateSendError = 'נא למלא שדות חובה';
         setTimeout(() => {
           this.newTemplateSendError = '';
         }, 2000);
-      }
     }
+    if((newTmp && this.newTemplateForm.valid) || !newTmp){
+      this.dialog.open(PhoneConfirmComponent, {
+        data: { message: ' ?מה מספר טלפון לשליחת SMS' }
+      }).afterClosed().subscribe(result => {
+        this.newSMSSend = newTmp;
+        if (result.result.includes('phone')) {
 
-      if((newTmp && templateValid) || !newTmp){
-        this.dialog.open(PhoneConfirmComponent, {
-          data: { message: ' ?מה מספר טלפון לשליחת SMS' }
-        }).afterClosed().subscribe(result => {
-          if (result.result.includes('phone')) {
-  
-            let phone = result.result.split('phone: ')[1];
-  
-            let objToApi = {
-              Token: this.userToken,
-              TemplateFormat: template.TemplateFormat,
-              Phone: phone
-            }
-  
-            this.dataService.SendSampleMessage(objToApi).subscribe(result => {
-              if (result['Token'] != undefined || result['Token'] != null) {
-  
-                //set new token
-                let tempObjUser = JSON.parse(localStorage.getItem('user'));
-                tempObjUser['Token'] = result['Token'];
-                localStorage.setItem('user', JSON.stringify(tempObjUser));
-                this.userToken = result['Token'];
-  
-                if (result.errdesc == 'OK') {
-                  this.dialog.open(DialogComponent, {
-                    data: { message: 'נשלח בהצלחה' }
-                  });
-                }
-  
-              }
-              else {
-                this.dialog.open(DialogComponent, {
-                  data: {message: MsgList.exitSystemAlert}
-                })
-                this.sharedService.exitSystemEvent();
-              }
-            });
+          this.spinnerById[0] = template['Id'];
+          let phone = result.result.split('phone: ')[1];
+
+          let objToApi = {
+            Token: this.userToken,
+            TemplateFormat: template.TemplateFormat,
+            Phone: phone
           }
-        })
-      }
+
+
+          this.dataService.SendSampleMessage(objToApi).subscribe(result => {
+            this.spinnerById[0] = -1;
+            this.newSMSSend = !this.newSMSSend;
+            if (result['Token'] != undefined || result['Token'] != null) {
+              //set new token
+              let tempObjUser = JSON.parse(localStorage.getItem('user'));
+              tempObjUser['Token'] = result['Token'];
+              localStorage.setItem('user', JSON.stringify(tempObjUser));
+              this.userToken = result['Token'];
+
+              debugger
+              if (result.obj == 'OK') {
+                this.dialog.open(DialogComponent, {
+                  data: { message: 'נשלח בהצלחה' }
+                });
+              }
+
+            }
+            else {
+              // this.dialog.open(DialogComponent, {
+              //   data: {message: MsgList.exitSystemAlert}
+              // })
+              this.sharedService.exitSystemEvent();
+            }
+          });
+        }
+      })
+    }
 
   // }
   // else{
@@ -440,13 +458,28 @@ Json:
 
 
 export interface DialogData {
-  message: any
+  message: any,
+  phone: any
 }
 @Component({
   selector: 'phone-confirm',
   templateUrl: './confirmPhone.component.html',
   styleUrls: ['./phone-confirm-dialog.component.css'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  animations:[
+    trigger('openClose', [
+      state('true', style({
+        overflow: 'hidden',
+        height: '*'
+      })),
+      state('false', style({
+        opacity: '0',
+        overflow: 'hidden',
+        height: '0px',
+      })),
+      transition('false <=> true', animate('600ms ease-in-out'))
+    ])
+  ]
 })
 export class PhoneConfirmComponent implements OnInit {
 
@@ -455,20 +488,24 @@ export class PhoneConfirmComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     private route: Router) { }
 
-  phoneControl = new FormControl('');
+  phoneControl = new FormControl();
+  
   errorPhone: string = '';
   MsgList = MsgList;
 
   ngOnInit(): void {
+
+    this.phoneControl.setValidators([Validators.required,Validators.pattern('[[0][0-9]{9}]*')]);
   }
 
   dialogClose() {
     this.dialogRef.close();
   }
   yes() {
-    if (this.phoneControl.value != '') {
-      this.dialogRef.close({ result: 'phone: ' + this.phoneControl.value });
-    }
+    debugger
+      if(this.phoneControl.valid){
+        this.dialogRef.close({ result: 'phone: ' + this.phoneControl.value });
+      }
     else {
       this.errorPhone = 'נא להזין מספר טלפון תקין';
       setTimeout(() => {

@@ -28,15 +28,7 @@ import { MDBBootstrapModule } from 'angular-bootstrap-md';
 
 
 
-
-
-
-
-
-
 import { ChartsModule } from 'ng2-charts';
-
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
@@ -56,7 +48,7 @@ import { DialogContentExampleDialog } from './home/home.component';
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { AllCardsComponent } from './Cards/all-cards/all-cards.component';
-import { OrderCardsComponent } from './Cards/order-cards/order-cards.component';
+import { AddCustomerDialogComponent, OrderCardsComponent } from './Cards/order-cards/order-cards.component';
 import { DigitalFilesListComponent } from './digital-files-list/digital-files-list.component';
 import { ReportsComponent } from './reports/reports.component';
 import { AllUsersComponent } from './Users/all-users/all-users.component';
@@ -85,6 +77,8 @@ import { ExcelFileViewComponent } from './excel/excel-file-view/excel-file-view.
 import { LoweUppCaseCheckPipe } from './Pipes/LowerUpperCaseCheck/lowe-upp-case-check.pipe';
 import { NumberDirective } from './directives/numbers-only.directive';
 import { AlphabetOnlyDirective } from './directives/letters-only.directive';
+import { TestComponent } from './test/test.component';
+import { DialogWithTableDataComponent } from './Cards/order-cards/Dialogs/dialog-with-table-data/dialog-with-table-data.component';
 
 @NgModule({
   declarations: [
@@ -127,7 +121,10 @@ import { AlphabetOnlyDirective } from './directives/letters-only.directive';
     LoweUppCaseCheckPipe,
     DatePickerDialog,
     NumberDirective,
-    AlphabetOnlyDirective
+    AlphabetOnlyDirective,
+    TestComponent,
+    AddCustomerDialogComponent,
+    DialogWithTableDataComponent
   ],
   imports: [
     BrowserModule,
@@ -166,8 +163,9 @@ import { AlphabetOnlyDirective } from './directives/letters-only.directive';
     NumberDirective,
     AlphabetOnlyDirective
   ],
+  entryComponents: [AddCustomerDialogComponent, DialogWithTableDataComponent],
   providers: [DataServiceService, { provide: MatPaginatorIntl, useClass: MatPaginatorIntlCro},{ provide: MAT_DATE_LOCALE, useValue: 'en-GB' }
-],
+          ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

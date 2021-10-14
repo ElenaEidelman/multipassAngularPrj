@@ -101,9 +101,9 @@ export class ExistUserComponent implements OnInit {
         }
       }
       else {
-        this.dialog.open(DialogComponent, {
-          data: {message: MsgList.exitSystemAlert}
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: {message: MsgList.exitSystemAlert}
+        // })
         this.sharedService.exitSystemEvent();
       }
     });
@@ -134,9 +134,9 @@ export class ExistUserComponent implements OnInit {
         }
       }
       else {
-        this.dialog.open(DialogComponent, {
-          data: {message: MsgList.exitSystemAlert}
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: {message: MsgList.exitSystemAlert}
+        // })
         this.sharedService.exitSystemEvent();
       }
     })
@@ -208,9 +208,9 @@ export class ExistUserComponent implements OnInit {
           }
         }
         else {
-          this.dialog.open(DialogComponent, {
-            data: {message: MsgList.exitSystemAlert}
-          })
+          // this.dialog.open(DialogComponent, {
+          //   data: {message: MsgList.exitSystemAlert}
+          // })
           this.sharedService.exitSystemEvent();
         }
       });
@@ -258,9 +258,9 @@ export class ExistUserComponent implements OnInit {
             }
           }
           else {
-            this.dialog.open(DialogComponent, {
-              data: {message: MsgList.exitSystemAlert}
-            })
+            // this.dialog.open(DialogComponent, {
+            //   data: {message: MsgList.exitSystemAlert}
+            // })
             this.sharedService.exitSystemEvent();
           }
         });

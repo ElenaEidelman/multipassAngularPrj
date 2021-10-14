@@ -1,0 +1,23 @@
+<div>
+    <div class="close-icon-wrap" (click)="dialogClose()" >
+        <mat-icon matTooltip="סגור" matTooltipPosition="right">cancel</mat-icon>
+    </div>
+
+
+    <div class="log-in">
+        <div class="wrap-form">
+            <!-- <div class="title">
+                {{data.data}}
+            </div> -->
+          <!-- <div class="dialogMessage">{{data.message}}</div> -->
+            <div>
+                <app-new-customer [IfComponentDialog]="IfComponentDialog"></app-new-customer>
+            </div>
+            <!-- <div class="wrapSendButton">
+                <div>
+                    <button mat-button class="addButton" (click)="dialogClose()">סגור</button>
+                </div>
+            </div> -->
+        </div>
+      </div>
+</div>

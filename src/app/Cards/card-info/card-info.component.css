@@ -12,7 +12,16 @@
     padding-left: 10px;
 }
 .changeDate{
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+}
+.changeDate > span{
     text-decoration: underline;
+    margin: 0 5px;
+}
+.changeDate > mat-icon{
+    color: #88C43E;
 }
 .innerElement{
     margin: 1.5rem 0;
@@ -91,6 +100,19 @@
 .templateTextArea{
     width: 100%;
 }
+.sendSMS textarea{
+    font: inherit;
+    background: transparent;
+    color: currentColor;
+    border: none;
+    outline: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    max-width: 100%;
+    vertical-align: bottom;
+    text-align: inherit;
+}
 /* .detailsRow{
     text-align: center;
 } */
@@ -117,6 +139,10 @@ textarea{
 }
 .wrapActiveVoidButton{
     position: relative;
+}
+
+.smsFormWrap mat-form-field{
+    width: 100%;
 }
 
 @media screen and (max-width: 1024px) {

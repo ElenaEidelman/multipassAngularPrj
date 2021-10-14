@@ -18,6 +18,9 @@
 .logo, .logo > a, .customerLogo, .customerLogo > a{
     display: flex;
 }
+.logo > a:hover{
+    cursor: pointer;
+}
 .logo > a > img{
     height: 80px;
     margin: auto 0;

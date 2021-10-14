@@ -20,6 +20,7 @@ export class DialogConfirmComponent implements OnInit {
               private route: Router) { }
 
   ngOnInit(): void {
+    
   }
 
   dialogClose(){

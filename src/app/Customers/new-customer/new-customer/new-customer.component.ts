@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
@@ -23,6 +23,7 @@ export class NewCustomerComponent implements OnInit {
     private dialog: MatDialog) { }
 
   @ViewChild(MatAccordion) accordion: MatAccordion;
+  @Input() IfComponentDialog = false;
 
   userToken: string;
   errorActionButtons: string = '';
@@ -38,9 +39,9 @@ export class NewCustomerComponent implements OnInit {
     FName: (''),
     LName: (''),
     Email: ['', [Validators.email, Validators.required]], //Validators.required,
-    Phone: ['',  [Validators.required, Validators.pattern('[0]{1}[0-9]{2,3}[0-9]{7}')]],
-    Permission: ['', Validators.required], // Validators.required
-    Phone1: ['', Validators.pattern('[0]{1}[0-9]{2,3}[0-9]{7}')],
+    Phone: ['',  [Validators.required, Validators.pattern('[[0][0-9]{9}]*')]],
+    Permission: ['מנהל באק אופיס', Validators.required], // Validators.required
+    Phone1: ['', Validators.pattern('[[0][0-9]{9}]*')],
     userNumber: [{ value: '', disabled: true }], //?
     CityName: (''),//v
     Streetno: (''),//v
@@ -56,11 +57,17 @@ export class NewCustomerComponent implements OnInit {
     BusinessFile: ('/test.txt') //must to be required Validators.required
   });
 
+  rolesList = ['מנהל באק אופיס','מפעיל באק אופיס'];
+
+
 
   ngOnInit(): void {
     window.scroll(0, 0);
     this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
     this.getUserStatus();
+
+    let test = this.IfComponentDialog;
+    debugger
   }
 
   getUserStatus(){
@@ -89,9 +96,9 @@ export class NewCustomerComponent implements OnInit {
         }
       }
       else {
-        this.dialog.open(DialogComponent, {
-          data: {message: MsgList.exitSystemAlert}
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: {message: MsgList.exitSystemAlert}
+        // })
         this.sharedService.exitSystemEvent();
       }
     })
@@ -110,6 +117,9 @@ export class NewCustomerComponent implements OnInit {
         if (this.newCustomerForm.get(control).value != '' && control != 'StatusId') {
           objToApi[control] = this.newCustomerForm.get(control).value
         }
+        else if(control == 'HouseNumber'){
+          objToApi['Address'] = this.newCustomerForm.get(control).value;
+        }
         else if(control == 'StatusId'){
         
           objToApi[control] = this.statusList.filter(status => status.StatusId == this.newCustomerForm.get(control).value)[0]['StatusId']
@@ -117,8 +127,9 @@ export class NewCustomerComponent implements OnInit {
       });
 
     
+      debugger
       this.dataService.InsertUpdateUser(objToApi).subscribe(result => {
-      
+      debugger
         this.saveFormSpinner = false;
         if (result['Token'] != undefined || result['Token'] != null) {
 
@@ -141,7 +152,13 @@ export class NewCustomerComponent implements OnInit {
 
             setTimeout(() => {
               this.msgActionButtons = '';
-              this.router.navigate(['/public/customer/', result.obj[0].id]);
+
+              if(this.IfComponentDialog){
+                this.dialog.closeAll();
+              }
+              else{
+                this.router.navigate(['/public/customer/', result.obj[0].id]);
+              }
             }, 2000);
           }
           if(result.obj == null && result.errdesc != ''){
@@ -153,9 +170,9 @@ export class NewCustomerComponent implements OnInit {
           }
         }
         else {
-          this.dialog.open(DialogComponent, {
-            data: {message: MsgList.exitSystemAlert}
-          })
+          // this.dialog.open(DialogComponent, {
+          //   data: {message: MsgList.exitSystemAlert}
+          // })
           this.sharedService.exitSystemEvent();
         }
       });

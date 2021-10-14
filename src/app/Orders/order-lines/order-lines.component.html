@@ -1,4 +1,4 @@
-<div class="pageTitle main2-title">
+<div class="pageTitle main2-title sticky top100">
     <div>רשימת כרטיסים </div>
     <div>מספר הזמנה: {{orderIdToPreview}}</div>
 </div>
@@ -27,6 +27,12 @@
                     <mat-icon>{{deleteIcon}}</mat-icon>
                 </button>
             </div>
+            <div>
+                <button mat-button class="linkButton" [routerLink]="['/public/order', orderId,userId]">
+                    חזרה להזמנה
+                    <mat-icon>arrow_back</mat-icon>
+                </button>
+            </div>
         </div>
         <div *ngIf="additionalOptionsSMS" class="additionalOptionsSMS formBorder">
             <div class="selectWrap">
@@ -45,14 +51,16 @@
                 </mat-form-field>
             </div>
             <div class="textAreaWrap">
-                <mat-form-field class="textAreaWrap">
+                <mat-form-field class="textAreaWrap" appearance="outline">
                     <textarea matInput [formControl]="previewSmsTemplate" cdkTextareaAutosize
-                        #autosize="cdkTextareaAutosize">
+                        #autosize="cdkTextareaAutosize"
+                        cdkAutosizeMinRows="5"
+                        cdkAutosizeMaxRows="10">
                         </textarea>
                 </mat-form-field>
             </div>
             <div class="buttonSendSms">
-                <button mat-button class="linkButton" (click)="sendSMS()" [disabled]="sendButtonSms">שלח הודעה
+                <button mat-button class="sendButton" (click)="sendSMS()" [disabled]="sendButtonSms">שלח הודעה
                     למסומנים</button>
                 <div class="errorSendSms error" *ngIf="errorSendSms">
                     {{errorSendSms}}

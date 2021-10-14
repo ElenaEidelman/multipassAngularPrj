@@ -24,6 +24,13 @@ mat-accordion mat-expansion-panel mat-expansion-panel-header .mat-icon{
   .actionWrapB{
     text-align: center;
   }
+  mat-card-actions.actionWrapB, mat-card-actions.newSMSActionButtons{
+    position: relative;
+  }
+  mat-card-actions.actionWrapB >  mat-spinner, mat-card-actions.newSMSActionButtons >  mat-spinner{
+    width: 100% !important;
+  }
+
   .cards-wrap{
     display: flex;
     justify-content: space-between;
@@ -125,7 +132,6 @@ mat-card-title > div{
   margin-right: auto;
   margin-left: 0 !important;
 }
-
   @media screen and (max-width: 1024px){
     .mat-card-sms{
       flex-direction: column;

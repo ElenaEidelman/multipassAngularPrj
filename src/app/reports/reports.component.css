@@ -1,6 +1,6 @@
 .wrapReportForm{
     display: flex;
-    flex-direction: row-reverse;
+    flex-direction: column;
     justify-content: space-around;
 }
 .wrapReportForm > div{
@@ -8,6 +8,13 @@
 }
 .wrap-content{
     margin-top: 2em;
+}
+.marginTop-2{
+    margin-top: -2em;
+}
+.reportDate{
+    margin-top: auto !important;
+    margin-bottom: 0.7em !important;
 }
 mat-form-field{
     width: 100%;
@@ -17,7 +24,7 @@ mat-form-field{
 }
 
 .mat-form-field-appearance-fill .mat-form-field-label {
-    margin-top: 0;
+    margin-top: -3px;
 }
 @media screen and (max-width: 1024px){
     .formWrap > div.formWrapRow > div {

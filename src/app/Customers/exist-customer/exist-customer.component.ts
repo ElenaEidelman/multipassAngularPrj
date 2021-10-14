@@ -82,10 +82,13 @@ export class ExistCustomerComponent implements OnInit {
 
   idUnsubscribe;
 
+  rolesList = ['מנהל באק אופיס','מפעיל באק אופיס'];
+
 
   ngOnInit() {
     window.scroll(0, 0);
     this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
+    this.getUserStatus();
 
     this.idUnsubscribe = this.activeRoute.params.subscribe(param => {
       this.userId = param['id'];
@@ -95,25 +98,31 @@ export class ExistCustomerComponent implements OnInit {
         CustomerId: param['id']
       }
 
-  
       this.dataService.GetCustomersByFilter(objToApi).subscribe(result => {
-    
+        debugger
         if (result['Token'] != undefined || result['Token'] != null) {
 
           if (typeof result == 'object' && result.obj != null) {
             this.customerData = result.obj[0];
+
             Object.keys(result.obj[0]).forEach(el => {
+              debugger
               if (this.CustomerForm.get(el) != null && el != 'SEO_Description') {
                 this.CustomerForm.get(el).setValue(result.obj[0][el]);
               }
+
               if(el == 'SEO_Description'){
                 this.CustomerForm.get('Notes').setValue(result.obj[0][el]);
               }
+
               if( el == 'StatusId'){
   
                 let list = this.statusList.filter(status => status.StatusId == this.CustomerForm.get(el).value);
+  
                 this.CustomerForm.get(el).setValue(list[0]['StatusId']);
-
+              }
+              else if(el == 'Address'){
+                this.CustomerForm.get('HouseNumber').setValue(result.obj[0]['Address']);
               }
             });
             this.getChartData();
@@ -125,14 +134,12 @@ export class ExistCustomerComponent implements OnInit {
           }
         }
         else {
-          this.dialog.open(DialogComponent, {
-            data: {message: MsgList.exitSystemAlert}
-          })
+          // this.dialog.open(DialogComponent, {
+          //   data: {message: MsgList.exitSystemAlert}
+          // })
           this.sharedService.exitSystemEvent();
         }
       });
-
-      this.getUserStatus();
     })
 
   }
@@ -194,9 +201,9 @@ export class ExistCustomerComponent implements OnInit {
         }
       }
       else {
-        this.dialog.open(DialogComponent, {
-          data: {message: MsgList.exitSystemAlert}
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: {message: MsgList.exitSystemAlert}
+        // })
         this.sharedService.exitSystemEvent();
       }
     });
@@ -207,7 +214,10 @@ export class ExistCustomerComponent implements OnInit {
     let objToApi = {
       Token: this.userToken
     }
+
+    debugger
     this.dataService.GetUserStatus(objToApi).subscribe(result => {
+      debugger
       if (result['Token'] != undefined || result['Token'] != null) {
         //set new token
         let tempObjUser = JSON.parse(localStorage.getItem('user'));
@@ -219,12 +229,13 @@ export class ExistCustomerComponent implements OnInit {
           
       
         this.statusList = [...result.obj];
+        debugger
         }
       }
       else {
-        this.dialog.open(DialogComponent,{
-          data: {message: MsgList.exitSystemAlert}
-        });
+        // this.dialog.open(DialogComponent,{
+        //   data: {message: MsgList.exitSystemAlert}
+        // });
         this.sharedService.exitSystemEvent();
       }
     })
@@ -246,6 +257,9 @@ export class ExistCustomerComponent implements OnInit {
         if(key == 'StatusId'){
           objToApi[key] = this.statusList.filter(status => status.StatusId == this.CustomerForm.get(key).value)[0]['StatusId']
         }
+        else if(key == 'HouseNumber'){
+          objToApi['Address'] = this.CustomerForm.get(key).value;
+        }
 
         //?????
         if (data[key] != '' && key == 'StatusId') {
@@ -261,8 +275,9 @@ export class ExistCustomerComponent implements OnInit {
       // objToApi['Tz'] = +objToApi['Tz'];
 
   
+      debugger
       this.dataService.InsertUpdateUser(objToApi).subscribe(result => {
-    
+    debugger
         this.saveFormSpinner = false;
 
         if (result['Token'] != undefined || result['Token'] != null) {
@@ -299,7 +314,6 @@ export class ExistCustomerComponent implements OnInit {
           }
         }
         else {
-          alert(result.errdesc);
           this.sharedService.exitSystemEvent();
         }
       });
@@ -313,6 +327,8 @@ export class ExistCustomerComponent implements OnInit {
     }
   }
 
+
+  //it block the customer
   deleteCustomer() {
 
     const dialogRef = this.dialog.open(DialogConfirmComponent, {
@@ -339,7 +355,7 @@ export class ExistCustomerComponent implements OnInit {
             if (result.errdesc.includes('Successfully')) {
               this.router.navigate(['/public/allCustomers']);
               this.dialog.open(DialogComponent, {
-                data: { message: result.errdesc }
+                data: { message: 'לקוח נחסם בהצלחה' }
               });
             }
             else {
@@ -349,7 +365,6 @@ export class ExistCustomerComponent implements OnInit {
             }
           }
           else {
-            alert(result.errdesc);
             this.sharedService.exitSystemEvent();
           }
         });

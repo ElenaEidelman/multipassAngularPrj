@@ -14,7 +14,6 @@ import {CdkTextareaAutosize} from '@angular/cdk/text-field';
 
 import { Workbook } from 'exceljs';
 import * as fs from 'file-saver';
-import { debug, table } from 'console';
 import { MsgList } from 'src/app/Classes/msgsList';
 
 
@@ -45,6 +44,8 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
   smsIcon: string = 'sms';
   deleteIcon: string = 'block';
 
+
+
   smsTemplates = new FormControl();
   previewSmsTemplate = new FormControl();
   smsTemplatesData = [];
@@ -56,6 +57,8 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
   cardsDeletedMsg: string = '';
   DigitalBatch = '';
 
+  customerData;
+
   voidCardSpinner: boolean = false;
 
   OrderCreatedFromExcel: boolean = false;
@@ -63,16 +66,17 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
   public dataTable = new MatTableDataSource([]);
 
   public tabelLabels = [
-    { value: 'ItemId', viewValue: "מס''ד" },
+    { value: 'Row', viewValue: "מס''ד" },
     { value: 'CardId', viewValue: 'קוד דיגיטלי' },
     { value: 'DSendName', viewValue: 'שם נמען' },
     { value: 'DSendPhone', viewValue: 'מספר נייד נמען	' },
     { value: 'LoadSum', viewValue: 'סכום טעינה ראשוני		' },
     { value: 'ValidationDate', viewValue: '	תוקף	' },
     { value: 'KindOfLoadSumDesc', viewValue: 'סוג שובר טעינה	' },
-    { value: 'DSendLastSent', viewValue: 'נשלח לאחרונה' }
+    { value: 'DSendLastSent', viewValue: 'נשלח לאחרונה' },
+    { value: 'IsActive', viewValue: 'סטטוס שובר' },
   ];
-  tabelLabelsList = ['ItemId', 'CardId', 'DSendName', 'DSendPhone', 'LoadSum', 'ValidationDate', 'KindOfLoadSumDesc', 'DSendLastSent'];
+  tabelLabelsList = ['Row', 'CardId', 'DSendName', 'DSendPhone', 'LoadSum', 'ValidationDate', 'KindOfLoadSumDesc', 'DSendLastSent','IsActive'];
 
   selection = new SelectionModel<any>(true, []);
 
@@ -94,6 +98,7 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
       this.userId = param['userId'];
       this.orderId = param['orderId'];
       this.GetCards();
+      this.GetCustomerById();
     });
   }
 
@@ -133,11 +138,12 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     // this.dataTable = new MatTableDataSource([
-    //   {ItemId:'1',CardId: '2',DSendName: '3', DSendPhone: '4', LoadSum: '5', ValidationDate: '6', KindOfLoadSumDesc: '7', DSendLastSent: '8'}
+    //   {Row:'1',CardId: '2',DSendName: '3', DSendPhone: '4', LoadSum: '5', ValidationDate: '6', KindOfLoadSumDesc: '7', DSendLastSent: '8'}
     // ]);
     
+    debugger
     this.dataService.GetCardsByOrderId(objToAPI).subscribe(result => {
-      
+      debugger
       this.tableSpinner = false;
 
       if (result['Token'] != undefined || result['Token'] != null) {
@@ -155,7 +161,6 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
           this.orderIdToPreview = result['obj'][2];
           
           this.dataTable.data = result['obj'][0];
-
           //DigitalBatch number, only if order created from excel
           this.OrderCreatedFromExcel = result['obj'][1] != '' ? true : false;
           this.DigitalBatch = result['obj'][1];
@@ -168,9 +173,9 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       }
       else {
-        this.dialog.open(DialogComponent, {
-          data: {message: MsgList.exitSystemAlert}
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: {message: MsgList.exitSystemAlert}
+        // })
         this.sharedService.exitSystemEvent();
       }
     });
@@ -236,7 +241,7 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
   smsTempleteSelect(event){
     if(event.value != undefined){
 
-      this.smsTemplatesData;
+      // this.smsTemplatesData;
       this.previewSmsTemplate.setValue(this.smsTemplatesData.filter(el => el.Id == event.value)[0]['TemplateFormat']);
       //enable send sms button
       this.sendButtonSms = false;
@@ -282,9 +287,9 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       }
       else {
-        this.dialog.open(DialogComponent, {
-          data: {message: MsgList.exitSystemAlert}
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: {message: MsgList.exitSystemAlert}
+        // })
         this.sharedService.exitSystemEvent();
       }
     });
@@ -347,9 +352,9 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
         });
       }
       else {
-        this.dialog.open(DialogComponent, {
-          data: {message: MsgList.exitSystemAlert}
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: {message: MsgList.exitSystemAlert}
+        // })
         this.sharedService.exitSystemEvent();
       }
     });
@@ -378,15 +383,14 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
         tempObjUser['Token'] = result['Token'];
         localStorage.setItem('user', JSON.stringify(tempObjUser));
         this.userToken = result['Token'];
-
         if (typeof result == 'object' && result.obj != null && result.obj.length > 0) {
           this.smsTemplatesData = [...result.obj];
         }
       }
       else {
-        this.dialog.open(DialogComponent, {
-          data: {message: MsgList.exitSystemAlert}
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: {message: MsgList.exitSystemAlert}
+        // })
         this.sharedService.exitSystemEvent();
       }
     });
@@ -400,7 +404,7 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
     if(this.DigitalBatch != ''){
       tableLabels.push({value: 'ValidationField', viewValue: 'שדה אימות'})
     }
-    let tableData = JSON.parse(JSON.stringify(this.dataTable.data));;
+    let tableData = JSON.parse(JSON.stringify(this.dataTable.data));
     
     let workbook = new Workbook();
     let worksheet = workbook.addWorksheet('ProductSheet');
@@ -422,11 +426,41 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     worksheet.addRows(tableData, "n")
    
-    let userData = JSON.parse(localStorage.getItem('user')).obj;
+    // let userData = JSON.parse(localStorage.getItem('user')).obj;
+    let userData = this.customerData;
+
     workbook.xlsx.writeBuffer().then((data) => {
       let blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      fs.saveAs(blob, userData['Fname'] + '_' + userData['Lname']  + '_' + this.orderId + '.xlsx');
+      fs.saveAs(blob, userData['FName'] + '_' + userData['LName']  + '_' + this.orderId + '.xlsx');
     })
+  }
+
+  GetCustomerById(){
+
+      let objToApi = {
+        Token: this.userToken,
+        CustomerId: this.userId
+      }
+      this.dataService.GetCustomersByFilter(objToApi).subscribe(result => {
+        if (result['Token'] != undefined || result['Token'] != null) {
+
+          if (typeof result == 'object' && result.obj != null) {
+            this.customerData = result.obj[0];
+          }
+          if(result.obj == null && result.errdesc != ''){
+            this.dialog.open(DialogComponent, {
+              data: {message: result.errdesc}
+            })
+          }
+        }
+        else {
+          // this.dialog.open(DialogComponent, {
+          //   data: {message: MsgList.exitSystemAlert}
+          // })
+          this.sharedService.exitSystemEvent();
+        }
+      });
+
   }
 
 

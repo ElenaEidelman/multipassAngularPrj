@@ -86,6 +86,7 @@ export class AllUsersComponent implements OnInit {
       Token: this.userToken
     }
     this.dataService.GetAllUsers(objToApi).subscribe(result => {
+      debugger
       if (result['Token'] != undefined || result['Token'] != null) {
         //set new token
         let tempObjUser = JSON.parse(localStorage.getItem('user'));
@@ -96,9 +97,9 @@ export class AllUsersComponent implements OnInit {
         this.dataSource.data = result.obj;
       }
       else {
-        this.dialog.open(DialogComponent, {
-          data: {message: MsgList.exitSystemAlert}
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: {message: MsgList.exitSystemAlert}
+        // })
         this.sharedService.exitSystemEvent();
       }
     });
@@ -156,6 +157,7 @@ export class AllUsersComponent implements OnInit {
         
         this.dataService.DeleteSuspendBackOfficeUsers(objToApi).subscribe(result => {
           
+          debugger
           if (result['Token'] != undefined || result['Token'] != null) {
 
             //set new token
@@ -177,9 +179,9 @@ export class AllUsersComponent implements OnInit {
             }
           }
           else {
-            this.dialog.open(DialogComponent, {
-              data: {message: MsgList.exitSystemAlert}
-            })
+            // this.dialog.open(DialogComponent, {
+            //   data: {message: MsgList.exitSystemAlert}
+            // })
             this.sharedService.exitSystemEvent();
           }
         });

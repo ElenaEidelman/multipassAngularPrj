@@ -5,8 +5,9 @@ import { Router } from '@angular/router';
 
 export interface DialogData{
   title: any,
-  message: any,
-  subTitle: any
+  subTitle: any,
+  message: any
+
 }
 
 @Component({
@@ -24,6 +25,7 @@ export class DialogComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    
   }
 
   dialogClose(){

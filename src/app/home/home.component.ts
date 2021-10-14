@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -20,7 +20,7 @@ import { SharedService } from '../shared.service';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, AfterViewInit {
 
   userToken;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -98,14 +98,15 @@ export class HomeComponent implements OnInit {
         this.userToken = result['Token'];
 
         if (typeof result == 'object' && result.obj != null && result.obj.length > 0) {
-          
-          debugger
           //create tables
           this.createDisplayedColumns('newOrderLabelForTable', this.labelTemp);
           this.createDisplayedColumns('lastCustomersLabelForTable', this.lastCustomersLabelTemp);
           this.newOrderDataSource = new MatTableDataSource(result.obj[1]);
           this.lastCustomersDataSource = new MatTableDataSource(result.obj[5]);
 
+          
+          this.newOrderDataSource.sort = this.sort;
+          this.lastCustomersDataSource.sort = this.sort;
 
 
           //create graphs
@@ -147,9 +148,9 @@ export class HomeComponent implements OnInit {
         }
       }
       else {
-          this.dialog.open(DialogComponent, {
-            data: {message: MsgList.exitSystemAlert}
-          })
+          // this.dialog.open(DialogComponent, {
+          //   data: {message: MsgList.exitSystemAlert}
+          // })
           this.sharedService.exitSystemEvent();
       }
     })
@@ -165,9 +166,10 @@ export class HomeComponent implements OnInit {
 
 
   ngAfterViewInit() {
-    if(this.newOrderDataSource != undefined){
-      this.newOrderDataSource.paginator = this.paginator;
+    if(this.newOrderDataSource != undefined && this.lastCustomersDataSource != undefined){
+      // this.newOrderDataSource.paginator = this.paginator;
       this.newOrderDataSource.sort = this.sort;
+      this.lastCustomersDataSource.sort = this.sort;
     }
   }
   applyFilter(event: Event) {

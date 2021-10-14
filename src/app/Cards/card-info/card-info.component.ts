@@ -1,3 +1,4 @@
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -9,18 +10,36 @@ import { CustomerData } from 'src/app/Classes/customerData';
 import { MsgList } from 'src/app/Classes/msgsList';
 import { DataServiceService } from 'src/app/data-service.service';
 import { DatePickerDialog } from 'src/app/Orders/exec-order/exec-order.component';
+import { DialogConfirmComponent } from 'src/app/PopUps/dialog-confirm/dialog-confirm.component';
 import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
 import { SharedService } from 'src/app/shared.service';
+import { PhoneConfirmComponent } from 'src/app/SMSTemplate/all-sms-templates/all-sms-templates.component';
 
 @Component({
   selector: 'app-card-info',
   templateUrl: './card-info.component.html',
-  styleUrls: ['./card-info.component.css']
+  styleUrls: ['./card-info.component.css'],
+  animations:[
+    trigger('openClose', [
+      state('true', style({
+        overflow: 'hidden',
+        height: '*'
+      })),
+      state('false', style({
+        opacity: '0',
+        overflow: 'hidden',
+        height: '0px',
+      })),
+      transition('false <=> true', animate('600ms ease-in-out'))
+    ])
+  ]
 })
 export class CardInfoComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+
+  MsgList = MsgList;
 
   constructor(
     private activateRoute: ActivatedRoute,
@@ -35,12 +54,12 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
     { value: 'isActiveField', viewValue: 'פעיל' },
     { value: 'activityDateField', viewValue: 'תאריך הפעלה' },
     { value: 'operationTypeField', viewValue: '	סוג פעולה' },
-    { value: 'firstChargeAmount', viewValue: '	סכום טעינה נוכחי' },
-    { value: 'loadActualSumField', viewValue: '	סכום עיסקה' },
+    { value: 'loadActualSumField', viewValue: '	סכום טעינה נוכחי' },
+    { value: 'approvedSumField', viewValue: '	סכום עסקה' },
     { value: 'supplierNameField', viewValue: '	שם ספק' },
     { value: 'tranIdField', viewValue: '	מספר אסמכתה' }
   ];
-  public historyDataSource = new  MatTableDataSource([]);
+  public historyDataSource = new MatTableDataSource([]);
 
   public historyLabelForTable = [];
 
@@ -50,6 +69,7 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
 
   CardInfo;
   OrderDetails;
+  orderLine;
   History;
 
   spinnerActiveVoidCard: boolean = false;
@@ -61,8 +81,15 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
 
   userDetailsForm = this.fb.group({
     FullName: ['', Validators.required],
-    PhoneNumber: ['', Validators.required],
+    PhoneNumber: ['', [Validators.required, Validators.pattern('[0]{1}[0-9]{2,3}[0-9]{7}')]],
   });
+
+  sendSms = this.fb.group({
+    smsTemplates: ['', Validators.required],
+    previewSmsTemplate: ['', Validators.required]
+  });
+  smsTemplatesData = [];
+  orderCardsData;
 
   Note = this.fb.control({ value: '', disabled: true });
 
@@ -75,7 +102,38 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
       this.cardId = param['id'];
       this.userId = param['userId'];
       this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
+      this.getSmsTemplates();
       this.getTablesData();
+    });
+  }
+
+  getSmsTemplates() {
+
+    let objToApi = {
+      Token: this.userToken
+    }
+
+    this.dataService.GetSMSFormats(objToApi).subscribe(result => {
+
+
+      if (result['Token'] != undefined || result['Token'] != null) {
+
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
+
+        if (typeof result == 'object' && result.obj != null && result.obj.length > 0) {
+          this.smsTemplatesData = [...result.obj];
+        }
+      }
+      else {
+        // this.dialog.open(DialogComponent, {
+        //   data: {message: MsgList.exitSystemAlert}
+        // })
+        this.sharedService.exitSystemEvent();
+      }
     });
   }
 
@@ -87,6 +145,7 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
       UserId: this.userId
     }
 
+    debugger
     this.dataService.GetCardInfoById(objToApi).subscribe(result => {
       debugger
       if (result['Token'] != undefined || result['Token'] != null) {
@@ -98,36 +157,35 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
 
         if (typeof result == 'object' && result.obj != null) {
           this.CardInfo = result.obj[1][0];
+          this.orderLine = result.obj[9]['Id'];
           this.OrderDetails = result.obj[3];
+          
           this.userDetailsForm.get('FullName').setValue(this.CardInfo.FullName);
           this.userDetailsForm.get('PhoneNumber').setValue(this.CardInfo.PhoneNumber);
+          
           // this.Note.setValue(result.obj[1][0]['RemarkNotes']);
 
           let historyData = result.obj[7]['lstHistoryTranInfoField'];
-          debugger
           this.historyDataSource.data = historyData;
           debugger
 
-          this.createDisplayedColumns('historyLabelForTable',this.historyTableTemplate);
+          this.createDisplayedColumns('historyLabelForTable', this.historyTableTemplate);
 
-
-          debugger
-      
           // this.historyDataSource = new MatTableDataSource([]);
 
-          
+
           //implement data
         }
       }
-      else if(typeof result == 'string'){
+      else if (typeof result == 'string') {
         this.dialog.open(DialogComponent, {
           data: { message: result }
         });
       }
       else {
-        this.dialog.open(DialogComponent, {
-          data: {message: MsgList.exitSystemAlert}
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: {message: MsgList.exitSystemAlert}
+        // })
         this.sharedService.exitSystemEvent();
       }
     });
@@ -135,51 +193,55 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
 
   saveUserDetails() {
 
-    this.saveUserDataSpinner = true;
 
-    if(this.userDetailsForm.valid){
-      
-    let objToApi = {
-      Token: this.userToken,
-      CardId: this.cardId,
-      FullName: this.userDetailsForm.get('FullName').value,
-      Phoneno: this.userDetailsForm.get('PhoneNumber').value,
-      UserID: this.userId,
-      OrderId: this.OrderDetails.IdForDisplay
-    }
 
-    this.dataService.UpdateCards(objToApi).subscribe(result => {
-      this.saveUserDataSpinner = false;
-      if (result['Token'] != undefined || result['Token'] != null) {
-        //set new token
-        let tempObjUser = JSON.parse(localStorage.getItem('user'));
-        tempObjUser['Token'] = result['Token'];
-        localStorage.setItem('user', JSON.stringify(tempObjUser));
-        this.userToken = result['Token'];
+    if (this.userDetailsForm.valid) {
+      this.saveUserDataSpinner = true;
 
-        if(result.obj != undefined && result.obj != null && Object.keys(result.obj).length > 0){
-          this.userDetailsForm.get('FullName').setValue(result.obj.DSendName);
-          this.userDetailsForm.get('PhoneNumber').setValue(result.obj.DSendPhone);
+      let objToApi = {
+        Token: this.userToken,
+        CardId: this.cardId,
+        FullName: this.userDetailsForm.get('FullName').value,
+        Phoneno: this.userDetailsForm.get('PhoneNumber').value,
+        UserID: this.userId,
+        OrderId: this.OrderDetails.IdForDisplay
+      }
 
-          this.saveUserDetailsMSG = 'נשמר בהצלחה';
-          setTimeout(()=>{
-            this.saveUserDetailsMSG = '';
-          }, 2000);
+      this.dataService.UpdateCards(objToApi).subscribe(result => {
+        this.saveUserDataSpinner = false;
+        if (result['Token'] != undefined || result['Token'] != null) {
+          //set new token
+          let tempObjUser = JSON.parse(localStorage.getItem('user'));
+          tempObjUser['Token'] = result['Token'];
+          localStorage.setItem('user', JSON.stringify(tempObjUser));
+          this.userToken = result['Token'];
 
-          //saveUserDetailsError
+          if (result.obj != undefined && result.obj != null && Object.keys(result.obj).length > 0) {
+            this.userDetailsForm.get('FullName').setValue(result.obj.DSendName);
+            this.userDetailsForm.get('PhoneNumber').setValue(result.obj.DSendPhone);
+
+            this.saveUserDetailsMSG = 'נשמר בהצלחה';
+            setTimeout(() => {
+              this.saveUserDetailsMSG = '';
+            }, 2000);
+
+            //saveUserDetailsError
+          }
+
+        }
+        else {
+          this.dialog.open(DialogComponent, {
+            data: { message: result.errdesc }
+          })
         }
 
-      }
-      else{
-        this.dialog.open(DialogComponent, {
-          data: {message: result.errdesc}
-        })
-      }
-      
-    });
+      });
     }
-    else{
-      alert('form not valid');
+    else {
+      this.saveUserDetailsError = 'נא למלא את כל השדות';
+      setTimeout(() => {
+        this.saveUserDetailsError = '';
+      }, 2000)
     }
 
     setTimeout(() => {
@@ -202,7 +264,7 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
       this.dataService.VoidCards(objToApi).subscribe(result => {
         this.spinnerActiveVoidCard = false;
         if (result['Token'] != undefined || result['Token'] != null) {
-          
+
           //set new token
           let tempObjUser = JSON.parse(localStorage.getItem('user'));
           tempObjUser['Token'] = result['Token'];
@@ -219,9 +281,9 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
           }
         }
         else {
-          this.dialog.open(DialogComponent, {
-            data: {message: MsgList.exitSystemAlert}
-          })
+          // this.dialog.open(DialogComponent, {
+          //   data: {message: MsgList.exitSystemAlert}
+          // })
           this.sharedService.exitSystemEvent();
         }
       })
@@ -248,7 +310,7 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
           if (result.errdesc == 'OK') {
             this.CardInfo.IsActive = !this.CardInfo.IsActive;
           }
-          else{
+          else {
             this.dialog.open(DialogComponent, {
               data: { message: result.errdesc }
             })
@@ -256,9 +318,9 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
         }
 
         else {
-          this.dialog.open(DialogComponent, {
-            data: {message: MsgList.exitSystemAlert}
-          })
+          // this.dialog.open(DialogComponent, {
+          //   data: {message: MsgList.exitSystemAlert}
+          // })
           this.sharedService.exitSystemEvent();
         }
       })
@@ -273,74 +335,74 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
     });
   }
 
-  changeDate(dateForChange){
-      // 
-      let date = new Date(dateForChange);
-      let day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
-      let month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
-      let year = date.getFullYear();
-      this.dialog.open(DatePickerDialog, {
-        data: {
-          date: day +'/' + month + '/' + year
-        }
-      }).afterClosed().subscribe(dialogResult => {
- 
-        
-        let validityDate = new Date(dialogResult.result.date);
-        validityDate.setHours(23, 59, 59);
+  changeDate(dateForChange) {
+    // 
+    let date = new Date(dateForChange);
+    let day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
+    let month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
+    let year = date.getFullYear();
+    this.dialog.open(DatePickerDialog, {
+      data: {
+        date: day + '/' + month + '/' + year
+      }
+    }).afterClosed().subscribe(dialogResult => {
 
-        let dateForApi = new Date(validityDate);
-        let day = dateForApi.getDate() < 10 ? '0' + dateForApi.getDate() : dateForApi.getDate();
-        let month = (dateForApi.getMonth() + 1) < 10 ? '0' + (dateForApi.getMonth() + 1) : (dateForApi.getMonth() + 1);
-        let year = dateForApi.getFullYear();
 
-        let objToApi = {
-          Token: this.userToken,
-          CardLst:[this.CardInfo.CardId + ''],
-          OrderId:this.OrderDetails.Id,
-          UserId: +this.userId,
-          ValidationDate: day + '/' + month + '/' + year
-        }
+      let validityDate = new Date(dialogResult.result.date);
+      validityDate.setHours(23, 59, 59);
 
-        
-        this.dataService.UpdateExpirationDateOfCards(objToApi).subscribe(result => {
-          
-          if (result['Token'] != undefined || result['Token'] != null) {
+      let dateForApi = new Date(validityDate);
+      let day = dateForApi.getDate() < 10 ? '0' + dateForApi.getDate() : dateForApi.getDate();
+      let month = (dateForApi.getMonth() + 1) < 10 ? '0' + (dateForApi.getMonth() + 1) : (dateForApi.getMonth() + 1);
+      let year = dateForApi.getFullYear();
 
-            //set new token
-            let tempObjUser = JSON.parse(localStorage.getItem('user'));
-            tempObjUser['Token'] = result['Token'];
-            localStorage.setItem('user', JSON.stringify(tempObjUser));
-            this.userToken = result['Token'];
-    
-            if (typeof result == 'object' && result.obj != null) {
-              
-              let respDate = new Date(result.obj.ValidationDate);
+      let objToApi = {
+        Token: this.userToken,
+        CardLst: [this.CardInfo.CardId + ''],
+        OrderId: this.OrderDetails.Id,
+        UserId: +this.userId,
+        ValidationDate: day + '/' + month + '/' + year
+      }
 
-              this.CardInfo.ExpirationDate = new Date(respDate.getFullYear(), respDate.getMonth(), respDate.getDate());
-            }
-            else if(result.obj == null){
-              this.dialog.open(DialogComponent, {
-                data: {message: result.errdesc}
-              });
-            }
+
+      this.dataService.UpdateExpirationDateOfCards(objToApi).subscribe(result => {
+
+        if (result['Token'] != undefined || result['Token'] != null) {
+
+          //set new token
+          let tempObjUser = JSON.parse(localStorage.getItem('user'));
+          tempObjUser['Token'] = result['Token'];
+          localStorage.setItem('user', JSON.stringify(tempObjUser));
+          this.userToken = result['Token'];
+
+          if (typeof result == 'object' && result.obj != null) {
+
+            let respDate = new Date(result.obj.ValidationDate);
+
+            this.CardInfo.ExpirationDate = new Date(respDate.getFullYear(), respDate.getMonth(), respDate.getDate());
           }
-
-          else if(typeof result == 'string'){
+          else if (result.obj == null) {
             this.dialog.open(DialogComponent, {
-              data: {message: result}
-            })
+              data: { message: result.errdesc }
+            });
           }
-          else {
-            this.dialog.open(DialogComponent, {
-              data: {message: MsgList.exitSystemAlert}
-            })
-            this.sharedService.exitSystemEvent();
-          }
-        });
+        }
 
-
+        else if (typeof result == 'string') {
+          this.dialog.open(DialogComponent, {
+            data: { message: result }
+          })
+        }
+        else {
+          // this.dialog.open(DialogComponent, {
+          //   data: {message: MsgList.exitSystemAlert}
+          // })
+          this.sharedService.exitSystemEvent();
+        }
       });
+
+
+    });
 
   }
 
@@ -353,14 +415,139 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
     }
   }
 
-  returnHebTranslation(obj,value){
+  returnHebTranslation(obj, value) {
     return obj.filter(el => el.value == value)[0].viewValue;
   }
 
+  changePinCode(pinCode) {
+    this.dialog.open(DialogConfirmComponent, {
+      data: { message: 'האם לשנות את הקוד הסודי?', eventButton: 'לשנות' }
+    }).afterClosed().subscribe(result => {
+      
+
+      if(result.result == 'yes'){
+        let objToApi = {
+          Token: this.userToken.toString(),
+          CardId: this.CardInfo.CardId.toString(),
+          OrderId: this.OrderDetails.Id.toString(),
+          // Pin: result.result.pinCode,
+          UserId: this.userId,
+        }
+  
+        
+        this.dataService.UpdatePinCodeOfCards(objToApi).subscribe(result => {
+          
+          if (result['Token'] != undefined || result['Token'] != null) {
+  
+            //set new token
+            let tempObjUser = JSON.parse(localStorage.getItem('user'));
+            tempObjUser['Token'] = result['Token'];
+            localStorage.setItem('user', JSON.stringify(tempObjUser));
+            this.userToken = result['Token'];
+  
+            if (typeof result == 'object' && result.obj != null && Object.keys(result.obj).length > 0) {
+              this.CardInfo.PinCode = result.obj.PinCode;
+            }
+          }
+          else {
+            this.dialog.open(DialogComponent, {
+              data: { message: MsgList.exitSystemAlert }
+            })
+            this.sharedService.exitSystemEvent();
+          }
+  
+  
+        })
+      }
+    })
+  }
+
+  sendSMS() {
+
+
+    if (this.sendSms.valid) {
+      this.dialog.open(DialogConfirmComponent, {
+        data: {message: 'האם לשלוח SMS?', eventButton:'שלח'}
+                
+      }).afterClosed().subscribe(result => {
+        if (result.result.includes('yes')) {
+
+          let phone = result.result.split('phone: ')[1];
+
+          
+          // let objToApi = {
+          //   Token: this.userToken,
+          //   TemplateFormat: this.sendSms.get('previewSmsTemplate').value,
+          //   Phone: phone
+          // }
+
+          // let objToApi = {
+          //   Token: this.userToken,
+          //   TemplateId: this.sendSms.get('smsTemplates').value,
+          //   UserId : +this.userId,
+          //   CoreOrderId:this.OrderDetails.Id,
+          //   From: this.OrderDetails.PrimaryUser.OrganizationName
+          // }
+
+          let objToApi = {
+            Token: this.userToken,
+            TemplateId: this.sendSms.get('smsTemplates').value,
+            UserId: +this.userId,
+            OrderLineIds: Array.of(this.orderLine),
+            CoreOrderId: this.OrderDetails.Id,
+            From: this.OrderDetails.PrimaryUser.OrganizationName
+          }
+
+          debugger
+          this.dataService.SendSMSByOrderLine(objToApi).subscribe(result => {
+            debugger
+            if (result['Token'] != undefined || result['Token'] != null) {
+
+              //set new token
+              let tempObjUser = JSON.parse(localStorage.getItem('user'));
+              tempObjUser['Token'] = result['Token'];
+              localStorage.setItem('user', JSON.stringify(tempObjUser));
+              this.userToken = result['Token'];
+
+              if (result.err != -1) {
+                this.dialog.open(DialogComponent, {
+                  data: { message: 'נשלח בהצלחה' }
+                });
+              }
+
+            }
+            else {
+              // this.dialog.open(DialogComponent, {
+              //   data: {message: result}
+              // })
+              this.sharedService.exitSystemEvent();
+            }
+          });
+        }
+      })
+    }
+    else {
+      // this.errorSendSms = 'נא לבחור תבנית ההודעה';
+      setTimeout(() => {
+        // this.errorSendSms = '';
+      }, 2000)
+    }
+  }
+
+  smsTempleteSelect(event){
+    if(event.value != undefined){
+      this.sendSms.get('previewSmsTemplate').setValue(this.smsTemplatesData.filter(el => el.Id == event.value)[0]['TemplateFormat']);
+    }
+  }
+
   ngAfterViewInit() {
-    if(this.historyDataSource != undefined){
+    if (this.historyDataSource != undefined) {
       this.historyDataSource.paginator = this.paginator;
       this.historyDataSource.sort = this.sort;
     }
   }
 }
+
+
+
+
