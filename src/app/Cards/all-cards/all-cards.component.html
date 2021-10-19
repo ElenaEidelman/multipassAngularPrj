@@ -74,7 +74,7 @@
                         <div>
                             <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
                                 <mat-label>מתאריך</mat-label>
-                                <input matInput [matDatepicker]="picker2" formControlName="FromDate">
+                                <input matInput [matDatepicker]="picker2" formControlName="FromDate" readonly>
                                 <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
                                 <mat-datepicker #picker2></mat-datepicker>
                             </mat-form-field>
@@ -82,7 +82,7 @@
                         <div>
                             <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
                                 <mat-label>עד תאריך</mat-label>
-                                <input matInput [matDatepicker]="picker" formControlName="ToDate">
+                                <input matInput [matDatepicker]="picker" formControlName="ToDate" readonly>
                                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                                 <mat-datepicker #picker></mat-datepicker>
                             </mat-form-field>
@@ -123,8 +123,9 @@
                     <!-- <button mat-button class="addButton" (click) = "filterTable()">חפש</button> -->
                     <button mat-button class="addButton" (click) = "getFilteredCards()">חפש</button>
                     <mat-spinner class="spinner" *ngIf="spinner"></mat-spinner>
-                    <mat-error [@openClose]="formErrorMsg != ''">{{formErrorMsg}}</mat-error>
+
                 </div>
+                <mat-error class="error" [@openClose]="formErrorMsg != ''">{{formErrorMsg}}</mat-error>
 
             </form>
         </div>

@@ -16,6 +16,7 @@ import { DialogConfirmComponent } from 'src/app/PopUps/dialog-confirm/dialog-con
 import { MsgList } from 'src/app/Classes/msgsList';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { faFileExcel } from '@fortawesome/free-solid-svg-icons';
+import { UrlSharingService } from 'src/app/Services/url-sharing.service';
 
 
 
@@ -48,7 +49,9 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private acivatedRoute: ActivatedRoute,
     private sharedService: SharedService,
-    private dialog: MatDialog) { }
+    private dialog: MatDialog,
+    private urlSharingService: UrlSharingService
+ ) { }
 
     faFileExcel = faFileExcel;
 
@@ -428,6 +431,14 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+
+  // goToOrderPage(orderId, userId){
+
+  //   this.urlSharingService.changeMessage('orderId:' + orderId + '-userId:' + userId );
+  //   debugger
+
+    
+  // }
   ngOnDestroy() {
     this.activeRouteUnsubscribe.unsubscribe();
   }

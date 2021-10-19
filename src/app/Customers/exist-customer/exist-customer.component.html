@@ -132,11 +132,11 @@
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>שם חברה</mat-label>
-                                            <input matInput placeholder="שם חברה" formControlName="OrganizationName" tabindex="1" pattern="^([^0-9]*)$">
+                                            <input matInput placeholder="שם חברה" formControlName="OrganizationName" tabindex="1">
                                             <button class="clearButton" *ngIf="this.CustomerForm.get('OrganizationName').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('OrganizationName').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
-                                            <mat-error *ngIf="CustomerForm.get('OrganizationName').errors?.pattern">{{MsgList.lettersValidationErr}}</mat-error>
+                                            <!-- <mat-error *ngIf="CustomerForm.get('OrganizationName').errors?.pattern">{{MsgList.lettersValidationErr}}</mat-error> -->
 
                                         </mat-form-field>
                                         <mat-form-field>

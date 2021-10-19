@@ -122,7 +122,7 @@
                                     <button mat-button class="sendButton" (click)="sendSMS()" [disabled]="sendButtonSms">שלח הודעה
                                         לכולם
                                     </button>
-                                    <div class="errorSendSms error" *ngIf="errorSendSms != ''">
+                                    <div class="errorSendSms error" [@openClose]="errorSendSms != ''">
                                         {{errorSendSms}}
                                     </div>
                                 </div>
@@ -138,17 +138,17 @@
                         <mat-icon>delete</mat-icon>
                         <mat-spinner class="spinner" *ngIf="deleteCardsSpinner"></mat-spinner>
                     </button>
-                    <div class="saveMessage" *ngIf="orderMsgDelete != ''">{{orderMsgDelete}}</div>
-                    <div class="error" *ngIf="errorMsgDelete != ''">{{errorMsgDelete}}</div>
+                    <div class="saveMessage" [@openClose]="orderMsgDelete != ''">{{orderMsgDelete}}</div>
+                    <div class="error" [@openClose]="errorMsgDelete != ''">{{errorMsgDelete}}</div>
                 </div>
                 <div *ngIf="orderStatus.id == '1'" class="wrapAprDel">
                     <button mat-button class="addButton" (click)="ApproveOrder($event)"> אישור ויצירת שוברים
                         <mat-icon>done_outline</mat-icon>
                     </button>
                     <mat-spinner class="spinner orangeSp" *ngIf="createCardsSpinner"></mat-spinner>
-                    <div class="error" *ngIf="errorMsg != ''">{{errorMsg}}</div>
-                    <div class="saveMessage" *ngIf="orderMsg != ''">{{orderMsg}}</div>
-                    <div class="infoMessage" *ngIf="infoMsg != ''">{{infoMsg}}</div>
+                    <div class="error" [@openClose]="errorMsg != ''">{{errorMsg}}</div>
+                    <div class="saveMessage" [@openClose]="orderMsg != ''">{{orderMsg}}</div>
+                    <div class="infoMessage" [@openClose]="infoMsg != ''">{{infoMsg}}</div>
                     
                 </div>
                 <div class="wrapAprDel">
@@ -156,8 +156,8 @@
                         <mat-icon>save</mat-icon>
                     </button>
                     <mat-spinner class="spinner orangeSp" *ngIf="saveChangesSpinner"></mat-spinner>
-                    <div class="error" *ngIf="errorRefMsg != ''">{{errorRefMsg}}</div>
-                    <div class="saveMessage" *ngIf="orderRefMsg != ''">{{orderRefMsg}}</div>
+                    <div class="error" [@openClose]="errorRefMsg != ''">{{errorRefMsg}}</div>
+                    <div class="saveMessage" [@openClose]="orderRefMsg != ''">{{orderRefMsg}}</div>
                     
                 </div>
 
@@ -213,11 +213,11 @@
                                             <mat-form-field>
                                                 <mat-label>כמות כרטיסים</mat-label>
                                                 <input matInput formControlName="ticketCount" #ticketCount
-                                                    placeholder="0">
-                                                <mat-error
-                                                    *ngIf="addToExecOrderForm.get('ticketCount').hasError('pattern')">
+                                                    placeholder="0" numbersOnly>
+                                                <!-- <mat-error
+                                                    [@openClose]="addToExecOrderForm.get('ticketCount').hasError('pattern')">
                                                     *רק מספרים
-                                                </mat-error>
+                                                </mat-error> -->
                                             </mat-form-field>
                                         </ng-container>
                                         <ng-container *ngIf="obj == 'LoadSum'">
@@ -227,15 +227,15 @@
                                                     #chargeAmount>
                                                 <!-- <span matPrefix>00.</span> -->
                                                 <mat-error
-                                                    *ngIf="addToExecOrderForm.get('chargeAmount').hasError('min')">
+                                                    [@openClose]="addToExecOrderForm.get('chargeAmount').hasError('min')">
                                                     * ערך מינימלי 1
                                                 </mat-error>
                                                 <mat-error
-                                                    *ngIf="addToExecOrderForm.get('chargeAmount').hasError('max')">
+                                                    [@openClose]="addToExecOrderForm.get('chargeAmount').hasError('max')">
                                                     * ערך מקסימלי 1000
                                                 </mat-error>
                                                 <mat-error
-                                                    *ngIf="addToExecOrderForm.get('chargeAmount').hasError('pattern')">
+                                                    [@openClose]="addToExecOrderForm.get('chargeAmount').hasError('pattern')">
                                                     *רק מספרים
                                                 </mat-error>
                                             </mat-form-field>
@@ -244,7 +244,7 @@
                                             <mat-form-field class="datePicker datePickerPadding marginTop-1"
                                                 appearance="fill" dir="ltr">
                                                 <input matInput formControlName="validity"
-                                                     [matDatepicker]="picker">
+                                                     [matDatepicker]="picker" [min]="minOrderDate" readonly>
                                                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                                                 <mat-datepicker #picker></mat-datepicker>
                                                   
@@ -283,7 +283,7 @@
                                 <div *ngIf="((rowNum == orderDetails.length-1) && !excelOrder && dataByPage.StatusId == 1) || (newOrder && (rowNum == orderDetails.length-1))" class="tableButton">
                                         
                                     <button mat-button class="addButton" (click)="addOrderLine()">הכנס</button>
-                                    <div class="error" *ngIf="addOrderLineErrMsg != ''">{{addOrderLineErrMsg}}</div>
+                                    <mat-error class="error" *ngIf="addOrderLineErrMsg != ''">{{addOrderLineErrMsg}}</mat-error>
                                     <mat-spinner class="spinner orangeSp" *ngIf="insertOrderLineSpinner"></mat-spinner>
                                 </div>
 
@@ -296,7 +296,7 @@
                     <tr mat-row *matRowDef="let row; columns: displayedColumnsOrderDetails;"></tr>
 
                 </table>
-                <div class="noInfo saveMessage" *ngIf="dataByPage.DigitalBatch != undefined && (dataByPage.DigitalBatch > 0 || dataByPage.DigitalBatch != 0)">לא ניתן להוסיף שורות להזמנה שנוצרה מקובץ
+                <div class="noInfo saveMessage" [@openClose]="dataByPage.DigitalBatch != undefined && (dataByPage.DigitalBatch > 0 || dataByPage.DigitalBatch != 0)">לא ניתן להוסיף שורות להזמנה שנוצרה מקובץ
                 </div>
             </div>
 

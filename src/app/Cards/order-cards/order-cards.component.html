@@ -36,7 +36,7 @@
                                         </ng-container>
                                     </mat-select>
                                     <!-- <mat-error *ngIf="excelCustomerError">{{excelCustomerError}}</mat-error> -->
-                                    <mat-error *ngIf="excelCardCreatingForm.get('customer').hasError('required')">נא לבחור לקוח</mat-error>
+                                    <mat-error [@openClose]="excelCardCreatingForm.get('customer').hasError('required')">נא לבחור לקוח</mat-error>
                                 </mat-form-field>
                             </div>
                             <div>
@@ -91,7 +91,7 @@
                             <button mat-button class="addButton" (click)="goToExcelView()">
                                 טען קובץ
                             </button>
-                            <mat-error *ngIf="excelSendError != ''">{{excelSendError}}</mat-error>
+                            <mat-error [@openClose]="excelSendError != ''">{{excelSendError}}</mat-error>
                         </div>
                     </form>
                 </div>
@@ -128,6 +128,7 @@
                                     </mat-select>
                                 </mat-form-field>
                             </div>
+                            <div></div>
                             <!-- <div>
                                 <mat-form-field class="width100 textA">
                                     <mat-label>תאור ההזמנה</mat-label>
@@ -141,16 +142,14 @@
                                     </textarea>
                                 </mat-form-field>
                             </div> -->
-                            <div class="buttonAny alignRight">
-                                <div class="wrapUserButton">
-                                    <button mat-button class="addButton flexB" (click)="checkFormValidity()">הכנס</button>
-                                    <div class="error">{{manualError}}</div>
-                                    <!-- <button mat-button class="addButton" (click)="test()"
-                                        [routerLink]="'/public/newOrder'" [state]="{data: manualCardgroup.get('selectedCustomerControl').value}">הכנס
-                                    </button> -->
-                                </div>
-                            </div>
+
                             <div></div>
+                        </div>
+                        <div class="sendButtonWrap">
+                            <button mat-button class="addButton" (click)="checkFormValidity()">
+                                הכנס
+                            </button>
+                            <mat-error [@openClose]="manualError != ''">{{manualError}}</mat-error>
                         </div>
                     </form>
                 </div>

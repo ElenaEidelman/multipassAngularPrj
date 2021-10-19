@@ -19,12 +19,28 @@ import { DialogComponent, DialogData } from 'src/app/PopUps/dialog/dialog.compon
 import { SharedService } from 'src/app/shared.service';
 import { AlertMessage } from 'src/assets/alertMessage';
 import * as fs from 'file-saver';
+import { UrlSharingService } from 'src/app/Services/url-sharing.service';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'app-exec-order',
   templateUrl: './exec-order.component.html',
   styleUrls: ['./exec-order.component.css'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  animations:[
+    trigger('openClose', [
+      state('true', style({
+        overflow: 'hidden',
+        height: '*'
+      })),
+      state('false', style({
+        opacity: '0',
+        overflow: 'hidden',
+        height: '0px',
+      })),
+      transition('false <=> true', animate('600ms ease-in-out'))
+    ])
+  ]
 })
 
 
@@ -42,7 +58,8 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     private dataService: DataServiceService,
     private sharedService: SharedService,
     private router: Router,
-    private dialog: MatDialog) { }
+    private dialog: MatDialog,
+    private urlSharingService: UrlSharingService) { }
 
   insertOrderLineSpinner: boolean = false;
   createCardsSpinner: boolean = false;
@@ -70,6 +87,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
   manualOrder: boolean = false;
   excelOrder: boolean = false;
+  minOrderDate = new Date();
 
 
   minDate: any;
@@ -165,6 +183,11 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     this.orderDetails = [
       { id: 0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem: 0 }
     ];
+
+
+    //this code need when i will change url
+    let orderandcustomerid = this.urlSharingService.currentMessage;
+    debugger
 
     // this.getCalendarFilter();
 
@@ -1068,6 +1091,7 @@ export class DatePickerDialog implements OnInit {
   }
 
   validity = new FormControl()
+  minOrderDate = new Date();
 
 
   ngOnInit(): void {

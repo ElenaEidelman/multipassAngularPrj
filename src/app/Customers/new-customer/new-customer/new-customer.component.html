@@ -28,8 +28,8 @@
                             <mat-spinner *ngIf="saveFormSpinner" class="saveFormSpinner"></mat-spinner>
                         </div>
                     </div>
-                    <div class="error alignCenter" *ngIf="errorActionButtons">{{errorActionButtons}}</div>
-                    <div class="saveMessage alignCenter" *ngIf="msgActionButtons">{{msgActionButtons}}</div>
+                    <div class="error alignCenter" [@openClose]="errorActionButtons != ''">{{errorActionButtons}}</div>
+                    <div class="saveMessage alignCenter" [@openClose]="msgActionButtons != ''">{{msgActionButtons}}</div>
                 </div>
 
 
@@ -60,7 +60,7 @@
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>שם חברה*</mat-label>
-                                            <input matInput placeholder="שם חברה*" formControlName="OrganizationName" tabindex="1" pattern="^([^0-9]*)$">
+                                            <input matInput placeholder="שם חברה*" formControlName="OrganizationName" tabindex="1">
                                             <button class="clearButton" *ngIf="this.newCustomerForm.get('OrganizationName').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('OrganizationName').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
@@ -89,7 +89,7 @@
                                             <button class="clearButton" *ngIf="this.newCustomerForm.get('FName').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('FName').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
-                                            <mat-error *ngIf="newCustomerForm.get('FName').errors?.pattern">{{MsgList.numbersValidationErr}}</mat-error>
+                                            <mat-error *ngIf="newCustomerForm.get('FName').errors?.pattern">{{MsgList.lettersValidationErr}}</mat-error>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>מספר טלפון נוסף</mat-label>

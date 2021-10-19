@@ -63,7 +63,7 @@
                                 </button>
                                 <mat-spinner class="spinner" *ngIf="spinnerNewTemp"></mat-spinner>
                                 <div class="saveMessage">{{saveMessage}}</div>
-                                <mat-error>{{errorMessagenewSms}}</mat-error>
+                                <mat-error [@openClose]="errorMessagenewSms != ''">{{errorMessagenewSms}}</mat-error>
                             </div>
                             <mat-spinner *ngIf="newSMSSend"></mat-spinner>
                         </mat-card-actions>
@@ -89,14 +89,14 @@
                             <button mat-button class="linkButton" (click)="editButtonClicked('','סכום טעינה')">
                                 <span><סכום טעינה></span>
                             </button>
-                            <button mat-button class="linkButton" (click)="editButtonClicked('','מספר שובר')">
-                                <span><מספר שובר></span>
+                            <button mat-button class="linkButton" [class.errorActionButton]="voucherNumberInsered" (click)="editButtonClicked('','מספר שובר')">
+                                <span><מספר שובר>*</span>
                             </button>
                             <!-- <button mat-button class="linkButton" (click)="editButtonClicked('','פין קוד')">
                                 <span><פין קוד></span>
                             </button> -->
-                            <button mat-button class="linkButton" (click)="editButtonClicked('','תוקף')">
-                                <span><תוקף></span>
+                            <button mat-button class="linkButton" [class.errorActionButton]="voucherValidityInsered"  (click)="editButtonClicked('','תוקף')">
+                                <span><תוקף>*</span>
                             </button>
                             <button mat-button class="linkButton" (click)="editButtonClicked('','לינק לברקוד')">
                                 <span><לינק לברקוד></span>
@@ -151,7 +151,7 @@
                                     <mat-card-content>
                                         <mat-form-field>
                                             <textarea 
-                                            matInput #txtArea formControlName="TemplateFormat{{temp.Id}}" placeholder="SMS תבנית" class="templateTextArea"></textarea>
+                                            matInput #txtArea [id]="'textareas' + temp.Id" formControlName="TemplateFormat{{temp.Id}}" placeholder="SMS תבנית" class="templateTextArea"></textarea>
                                         </mat-form-field>
                                     </mat-card-content> 
 
@@ -194,15 +194,16 @@
                                         <button mat-button class="linkButton" (click)="editButtonClicked(temp,'סכום טעינה')">
                                             <span><סכום טעינה></span>
                                         </button>
-                                        <button mat-button class="linkButton" (click)="editButtonClicked(temp,'מספר שובר')">
-                                            <span><מספר שובר></span>
+                                        <button mat-button class="linkButton" [class.errorActionButton]="voucherNumberInseredById === 'voucherNumberInseredById' + temp.Id" (click)="editButtonClicked(temp,'מספר שובר')">
+                                            <span><מספר שובר>*</span>
                                         </button>
                                         <!-- <button mat-button class="linkButton" (click)="editButtonClicked(temp,'פין קוד')">
                                             <span><פין קוד></span>
                                         </button> -->
-                                        <button mat-button class="linkButton" (click)="editButtonClicked(temp,'תוקף')">
-                                            <span><תוקף></span>
+                                        <button mat-button class="linkButton" [class.errorActionButton]="voucherValidityInseredById === 'voucherValidityInseredById' + temp.Id" (click)="editButtonClicked(temp,'תוקף')">
+                                            <span><תוקף>*</span>
                                         </button>
+
                                         <button mat-button class="linkButton" (click)="editButtonClicked(temp,'לינק לברקוד')">
                                             <span><לינק לברקוד></span>
                                         </button>
@@ -216,8 +217,8 @@
                                             <span>שמור</span>
                                             <mat-icon>save</mat-icon>
                                         </button>
-                                        <diV [id]="'msgBySms' + temp.Id" class="saveMessage"></diV>
-                                        <diV [id]="'msgErrorBySms' + temp.Id" class="error"></diV>
+                                        <diV [@openClose]="('msgBySms' + temp.Id) != '' " [id]="'msgBySms' + temp.Id" class="saveMessage"></diV>
+                                        <diV [@openClose]="('msgErrorBySms' + temp.Id) != '' " [id]="'msgErrorBySms' + temp.Id" class="error"></diV>
                                     </div>
                                 </div>
                             </mat-card>

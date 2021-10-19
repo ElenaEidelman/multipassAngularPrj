@@ -1,3 +1,4 @@
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -12,7 +13,21 @@ import { resourceLimits } from 'worker_threads';
 @Component({
   selector: 'app-new-user',
   templateUrl: './new-user.component.html',
-  styleUrls: ['./new-user.component.css']
+  styleUrls: ['./new-user.component.css'],
+  animations:[
+    trigger('openClose', [
+      state('true', style({
+        overflow: 'hidden',
+        height: '*'
+      })),
+      state('false', style({
+        opacity: '0',
+        overflow: 'hidden',
+        height: '0px',
+      })),
+      transition('false <=> true', animate('600ms ease-in-out'))
+    ])
+  ]
 })
 export class NewUserComponent implements OnInit {
 

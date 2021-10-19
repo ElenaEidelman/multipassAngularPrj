@@ -89,7 +89,7 @@
                                                 class="datePicker datePickerPadding marginTop-1">
                                                 <mat-label>מתאריך</mat-label>
                                                 <input matInput [matDatepicker]="picker"
-                                                    [disabled]="!rangeOfDatesDatePickerView1Form" formControlName="FDate">
+                                                    [disabled]="!rangeOfDatesDatePickerView1Form" formControlName="FDate" [max]="maxDateForReport">
                                                 <!-- <button class="clearButton" *ngIf="Report1Form.get('ValidateDate').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('ValidateDate').setValue('')">
                                                     <mat-icon>close</mat-icon>
                                                 </button> -->
@@ -194,7 +194,7 @@
                                                 class="datePicker datePickerPadding marginTop-1">
                                                 <mat-label>מתאריך</mat-label>
                                                 <input matInput [matDatepicker]="picker3" disabled="false"
-                                                    formControlName="FDate">
+                                                    formControlName="FDate" [max]="maxDateForReport">
                                                 <mat-datepicker-toggle matSuffix [for]="picker3">
                                                 </mat-datepicker-toggle>
                                                 <mat-datepicker #picker3></mat-datepicker>
@@ -208,7 +208,7 @@
                                                 class="datePicker datePickerPadding marginTop-1">
                                                 <mat-label>עד תאריך</mat-label>
                                                 <input matInput [matDatepicker]="picker4" disabled="false"
-                                                    formControlName="TDate">
+                                                    formControlName="TDate" [max]="maxDateForReport">
                                                 <mat-datepicker-toggle matSuffix [for]="picker4">
                                                 </mat-datepicker-toggle>
                                                 <mat-datepicker #picker4></mat-datepicker>
@@ -332,7 +332,7 @@
                                                 class="datePicker datePickerPadding marginTop-1">
                                                 <mat-label>מתאריך</mat-label>
                                                 <input matInput [matDatepicker]="picker"
-                                                    [disabled]="!rangeOfDatesDatePickerView3Form" formControlName="FDate" >
+                                                    [disabled]="!rangeOfDatesDatePickerView3Form" formControlName="FDate" [max]="maxDateForReport">
                                                 <!-- <button class="clearButton" *ngIf="Report3Form.get('ValidateDate').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('ValidateDate').setValue('')">
                                                     <mat-icon>close</mat-icon>
                                                 </button> -->

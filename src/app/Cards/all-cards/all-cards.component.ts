@@ -89,8 +89,8 @@ export class AllCardsComponent implements OnInit, AfterViewInit, OnChanges {
   cardsLabelForTable = [
     {value: 'CardId', viewValue: 'מספר שובר'},
     {value: 'FullName', viewValue: 'שם לקוח'},
-    {value: 'PhoneNo', viewValue: 'מספר טלפון'},
-    {value: 'balance', viewValue: 'יתרה'},// no data !!!!
+    {value: 'PhoneNumber', viewValue: 'מספר טלפון'},
+    {value: 'CurrentBudget', viewValue: 'יתרה'},// no data !!!!
     {value: 'OrderId', viewValue: 'מספר הזמנה'},
     {value: 'CreationDate', viewValue: 'תאריך הנפקה'},
     // {value: 'dataSend', viewValue: 'תאריך שליחה'},

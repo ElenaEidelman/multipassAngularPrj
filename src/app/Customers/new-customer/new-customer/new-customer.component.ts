@@ -1,3 +1,4 @@
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -11,7 +12,21 @@ import { SharedService } from 'src/app/shared.service';
 @Component({
   selector: 'app-new-customer',
   templateUrl: './new-customer.component.html',
-  styleUrls: ['./new-customer.component.css']
+  styleUrls: ['./new-customer.component.css'],
+  animations:[
+    trigger('openClose', [
+      state('true', style({
+        overflow: 'hidden',
+        height: '*'
+      })),
+      state('false', style({
+        opacity: '0',
+        overflow: 'hidden',
+        height: '0px',
+      })),
+      transition('false <=> true', animate('600ms ease-in-out'))
+    ])
+  ]
 })
 export class NewCustomerComponent implements OnInit {
 

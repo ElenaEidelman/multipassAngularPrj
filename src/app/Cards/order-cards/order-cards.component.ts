@@ -13,12 +13,27 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { SharedService } from 'src/app/shared.service';
 import { MsgList } from 'src/app/Classes/msgsList';
 import { DialogWithTableDataComponent } from './Dialogs/dialog-with-table-data/dialog-with-table-data.component';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'app-order-cards',
   templateUrl: './order-cards.component.html',
   styleUrls: ['./order-cards.component.css'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  animations:[
+    trigger('openClose', [
+      state('true', style({
+        overflow: 'hidden',
+        height: '*'
+      })),
+      state('false', style({
+        opacity: '0',
+        overflow: 'hidden',
+        height: '0px',
+      })),
+      transition('false <=> true', animate('600ms ease-in-out'))
+    ])
+  ]
 })
 export class OrderCardsComponent implements OnInit, OnDestroy {
 
@@ -162,6 +177,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
     return this.customers.filter(customer => customer.id == userId)[0];
   }
 
+  //check manual order
   checkFormValidity() {
     let customerSelectedId = this.manualCardgroup.get('selectedCustomerControl').value.id;
     if (customerSelectedId != undefined) {
@@ -189,11 +205,8 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
   }
 
   fileOptionChange(event) {
-    
-    debugger
     if(this.excelCardCreatingForm.get('customer').valid){
       if (event.target.files.length > 0) {
-        debugger
         const file = event.target.files[0];
         if (!file.type.includes('excel') && !file.type.includes('sheet')) {
           this.fileUplodadeValid = false;
@@ -219,6 +232,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
           debugger
           this.dataService.InsertUpdateOrderByExcel(formData).subscribe(result => {
 
+            debugger
             this.fileUploading = false;
             this.fileUplodadeValid = false;
             if (result['Token'] != undefined || result['Token'] != null) {
@@ -240,30 +254,24 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
                   }
                   localStorage.setItem('excelFileData', JSON.stringify(objGetFile));
                   this.uploadDoc.nativeElement.value = '';
-                  debugger
                 
               }
               if(result.err == -1){
 
-                let data_Source = new MatTableDataSource([]);
-                let data = [];
-                let dataLabelsList = ['FirstName', 'LastName', 'Cellular', 'Amount'];
-                // let dataLabelsList = [
-                //                       {engLabel: 'FirstName', hebLabel: 'שם'},
-                //                       {engLabel: 'LastName', hebLabel: 'שם משפחה'},
-                //                       {engLabel: 'Cellular', hebLabel: 'טלפון'},
-                //                     ];
-
-                if(result.obj.length > 0){
+                //if have missing data in file
+                if(result.obj != null && result.obj.length > 0){
                   let dataOBJ = {};
+                  let data_Source = new MatTableDataSource([]);
+                  let data = [];
+                  let dataLabelsList = ['FirstName', 'LastName', 'Cellular', 'Amount'];
+
                   result.obj[0].forEach(element => {
                       dataLabelsList.forEach(labels => {
                         dataOBJ[labels] = element[labels]
                       })
                       data.push(dataOBJ);
                   });
-                }
-
+                  
                 data_Source.data = data;
                 this.dialog.open(DialogWithTableDataComponent, {
                   maxHeight: '200px',
@@ -273,27 +281,32 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
                     dataLabelsList: dataLabelsList
                   }
                 });
+                }
+                else{
+                  this.dialog.open(DialogComponent, {
+                    data: {
+                      title: '',
+                      subTitle: '',
+                      message: 'קובץ אינו תקין'
+                    }
+                  })
+                }
+
 
                 this.uploadDoc.nativeElement.value = '';
                 this.filename = '';
-
-                // this.excelFileError = result.errdesc;
-
-                // setTimeout(() => {
-                //   this.excelFileError = '';
-                // }, 2000);
               }
-              else if(typeof result == 'string'){
+            }
+            else if(typeof result == 'string'){
 
-                this.dialog.open(DialogComponent, {
-                  data: {
-                    title: '',
-                    subTitle: '',
-                    message: result
-                  }
-                });
-                // this.excelFileError = result;
-              }
+              this.dialog.open(DialogComponent, {
+                data: {
+                  title: '',
+                  subTitle: '',
+                  message: result
+                }
+              });
+              // this.excelFileError = result;
             }
             else{
               this.sharedService.exitSystemEvent();

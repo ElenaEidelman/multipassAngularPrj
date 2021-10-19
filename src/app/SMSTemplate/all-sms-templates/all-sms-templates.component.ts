@@ -15,7 +15,7 @@ import { SharedService } from 'src/app/shared.service';
   selector: 'app-all-sms-templates',
   templateUrl: './all-sms-templates.component.html',
   styleUrls: ['./all-sms-templates.component.css'],
-  animations:[
+  animations: [
     trigger('openClose', [
       state('true', style({
         overflow: 'hidden',
@@ -40,8 +40,13 @@ export class AllSmsTemplatesComponent implements OnInit {
   spinnerId = -1;
   spinnerById = [];
   newSMSSend: boolean = false;
+  voucherNumberInsered: boolean = false;
+  voucherValidityInsered: boolean = false;
 
-  
+  voucherNumberInseredById: string = '';
+  voucherValidityInseredById: string = '';
+
+
   userToken;
   userId;
   errorMessagenewSms: string = '';
@@ -162,61 +167,78 @@ export class AllSmsTemplatesComponent implements OnInit {
 
   saveTemplate(template) {
     if (template != 'newTemplate') {
-
+      debugger
       if (this.SMSForm.get('Id-' + template.Id).valid) {
 
-        let objToApi = {
-          Token: this.userToken,
-          TemplateName: this.SMSForm.get('Id-' + template.Id).get('TemplateName' + template.Id).value,
-          SenderName: this.SMSForm.get('Id-' + template.Id).get('SenderName' + template.Id).value,
-          TemplateFormat: this.SMSForm.get('Id-' + template.Id).get('TemplateFormat' + template.Id).value,
-          TemplateId: template.Id
+        this.voucherValidityInseredById = this.SMSForm.get('Id-' + template.Id).value['TemplateFormat' + template.Id].indexOf('<תוקף>') == -1 ? 'voucherValidityInseredById' + template.Id : '';
+        this.voucherNumberInseredById = this.SMSForm.get('Id-' + template.Id).value['TemplateFormat' + template.Id].indexOf('<מספר שובר>') == -1 ? 'voucherNumberInseredById' + template.Id : '';
+        debugger
+        if (this.SMSForm.get('Id-' + template.Id).value['TemplateFormat' + template.Id].indexOf('<תוקף>') != -1 &&
+          this.SMSForm.get('Id-' + template.Id).value['TemplateFormat' + template.Id].indexOf('<מספר שובר>') != -1) {
+
+
+          this.voucherNumberInseredById = '';
+
+          let objToApi = {
+            Token: this.userToken,
+            TemplateName: this.SMSForm.get('Id-' + template.Id).get('TemplateName' + template.Id).value,
+            SenderName: this.SMSForm.get('Id-' + template.Id).get('SenderName' + template.Id).value,
+            TemplateFormat: this.SMSForm.get('Id-' + template.Id).get('TemplateFormat' + template.Id).value,
+            TemplateId: template.Id
+          }
+
+
+          this.dataService.CreateOrUpdateSMSTemplate(objToApi).subscribe(result => {
+            if (result['Token'] != undefined || result['Token'] != null) {
+
+              //set new token
+              let tempObjUser = JSON.parse(localStorage.getItem('user'));
+              tempObjUser['Token'] = result['Token'];
+              localStorage.setItem('user', JSON.stringify(tempObjUser));
+              this.userToken = result['Token'];
+
+              if (typeof result == 'object' && result['obj'] != null && result['obj'].length > 0) {
+
+                document.getElementById('msgBySms' + template.Id).innerHTML = 'נשמר בהצלחה';
+                setTimeout(() => {
+                  document.getElementById('msgBySms' + template.Id).innerHTML = '';
+                  this.edit = !this.edit;
+                  this.editingTempId = -1;
+                }, 2000);
+
+                this.SMSForm.get('Id-' + template.Id).get('TemplateFormat' + template.Id).disable();
+                this.SMSForm.get('Id-' + template.Id).get('SenderName' + template.Id).disable();
+                this.SMSForm.get('Id-' + template.Id).get('TemplateName' + template.Id).disable();
+              }
+              if (typeof result == 'string') {
+                this.errorMessagenewSms = result;
+
+                setTimeout(() => {
+                  this.errorMessagenewSms = '';
+                }, 5000)
+              }
+              if (result.obj == null && result.errdesc != '' && result.errdesc != null) {
+                this.dialog.open(DialogComponent, {
+                  data: { message: result.errdesc }
+                })
+              }
+
+            }
+            else {
+              // this.dialog.open(DialogComponent, {
+              //   data: {message: MsgList.exitSystemAlert}
+              // })
+              this.sharedService.exitSystemEvent();
+            }
+          });
         }
+        else {
+          document.getElementById('msgErrorBySms' + template.Id).innerHTML = 'נא להזין שדות חובה';
 
-
-        this.dataService.CreateOrUpdateSMSTemplate(objToApi).subscribe(result => {
-          if (result['Token'] != undefined || result['Token'] != null) {
-
-            //set new token
-            let tempObjUser = JSON.parse(localStorage.getItem('user'));
-            tempObjUser['Token'] = result['Token'];
-            localStorage.setItem('user', JSON.stringify(tempObjUser));
-            this.userToken = result['Token'];
-
-            if (typeof result == 'object' && result['obj'] != null && result['obj'].length > 0) {
-
-              document.getElementById('msgBySms' + template.Id).innerHTML = 'נשמר בהצלחה';
-              setTimeout(() => {
-                document.getElementById('msgBySms' + template.Id).innerHTML = '';
-                this.edit = !this.edit;
-                this.editingTempId = -1;
-              }, 2000);
-
-              this.SMSForm.get('Id-' + template.Id).get('TemplateFormat' + template.Id).disable();
-              this.SMSForm.get('Id-' + template.Id).get('SenderName' + template.Id).disable();
-              this.SMSForm.get('Id-' + template.Id).get('TemplateName' + template.Id).disable();
-            }
-            if (typeof result == 'string') {
-              this.errorMessagenewSms = result;
-
-              setTimeout(() => {
-                this.errorMessagenewSms = '';
-              }, 5000)
-            }
-            if (result.obj == null && result.errdesc != '' && result.errdesc != null) {
-              this.dialog.open(DialogComponent, {
-                data: { message: result.errdesc }
-              })
-            }
-
-          }
-          else {
-            // this.dialog.open(DialogComponent, {
-            //   data: {message: MsgList.exitSystemAlert}
-            // })
-            this.sharedService.exitSystemEvent();
-          }
-        });
+          setTimeout(() => {
+            document.getElementById('msgErrorBySms' + template.Id).innerHTML = '';
+          }, 2000);
+        }
       }
       else {
         document.getElementById('msgErrorBySms' + template.Id).innerHTML = 'נא למלא את כל השדות';
@@ -228,61 +250,76 @@ export class AllSmsTemplatesComponent implements OnInit {
     }
     else {
       if (this.newTemplateForm.valid) {
-        this.spinnerNewTemp = true;
-        let objToApi = {
-          Token: this.userToken,
-          TemplateName: this.newTemplateForm.get('TemplateName').value,
-          SenderName: this.newTemplateForm.get('SenderName').value,
-          TemplateFormat: this.newTemplateForm.get('TemplateFormat').value,
+        this.voucherNumberInsered = this.newTemplateForm.value.TemplateFormat.indexOf('<מספר שובר>') == -1;
+        this.voucherValidityInsered = this.newTemplateForm.value.TemplateFormat.indexOf('<תוקף>') == -1;
+        debugger
+
+        if (this.newTemplateForm.value.TemplateFormat.indexOf('<תוקף>') != -1 &&
+          this.newTemplateForm.value.TemplateFormat.indexOf('<מספר שובר>') != -1) {
+          debugger
+          this.spinnerNewTemp = true;
+          let objToApi = {
+            Token: this.userToken,
+            TemplateName: this.newTemplateForm.get('TemplateName').value,
+            SenderName: this.newTemplateForm.get('SenderName').value,
+            TemplateFormat: this.newTemplateForm.get('TemplateFormat').value,
+          }
+
+          this.dataService.CreateOrUpdateSMSTemplate(objToApi).subscribe(result => {
+            this.spinnerNewTemp = false;
+            if (result['Token'] != undefined || result['Token'] != null) {
+
+              //set new token
+              let tempObjUser = JSON.parse(localStorage.getItem('user'));
+              tempObjUser['Token'] = result['Token'];
+              localStorage.setItem('user', JSON.stringify(tempObjUser));
+              this.userToken = result['Token'];
+
+              if (typeof result == 'object' && result['obj'] != null && result['obj'].length > 0 && result.errdesc == 'Template Created Successfully') {
+                this.templatesSMS.unshift(...result.obj);
+
+                this.saveMessage = 'נשמר בהצלחה';
+
+
+                this.newTemplateForm.get('TemplateName').setValue('');
+                this.newTemplateForm.get('SenderName').setValue('');
+                this.newTemplateForm.get('TemplateFormat').setValue('');
+
+                setTimeout(() => {
+                  this.saveMessage = '';
+                  this.openNewTemplate = false;
+                }, 2000);
+                this.createForm('SMSForm', this.templatesSMS, 'Id-');
+
+              }
+              if (typeof result == 'string') {
+                this.errorMessagenewSms = result;
+
+                setTimeout(() => {
+                  this.errorMessagenewSms = '';
+                }, 5000)
+              }
+              if (result.obj == null && result.errdesc != '' && result.errdesc != null) {
+                this.dialog.open(DialogComponent, {
+                  data: { message: result.errdesc }
+                })
+              }
+            }
+            else {
+              // this.dialog.open(DialogComponent, {
+              //   data: {message: MsgList.exitSystemAlert}
+              // })
+              this.sharedService.exitSystemEvent();
+            }
+          });
         }
+        else {
+          this.errorMessagenewSms = 'נא להזין שדות חובה';
 
-        this.dataService.CreateOrUpdateSMSTemplate(objToApi).subscribe(result => {
-          this.spinnerNewTemp = false;
-          if (result['Token'] != undefined || result['Token'] != null) {
-
-            //set new token
-            let tempObjUser = JSON.parse(localStorage.getItem('user'));
-            tempObjUser['Token'] = result['Token'];
-            localStorage.setItem('user', JSON.stringify(tempObjUser));
-            this.userToken = result['Token'];
-
-            if (typeof result == 'object' && result['obj'] != null && result['obj'].length > 0 && result.errdesc == 'Template Created Successfully') {
-              this.templatesSMS.unshift(...result.obj);
-
-              this.saveMessage = 'נשמר בהצלחה';
-
-
-              this.newTemplateForm.get('TemplateName').setValue('');
-              this.newTemplateForm.get('SenderName').setValue('');
-              this.newTemplateForm.get('TemplateFormat').setValue('');
-
-              setTimeout(() => {
-                this.saveMessage = '';
-                this.openNewTemplate = false;
-              }, 2000);
-              this.createForm('SMSForm', this.templatesSMS, 'Id-');
-
-            }
-            if (typeof result == 'string') {
-              this.errorMessagenewSms = result;
-
-              setTimeout(() => {
-                this.errorMessagenewSms = '';
-              }, 5000)
-            }
-            if (result.obj == null && result.errdesc != '' && result.errdesc != null) {
-              this.dialog.open(DialogComponent, {
-                data: { message: result.errdesc }
-              })
-            }
-          }
-          else {
-            // this.dialog.open(DialogComponent, {
-            //   data: {message: MsgList.exitSystemAlert}
-            // })
-            this.sharedService.exitSystemEvent();
-          }
-        });
+          setTimeout(() => {
+            this.errorMessagenewSms = '';
+          }, 2000);
+        }
       }
       else {
         this.errorMessagenewSms = 'נא למלא את כל השדות';
@@ -295,6 +332,11 @@ export class AllSmsTemplatesComponent implements OnInit {
   }
 
   editTemplate(template, index) {
+
+    //close another template if it been opened
+    if (this.editingTempId != undefined && this.editingTempId != -1) {
+      this.closeTemplate({ Id: this.editingTempId });
+    }
     this.edit = !this.edit;
     this.editingTempId = template.Id;
     this.SMSForm.get('Id-' + template.Id).get('TemplateFormat' + template.Id).enable();
@@ -305,16 +347,20 @@ export class AllSmsTemplatesComponent implements OnInit {
       return (idx) === index;
     }).nativeElement.focus();
   }
-  editButtonClicked(obj, buttonName) {
-    if (obj != '') {
 
+
+  editButtonClicked(obj, buttonName) {
+    //not new template
+    if (obj != '') {
       // fill textArea
       let valueTA = this.SMSForm.get('Id-' + obj.Id).get('TemplateFormat' + obj.Id).value;
       let textAreaValue = valueTA != null ? valueTA : '';
       this.SMSForm.get('Id-' + obj.Id).get('TemplateFormat' + obj.Id).setValue(textAreaValue + ' <' + buttonName + '>');
       //focus text area
+
+      debugger
       this.textAreas.find((item, idx) => {
-        return (idx) === obj.Id;
+        return (+item.nativeElement.id.split('textareas')[1]) === obj.Id;
       }).nativeElement.focus();
     }
 
@@ -395,13 +441,13 @@ Json:
 
   sendSMSForExample(template, newTmp: boolean) {
     debugger
-    if(newTmp && !this.newTemplateForm.valid){
-        this.newTemplateSendError = 'נא למלא שדות חובה';
-        setTimeout(() => {
-          this.newTemplateSendError = '';
-        }, 2000);
+    if (newTmp && !this.newTemplateForm.valid) {
+      this.newTemplateSendError = 'נא למלא שדות חובה';
+      setTimeout(() => {
+        this.newTemplateSendError = '';
+      }, 2000);
     }
-    if((newTmp && this.newTemplateForm.valid) || !newTmp){
+    if ((newTmp && this.newTemplateForm.valid) || !newTmp) {
       this.dialog.open(PhoneConfirmComponent, {
         data: { message: ' ?מה מספר טלפון לשליחת SMS' }
       }).afterClosed().subscribe(result => {
@@ -447,10 +493,10 @@ Json:
       })
     }
 
-  // }
-  // else{
+    // }
+    // else{
 
-  // }
+    // }
   }
 
 }
@@ -466,7 +512,7 @@ export interface DialogData {
   templateUrl: './confirmPhone.component.html',
   styleUrls: ['./phone-confirm-dialog.component.css'],
   encapsulation: ViewEncapsulation.None,
-  animations:[
+  animations: [
     trigger('openClose', [
       state('true', style({
         overflow: 'hidden',
@@ -489,13 +535,13 @@ export class PhoneConfirmComponent implements OnInit {
     private route: Router) { }
 
   phoneControl = new FormControl();
-  
+
   errorPhone: string = '';
   MsgList = MsgList;
 
   ngOnInit(): void {
 
-    this.phoneControl.setValidators([Validators.required,Validators.pattern('[[0][0-9]{9}]*')]);
+    this.phoneControl.setValidators([Validators.required, Validators.pattern('[[0][0-9]{9}]*')]);
   }
 
   dialogClose() {
@@ -503,9 +549,9 @@ export class PhoneConfirmComponent implements OnInit {
   }
   yes() {
     debugger
-      if(this.phoneControl.valid){
-        this.dialogRef.close({ result: 'phone: ' + this.phoneControl.value });
-      }
+    if (this.phoneControl.valid) {
+      this.dialogRef.close({ result: 'phone: ' + this.phoneControl.value });
+    }
     else {
       this.errorPhone = 'נא להזין מספר טלפון תקין';
       setTimeout(() => {

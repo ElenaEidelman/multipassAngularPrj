@@ -1,5 +1,6 @@
 .mat-progress-spinner{
     margin: auto;
+    z-index: 999;
 }
 .tableActions{
     display: flex;

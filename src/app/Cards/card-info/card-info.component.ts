@@ -145,9 +145,9 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
       UserId: this.userId
     }
 
-    debugger
+    
     this.dataService.GetCardInfoById(objToApi).subscribe(result => {
-      debugger
+      
       if (result['Token'] != undefined || result['Token'] != null) {
         //set new token
         let tempObjUser = JSON.parse(localStorage.getItem('user'));
@@ -167,7 +167,7 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
 
           let historyData = result.obj[7]['lstHistoryTranInfoField'];
           this.historyDataSource.data = historyData;
-          debugger
+          
 
           this.createDisplayedColumns('historyLabelForTable', this.historyTableTemplate);
 
@@ -498,9 +498,9 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
             From: this.OrderDetails.PrimaryUser.OrganizationName
           }
 
-          debugger
+          
           this.dataService.SendSMSByOrderLine(objToApi).subscribe(result => {
-            debugger
+            
             if (result['Token'] != undefined || result['Token'] != null) {
 
               //set new token

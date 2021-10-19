@@ -116,6 +116,11 @@ mat-card-title > div{
 .newSMSActionButtons > div{
   margin-left: 10px;
 }
+
+.errorActionButton{
+  color: #ee8875 !important;
+  border: 1px solid #ee8875 !important;
+}
 .mat-card>.mat-card-actions{
   text-align: right;
 }

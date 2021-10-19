@@ -7,6 +7,8 @@
         </button>
     </div> -->
 </div>
+<mat-spinner *ngIf="newOrderDataSource == undefined" class="noDataSpinner"></mat-spinner>
+
 <div class="page-wrap" *ngIf="newOrderDataSource != undefined">
 
     <!-- charts -->

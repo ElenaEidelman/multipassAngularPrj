@@ -13,7 +13,7 @@
                 <mat-form-field class="datePicker datePickerPadding marginTop-1"
                 appearance="fill" dir="ltr">
                 <input matInput [formControl]="validity"
-                     [matDatepicker]="picker">
+                     [matDatepicker]="picker" [min]="minOrderDate">
                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                 <mat-datepicker #picker></mat-datepicker>
                   

@@ -56,7 +56,6 @@ import { NewUserComponent } from './Users/new-user/new-user.component';
 import { ExistUserComponent } from './Users/exist-user/exist-user.component';
 import { ExistCustomerComponent } from './Customers/exist-customer/exist-customer.component';
 import { AllSmsTemplatesComponent, PhoneConfirmComponent } from './SMSTemplate/all-sms-templates/all-sms-templates.component';
-import { NewSmsTemplateComponent } from './SMSTemplate/new-sms-template/new-sms-template.component';
 import { CardInfoComponent } from './Cards/card-info/card-info.component';
 import { LogInComponent } from './log-in/log-in.component';
 
@@ -104,7 +103,6 @@ import { DialogWithTableDataComponent } from './Cards/order-cards/Dialogs/dialog
     ExistUserComponent,
     ExistCustomerComponent,
     AllSmsTemplatesComponent,
-    NewSmsTemplateComponent,
     CardInfoComponent,
     LogInComponent,
     PublicComponent,
