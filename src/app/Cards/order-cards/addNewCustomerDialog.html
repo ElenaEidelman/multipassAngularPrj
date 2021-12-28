@@ -1,5 +1,5 @@
 <div>
-    <div class="close-icon-wrap" (click)="dialogClose()" >
+    <div class="close-icon-wrap" (click)="dialogClose()">
         <mat-icon matTooltip="סגור" matTooltipPosition="right">cancel</mat-icon>
     </div>
 
@@ -9,9 +9,10 @@
             <!-- <div class="title">
                 {{data.data}}
             </div> -->
-          <!-- <div class="dialogMessage">{{data.message}}</div> -->
+            <!-- <div class="dialogMessage">{{data.message}}</div> -->
             <div>
-                <app-new-customer [IfComponentDialog]="IfComponentDialog"></app-new-customer>
+                <app-new-customer [IfComponentDialog]="IfComponentDialog" [formNewCustomer]="data.form"
+                    [controllerNewCustomer]="data.controller"></app-new-customer>
             </div>
             <!-- <div class="wrapSendButton">
                 <div>
@@ -19,5 +20,5 @@
                 </div>
             </div> -->
         </div>
-      </div>
+    </div>
 </div>

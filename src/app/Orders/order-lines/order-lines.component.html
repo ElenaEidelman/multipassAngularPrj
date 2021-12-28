@@ -28,7 +28,9 @@
                 </button>
             </div>
             <div>
-                <button mat-button class="linkButton" [routerLink]="['/public/order', orderId,userId]">
+
+                <!--[routerLink]="['/public/order', orderId,userId]"-->
+                <button mat-button class="linkButton" (click)="goToOrder(orderId, userId)">
                     חזרה להזמנה
                     <mat-icon>arrow_back</mat-icon>
                 </button>
@@ -132,9 +134,11 @@
                                             && column['value'] != 'IsActive'">
                                     {{row[column['value']]}}
                                 </span>
+
+                                <!--[routerLink]="['/public/cardInfo',row['CardId'], userId]"-->
                                 <a *ngIf="column['value'] == 'CardId' 
                                           && column['value'] != 'IsActive'"
-                                         [routerLink]="['/public/cardInfo',row['CardId'], userId]">
+                                         (click)="goToCardInfo(row['CardId'],userId)">
                                     {{row[column['value']]}}
                                 </a>
                                 <span *ngIf="column['value'] == 'IsActive'">{{row[column['value']] == true ? 'פעיל': 'חסום'}}</span>

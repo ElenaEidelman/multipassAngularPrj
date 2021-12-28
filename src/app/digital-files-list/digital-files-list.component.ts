@@ -3,10 +3,11 @@ import { MatTableDataSource } from '@angular/material/table';
 import { DataServiceService } from 'src/app/data-service.service';
 import { DialogComponent } from '../PopUps/dialog/dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-import { SharedService } from '../shared.service';
+
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MsgList } from '../Classes/msgsList';
+import { SharedService } from '../Services/SharedService/shared.service';
 
 @Component({
   selector: 'app-digital-files-list',
@@ -15,10 +16,10 @@ import { MsgList } from '../Classes/msgsList';
   encapsulation: ViewEncapsulation.None
 })
 export class DigitalFilesListComponent implements OnInit, AfterViewInit {
-        //MatPaginator is keyword here
-  @ViewChild(MatPaginator) paginator: MatPaginator; 
+  //MatPaginator is keyword here
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-   
+
   userToken;
   spinner: boolean = false;
   digitalFiles;
@@ -26,13 +27,13 @@ export class DigitalFilesListComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource([]);
   displayedColumns: string[] = [];
   newArr: string[] = [];
-  
+
 
   excelFilesLabelForTable = [
-    {value: 'BatchNum', viewValue: 'מספר טעינה'},
-    {value: 'Description', viewValue: 'תאור  ההזמנה'},
-    {value: 'DateInsert', viewValue: 'תאריך קליטה'},
-    {value: 'FilePath', viewValue: 'שם הקובץ'}
+    { value: 'BatchNum', viewValue: 'מספר טעינה' },
+    { value: 'Description', viewValue: 'תאור  ההזמנה' },
+    { value: 'DateInsert', viewValue: 'תאריך קליטה' },
+    { value: 'FilePath', viewValue: 'שם הקובץ' }
   ];
 
   constructor(private dataService: DataServiceService,
@@ -40,12 +41,12 @@ export class DigitalFilesListComponent implements OnInit, AfterViewInit {
     private sharedService: SharedService) { }
 
   ngOnInit(): void {
-    window.scroll(0,0);
+    window.scroll(0, 0);
     this.spinner = true;
     this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
 
 
-    
+
     this.createDisplayedColumns(this.excelFilesLabelForTable);
 
     this.getTableData();
@@ -61,14 +62,14 @@ export class DigitalFilesListComponent implements OnInit, AfterViewInit {
     return obj.filter(el => el.value == value)[0].viewValue;
   }
 
-  getTableData(){
+  getTableData() {
     this.dataSource.data = [];
     let objToApi = {
       Token: this.userToken
     }
-     
+
     this.dataService.GetDigitalFilesList(objToApi).subscribe(result => {
-      debugger
+
       this.spinner = false;
       if (result['Token'] != undefined || result['Token'] != null) {
         //set new token
@@ -79,24 +80,24 @@ export class DigitalFilesListComponent implements OnInit, AfterViewInit {
 
         if (typeof result == 'object' && result.obj != null && result.obj.length > 0) {
           this.digitalFiles = result['obj'];
-  
+
           this.newArr = this.digitalFiles.map(o => {
-            return { 
+            return {
               FilePath: o.FilePath.replace(/^.*[\\\/]/, ''),
               BatchNum: o.BatchNum,
               Description: o.Description,
               DateInsert: o.DateInsert,
-            };
+            }
           });
 
           if (typeof result == 'object' && result.obj != null) {
-            this.dataSource.data = this.newArr;
-         }
+            this.dataSource.data = this.newArr
+          }
         }
       }
-      else if(typeof result == 'string'){
+      else if (typeof result == 'string') {
         this.dialog.open(DialogComponent, {
-          data: {message: result}
+          data: { message: result }
         });
       }
       else {

@@ -28,8 +28,10 @@
                         <ng-container matColumnDef="{{column}}" *ngIf="column != 'delUser'">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header> {{returnHebTranslation(userLabelForTable,column)}} </th>
                             <td mat-cell *matCellDef="let row">
-                                <span *ngIf="column == 'id'"><a [routerLink]="['/public/user',row[column]]" >{{row[column]}}</a></span>
-                                <span href="" *ngIf="column != 'id'">{{row[column]}}</span>
+
+                                <!--[routerLink]="['/public/user',row[column]]"-->
+                                <a  *ngIf="column == 'id'" (click)="goToUser(row[column])">{{row[column]}}</a>
+                                <span  *ngIf="column != 'id'">{{row[column]}}</span>
                             </td>
                         </ng-container>
                         <ng-container matColumnDef="{{column}}" *ngIf="column == 'delUser'" style="width:100px">

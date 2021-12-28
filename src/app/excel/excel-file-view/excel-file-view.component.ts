@@ -4,7 +4,9 @@ import { Router } from '@angular/router';
 import { MsgList } from 'src/app/Classes/msgsList';
 import { DataServiceService } from 'src/app/data-service.service';
 import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
-import { SharedService } from 'src/app/shared.service';
+import { SharedService } from 'src/app/Services/SharedService/shared.service';
+import { UrlSharingService } from 'src/app/Services/UrlSharingService/url-sharing.service';
+
 
 @Component({
   selector: 'app-excel-file-view',
@@ -14,11 +16,12 @@ import { SharedService } from 'src/app/shared.service';
 export class ExcelFileViewComponent implements OnInit, OnDestroy {
 
   constructor(
-              private router: Router,
-              private dataService: DataServiceService,
-              private dialog: MatDialog,
-              private sharedService: SharedService
-              ) { }
+    private router: Router,
+    private dataService: DataServiceService,
+    private dialog: MatDialog,
+    private sharedService: SharedService,
+    private urlSharingService: UrlSharingService
+  ) { }
   excelData;
   userToken: string;
   customerId;
@@ -29,26 +32,26 @@ export class ExcelFileViewComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
-    window.scroll(0,0);
+    window.scroll(0, 0);
     this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
     this.getExcelFile();
   }
 
-  getExcelFile(){
+  getExcelFile() {
     debugger
-    if(localStorage.getItem('excelFileData') != ''){
+    if (localStorage.getItem('excelFileData') != '') {
       this.excelFileData = JSON.parse(localStorage.getItem('excelFileData'));
       this.customerId = this.excelFileData.customerId;
       this.excelData = JSON.parse(this.excelFileData.fileData).obj[0];
       this.createTableToViewExcelFile(this.excelData);
     }
-    else{
+    else {
       this.router.navigate(['/public/home']);
     }
   }
 
 
-  goToCreateOrder(){
+  goToCreateOrder() {
     // let localStorageObj = {
     //   UserID: this.customerId,
     //   FileName: this.excelFileData.excelName
@@ -70,7 +73,6 @@ export class ExcelFileViewComponent implements OnInit, OnDestroy {
     formDataForOrdersLine.append('OpCode', 'create')
     formDataForOrdersLine.append('FileName', this.excelFileData.excelName)
 
-    debugger
     this.dataService.InsertUpdateOrderByExcel(formDataForOrdersLine).subscribe(result => {
       this.createOrderSpinner = false;
       if (result['Token'] != undefined || result['Token'] != null) {
@@ -83,32 +85,40 @@ export class ExcelFileViewComponent implements OnInit, OnDestroy {
 
 
         if (result.obj != undefined && result.obj != null && Object.keys(result.obj).length > 0) {
-          this.router.navigate(['/public/order/',  result.obj[0].orderid,this.customerId]);
+          // this.urlSharingService.changeMessage('orderId:' + result.obj[0].orderid + '-' + 'customerId:' + this.customerId);
+
+          let Order = {
+            orderId: result.obj[0].orderid,
+            customerId: this.customerId
+          }
+
+          this.urlSharingService.changeMessage(JSON.stringify(Order));
+          this.router.navigate(['/public/order/']);
         }
 
       }
       else {
         this.dialog.open(DialogComponent, {
-          data: {message: MsgList.exitSystemAlert}
+          data: { message: MsgList.exitSystemAlert }
         })
         this.sharedService.exitSystemEvent();
       }
     });
   }
 
-  createTableToViewExcelFile(fileData){
+  createTableToViewExcelFile(fileData) {
     // this.tableLabels = Object.keys(fileData[0]).filter(key => key != 'NewFileName');
-    this.tableLabels = Object.keys(fileData[0]).filter(key => key == 'סכום' || key == "סה''כ" || key == 'כמות' );
+    this.tableLabels = Object.keys(fileData[0]).filter(key => key == 'סכום' || key == "סה''כ" || key == 'כמות');
 
     this.tableSource = [...fileData];
   }
 
-  cancelOrder(){
+  cancelOrder() {
     localStorage.getItem('excelFileData') != '';
     this.router.navigate(['/public/orderCards']);
 
   }
-  ngOnDestroy(){
+  ngOnDestroy() {
     localStorage.setItem('excelFileData', '');
   }
 }

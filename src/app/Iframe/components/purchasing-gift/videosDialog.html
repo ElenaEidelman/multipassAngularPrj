@@ -1,0 +1,32 @@
+<div>
+    <div class="close-icon-wrap">
+        <mat-icon mattooltip="סגור" class="closeDialogIcon" (click)="dialogClose()">cancel</mat-icon>
+    </div>
+    <div class="dialogWrap">
+        <div class="dialogHeader">
+           <span class="title"> סרטונים מוכנים</span>
+        </div>
+        <div class="dialogBody">
+            <div class="bodyTitle">
+                איזה סרטון תרצו לצרף לברכה?
+            </div>
+            <div class="videosBlock">
+                <div class="videosListElement" *ngFor="let videoElement of videosList">
+                    <div class="elementTitle">
+                        {{videoElement.title}}
+                    </div>
+                    <div class="blockVideos">
+                        <div class="elementBody" *ngFor="let video of videoElement.videos">
+                            <div class="video">
+                                <video [src]="video" controls width="100%"></video>
+                            </div>
+                            <div class="">
+                                <button mat-button class="primaryButton" (click)="select(video, videoElement)">בחירה</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,320 @@
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Mail</title>
+   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+   <style>
+      body {
+         font-family: Poppins, sans-serif;
+      }
+
+      .table {
+         width: 100%;
+         padding: 15px;
+      }
+
+      .wrapMail {
+         /* background-image: url('http://tempdomain-test-3.mltp.co.il/assets/img/confetti.jpg'); */
+         /* margin: 0 15%; */
+         margin: 0 auto;
+         background-position: center;
+         background-repeat: no-repeat;
+         background-size: cover;
+         display: table;
+         max-width: 700px;
+         /* width: -webkit-fill-available; */
+      }
+
+      .mailContent {
+         margin: 15px 7%;
+         background: rgba(255, 255, 255, 0.9);
+         border-radius: 10px;
+         padding: 15px;
+         /* max-width: 520px; */
+      }
+
+      .wrapMailFooter {
+         background: #f0f0f0;
+         min-height: 100px;
+         display: flex;
+         flex-direction: row;
+         direction: rtl;
+         padding: 10px 30px;
+      }
+
+
+      .title {
+         font-weight: bold;
+         font-size: 1.4em;
+         color: #757575;
+      }
+
+      .text {
+         display: flex;
+         flex-direction: column;
+         margin: 15px 0;
+      }
+
+      .mainImg {
+         width: 100%;
+         border-radius: 10px;
+      }
+
+      .smallText {
+         flex: 3;
+         direction: rtl;
+         padding: 10px 10px 0 0;
+         font-size: 15px;
+         text-align: center;
+      }
+
+      .textBlock {
+         display: flex;
+      }
+
+      .smallLogoImg {
+         width: 50%;
+         text-align: center;
+      }
+
+      .smallLogoImg>img {
+         width: 50%;
+      }
+
+      .codeImg {
+         height: 300px;
+         text-align: CENTER;
+      }
+
+      .barQodeTitle {
+         margin: 1em;
+         text-align: center;
+      }
+
+      .footerData {
+         width: 65%;
+      }
+
+      .footerContact {
+         width: 30%;
+      }
+
+      .hr {
+         width: 100%;
+         height: 0.1em;
+         background: gray;
+      }
+
+      .contactDataChild table {
+         text-align: left;
+      }
+
+      .giftCardImg {
+         width: 85%;
+         border-radius: 10px;
+      }
+
+      @media screen and (max-width: 1024px) {
+         .wrapMail {
+            max-width: 520px;
+         }
+      }
+   </style>
+</head>
+
+<body>
+   <div class="wrapMail" style="background-image: url('http://tempdomain-test-3.mltp.co.il/assets/img/confetti.jpg');">
+      <table class="mailContent" dir="rtl">
+         <!-- <table dir='rtl' class="table"> -->
+         <tr>
+            <td class="textBlock">
+               <div>
+                  <div class="title"> {[towho]} נראה שחושבים עליך, קיבלת מתנה מ{[fromhow]} </div>
+                  <div class="text">
+                     <span>
+                        <!--גם המרחק לא יעצור אותי מלהפטיע אותך, ככה סתם כי בא לי :)
+                                <br>
+                                שיהיה יום מקסים מלא בחיוכים-->
+                        {[blessing]}
+                     </span>
+                  </div>
+               </div>
+            </td>
+            <td>
+               <img src="{[ItemPic]}" class="mainImg">
+            </td>
+         </tr>
+         <tr>
+            <td>
+               <img src="https://buyme.co.il/files/moneyVoucherImage339033.jpg?" class="giftCardImg">
+
+            </td>
+            <td>
+               <table>
+                  <tr>
+                     <td class="smallLogoImg">
+                        <img src="{[logo]}">
+                     </td>
+                     <td>
+                        <div class="smallText">גיפט קארד ל{[TenantDescription]} בסך {[Total]} &#8362;</div>
+                     </td>
+                  </tr>
+               </table>
+            </td>
+         </tr>
+         <!-- </table> -->
+         <tr class="hr">
+            <td colspan="2"></td>
+         </tr>
+         <!-- <table class="table"> -->
+         <tr>
+            <th colspan="2">
+               <div class="barQodeTitle title">
+                  יש להציג את הברקוד או קוד מולטיפאס בקופה
+               </div>
+            </th>
+         </tr>
+         <tr>
+            <td colspan="2">
+               <div class="codeImg">
+                  <img src="{[Barcode]}">
+                  <br />
+                  <img src="{[Qrcode]}" width="180">
+                  <br />
+                  <h1>{[code]}</h1>
+               </div>
+            </td>
+         </tr>
+         <!-- </table> -->
+      </table>
+      <div class="wrapMailFooter">
+         <table dir="rtl" class="footerData">
+            <tr>
+               <td>
+                  <div class="title">גיפט קארד ל{[TenantDescription]} - בסך {[Total]} &#8362</div>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <div class="text">
+                     {[marketing]}
+                  </div>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <div class="title">
+                     מידע נוסף:
+                  </div>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <div class="text">
+                     למימוש בסניפי הרשת יש להציג את הקוד ה - Gift Card באמצעות SMS/מייל/דף מודפס.
+                  </div>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <div class="title">
+                     אני רוצה לשמור את ה - Gift Card
+                  </div>
+               </td>
+            </tr>
+            <tr style="display: flex;">
+               <td>
+                  <div style="margin: 10px 0 0 20px;">
+                     <img src="https://tempdomain-test-3.mltp.co.il/assets/img/phone.png" width="25px"
+                        style="margin-bottom: 10px;">
+                     <br>
+                     <span>SMS</span>
+                  </div>
+               </td>
+               <td>
+               </td>
+               <td>
+                  <div style=" margin: 10px 20px;">
+                     <img src="https://tempdomain-test-3.mltp.co.il/assets/img/email.png" width="25px"
+                        style="margin-bottom: 10px;">
+                     <br>
+                     <span>מייל</span>
+                  </div>
+               </td>
+               <td>
+                  <div style=" margin: 10px 20px;">
+                     <img src="https://tempdomain-test-3.mltp.co.il/assets/img/printer.png" width="25px"
+                        style="margin-bottom: 10px;">
+                     <br>
+                     <span>להדפסה</span>
+                  </div>
+               </td>
+            </tr>
+
+            </tr>
+
+         </table>
+         <table dir="rtl" class="footerContact">
+            <tr>
+               <th>
+                  <img src="{[logo]}" class="smallLogoImg">
+               </th>
+            </tr>
+            <tr>
+               <td>
+                  <div class="contactDataChild">
+                     <table dir="ltr">
+                        <tr>
+                           <td>
+                              <a [href]="tel:{[phonenum]}">{[phonenum]}</a>
+                           </td>
+                           <td>
+                              <img src="https://tempdomain-test-3.mltp.co.il/assets/img/phone.png" width="25px">
+                           </td>
+                        </tr>
+                     </table>
+                  </div>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <div class="contactDataChild">
+                     <table dir="ltr">
+                        <tr>
+                           <td>
+                              <a [href]="mailto:{[email]}">{[email]}</a>
+                           </td>
+                           <td>
+                              <img src="https://tempdomain-test-3.mltp.co.il/assets/img/email.png" width="25px">
+                           </td>
+                        </tr>
+                     </table>
+                  </div>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <div class="contactDataChild">
+                     <table dir="ltr">
+                        <tr>
+                           <td>
+                              <a [href]="{[website]}" target="_blank">{[website]}</a>
+                           </td>
+                           <td>
+                              <img src="https://tempdomain-test-3.mltp.co.il/assets/img/internet.png" width="25px">
+                           </td>
+                        </tr>
+                     </table>
+                  </div>
+               </td>
+            </tr>
+         </table>
+      </div>
+
+   </div>
+</body>
+
+</html>

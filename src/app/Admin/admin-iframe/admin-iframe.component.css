@@ -1,0 +1,167 @@
+.wrapFlexTwoCol{
+    flex-direction: column;
+}
+.wrapFlexTwoCol > div.formWrapColumn {
+
+    flex-direction: row-reverse;
+}
+
+div.formWrapColumn > mat-form-field{
+    flex-grow: 1;
+    margin: 0px 10px;
+}
+.formBorder{
+  padding: 0 !important;
+}
+/* sticky buttons*/
+mat-panel-description{
+    direction: rtl;
+}
+mat-accordion mat-expansion-panel mat-expansion-panel-header .mat-icon{
+    width: unset !important;
+    font-size: 45px;
+    height: 45px !important;
+  }
+  .wrapData{
+      display: flex;
+      justify-content: space-between;
+      flex-direction: column-reverse;
+  }
+  .buttonAny{
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  .wrapData > div.buttonAny{
+    flex-grow: 1;
+    width: 130px;
+    margin: 0 auto;
+    flex-direction: column;
+  }
+  .example-action-buttons{
+    background: #EEF0F2;
+    border-radius: 4px;
+  }
+  .selectedFormFieldWidth{
+    width: 100% !important;
+  }
+  .wrapButtons{
+    display: flex;
+    flex-direction: row-reverse;
+    margin:3rem;
+  }
+  .margin0{
+    margin: auto 0;
+  }
+  .graph-buttons-wrap{
+    display: flex;
+    flex-direction: row-reverse;
+    margin: 2em 0;
+  }
+  .graph-buttons-wrap > div{
+      flex-grow: 1;
+      flex-basis: 0;
+      margin: 10px;
+      justify-content: center;
+  }
+  .buttonInElement{
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: column-reverse;
+  }
+  .buttonInElement > div{
+      margin: 10px auto;
+  }
+  .buttonInElement mat-icon, .buttonInElement fa-icon{
+    color: #fff;
+  }
+  .buttonInElement a:hover{
+    text-decoration: none;
+    background: #88C43E;
+    color: #fff;
+  }
+  .wrap-setting-form{
+    display: flex;
+    justify-content: space-around;
+    margin-top: 5em;
+  }
+  .wrap-setting-form mat-form-field{
+    flex-grow: 1;
+    flex-basis: 0;
+  }
+  .infoForButton{
+    display: flex;
+    position: absolute;
+    top: -25px;
+    z-index: 999999999;
+    right: 0;
+  }
+  /* .infoForButton > span.infoTitle{
+    margin-right: 5px;
+  } */
+
+  .page-wrap{
+    display: flex;
+    margin: 0 5px;
+  }
+  .infoForButton > span > mat-icon{
+  font-size: 20px;
+  }
+  .wrap-main-menu{
+    padding-top:20px;
+    border-top: none;
+  }
+  .smallSideNav{
+    background: #fff;
+    margin: -5px 15px 0 -5px;
+    width: 50px;
+  }
+  .iconMenu{
+    text-align: center;
+  }
+
+  .wrap-main-menu > div{
+    margin: 10px 0;
+  }
+  .wrap-main-menu > div > a{
+    width: 100%;
+    background: #444445;
+    color: #fff;
+  }
+  .wrap-main-menu > div > a:hover{
+    text-decoration: none;
+    background: #88C43E ;
+  }
+  /* .wrap-main-menu > div > a.routActive{
+
+  } */
+
+  .topMenu{
+    background: #fff;
+    border-radius: 4px;
+    padding: 3px;
+    display: flex;
+    justify-content: end;
+  }
+  .topMenu mat-icon{
+    color: #686866;
+  }
+  .example-sidenav{
+    padding: 10px;
+  }
+  .mat-drawer-side{
+    border-right: none;
+    border-radius: 4px;
+  }
+
+  @media screen and (max-width: 1024px){
+    .flexData {
+      flex-direction: row-reverse;
+    }
+    .graph-buttons-wrap{
+      flex-direction: column;
+      margin:0;
+    }
+  }
+

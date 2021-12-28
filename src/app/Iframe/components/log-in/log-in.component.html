@@ -1,0 +1,123 @@
+<div *ngIf="infoData" class="wrapComponent" style='background-image: url("{{infoData.BackGround}}")'>
+    <div class="logInWrap">
+        <div class="logInInfo">
+
+            <!-- logo data -->
+            <div class="customerLogoWrap">
+                <img [src]="infoData.Logo">
+            </div>
+
+            <!-- main title -->
+            <div class="InfoTitle hr" id="InfoTitle">
+                גיפט קארד
+            </div>
+
+            <!-- texts -->
+            <div class="infoTextsWrap">
+                <div class="textWrap">
+                    <div class="hr">
+                        {{infoData.ShortDescription}}
+                    </div>
+                    <div class="hr">
+                        <div *ngIf="!previewLongDescription"
+                            [innerHTML]="(infoData.LongDescription | slice:0:150) + ' ...' ">
+                        </div>
+                        <div [@openClose]="previewLongDescription" [innerHTML]="infoData.LongDescription">
+                        </div>
+                        <div (click)="previewLongDescriptionFunc()">
+                            <span class="openMoreLess" *ngIf="!previewLongDescription">הצג עוד</span>
+                            <span class="openMoreLess" *ngIf="previewLongDescription">הצג פחות</span>
+                        </div>
+                    </div>
+                    <div class="hr">
+                        {{infoData.Instructions}}
+                    </div>
+                    <!-- <div *ngIf="infoData.ShortDescription == ''" [id]="'allText-' + i">
+                        <div [innerHTML]="(infoData.LongDescription)"></div>
+                    </div> -->
+
+
+
+
+                    <!-- <div *ngIf="infoText.prevText == ''" [innerHTML]="(infoText.text)"></div>
+                    <div *ngIf="infoText.prevText == ''" (click)="openAllText()">הצג עוד</div> -->
+
+                </div>
+
+            </div>
+
+            <!-- contact data -->
+            <div class="contactDataWrap">
+                <div class="contactDataChild" *ngIf="infoData.Website != ''">
+                    <div>
+                        <a [href]="'https://' + infoData.Website" target="_blank">קישור לרשימת הסניפים</a>
+                    </div>
+                    <mat-icon>list_alt</mat-icon>
+                </div>
+                <div class="contactDataChild">
+                    <div>
+                        <div>
+                            <a [href]="'tel:' + infoData.Phone">{{infoData.Phone}}</a>
+                        </div>
+                    </div>
+                    <mat-icon *ngIf="infoData.Phone != ''">phone</mat-icon>
+                </div>
+                <div class="contactDataChild">
+                    <div>
+                        <a [href]="'mailto:' + infoData.Mail">{{infoData.Mail}}</a>
+                    </div>
+                    <mat-icon *ngIf="infoData.Mail != ''">mail_outline</mat-icon>
+                </div>
+                <!-- <div class="contactDataChild">
+                    <div>
+                        <a [href]="'https://' + infoData.Website" target="_blank">{{infoData.Website}}</a>
+                    </div>
+                    <mat-icon *ngIf="infoData.Website != ''">web</mat-icon>
+                </div> -->
+            </div>
+        </div>
+        <div class="logInSum">
+            <!-- <div class="logInSumForm">
+                <div class="logInForm"> -->
+            <div class="log-in">
+                <div class="wrap-form">
+                    <!-- <form  class="logInForm"> -->
+                    <!-- <p> -->
+                    <form [formGroup]="sumForm" class="example-form" (ngSubmit)="onSubmit()">
+                        <div class="loginFormImgWrap">
+                            <img [src]="infoData.GiftCardPic">
+
+                        </div>
+                        <mat-form-field class="example-full-width sumInputWrap" appearance="outline">
+                            <!-- <mat-label class="paddingLabel">"סכום המתנה"'/mat-label> -->
+                            <input type="text" matInput placeholder="סכום המתנה" formControlName="cardSumControl"
+                                autofocus numbersOnly>
+                            <!-- <mat-hint *ngIf="cardSumControl.hasError('pattern')">fill only numbers</mat-hint> -->
+                            <span matPrefix class="inputIcon">&#8362;</span>
+                            <mat-error *ngIf="sumForm.get('cardSumControl').hasError('required')">{{msgAlert}}
+                            </mat-error>
+                            <mat-error *ngIf="sumForm.get('cardSumControl').hasError('min')">&#8362; הסכום המינימלי הינו
+                                {{minAmount}} </mat-error>
+
+
+                        </mat-form-field>
+                        <div class="wrap-button-login">
+                            <button mat-button type="submit" class="bigButton">בואו נתחיל</button>
+                            <!-- <span *ngIf="true">
+                                          <mat-spinner></mat-spinner>
+                                        </span> -->
+                        </div>
+                    </form>
+                    <!-- </p> -->
+
+                    <!-- </form> -->
+                </div>
+            </div>
+            <!-- </div>
+            </div> -->
+        </div>
+        <!-- <div class="customerLogoWrapMobile">
+            <img [src]="infoData.logoImg">
+        </div> -->
+    </div>
+</div>

@@ -1,0 +1,41 @@
+<div>
+    <div class="close-icon-wrap">
+        <mat-icon mattooltip="סגור" class="closeDialogIcon" (click)="dialogClose()">cancel</mat-icon>
+    </div>
+    <div class="dialogWrap">
+        <div class="dialogHeader">
+           <span class="title">{{data.format == 'video' ? 'סרטונים מוכנים' : 'תצוגת מדיה'}}</span>
+        </div>
+
+
+        <!--image block-->
+        <div class="dialogBody" *ngIf="data.format == 'image'">
+            <div class="videosBlock">
+                <div>
+                    <img [src]="data.src" class="largeImgPrev">
+                </div>
+            </div>
+            <!-- <div class="dialogFooter">
+                <button mat-button class="primaryButton" (click)="deleteImage()">לא, אני לא רוצה תמונה הזו</button>
+            </div> -->
+        </div>
+
+
+        <!--video block-->
+        <div class="dialogBody" *ngIf=" data.format == 'video'">
+            <div class="bodyTitle">
+                איזה סרטון תרצו לצרף לברכה?
+            </div>
+            <div class="videosBlock">
+                <div>
+                    <video  [src]="data.src" controls></video>
+                </div>
+            </div>
+            <div class="dialogFooter">
+                <button mat-button class="primaryButton" (click)="changeVideo()">לא, אני רוצה סרטון אחר</button>
+            </div>
+        </div>
+
+
+    </div>
+</div>

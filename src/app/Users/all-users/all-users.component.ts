@@ -5,12 +5,15 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table/';
+import { Router } from '@angular/router';
 import { CustomerData } from 'src/app/Classes/customerData';
 import { MsgList } from 'src/app/Classes/msgsList';
 import { DataServiceService } from 'src/app/data-service.service';
 import { DialogConfirmComponent } from 'src/app/PopUps/dialog-confirm/dialog-confirm.component';
 import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
-import { SharedService } from 'src/app/shared.service';
+import { SharedService } from 'src/app/Services/SharedService/shared.service';
+import { UrlSharingService } from 'src/app/Services/UrlSharingService/url-sharing.service';
+
 
 @Component({
   selector: 'app-all-users',
@@ -29,7 +32,9 @@ export class AllUsersComponent implements OnInit {
     private fb: FormBuilder,
     private dataService: DataServiceService,
     private sharedService: SharedService,
-    private dialog: MatDialog) { }
+    private dialog: MatDialog,
+    private urlSharingService: UrlSharingService,
+    private router: Router) { }
 
   userToken;
   userId;
@@ -144,7 +149,7 @@ export class AllUsersComponent implements OnInit {
     });
   }
 
-  deleteUser(user){
+  deleteUser(user) {
     this.dialog.open(DialogConfirmComponent, {
       data: { message: 'האם למחוק ' + user.FName + ' ' + user.LName + '?' }
     }).afterClosed().subscribe(response => {
@@ -154,9 +159,9 @@ export class AllUsersComponent implements OnInit {
           Token: this.userToken,
           BackUserId: user.id.toString()
         }
-        
+
         this.dataService.DeleteSuspendBackOfficeUsers(objToApi).subscribe(result => {
-          
+
           debugger
           if (result['Token'] != undefined || result['Token'] != null) {
 
@@ -187,6 +192,14 @@ export class AllUsersComponent implements OnInit {
         });
       }
     });
+  }
+
+  goToUser(userId: number) {
+    let User = {
+      userId: userId
+    }
+    this.urlSharingService.changeMessage(JSON.stringify(User));
+    this.router.navigate(['/public/user']);
   }
 
   ngAfterViewInit() {

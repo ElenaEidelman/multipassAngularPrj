@@ -24,27 +24,12 @@
                         </div>
                         <div class="addOpt">
                             <!-- <mat-icon matTooltip="יציאה מהמערכת" (click)="exitSystem()">exit_to_app</mat-icon> -->
-                            <button mat-icon-button #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="menu" matTooltip="הגדרות / יציאה">
+                            <button mat-icon-button #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="menu"
+                                matTooltip="הגדרות / יציאה">
                                 <mat-icon *ngIf="!menuTrigger.menuOpen">expand_more</mat-icon>
                                 <mat-icon *ngIf="menuTrigger.menuOpen">expand_less</mat-icon>
                             </button>
                             <mat-menu #menu="matMenu">
-                                <button mat-menu-item class="settingsMenu">
-                                    <div>
-                                        <span>הגדרות</span>
-                                    </div>
-                                    <div>
-                                        <mat-icon>settings</mat-icon>
-                                    </div>
-                                </button>
-                                <!-- <button mat-menu-item (click)="adminLogIn()" class="settingsMenu">
-                                    <div>
-                                        <span>Admin login</span>
-                                    </div>
-                                    <div>
-                                        <mat-icon>manage_accounts</mat-icon>
-                                    </div>
-                                </button> -->
                                 <button mat-menu-item (click)="exitSystem()" class="settingsMenu">
                                     <div>
                                         <span>יציאה</span>

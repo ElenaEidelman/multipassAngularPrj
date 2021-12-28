@@ -1,18 +1,19 @@
-
 <div class="pageTitle main2-title sticky top100">
     <div>
         <!-- <div>{{dataByPage[0].customerName}}</div> -->
-        <div><span class="subTitle">מספר הזמנה:</span> {{orderIdToPreview != undefined ? orderIdToPreview : 'הזמנה חדשה'}}</div>
+        <div><span class="subTitle">מספר הזמנה:</span> {{orderIdToPreview != undefined ? orderIdToPreview : 'הזמנה
+            חדשה'}}</div>
         <!-- <div><span class="subTitle">סטטוס הזמנה: </span> {{dataByPage != undefined ? dataByPage.StatusDescription != undefined ? dataByPage.StatusDescription : dataByPage.Description  : ''}}</div> -->
         <div>
             <span class="subTitle">סטטוס הזמנה: </span>
-            <span [class.flickerTitle] = 'this.createCardsSpinner'> {{descriptionStatusInjected != '' ? descriptionStatusInjected :  orderStatus.description}}</span>
+            <span [class.flickerTitle]='this.createCardsSpinner'> {{descriptionStatusInjected != '' ?
+                descriptionStatusInjected : orderStatus.description}}</span>
         </div>
     </div>
 </div>
 <span *ngIf="dataByPage == null">
     <mat-spinner></mat-spinner>
-  </span>
+</span>
 <div class="page-wrap">
 
     <!-- <div class="headerPage">
@@ -61,31 +62,49 @@
                         </div>
                         <div class="flexDataChild">
                             <div>
-                                <div class="dataBolder">{{(dataByPage != undefined ? dataByPage['MDate'] : '') | formatDate }} </div>
+                                <div class="dataBolder">{{(dataByPage != undefined ? dataByPage['MDate'] : '') |
+                                    formatDate }} </div>
                                 <div class="customerDataTitle">:תאריך יצירת הזמנה</div>
                             </div>
                             <div>
-                                <div class="dataBolder"> {{(dataByPage != undefined ? dataByPage['ApproveDate'] : '') | formatDate}} </div>
+                                <div class="dataBolder"> {{(dataByPage != undefined ? dataByPage['ApproveDate'] : '') |
+                                    formatDate}} </div>
                                 <div class="customerDataTitle">:תאריך הנפקה</div>
                             </div>
                             <div>
-                                <div class="dataBolder"> {{(dataByPage != undefined ? dataByPage['CancelationDate']: '') | formatDate}} </div>
+                                <div class="dataBolder"> {{(dataByPage != undefined ? dataByPage['CancelationDate']: '')
+                                    | formatDate}} </div>
                                 <div class="customerDataTitle">:תאריך ביטול</div>
                             </div>
                         </div>
                     </div>
 
-                    <div *ngIf="(orderStatus.id > '1') || orderStatus.id > '1' ">
+                    <div>
                         <div class="viewCodeButton">
-                            <button mat-button class="linkButton" [routerLink]="['/public/orderLines/',orderId,customerId]"> צפה בקודים
+
+                            <!--[routerLink]="['/public/orderLines/',orderId,customerId]"-->
+                            <button *ngIf="orderStatus.id > '1'" mat-button class="linkButton"
+                                (click)="goToOrderLines(orderId, customerId)"> צפה בקודים
                                 <mat-icon>preview</mat-icon>
                             </button>
-                            <button *ngIf="excelOrder" mat-button [class.addButton]="!additionalOptionsSMS" [class.sendButton]="additionalOptionsSMS"  (click)="openSendSmsBlock()">שליחה לכולם
+                            <button *ngIf="excelOrder && orderStatus.id > '1'" mat-button
+                                [class.linkButton]="!additionalOptionsSMS" [class.sendButton]="additionalOptionsSMS"
+                                (click)="openSendSmsBlock()">שליחה לכולם
                                 <mat-icon>sms</mat-icon>
                             </button>
-                            <button mat-button class="addButton" (click)="excelFileExport()">ייצאו לאקסל
-                                <fa-icon [icon]="faFileExcel"></fa-icon>
+                            <button *ngIf="orderStatus.id > '1'" mat-button class="linkButton"
+                                (click)="excelFileExport()">ייצאו לאקסל
+                                <!-- <fa-icon [icon]="faFileExcel"></fa-icon> -->
+                                <!-- <mat-icon class="mat-icon-rtl-mirror" svgIcon="thumb-up" class="matIconSVGWrap"> -->
+                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                    aria-hidden="true" role="img" width="1em" height="1em"
+                                    preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24" class="icon-svg">
+                                    <path class="icon-svg"
+                                        d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6m1.8 18H14l-2-3.4l-2 3.4H8.2l2.9-4.5L8.2 11H10l2 3.4l2-3.4h1.8l-2.9 4.5l2.9 4.5M13 9V3.5L18.5 9H13z" />
+                                </svg>
+                                <!-- </mat-icon> -->
                             </button>
+
                         </div>
 
                     </div>
@@ -99,33 +118,31 @@
                                 <div class="selectWrap">
                                     <mat-form-field>
                                         <mat-label>בחר תבנית מסרון</mat-label>
-                                        <mat-select formControlName="smsTemplates" (selectionChange)="smsTempleteSelect($event)">
+                                        <mat-select formControlName="smsTemplates"
+                                            (selectionChange)="smsTempleteSelect($event)">
                                             <mat-option *ngFor="let template of smsTemplatesData" [value]="template.Id">
                                                 {{template.TemplateName}}</mat-option>
                                         </mat-select>
                                     </mat-form-field>
                                 </div>
-                                 <div class="textAreaWrap">
+                                <div class="textAreaWrap">
                                     <mat-form-field class="textAreaWrap" appearance="outline">
-                                        <textarea matInput formControlName="previewSmsTemplate"
-                                            cdkTextareaAutosize
-                                            #autosize="cdkTextareaAutosize"
-                                            cdkAutosizeMinRows="5"
-                                            cdkAutosizeMaxRows="10"
-                                            readonly
-                                            >
+                                        <textarea matInput formControlName="previewSmsTemplate" cdkTextareaAutosize
+                                            #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="5"
+                                            cdkAutosizeMaxRows="10" readonly>
                                             </textarea>
                                     </mat-form-field>
                                 </div>
                             </div>
                             <div class="buttonSendSms">
-                                    <button mat-button class="sendButton" (click)="sendSMS()" [disabled]="sendButtonSms">שלח הודעה
-                                        לכולם
-                                    </button>
-                                    <div class="errorSendSms error" [@openClose]="errorSendSms != ''">
-                                        {{errorSendSms}}
-                                    </div>
+                                <button mat-button class="sendButton" (click)="sendSMS()" [disabled]="sendButtonSms">שלח
+                                    הודעה
+                                    לכולם
+                                </button>
+                                <div class="errorSendSms error" [@openClose]="errorSendSms != ''">
+                                    {{errorSendSms}}
                                 </div>
+                            </div>
                         </form>
                     </div>
 
@@ -133,42 +150,48 @@
                 </div>
             </div>
             <div class="flexButtonsElement">
-                <div *ngIf="orderStatus.id == '1' || orderStatus.id == '4'">
-                    <button mat-button class="deleteButton" (click)="deleteOrder()">מחק הזמנה
-                        <mat-icon>delete</mat-icon>
-                        <mat-spinner class="spinner" *ngIf="deleteCardsSpinner"></mat-spinner>
-                    </button>
-                    <div class="saveMessage" [@openClose]="orderMsgDelete != ''">{{orderMsgDelete}}</div>
-                    <div class="error" [@openClose]="errorMsgDelete != ''">{{errorMsgDelete}}</div>
+                <div *ngIf="orderStatus.id == '1' || orderStatus.id == '4'" class="deleteB margin">
+                    <!-- <button mat-button class="deleteButton" (click)="deleteOrder()">מחק הזמנה -->
+                    <mat-icon class="deleteIcon" (click)="deleteOrder()" matTooltip="מחק הזמנה">delete</mat-icon>
+                    <!-- <mat-spinner class="spinner" *ngIf="deleteCardsSpinner"></mat-spinner> -->
+                    <!-- </button> -->
+                    <!-- <div class="saveMessage" [@openClose]="orderMsgDelete != ''">{{orderMsgDelete}}</div>
+                    <div class="error" [@openClose]="errorMsgDelete != ''">{{errorMsgDelete}}</div> -->
                 </div>
-                <div *ngIf="orderStatus.id == '1'" class="wrapAprDel">
+
+                <div class="wrapAprDel">
+                    <button mat-button class="linkButton" (click)="saveChanges()">שמור שינויים
+                        <mat-icon>save</mat-icon>
+                    </button>
+                    <!-- <mat-spinner class="spinner orangeSp" *ngIf="saveChangesSpinner"></mat-spinner>
+                    <div class="error" [@openClose]="errorRefMsg != ''">{{errorRefMsg}}</div>
+                    <div class="saveMessage" [@openClose]="orderRefMsg != ''">{{orderRefMsg}}</div> -->
+
+                </div>
+                <div
+                    *ngIf="orderStatus.id == '1' && (dataByPage.DigitalBatch != undefined && (dataByPage.DigitalBatch > 0 || dataByPage.DigitalBatch != 0))">
+                    <!-- <div class="viewCodeButton"> -->
+
+                    <!--[routerLink]="['/public/orderLines/',orderId,customerId]"-->
+                    <button mat-button class="linkButton" (click)="goToOrderLines(orderId, customerId)"> רשימת הנמענים
+                        <mat-icon>preview</mat-icon>
+                    </button>
+                    <!-- </div> -->
+                </div>
+                <div *ngIf="orderStatus.id == '1'" class="wrapAprDel nextLevelButton">
                     <button mat-button class="addButton" (click)="ApproveOrder($event)"> אישור ויצירת שוברים
                         <mat-icon>done_outline</mat-icon>
                     </button>
-                    <mat-spinner class="spinner orangeSp" *ngIf="createCardsSpinner"></mat-spinner>
+                    <!-- <mat-spinner class="spinner orangeSp" *ngIf="createCardsSpinner"></mat-spinner>
                     <div class="error" [@openClose]="errorMsg != ''">{{errorMsg}}</div>
-                    <div class="saveMessage" [@openClose]="orderMsg != ''">{{orderMsg}}</div>
-                    <div class="infoMessage" [@openClose]="infoMsg != ''">{{infoMsg}}</div>
-                    
+                    <div class="saveMessage" [@openClose]="orderMsg != ''">{{orderMsg}}</div>                     -->
                 </div>
-                <div class="wrapAprDel">
-                    <button mat-button class="addButton" (click)="saveChanges()">שמור שינויים
-                        <mat-icon>save</mat-icon>
-                    </button>
-                    <mat-spinner class="spinner orangeSp" *ngIf="saveChangesSpinner"></mat-spinner>
-                    <div class="error" [@openClose]="errorRefMsg != ''">{{errorRefMsg}}</div>
-                    <div class="saveMessage" [@openClose]="orderRefMsg != ''">{{orderRefMsg}}</div>
-                    
-                </div>
-
-                
-                <div *ngIf="orderStatus.id == '1' && (dataByPage.DigitalBatch != undefined && (dataByPage.DigitalBatch > 0 || dataByPage.DigitalBatch != 0))">
-                    <!-- <div class="viewCodeButton"> -->
-                            <button mat-button class="linkButton" [routerLink]="['/public/orderLines/',orderId,customerId]"> צפה ברשימת הנמענים
-                                <mat-icon>preview</mat-icon>
-                            </button>
-                    <!-- </div> -->
-                </div>
+                <mat-spinner class="spinner orangeSp" *ngIf="createCardsSpinner"></mat-spinner>
+            </div>
+            <div [@openClose]="infoMsg != ''" [@openClose]="errorMsg != ''" class="infoMsg">
+                <mat-icon class="infoIcon">info</mat-icon>
+                <div class="infoMessage" [innerHTML]="infoMsg"></div>
+                <div class="infoMessage" [innerHTML]="errorMsg"></div>
             </div>
         </div>
 
@@ -176,9 +199,8 @@
         <div class="page-element">
             <div class="element-page-title"> פרטי הזמנה </div>
             <div class="mat-elevation-z8 tableWrapNoInfo">
-                <table  mat-table 
-                        [dataSource]="orderDetailsTable" class="mat-elevation-z8 tableInsideElement tableView"
-                        dir="rtl">
+                <table mat-table [dataSource]="orderDetailsTable" class="mat-elevation-z8 tableInsideElement tableView"
+                    dir="rtl">
                     <ng-container *ngFor="let obj of displayedColumnsOrderDetails; let columnNum = index;">
 
                         <ng-container *ngIf="obj != 'additionalColumn'" matColumnDef="{{obj}}">
@@ -188,25 +210,31 @@
 
 
                                 <!-- all rows before last -->
-                                <div *ngIf="obj != 'ValidationDate' && rowNum != orderDetails.length-1" class="dataRows">
+                                <div *ngIf="obj != 'ValidationDate' && rowNum != orderDetails.length-1"
+                                    class="dataRows">
                                     {{element[obj]}}
                                 </div>
-                                <div *ngIf="obj == 'ValidationDate' && rowNum != orderDetails.length-1" class="dataRows">
-                                    <div *ngIf="orderStatus.id != '4'" class="changeDate" (click)="changeDateOfRow(element, obj)"> 
+                                <div *ngIf="obj == 'ValidationDate' && rowNum != orderDetails.length-1"
+                                    class="dataRows">
+                                    <div *ngIf="orderStatus.id != '4'" class="changeDate"
+                                        (click)="changeDateOfRow(element, obj)">
                                         <mat-icon matTooltip="ערוך לוח שנה">edit_calendar</mat-icon>
-                                        <span>{{element[obj]}}</span> 
+                                        <span>{{element[obj]}}</span>
                                     </div>
-                                    <div *ngIf="orderStatus.id == 4 && (dataByPage.DigitalBatch == 0)"> {{element[obj]}} </div>
-                                    <div *ngIf="orderStatus.id == '4' && (dataByPage.DigitalBatch > 0 || dataByPage.DigitalBatch != 0)" class="changeDate" (click)="changeDateOfRow(element, obj)">
-                                        <mat-icon matTooltip="ערוך לוח שנה">edit_calendar</mat-icon> 
+                                    <div *ngIf="orderStatus.id == 4 && (dataByPage.DigitalBatch == 0)"> {{element[obj]}}
+                                    </div>
+                                    <div *ngIf="orderStatus.id == '4' && (dataByPage.DigitalBatch > 0 || dataByPage.DigitalBatch != 0)"
+                                        class="changeDate" (click)="changeDateOfRow(element, obj)">
+                                        <mat-icon matTooltip="ערוך לוח שנה">edit_calendar</mat-icon>
                                         <span>{{element[obj]}} </span>
-                                        </div>
+                                    </div>
                                 </div>
 
-                                
+
                                 <!-- last row -->
                                 <!-- [class.displayNone]="!newOrder || excelOrder" -->
-                                <div class="last-row" *ngIf="((rowNum == orderDetails.length-1) && !excelOrder && dataByPage.StatusId == 1) || (newOrder && (rowNum == orderDetails.length-1))" >
+                                <div class="last-row"
+                                    *ngIf="((rowNum == orderDetails.length-1) && !excelOrder && dataByPage.StatusId == 1) || (newOrder && (rowNum == orderDetails.length-1))">
                                     <form [formGroup]="addToExecOrderForm" class="addToExecOrderForm"
                                         *ngIf="viewAddToExecOrderForm">
                                         <ng-container *ngIf="obj == 'QTY'">
@@ -224,7 +252,7 @@
                                             <mat-form-field>
                                                 <mat-label>סכום טעינה</mat-label>
                                                 <input matInput formControlName="chargeAmount" placeholder="1000 - 1.00"
-                                                    #chargeAmount>
+                                                    #chargeAmount numbersOnly [attr.maxlength]="4">
                                                 <!-- <span matPrefix>00.</span> -->
                                                 <mat-error
                                                     [@openClose]="addToExecOrderForm.get('chargeAmount').hasError('min')">
@@ -236,18 +264,18 @@
                                                 </mat-error>
                                                 <mat-error
                                                     [@openClose]="addToExecOrderForm.get('chargeAmount').hasError('pattern')">
-                                                    *רק מספרים
+                                                    *מספרים או מספרים צפים בלבד
                                                 </mat-error>
                                             </mat-form-field>
                                         </ng-container>
                                         <ng-container *ngIf="obj == 'ValidationDate'">
                                             <mat-form-field class="datePicker datePickerPadding marginTop-1"
                                                 appearance="fill" dir="ltr">
-                                                <input matInput formControlName="validity"
-                                                     [matDatepicker]="picker" [min]="minOrderDate" readonly>
+                                                <input matInput formControlName="validity" [matDatepicker]="picker"
+                                                    [min]="minOrderDate" readonly>
                                                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                                                 <mat-datepicker #picker></mat-datepicker>
-                                                  
+
                                             </mat-form-field>
                                         </ng-container>
                                         <ng-container *ngIf="obj == 'TotalForItem'">
@@ -274,16 +302,29 @@
                             <td mat-cell *matCellDef="let element; let rowNum = index;">
                                 <div *ngIf="rowNum != orderDetails.length-1" class="tableButton" #orderLinesChildren>
                                     <!-- <button mat-icon-button class="deleteButton" (click)="deleteRow(element, rowNum)">מחק</button> -->
-                                    <mat-icon *ngIf="orderStatus.id == '1' || orderStatus.id == '0'" class="deleteIcon" (click)="deleteRow(element, rowNum)" matTooltip="מחק">delete</mat-icon>
-                                    <mat-spinner class="spinner disableSpinner" id="spinnerDelete{{element.id}}"></mat-spinner>
+                                    <mat-icon *ngIf="(orderStatus.id == '1' || orderStatus.id == '0') && 
+                                    (dataByPage.DigitalBatch == undefined)" class="deleteIcon"
+                                        (click)="deleteRow(element, rowNum)" matTooltip="מחק">delete
+                                    </mat-icon>
+
+                                    <mat-icon
+                                        *ngIf="(dataByPage.DigitalBatch != undefined && (dataByPage.DigitalBatch > 0 ||
+                                        dataByPage.DigitalBatch != 0) && (orderDetails.length-1 != 1)) && (orderStatus.id == '1' || orderStatus.id == '0')"
+                                        class="deleteIcon" (click)="deleteRow(element, rowNum)" matTooltip="מחק">delete
+                                    </mat-icon>
+                                    <mat-spinner class="spinner disableSpinner" id="spinnerDelete{{element.id}}">
+                                    </mat-spinner>
+
                                 </div>
 
 
 
-                                <div *ngIf="((rowNum == orderDetails.length-1) && !excelOrder && dataByPage.StatusId == 1) || (newOrder && (rowNum == orderDetails.length-1))" class="tableButton">
-                                        
+                                <div *ngIf="((rowNum == orderDetails.length-1) && !excelOrder && dataByPage.StatusId == 1) || (newOrder && (rowNum == orderDetails.length-1))"
+                                    class="tableButton">
+
                                     <button mat-button class="addButton" (click)="addOrderLine()">הכנס</button>
-                                    <mat-error class="error" *ngIf="addOrderLineErrMsg != ''">{{addOrderLineErrMsg}}</mat-error>
+                                    <mat-error class="error" *ngIf="addOrderLineErrMsg != ''">{{addOrderLineErrMsg}}
+                                    </mat-error>
                                     <mat-spinner class="spinner orangeSp" *ngIf="insertOrderLineSpinner"></mat-spinner>
                                 </div>
 
@@ -296,7 +337,9 @@
                     <tr mat-row *matRowDef="let row; columns: displayedColumnsOrderDetails;"></tr>
 
                 </table>
-                <div class="noInfo saveMessage" [@openClose]="dataByPage.DigitalBatch != undefined && (dataByPage.DigitalBatch > 0 || dataByPage.DigitalBatch != 0)">לא ניתן להוסיף שורות להזמנה שנוצרה מקובץ
+                <div class="noInfo saveMessage"
+                    [@openClose]="dataByPage.DigitalBatch != undefined && (dataByPage.DigitalBatch > 0 || dataByPage.DigitalBatch != 0)">
+                    לא ניתן להוסיף שורות להזמנה שנוצרה מקובץ
                 </div>
             </div>
 

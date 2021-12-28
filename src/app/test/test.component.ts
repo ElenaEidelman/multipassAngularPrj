@@ -9,6 +9,7 @@ import { DomSanitizer, SafeResourceUrl, SafeUrl} from '@angular/platform-browser
 })
 export class TestComponent implements OnInit {
   IframeSrc;
+  iframeChange: boolean = true;
 
   constructor(private sanitizer: DomSanitizer) { }
 
@@ -16,6 +17,10 @@ export class TestComponent implements OnInit {
     // this.IframeSrc = this.sanitizer.bypassSecurityTrustHtml('/iframeGiftCard')
     this.IframeSrc = '/iframeGiftCard'
 
+  }
+
+  changeIframe(){
+    this.iframeChange = !this.iframeChange;
   }
 
 }

@@ -7,7 +7,9 @@ import { MsgList } from 'src/app/Classes/msgsList';
 import { DataServiceService } from 'src/app/data-service.service';
 import { DialogConfirmComponent } from 'src/app/PopUps/dialog-confirm/dialog-confirm.component';
 import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
-import { SharedService } from 'src/app/shared.service';
+import { SharedService } from 'src/app/Services/SharedService/shared.service';
+import { UrlSharingService } from 'src/app/Services/UrlSharingService/url-sharing.service';
+
 
 @Component({
   selector: 'app-exist-user',
@@ -31,57 +33,68 @@ export class ExistUserComponent implements OnInit {
   saveFormSpinner: boolean = false;
   deleteUserSpinner: boolean = false;
 
-  MsgList= MsgList;
+  MsgList = MsgList;
 
   statusList = [];
+  roleList = [];
 
   userDataForm = this.fb.group({
-    FName: (''), // new  V ---------FName
-    LName: (''), // new  V ---------LName
+    FName: ['', Validators.required], // new  V ---------FName
+    LName: ['', Validators.required], // new  V ---------LName
     Email: ['', [Validators.required, Validators.email]],// -----------Email
     StatusId: (''), // -------------StatusDescription
     // Tz: (''),//מספר משתמש של המערכת -------------Tz
     // Id: (''),//מספר עובד -----------id
-    Phone: ['',  [Validators.required, Validators.pattern('[0]{1}[0-9]{2,3}[0-9]{7}')]],//------------Phone
+    Phone: ['', [Validators.required, Validators.pattern('[[0][0-9]{8,9}]*')]],//------------Phone
     CityName: (''),// -----------CityName
-    Phone1: ['', Validators.pattern('[0]{1}[0-9]{2,3}[0-9]{7}')],// ------------Phone1
+    Phone1: ['', [Validators.pattern('[[0][0-9]{8,9}]*')]],// ------------Phone1
     Streetno: (''),// ---------Streetno
     ZIP: (''),// --------ZIP
-    Permission: [{value:'משתמש משרד אחורי', disabled: true}, Validators.required], // ---------------Permission
+    Permission: [{ value: '', disabled: false }, Validators.required], // ---------------Permission
     ApartmentNo: ('')// ---------ApartmentNo
-  });
-  
-  
+  },
+    { updateOn: "blur" });
+
+
   constructor(
-                private activeRoute: ActivatedRoute, 
-                private router: Router,
-                private fb: FormBuilder, 
-                private dataService: DataServiceService,
-                private sharedService: SharedService,
-                private dialog: MatDialog) { }
+    private activeRoute: ActivatedRoute,
+    private router: Router,
+    private fb: FormBuilder,
+    private dataService: DataServiceService,
+    private sharedService: SharedService,
+    private dialog: MatDialog,
+    private urlSharingService: UrlSharingService) { }
 
   ngOnInit(): void {
-    window.scroll(0,0);
-    this.idUnsubscribe = this.activeRoute.params.subscribe( param => {
+    window.scroll(0, 0);
+    // this.idUnsubscribe = this.activeRoute.params.subscribe( param => {
+    let urlParams = this.urlSharingService.messageSource.getValue();
+    if (urlParams == '') {
+      this.router.navigate(['/public/allUsers']);
+    }
+    else {
+      this.urlSharingService.changeMessage('');
+      this.id = JSON.parse(urlParams)['userId'];
+      this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
+      this.getUserStatus();
+      this.getUserDataById(this.id);
+      this.GetUserToRole(this.id);
+      this.GetRoles();
 
-        this.id = param['id'];
-        this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
-        this.getUserStatus();
-        this.getUserDataById(param['id']);
-
-    })
+    }
+    // })
 
   }
 
-  getUserDataById(id){
+  getUserDataById(id) {
     let objToApi = {
       Token: this.userToken,
       BackUserId: id
     }
 
-    
+
     this.dataService.GetUsersByFilter(objToApi).subscribe(result => {
-      
+
       if (result['Token'] != undefined || result['Token'] != null) {
 
         //set new token
@@ -90,13 +103,13 @@ export class ExistUserComponent implements OnInit {
         localStorage.setItem('user', JSON.stringify(tempObjUser));
         this.userToken = result['Token'];
 
-        if(result.obj != null && result.obj != undefined && Object.keys(result.obj[0]).length > 0){
+        if (result.obj != null && result.obj != undefined && Object.keys(result.obj[0]).length > 0) {
           this.userData = result.obj[0];
           this.fillFormOfUserData(this.userData);
         }
-        else{
-          this.dialog.open(DialogComponent,{
-            data: {message: result.errdesc}
+        else {
+          this.dialog.open(DialogComponent, {
+            data: { message: result.errdesc }
           });
         }
       }
@@ -109,11 +122,12 @@ export class ExistUserComponent implements OnInit {
     });
   }
 
-  getUserStatus(){
+  getUserStatus() {
     let objToApi = {
       Token: this.userToken
     }
     this.dataService.GetUserStatus(objToApi).subscribe(result => {
+
       if (result['Token'] != undefined || result['Token'] != null) {
         //set new token
         let tempObjUser = JSON.parse(localStorage.getItem('user'));
@@ -121,16 +135,16 @@ export class ExistUserComponent implements OnInit {
         localStorage.setItem('user', JSON.stringify(tempObjUser));
         this.userToken = result['Token'];
 
-        if(result.obj != null && result.obj != undefined && Object.keys(result.obj).length > 0){
-          
-        this.statusList = [...result.obj];
+        if (result.obj != null && result.obj != undefined && Object.keys(result.obj).length > 0) {
+
+          this.statusList = [...result.obj];
 
 
-        /**
-         * Description: "ממתין לאישור"
-          StatusId: 1
-          StatusType: "PendingApproval"
-         */
+          /**
+           * Description: "ממתין לאישור"
+            StatusId: 1
+            StatusType: "PendingApproval"
+           */
         }
       }
       else {
@@ -142,33 +156,118 @@ export class ExistUserComponent implements OnInit {
     })
   }
 
-  fillFormOfUserData(user){
+  GetUserToRole(id) {
+
+    let objToApi = {
+      Token: this.userToken,
+      UserId: id + ''
+    }
+
+
+    this.dataService.GetUserToRole(objToApi).subscribe(result => {
+      if (result['Token'] != undefined || result['Token'] != null) {
+
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
+
+        if (result.err != -1) {
+          if (Object.keys(result.obj).length > 0) {
+            this.userDataForm.get('Permission').setValue(result.obj[0]['CredentialId']);
+
+            //disable select dropdown if user not admin
+            if (result.obj[0]['CredentialId'] != 1) {
+              this.userDataForm.get('Permission').disable();
+            }
+          }
+          else {
+            this.userDataForm.get('Permission').setValue(3);
+            this.userDataForm.get('Permission').disable();
+          }
+        }
+        else {
+          this.dialog.open(DialogComponent, {
+            data: { message: result.errdesc }
+          })
+        }
+      }
+      else {
+
+        this.sharedService.exitSystemEvent();
+      }
+    })
+
+
+  }
+  GetRoles() {
+
+    let objToApi = {
+      Token: this.userToken
+    }
+
+    this.dataService.GetRoles(objToApi).subscribe(result => {
+
+      if (result['Token'] != undefined || result['Token'] != null) {
+
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
+
+        if (result.err != -1) {
+
+          this.roleList = result.obj;
+        }
+        else {
+          this.dialog.open(DialogComponent, {
+            data: { message: result.errdesc }
+          })
+        }
+      }
+      else {
+
+        this.sharedService.exitSystemEvent();
+      }
+    })
+    // this.roleList = [
+    //   { RoleId: '1', Description: 'admin' },
+    //   { RoleId: '2', Description: 'admin' },
+    //   { RoleId: '3', Description: 'admin' },
+    //   { RoleId: '4', Description: 'admin' },
+    //   { RoleId: '5', Description: 'admin' }
+    // ]
+  }
+
+  fillFormOfUserData(user) {
     Object.keys(this.userDataForm.controls).forEach(control => {
-      if(control == 'StatusId'){
+      if (control == 'StatusId') {
         let statusDesc = this.statusList.filter(status => status.StatusId == user.StatusId);
         this.userDataForm.get(control).setValue(statusDesc[0]['StatusId']);
       }
-      if(control != 'Permission' && control != 'StatusId'){
+      if (control != 'Permission' && control != 'StatusId') {
         this.userDataForm.get(control).setValue(user[control]);
       }
     });
   }
 
-  saveData(){
+  saveData() {
 
-    if(this.userDataForm.valid){
+    if (this.userDataForm.valid) {
       this.saveFormSpinner = true;
       let objToApi = {
         Token: this.userToken
       }
 
       Object.keys(this.userDataForm.controls).forEach(control => {
-        if(this.userDataForm.get(control).value != ''){
-          if(control == 'StatusId'){
+        if (this.userDataForm.get(control).value != '') {
+          if (control == 'StatusId') {
             objToApi[control] = this.userDataForm.get(control).value;
 
           }
-          else{
+          else {
             objToApi[control] = this.userDataForm.get(control).value;
           }
         }
@@ -178,31 +277,30 @@ export class ExistUserComponent implements OnInit {
       objToApi['BusinessFile'] = '';
       objToApi['BackOfficeUserId'] = this.id;
 
-      
       this.dataService.InsertUpdateBackOfficeUsers(objToApi).subscribe(result => {
-        
+
         this.saveFormSpinner = false;
         if (result['Token'] != undefined || result['Token'] != null) {
-  
+
           //set new token
           let tempObjUser = JSON.parse(localStorage.getItem('user'));
           tempObjUser['Token'] = result['Token'];
           localStorage.setItem('user', JSON.stringify(tempObjUser));
           this.userToken = result['Token'];
-  
-          if(result.obj != null && result.obj != undefined && Object.keys(result.obj[0]).length > 0){
+
+          if (result.obj != null && result.obj != undefined && Object.keys(result.obj[0]).length > 0) {
             this.userData = result.obj[0];
 
             this.msgActionButtons = 'נשמר בהצלחה';
-            setTimeout(()=>{
+            setTimeout(() => {
               this.msgActionButtons = '';
             }, 2000);
 
             // this.fillFormOfUserData(this.userData);
           }
-          else{
+          else {
             this.errorActionButtons = result.errdesc;
-            setTimeout(()=>{
+            setTimeout(() => {
               this.errorActionButtons = '';
             }, 2000);
           }
@@ -215,16 +313,16 @@ export class ExistUserComponent implements OnInit {
         }
       });
     }
-    else{
+    else {
       this.errorActionButtons = 'נא למלא שדות חובה';
-      setTimeout(()=>{
+      setTimeout(() => {
         this.errorActionButtons = '';
       }, 2000);
     }
 
   }
 
-  deleteUser(){
+  deleteUser() {
     this.dialog.open(DialogConfirmComponent, {
       data: { message: 'האם למחוק ' + this.userData.FName + ' ' + this.userData.LName + '?' }
     }).afterClosed().subscribe(response => {
@@ -233,9 +331,9 @@ export class ExistUserComponent implements OnInit {
           Token: this.userToken,
           BackUserId: this.userData.Id.toString()
         }
-        
+
         this.dataService.DeleteSuspendBackOfficeUsers(objToApi).subscribe(result => {
-          
+
           if (result['Token'] != undefined || result['Token'] != null) {
 
             //set new token

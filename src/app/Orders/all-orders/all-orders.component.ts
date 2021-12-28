@@ -8,7 +8,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
 import { Route } from '@angular/compiler/src/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SharedService } from 'src/app/shared.service';
+
 import { element } from 'protractor';
 import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -16,7 +16,8 @@ import { DialogConfirmComponent } from 'src/app/PopUps/dialog-confirm/dialog-con
 import { MsgList } from 'src/app/Classes/msgsList';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { faFileExcel } from '@fortawesome/free-solid-svg-icons';
-import { UrlSharingService } from 'src/app/Services/url-sharing.service';
+import { UrlSharingService } from 'src/app/Services/UrlSharingService/url-sharing.service';
+import { SharedService } from 'src/app/Services/SharedService/shared.service';
 
 
 
@@ -25,7 +26,7 @@ import { UrlSharingService } from 'src/app/Services/url-sharing.service';
   selector: 'app-all-orders',
   templateUrl: './all-orders.component.html',
   styleUrls: ['./all-orders.component.css'],
-  animations:[
+  animations: [
     trigger('openClose', [
       state('true', style({
         overflow: 'hidden',
@@ -51,9 +52,9 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     private sharedService: SharedService,
     private dialog: MatDialog,
     private urlSharingService: UrlSharingService
- ) { }
+  ) { }
 
-    faFileExcel = faFileExcel;
+  faFileExcel = faFileExcel;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -103,23 +104,24 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     window.scroll(0, 0);
-    
+
     this.filterActionButtonSpinner = true;
     this.userToken = JSON.parse(localStorage.getItem('user')).Token
     this.getStatusList();
     this.createDisplayedColumns(this.orderLabelForTable);
 
-    this.activeRouteUnsubscribe = this.acivatedRoute.params.subscribe(param => {
-      this.userId = param['userId'];
-      console.log(" this.userId", this.userId)
-      if (param['customerName'] != undefined) {
-        this.filterTableGroup.get('OrganizationName').setValue(param['customerName']);
-        this.filterTable();
-      }
-      else {
-        this.getOrdersList();
-      }
-    })
+    // this.activeRouteUnsubscribe = this.acivatedRoute.params.subscribe(param => {
+
+    let urlParams = this.urlSharingService.messageSource.getValue();
+    if (urlParams == '') {
+      this.getOrdersList();
+    }
+    else {
+      this.urlSharingService.changeMessage('');
+      this.filterTableGroup.get('OrganizationName').setValue(JSON.parse(urlParams)['customerName']);
+      this.filterTable();
+    }
+    // })
 
   }
 
@@ -132,7 +134,6 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.dataService.GetOrdersStatus(objToApi).subscribe(result => {
-
       if (result['Token'] != undefined || result['Token'] != null) {
 
         //set new token
@@ -143,8 +144,11 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
         if (typeof result == 'object' && result.obj != null) {
-          debugger
-          this.statusListArr = [...result.obj];
+          this.statusListArr = [...result.obj].sort(function (a, b) {
+            if (a.DescriptionWL < b.DescriptionWL) { return -1; }
+            if (a.DescriptionWL > b.DescriptionWL) { return 1; }
+            return 0;
+          });
         }
       }
       else {
@@ -160,7 +164,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   getOrdersList() {
     //
 
-    
+
     this.filterActionButtonSpinner = true;
     let objToApi = {
       Token: this.userToken
@@ -168,11 +172,11 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.filterActionButtonSpinner = true;
     //GetOrdersByFilter
-    
-    
-    this.dataService.getAllOrders(objToApi).subscribe(result => {
-      
 
+
+    this.dataService.getAllOrders(objToApi).subscribe(result => {
+
+      debugger
       this.filterActionButtonSpinner = false;
 
       if (result['Token'] != undefined || result['Token'] != null) {
@@ -187,19 +191,18 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
         if (typeof result == 'object' && result.obj != null) {
           this.dataSourceSpare.data = result['obj'];
           this.dataSource.data = result['obj'];
-          debugger
         }
         // if(result.errdesc == 'No Data Found'){
         //   this.noTableData = true;
         // }
         if (result.errdesc != null && result.errdesc != '') {
           this.dialog.open(DialogComponent, {
-            data: {message: result.errdesc}
-          });        
+            data: { message: result.errdesc }
+          });
         }
 
       }
-      else if(typeof result == 'string'){
+      else if (typeof result == 'string') {
 
       }
       else {
@@ -222,7 +225,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   deleteOrder(order) {
-    
+
     this.dialog.open(DialogConfirmComponent, {
       data: { message: 'האם למחוק הזמנה מספר ' + ' ' + order.idex + ' ?' }
     }).afterClosed().subscribe(response => {
@@ -237,9 +240,9 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
           OpCode: "delete"
         }
 
-        
+
         this.dataService.DeleteVoidOrder(objToApi).subscribe(result => {
-          
+
           if (result['Token'] != undefined) {
 
             //set new token
@@ -248,9 +251,9 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
             localStorage.setItem('user', JSON.stringify(tempObjUser));
             this.userToken = result['Token'];
 
-            
+
             if (typeof result == 'object' && result.obj != null && Object.values(result.obj[0]).includes('Order is deleted Successfully')) {
-              
+
               this.dialog.open(DialogComponent, {
                 data: { message: 'ההזמנה נמחקה בהצלחה' }
               });
@@ -258,9 +261,9 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
               this.dataSource.data = [];
               this.getOrdersList();
             }
-            
-            if(result.obj == null && result.errdesc != ''){
-              
+
+            if (result.obj == null && result.errdesc != '') {
+
               this.dialog.open(DialogComponent, {
                 data: { message: result.errdesc }
               });
@@ -277,8 +280,8 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     })
   }
 
-  blockOrder(order){
-    
+  blockOrder(order) {
+
     this.dialog.open(DialogConfirmComponent, {
       data: { message: 'האם לחסום הזמנה מספר ' + ' ' + order.idex + ' ?', eventButton: 'לחסום' }
     }).afterClosed().subscribe(response => {
@@ -292,9 +295,9 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
           OpCode: "delete"
         }
 
-        
+
         this.dataService.DeleteVoidOrder(objToApi).subscribe(result => {
-          
+
           if (result['Token'] != undefined) {
 
             //set new token
@@ -303,9 +306,9 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
             localStorage.setItem('user', JSON.stringify(tempObjUser));
             this.userToken = result['Token'];
 
-            
+
             if (typeof result == 'object' && result.obj != null && result.errdesc.includes('Successfully')) {
-              
+
               this.dialog.open(DialogComponent, {
                 data: { message: 'ההזמנה נחסמה בהצלחה' }
               });
@@ -313,16 +316,16 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
               this.dataSource.data = [];
               this.getOrdersList();
             }
-            
-            if(result.obj == null && result.errdesc != ''){
+
+            if (result.obj == null && result.errdesc != '') {
               this.dialog.open(DialogComponent, {
                 data: { message: result.errdesc }
               });
             }
           }
-          else if(typeof result == 'string'){
+          else if (typeof result == 'string') {
             this.dialog.open(DialogComponent, {
-              data: {message: result}
+              data: { message: result }
             })
           }
           else {
@@ -376,8 +379,8 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     Object.keys(this.filterTableGroup.controls).forEach(control => {
       if (this.filterTableGroup.get(control).value != null && this.filterTableGroup.get(control).value.toString() != '') {
         inputSelected = true;
-          objToApi[control] = this.filterTableGroup.get(control).value;
-        
+        objToApi[control] = this.filterTableGroup.get(control).value;
+
       }
     });
 
@@ -391,10 +394,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     else {
 
       this.filterActionButtonSpinner = true;
-
-      debugger
       this.dataService.GetOrdersByFilter(objToApi).subscribe(result => {
-        debugger
         this.filterActionButtonSpinner = false;
 
         if (result['Token'] != undefined || result['Token'] != null && Object.keys(result.obj).length > 0) {
@@ -407,7 +407,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
             this.dataSource.data = [];
           }
         }
-        else  if (typeof result == 'string') {
+        else if (typeof result == 'string') {
           this.errorMsg = result;
 
           setTimeout(() => {
@@ -424,6 +424,21 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  goToCustomer(customerId: number) {
+    let Customer = {
+      customerId: customerId
+    }
+    this.urlSharingService.changeMessage(JSON.stringify(Customer));
+    this.router.navigate(['/public/customer']);
+  }
+  goToOrder(orderId: number, customerId: number) {
+    let Order = {
+      orderId: orderId,
+      customerId: customerId
+    }
+    this.urlSharingService.changeMessage(JSON.stringify(Order));
+    this.router.navigate(['/public/order']);
+  }
   ngAfterViewInit() {
     if (this.dataSource != undefined) {
       this.dataSource.paginator = this.paginator;
@@ -432,15 +447,8 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
 
-  // goToOrderPage(orderId, userId){
-
-  //   this.urlSharingService.changeMessage('orderId:' + orderId + '-userId:' + userId );
-  //   debugger
-
-    
-  // }
   ngOnDestroy() {
-    this.activeRouteUnsubscribe.unsubscribe();
+    // this.activeRouteUnsubscribe.unsubscribe();
   }
 
 }

@@ -1,0 +1,64 @@
+<div class="wrapPage thankyouPage" *ngIf="thankyouResponse != undefined">
+    <div class="wrapContent">
+
+
+        <div class="mainTitle">
+            <div class="iconTitle">
+                <img src="../../../assets/img/gift.png">
+            </div>
+            <div class="thankYouTitle">איזה כייף להעניק מתנה</div>
+        </div>
+
+        <div class="mainText">
+            <div class="firstText">
+                <span>תמיד טוב לתת לאנשים את ההרגשה שחושבים עליהם</span>
+                <span>
+                    <span>אנחנו בטוחים שהמתנה שנשלחה ל</span>
+                    <span>{{thankyouResponse.B2C_ThoWho == '' ? thankyouResponse.PayFName :
+                        thankyouResponse.B2C_ThoWho}}</span>
+                    <span> נתנה את ההרגשה הזאת </span>
+                </span>
+                <span></span>
+            </div>
+            <div class="secondText">
+
+                <span *ngIf="thankyouResponse.B2C_Email != ''">לידיעתך המתנה נשלחה למייל: <span>
+                        {{thankyouResponse.B2C_Email}} </span></span>
+                <span *ngIf="thankyouResponse.B2C_Mobile != ''"><span
+                        *ngIf="thankyouResponse.B2C_Email != ''">ו</span><span *ngIf="thankyouResponse.B2C_Email == ''">
+                        לידיעתך המתנה נשלחה </span>לטלפון:
+                    <span> {{thankyouResponse.B2C_Mobile}} </span>
+                </span>
+            </div>
+        </div>
+
+        <div class="wrapNextPrevButton">
+            <div class="wrapResendBless">
+                <div class="tabLabel">רוצה להעניק את הטוב הזה שוב?</div>
+                <div class="resendButton">
+                    <button mat-button class="primaryButton" id="goToPaymentButton" (click)="resendGiftCard()">
+                        להענקת מתנה נוספת
+                        <mat-icon>card_giftcard</mat-icon>
+                    </button>
+                </div>
+            </div>
+            <div class="subButtonsWrap">
+                <!-- <div>
+                    <button mat-button class="prevButton">
+                        <span>להדפסת המתנה</span>
+                        <mat-icon>print</mat-icon>
+                    </button>
+                </div>
+                <div>
+                    <button mat-button class="prevButton">
+                        <span>לשליח בווטסאפ</span>
+                        <mat-icon>whatsapp</mat-icon>
+                    </button>
+                </div> -->
+            </div>
+
+            <mat-spinner *ngIf="navigateToPayment"></mat-spinner>
+        </div>
+
+    </div>
+</div>

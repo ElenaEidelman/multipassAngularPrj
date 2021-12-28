@@ -58,9 +58,9 @@ mat-form-field{
     position: relative;
     }
     .wrap-button-login span{
-    position: absolute;
+    /* position: absolute;
     right: 27%;
-    top:-50%;
+    top:-50%; */
     }
     /* .wrap-button-login > button{
     background: lightgray;

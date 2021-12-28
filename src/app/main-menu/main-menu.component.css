@@ -6,15 +6,16 @@
     flex-direction: column;
     /* background: linear-gradient(to bottom, rgba(48,183,177,1), rgba(38,113,144,1)); */
 }
-.wrap-main-menu > div > a{
-    color: #fff;
+.wrap-main-menu > div >  div > a{
+    color: #fff !important;
     text-align: right;
     font-weight: bold;
     margin: 0 4px 5px;
     box-shadow: inset 0px 0px 15px #444445;
     width: -webkit-fill-available;
+    text-decoration: none;
 }
-.wrap-main-menu > div > a:hover, .wrap-main-menu > div > button:hover{
+.wrap-main-menu > div > div > a:hover, .wrap-main-menu > div > button:hover{
     /* box-shadow: inset 0px 0px 15px #ACBF9A; */
     background-color: #88C43E !important;
     box-shadow: none;
@@ -54,10 +55,10 @@ a > mat-icon{
         flex-direction: row;
         justify-content: space-between;
     }
-    .wrap-main-menu > div{
+    .wrap-main-menu > div > div{
         border-bottom: 0.15em solid #8FC636;
     }
-    .wrap-main-menu > div > a, .wrap-main-menu > div > button{
+    .wrap-main-menu > div > div > a, .wrap-main-menu > div > button{
         display: inline-block;
         color: white;
         text-align: center;

@@ -134,8 +134,9 @@ mat-card-title > div{
 }
 
 .deleteB{
-  margin-right: auto;
-  margin-left: 0 !important;
+  /* margin-right: auto;
+  margin-left: 0 !important; */
+  margin: auto auto auto 0 !important;
 }
   @media screen and (max-width: 1024px){
     .mat-card-sms{

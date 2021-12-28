@@ -1,0 +1,243 @@
+.wrapComponent{
+    /* background-image: url('/assets/img/logInImg.jpg'); */
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+.InfoTitle{
+    font-size: 2em;
+    color: #847A6C;
+    text-align: right;
+    padding: 15px 0;
+}
+div.hr{
+    /* content: ''; */
+    /* display: block;
+    background-color: white;
+    height: 0.01em;
+    width: 100%;
+    margin: 0.3em 0;
+    box-shadow: 0px 0px 23px 2px #b8b4b7; */
+    box-shadow: 0 2px 2px -2px #b8b4b7;
+    padding: 15px 0;
+}
+
+.logInWrap{
+    display: flex;
+    flex-direction: row-reverse;
+    min-height: 100vh;
+    border-radius: 6px;
+    
+}
+.logInWrap > div{
+    flex-basis: 0;
+}
+.customerLogoWrapMobile{
+    display: none;
+    width: auto;
+    text-align: center;
+    background: rgba(255,255,255,0.9);
+    margin: 10px;
+    border-bottom-right-radius: 7px;
+    border-bottom-left-radius: 7px;
+}
+.logInInfo{
+    padding: 15px;
+    background: rgba(255,255,255,0.9);
+    flex-grow: 1;
+    margin-right: 4em;
+    direction: rtl;
+    width: 5em;
+    text-align: right;
+}
+.logInSum{
+    flex-grow: 2;
+    display: flex;
+    flex-direction: column;
+}
+.textWrap{
+    line-height: 1.4;
+    font-size: 16px;
+    color: #323a48;
+}
+.logInForm{
+    
+}
+
+.bigButton{
+    background: #59576C;
+    color: #fff;
+    width: 100%;
+}
+.bigButton:hover{
+   background: #825F75; 
+}
+.wrap-form{
+display: flex;
+justify-content: center;
+align-items: center;
+flex-direction: column;
+/* margin-top:10vh; */
+}
+
+.wrap-button-login{
+text-align: center;
+position: relative;
+width: 100%;
+margin: 20px 0;
+}
+
+.wrap-button-login span{
+position: absolute;
+right: 27%;
+top:-50%;
+}
+
+.sub-title{
+width: 100%;
+text-align: center;
+}
+
+.log-in{
+position: sticky !important;
+/* top: 17%; */
+width: 450px;
+margin: 10% auto;
+padding: 25px;
+border-radius: 6px;
+position: relative;
+background: rgba(255,255,255,0.7);
+color: #676766;
+}
+
+.inputIcon{
+    color: #686568 !important;
+    font-size: 2em;
+}
+
+input, mat-icon{
+color:#404040;
+}
+
+.sumInputWrap input{
+    text-align: center;
+}
+
+input::placeholder {
+    color: gray;
+  }
+
+  input::-webkit-input-placeholder { /* Edge */
+    color: gray;
+  }
+
+  input:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: gray;
+  }
+
+  input:-moz-placeholder {
+    color: gray;
+  }
+
+  input::-moz-placeholder {
+    color: gray;
+  }
+
+  .customerLogoWrap{
+    text-align: center;
+    margin: 10px 0;
+  }
+  .customerLogoWrap img{
+      width: auto;
+      height: 100px;
+  }
+
+  .contactDataWrap{
+      display: flex;
+      flex-direction: column;
+      margin: 3em 0;
+  }
+.contactDataChild{
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    margin: 7px 0;
+}
+.contactDataChild > div{
+    margin-right: 1em;
+    color: gray;
+}
+
+mat-icon{
+    color: #847A6C;
+}
+
+
+
+
+
+
+
+
+
+.msgAlert{
+    direction: rtl;
+    font-weight: 600;
+    margin: 5px 0;
+}
+
+.example-form {
+    min-width: 150px;
+    max-width: 500px;
+    width: 100%;
+  }
+  
+  .example-full-width {
+    width: 100%;
+  }
+
+  .loginFormImgWrap > img{
+    width: 100%;
+    border-radius: 6px;
+  }
+
+
+
+@media screen and (max-width: 1024px){
+    .log-in{
+        width: auto;
+        margin: auto 10px;
+        background: rgba(255,255,255,1);
+    }
+    .logInWrap{
+        flex-direction: column-reverse;
+    }
+    .logInInfo{
+        width: auto;
+        margin: 15px 10px;
+        border-top-left-radius: 7px;
+        border-top-right-radius: 7px;
+    }
+    .customerLogoWrapMobile{
+        display: block;
+        margin-bottom: 15px;
+    }
+    .customerLogoWrap{
+        display: none;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

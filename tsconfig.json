@@ -12,13 +12,14 @@
     "importHelpers": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "target": "es2015",
+    "target": "es6",
     "typeRoots": [
       "node_modules/@types"
     ],
     "lib": [
       "es2018",
-      "dom"
+      "dom",
+      "dom.iterable"
     ],
     "paths": {
       "exceljs": [
@@ -27,4 +28,3 @@
     }
   }
 }
-

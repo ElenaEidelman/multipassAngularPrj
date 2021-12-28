@@ -11,18 +11,25 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatPaginatorIntl, MatPaginatorModule } from '@angular/material/paginator';
-import {MatExpansionModule} from '@angular/material/expansion';
-import {MatTooltipModule} from '@angular/material/tooltip';
-import {MatDialogModule} from '@angular/material/dialog';
-import {MatTabsModule} from '@angular/material/tabs';
-import {MatMenuModule} from '@angular/material/menu';
-import {MatCheckboxModule} from '@angular/material/checkbox';
-import { NgxMatDatetimePickerModule, NgxMatTimepickerModule, NgxMatNativeDateModule } from '@angular-material-components/datetime-picker';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { NgxMatDatetimePickerModule, NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';
 import { NgxMatMomentModule } from '@angular-material-components/moment-adapter';
-import {MatCardModule} from '@angular/material/card';
-import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
-import {MatGridListModule} from '@angular/material/grid-list';
+import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
+import { MatCardModule } from '@angular/material/card';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatGridListModule } from '@angular/material/grid-list';
 import { MDBBootstrapModule } from 'angular-bootstrap-md';
+import { CookieService } from 'ngx-cookie-service';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatStepperModule } from '@angular/material/stepper';
+
+
+
 
 
 
@@ -65,9 +72,6 @@ import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http'
 import { PublicComponent } from './public/public.component';
 import { MatPaginatorIntlCro } from './Classes/MatPaginatorTranslate';
 import { AdminLogInComponent } from './PopUps/admin-log-in/admin-log-in.component';
-import { AdminComponent } from './Admin/admin/admin.component';
-import { AdminNewUserComponent } from './Admin/admin-new-user/admin-new-user.component';
-import { AdminNewCardComponent } from './Admin/admin-new-card/admin-new-card.component';
 import { TestExpandingTableComponent } from './Orders/test-expanding-table/test-expanding-table.component';
 import { OrderLinesComponent } from './Orders/order-lines/order-lines.component';
 import { DialogComponent } from './PopUps/dialog/dialog.component';
@@ -78,6 +82,17 @@ import { NumberDirective } from './directives/numbers-only.directive';
 import { AlphabetOnlyDirective } from './directives/letters-only.directive';
 import { TestComponent } from './test/test.component';
 import { DialogWithTableDataComponent } from './Cards/order-cards/Dialogs/dialog-with-table-data/dialog-with-table-data.component';
+import { FloatNumberDirective } from './directives/float-numbers-only.directive';
+import { AdminIframeComponent } from './Admin/admin-iframe/admin-iframe.component';
+import { IframeSetupComponent } from './Admin/admin-iframe/iframeChildren/iframe-thankyou/iframe-setup.component';
+import { IframeSettingsComponent } from './Admin/admin-iframe/iframeChildren/iframe-page2/iframe-settings.component';
+import { PreviewIMGComponent } from './Admin/popup/preview-img/preview-img.component';
+import { IframeComponent } from './Admin/admin-iframe/iframeChildren/iframe-enterSum/iframe.component';
+import { LogInIframeComponent } from './Iframe/components/log-in/log-in.component';
+import { PurchasingGiftComponent, VideoImageDialogComponent, VideosDialogComponent } from './Iframe/components/purchasing-gift/purchasing-gift.component';
+import { ThanksPageComponent } from './Iframe/components/thanks-page/thanks-page.component';
+import { PopupDialogComponent } from './Iframe/Dialogs/popupDialog/popup-dialog/popup-dialog.component';
+import { SafeHtmlPipe } from './Iframe/Pipes/safe-html.pipe';
 
 @NgModule({
   declarations: [
@@ -107,9 +122,6 @@ import { DialogWithTableDataComponent } from './Cards/order-cards/Dialogs/dialog
     LogInComponent,
     PublicComponent,
     AdminLogInComponent,
-    AdminComponent,
-    AdminNewUserComponent,
-    AdminNewCardComponent,
     TestExpandingTableComponent,
     OrderLinesComponent,
     DialogComponent,
@@ -122,7 +134,21 @@ import { DialogWithTableDataComponent } from './Cards/order-cards/Dialogs/dialog
     AlphabetOnlyDirective,
     TestComponent,
     AddCustomerDialogComponent,
-    DialogWithTableDataComponent
+    DialogWithTableDataComponent,
+    FloatNumberDirective,
+    AdminIframeComponent,
+    IframeSetupComponent,
+    IframeSettingsComponent,
+    PreviewIMGComponent,
+    IframeComponent,
+    LogInIframeComponent,
+    PurchasingGiftComponent,
+    VideosDialogComponent,
+    VideoImageDialogComponent,
+    ThanksPageComponent,
+    PopupDialogComponent,
+    SafeHtmlPipe
+
   ],
   imports: [
     BrowserModule,
@@ -155,15 +181,30 @@ import { DialogWithTableDataComponent } from './Cards/order-cards/Dialogs/dialog
     HttpClientModule,
     MatProgressSpinnerModule,
     MatGridListModule,
-    MDBBootstrapModule
+    MDBBootstrapModule,
+    MatSidenavModule,
+    MatStepperModule,
+    NgxMatDatetimePickerModule,
+    NgxMaterialTimepickerModule
   ],
   exports: [
     NumberDirective,
+    FloatNumberDirective,
     AlphabetOnlyDirective
   ],
-  entryComponents: [AddCustomerDialogComponent, DialogWithTableDataComponent],
-  providers: [DataServiceService, { provide: MatPaginatorIntl, useClass: MatPaginatorIntlCro},{ provide: MAT_DATE_LOCALE, useValue: 'en-GB' }
-          ],
+  entryComponents: [
+    AddCustomerDialogComponent,
+    DialogWithTableDataComponent,
+    PreviewIMGComponent,
+    VideosDialogComponent,
+    VideoImageDialogComponent,
+    PopupDialogComponent],
+  providers: [
+    DataServiceService,
+    { provide: MatPaginatorIntl, useClass: MatPaginatorIntlCro },
+    { provide: MAT_DATE_LOCALE, useValue: 'en-GB' },
+    CookieService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

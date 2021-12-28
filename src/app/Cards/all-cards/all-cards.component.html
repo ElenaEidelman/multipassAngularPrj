@@ -1,4 +1,4 @@
-<div class="pageTitle main2-title sticky top100">
+<div class="pageTitle main2-title sticky top100 allCards">
     <div>שוברים</div>
     <div>
         <a routerLink="/public/orderCards">
@@ -20,10 +20,12 @@
                         <div>
                             <mat-form-field>
                                 <mat-label>מספר שובר</mat-label>
-                                <input matInput placeholder = "מספר שובר" formControlName="CardId">
+                                <input matInput placeholder="מספר שובר" formControlName="CardId">
                                 <!-- <a [routerLink]="['/public/cardInfo',row['CardId'], userId]"
                                 *ngIf="column['value'] == 'CardId'">{{row[column['value']]}}</a> -->
-                                <button class="clearButton" *ngIf="this.cardsForm.get('CardId').value != ''" routerLink="/public/cardInfo/CardId" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.cardsForm.get('CardId').setValue('')">
+                                <button class="clearButton" *ngIf="this.cardsForm.get('CardId').value != ''"
+                                    routerLink="/public/cardInfo/CardId" mat-button matPrefix mat-icon-button
+                                    aria-label="Clear" (click)="this.cardsForm.get('CardId').setValue('')">
                                     <mat-icon>close</mat-icon>
                                 </button>
                             </mat-form-field>
@@ -31,8 +33,10 @@
                         <div>
                             <mat-form-field>
                                 <mat-label>שם פרטי</mat-label>
-                                <input matInput placeholder = "שם פרטי" formControlName="FullName">
-                                <button class="clearButton" *ngIf="this.cardsForm.get('FullName').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.cardsForm.get('FullName').setValue('')">
+                                <input matInput placeholder="שם פרטי" formControlName="FullName">
+                                <button class="clearButton" *ngIf="this.cardsForm.get('FullName').value != ''"
+                                    mat-button matPrefix mat-icon-button aria-label="Clear"
+                                    (click)="this.cardsForm.get('FullName').setValue('')">
                                     <mat-icon>close</mat-icon>
                                 </button>
                             </mat-form-field>
@@ -49,13 +53,13 @@
                         <div>
                             <mat-form-field>
                                 <mat-label>מספר טלפון נייד</mat-label>
-                                <input 
-                                        matInput 
-                                        placeholder = "מספר טלפון נייד" 
-                                        formControlName="PhoneNo"
-                                        [attr.maxlength]="10">
-                                <mat-error *ngIf="cardsForm.get('PhoneNo').hasError('pattern')">{{MsgList.phonePatternErr}}</mat-error>
-                                <button class="clearButton" *ngIf="this.cardsForm.get('PhoneNo').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.cardsForm.get('PhoneNo').setValue('')">
+                                <input matInput placeholder="מספר טלפון נייד" formControlName="PhoneNo"
+                                    [attr.maxlength]="10">
+                                <mat-error *ngIf="cardsForm.get('PhoneNo').hasError('pattern')">
+                                    {{MsgList.phonePatternErr}}</mat-error>
+                                <button class="clearButton" *ngIf="this.cardsForm.get('PhoneNo').value != ''" mat-button
+                                    matPrefix mat-icon-button aria-label="Clear"
+                                    (click)="this.cardsForm.get('PhoneNo').setValue('')">
                                     <mat-icon>close</mat-icon>
                                 </button>
                             </mat-form-field>
@@ -65,14 +69,17 @@
                         <div>
                             <mat-form-field>
                                 <mat-label>מספר הזמנה</mat-label>
-                                <input matInput placeholder = "מספר הזמנה" formControlName="OrderId">
-                                <button class="clearButton" *ngIf="this.cardsForm.get('OrderId').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.cardsForm.get('OrderId').setValue('')">
+                                <input matInput placeholder="מספר הזמנה" formControlName="OrderId">
+                                <button class="clearButton" *ngIf="this.cardsForm.get('OrderId').value != ''" mat-button
+                                    matPrefix mat-icon-button aria-label="Clear"
+                                    (click)="this.cardsForm.get('OrderId').setValue('')">
                                     <mat-icon>close</mat-icon>
                                 </button>
                             </mat-form-field>
                         </div>
                         <div>
-                            <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
+                            <mat-form-field appearance="fill"
+                                class="datePicker datePickerPadding marginTop-1 marginTop0">
                                 <mat-label>מתאריך</mat-label>
                                 <input matInput [matDatepicker]="picker2" formControlName="FromDate" readonly>
                                 <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
@@ -80,7 +87,8 @@
                             </mat-form-field>
                         </div>
                         <div>
-                            <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
+                            <mat-form-field appearance="fill"
+                                class="datePicker datePickerPadding marginTop-1 marginTop0">
                                 <mat-label>עד תאריך</mat-label>
                                 <input matInput [matDatepicker]="picker" formControlName="ToDate" readonly>
                                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
@@ -92,8 +100,11 @@
                         <div>
                             <mat-form-field>
                                 <mat-label>ח"פ לקוח</mat-label>
-                                <input matInput placeholder = 'ח"פ לקוח' formControlName="CustomerId" [attr.maxlength]="9">
-                                <button class="clearButton" *ngIf="cardsForm.get('CustomerId').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.cardsForm.get('CustomerId').setValue('')">
+                                <input matInput placeholder='ח"פ לקוח' formControlName="CustomerId"
+                                    [attr.maxlength]="9">
+                                <button class="clearButton" *ngIf="cardsForm.get('CustomerId').value != ''" mat-button
+                                    matPrefix mat-icon-button aria-label="Clear"
+                                    (click)="this.cardsForm.get('CustomerId').setValue('')">
                                     <mat-icon>close</mat-icon>
                                 </button>
                             </mat-form-field>
@@ -119,9 +130,9 @@
                     </div>
                 </div>
                 <div class="buttonsWrap">
-                    <button mat-button class="linkButton" (click) = "resetForm()">אפס</button>
+                    <button mat-button class="linkButton" (click)="resetForm()">אפס</button>
                     <!-- <button mat-button class="addButton" (click) = "filterTable()">חפש</button> -->
-                    <button mat-button class="addButton" (click) = "getFilteredCards()">חפש</button>
+                    <button mat-button class="addButton" (click)="getFilteredCards()">חפש</button>
                     <mat-spinner class="spinner" *ngIf="spinner"></mat-spinner>
 
                 </div>
@@ -134,7 +145,7 @@
 
     <div class="hiddenBlockWrap" *ngIf="viewTable">
         <!-- table -->
-        <div class="page-element width-block-auto" >
+        <div class="page-element width-block-auto">
             <div class="element-page-title">תוצאות חיפוש</div>
             <div class="mat-elevation-z8">
                 <!-- <app-table
@@ -142,15 +153,16 @@
                     [data_Source]="cardsDataSource"
                     [linksListById]="linksListById"
                 ></app-table> -->
-                    
+
                 <table mat-table [dataSource]="cardsDataSource" matSort class="tableView" dir="ltr">
 
                     <!-- ID Column -->
                     <ng-container *ngFor="let data of displayedColumns">
-                        <ng-container matColumnDef="{{data}}" >
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> {{returnHebTranslation(cardsLabelForTable,data)}} </th>
-                            <td mat-cell *matCellDef="let row" >
-            
+                        <ng-container matColumnDef="{{data}}">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                                {{returnHebTranslation(cardsLabelForTable,data)}} </th>
+                            <td mat-cell *matCellDef="let row">
+
                                 <!--links-->
                                 <!-- <span *ngIf="checkIfLink(data)">
                                     <ng-container *ngIf="links != undefined">
@@ -161,41 +173,48 @@
                                         <a [routerLink]="returnUrlById(data, row)">{{row[data]}}</a>
                                     </ng-container>
                                 </span> -->
-            
+
                                 <!--no links-->
                                 <!-- <span *ngIf="!checkIfLink(data)">{{row[data]}}</span> -->
                                 <ng-container *ngIf="data == 'CardId'">
-                                    <a [routerLink]="['/public/cardInfo',row['CardId'],row['OrderUser']]">{{row[data]}}</a>
+                                    <!--[routerLink]="['/public/cardInfo',row['CardId'],row['OrderUser']]"-->
+                                    <a (click)="goToCardInfo(row['CardId'],row['OrderUser'])">{{row[data]}}</a>
                                 </ng-container>
                                 <ng-container *ngIf="data == 'OrderId'">
-                                    <a [routerLink]="['/public/order',row['CoreOrderId'], row['OrderUser']]">{{row[data]}}</a>
+
+                                    <!--[routerLink]="['/public/order',row['CoreOrderId'], row['OrderUser']]"-->
+                                    <a (click)="goToOrder(row['CoreOrderId'], row['OrderUser'])">{{row[data]}}</a>
                                 </ng-container>
                                 <ng-container *ngIf="data == 'CompanyName'">
-                                    <a [routerLink]="['/public/customer',row['OrderUser']]">{{row[data]}}</a>
+
+                                    <!--[routerLink]="['/public/customer',row['OrderUser']]"-->
+                                    <a (click)="goToCustomer(row['OrderUser'])">{{row[data]}}</a>
                                 </ng-container>
                                 <ng-container *ngIf="data == 'CreationDate'">
-                                    {{row[data] | formatDate}}   
+                                    {{row[data] | formatDate}}
                                 </ng-container>
-                                <ng-container *ngIf="data != 'CardId' && data != 'CompanyName' && data != 'OrderId' && data != 'CreationDate'">
-                                    {{row[data]}}   
+                                <ng-container
+                                    *ngIf="data != 'CardId' && data != 'CompanyName' && data != 'OrderId' && data != 'CreationDate'">
+                                    {{row[data]}}
                                 </ng-container>
 
 
-            
+
                             </td>
                         </ng-container>
                     </ng-container>
-            
+
                     <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
                     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-            
+
                     <!-- Row shown when there is no matching data. -->
                     <!-- <tr class="mat-row" *matNoDataRow>
                         <td class="mat-cell" colspan="4">לא נמצאו נתונים "{{input != undefined ? input.value : ''}}"</td>
                     </tr> -->
                 </table>
                 <!-- <div *ngIf="cardsDataSource.filteredData.length === 0" class="tableEmptyMsg">אין נתונים</div> -->
-                <mat-paginator [pageSize]="25"  [length]="cardsDataSource.data.length" [pageSizeOptions]="[25, 55, 85, 100]" class="mat-paginator-sticky"></mat-paginator>
+                <mat-paginator [pageSize]="25" [length]="cardsDataSource.data.length"
+                    [pageSizeOptions]="[25, 55, 85, 100]" class="mat-paginator-sticky"></mat-paginator>
 
             </div>
         </div>
@@ -205,9 +224,9 @@
             <div class="element-page-title">שליחת SMS</div> -->
 
 
-            <!-- send sms view block -->
-            <!-- additionalOptionsSMS -->
-            <!-- <div  class="additionalOptionsSMS padding0">
+        <!-- send sms view block -->
+        <!-- additionalOptionsSMS -->
+        <!-- <div  class="additionalOptionsSMS padding0">
                 <form [formGroup]="sendSms">
                     <div class="smsFormWrap">
                         <div class="selectWrap">
@@ -245,4 +264,3 @@
         <!-- </div> -->
     </div>
 </div>
-

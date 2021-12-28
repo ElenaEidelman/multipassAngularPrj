@@ -1,0 +1,23 @@
+<div>
+    <div class="close-icon-wrap">
+        <mat-icon mattooltip="סגור" class="closeDialogIcon" (click)="dialogClose()">cancel</mat-icon>
+    </div>
+    <div class="dialogWrap">
+        <div class="dialogHeader">
+           <span class="title">{{data.title}}</span>
+        </div>
+
+
+        <!--image block-->
+        <div class="dialogBodyPopUp">
+            <div class="videosBlock">
+                <div>
+                    {{data.text}}
+                </div>
+            </div>
+            <!-- <div class="dialogFooter">
+                <button mat-button class="primaryButton" (click)="deleteImage()">לא, אני לא רוצה תמונה הזו</button>
+            </div> -->
+        </div>
+    </div>
+</div>

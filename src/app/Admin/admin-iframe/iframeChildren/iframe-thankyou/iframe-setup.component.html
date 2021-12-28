@@ -1,0 +1,29 @@
+<div class="iframeWrap">
+   <div class="form-wrap">
+      <form>
+         <div class="wrapForm">
+            <div class="formRow">
+               <mat-form-field>
+                  <textarea matInput placeholder="תיאור קצר" cdkTextareaAutosize #autosize="cdkTextareaAutosize"
+                     cdkAutosizeMinRows="1">
+                  </textarea>
+                  <!-- <mat-icon matPrefix *ngIf="previewForm.get('ShortDescription').value != ''"
+                     (click)="previewForm.get('ShortDescription').setValue('')" class="close" matTooltip="למחוק">
+                     close
+                  </mat-icon> -->
+                  <mat-error>{{MsgList.requiredField}}</mat-error>
+               </mat-form-field>
+            </div>
+            <div class="formRow buttonSaveIframe">
+               <button mat-button class="addButton"> שמור</button>
+               <!-- <mat-spinner *ngIf="setupSpinner"></mat-spinner> -->
+            </div>
+         </div>
+      </form>
+   </div>
+   <div class="iframePreview">
+      <router-outlet></router-outlet>
+   </div>
+
+
+</div>

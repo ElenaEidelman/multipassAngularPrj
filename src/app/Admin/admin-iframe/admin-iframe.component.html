@@ -1,0 +1,77 @@
+<div class="pageTitle main2-title sticky top100">
+  <div>Iframe</div>
+  <!-- toogle button -->
+  <div class="example-sidenav-content">
+    <div class="topMenu">
+      <!-- <button type="button" mat-button (click)="drawer.toggle()">
+                  Toggle sidenav
+                </button> -->
+      <mat-icon *ngIf="!drawer.opened" (click)="drawer.open()" matTooltip="open side nav">menu_open</mat-icon>
+      <mat-icon *ngIf="drawer.opened" (click)="drawer.close()" matTooltip="close side nav">close</mat-icon>
+    </div>
+  </div>
+</div>
+<mat-drawer-container class="example-container" autosize>
+  <!-- side menu -->
+  <mat-drawer #drawer class="example-sidenav" mode="side" opened="false">
+    <div class="wrapMenu">
+      <div class="wrap-main-menu">
+        <div>
+          <a mat-button [routerLink]="['/public/IFrame/iframeView/giftCard']" class="titleMenuButton adminPageSideNav"
+            routerLinkActive="routActive">
+            <span>enter sum</span>
+            <mat-icon>looks_one</mat-icon>
+          </a>
+        </div>
+        <div>
+          <a mat-button [routerLink]="['/public/IFrame/iframeSettings/giftCard2Page']"
+            class="titleMenuButton adminPageSideNav" routerLinkActive="routActive">
+            <span>iframe</span>
+            <mat-icon>looks_two</mat-icon>
+          </a>
+        </div>
+        <div>
+          <a mat-button [routerLink]="['/public/IFrame/thankyouIframe/thankyou']"
+            class="titleMenuButton adminPageSideNav" routerLinkActive="routActive">
+            <span>thankyou page</span>
+            <mat-icon>looks_3</mat-icon>
+          </a>
+        </div>
+      </div>
+    </div>
+  </mat-drawer>
+
+
+
+
+
+  <!-- content -->
+  <div style="min-height: 500px;">
+    <div class="page-wrap">
+      <div *ngIf="!drawer.opened" class="smallSideNav">
+        <div class="wrap-main-menu">
+          <div class="iconMenu">
+            <mat-icon [routerLink]="['/public/IFrame/iframeView/giftCard']" routerLinkActive=" routActive"
+              matTooltip="enter sum">looks_one</mat-icon>
+          </div>
+          <div class="iconMenu">
+            <mat-icon [routerLink]="['/public/IFrame/iframeSettings/giftCard2Page']" routerLinkActive=" routActive"
+              matTooltip="iframe">looks_two</mat-icon>
+          </div>
+          <div class="iconMenu">
+            <mat-icon [routerLink]="['/public/IFrame/thankyouIframe/thankyou']" routerLinkActive=" routActive"
+              matTooltip="thankyou">looks_3</mat-icon>
+          </div>
+        </div>
+      </div>
+      <div class="page-element width100">
+        <div class="wrapData formBorder">
+          <router-outlet></router-outlet>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+</mat-drawer-container>

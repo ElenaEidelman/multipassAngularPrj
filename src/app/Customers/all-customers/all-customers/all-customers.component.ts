@@ -5,12 +5,14 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MsgList } from 'src/app/Classes/msgsList';
 import { DataServiceService } from 'src/app/data-service.service';
 import { DialogConfirmComponent } from 'src/app/PopUps/dialog-confirm/dialog-confirm.component';
 import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
-import { SharedService } from 'src/app/shared.service';
+import { SharedService } from 'src/app/Services/SharedService/shared.service';
+import { UrlSharingService } from 'src/app/Services/UrlSharingService/url-sharing.service';
+
 
 export class CustomerData {
   organizationName: string;
@@ -35,7 +37,7 @@ export class CustomerData {
   templateUrl: './all-customers.component.html',
   styleUrls: ['./all-customers.component.css'],
   encapsulation: ViewEncapsulation.None,
-  animations:[
+  animations: [
     trigger('openClose', [
       state('true', style({
         overflow: 'hidden',
@@ -64,7 +66,9 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
     private dataService: DataServiceService,
     private activeRoute: ActivatedRoute,
     public dialog: MatDialog,
-    private sharedService: SharedService) { }
+    private sharedService: SharedService,
+    private urlSharingService: UrlSharingService,
+    private router: Router) { }
 
   @ViewChild('closeSelect') closeSelect: any;
 
@@ -116,7 +120,7 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
     this.getStatusList();
   }
 
-  getStatusList(){
+  getStatusList() {
 
     let objToApi = {
       Token: this.userToken
@@ -132,7 +136,11 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
         this.userToken = result['Token'];
 
         if (typeof result == 'object' && result.obj != null && result.obj.length > 0) {
-          this.statusList = [...result.obj];
+          this.statusList = [...result.obj].sort(function (a, b) {
+            if (a.Description < b.Description) { return -1; }
+            if (a.Description > b.Description) { return 1; }
+            return 0;
+          });;
         }
       }
       else {
@@ -151,9 +159,9 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
     let objToApi = {
       Token: token
     }
-  
+
     this.dataService.GetAllCustomers(objToApi).subscribe(result => {
-    debugger
+
       this.filterSpinner = false;
       if (result['Token'] != undefined || result['Token'] != null) {
 
@@ -165,8 +173,12 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
 
         if (typeof result == 'object' && result['obj'] != null && result['obj'].length > 0) {
           this.allCustomersDataSpare = result['obj'];
-          this.dataSource.data = result['obj'];
-          debugger
+          this.dataSource.data = result['obj'].sort(function (a, b) {
+            if (a.organizationName < b.organizationName) { return -1; }
+            if (a.organizationName > b.organizationName) { return 1; }
+            return 0;
+          });
+
         }
         // if(typeof result == 'object' &&  result['obj'] == null){
         //   // this.errorMsg = 'No Data Found';
@@ -175,9 +187,9 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
         //   },3000);
         // }
       }
-      else if(typeof result == 'string'){
+      else if (typeof result == 'string') {
         this.dialog.open(DialogComponent, {
-          data: {message: result}
+          data: { message: result }
         })
       }
       else {
@@ -223,10 +235,10 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
       if (this.filterCustomerForm.get(control).value != '' && this.filterCustomerForm.get(control).value != null) {
         fieldFilled = true;
 
-        if(control == 'OrderStatus'){
+        if (control == 'OrderStatus') {
           objToApi[control] = Array.of(this.filterCustomerForm.get(control).value);
         }
-        else{
+        else {
           objToApi[control] = this.filterCustomerForm.get(control).value;
         }
       }
@@ -235,11 +247,7 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
 
     if (fieldFilled) {
       this.filterSpinner = true;
-
-      debugger
-    
       this.dataService.GetCustomersByFilter(objToApi).subscribe(result => {
-      debugger
         this.filterSpinner = false;
 
         if (result['Token'] != undefined || result['Token'] != null) {
@@ -251,27 +259,27 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
           this.userToken = result['Token'];
 
 
-            if (typeof result == 'object' && result['obj'] != null && result['obj'].length > 0) {
-              this.dataSource = new MatTableDataSource(result['obj']);
+          if (typeof result == 'object' && result['obj'] != null && result['obj'].length > 0) {
+            this.dataSource = new MatTableDataSource(result['obj']);
 
-              setTimeout(()=>{
-                this.dataSource.paginator = this.paginator;
-                this.dataSource.sort = this.sort;
-              }, 0);
+            setTimeout(() => {
+              this.dataSource.paginator = this.paginator;
+              this.dataSource.sort = this.sort;
+            }, 0);
 
-            }
-            if (typeof result == 'object' && result['obj'] == null) {
-              this.dataSource.data = [];
-              // this.errorMsg = 'No Data Found';
-              setTimeout(() => {
-                this.errorMsg = '';
-              }, 3000);
-            }
+          }
+          if (typeof result == 'object' && result['obj'] == null) {
+            this.dataSource.data = [];
+            // this.errorMsg = 'No Data Found';
+            setTimeout(() => {
+              this.errorMsg = '';
+            }, 3000);
+          }
 
         }
         if (typeof result == 'string') {
           this.dialog.open(DialogComponent, {
-            data: {message: result}
+            data: { message: result }
           });
         }
       });
@@ -317,9 +325,9 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
           Token: this.userToken,
           UserId: element.id.toString()
         }
-      
+
         this.dataService.DeleteSuspendUsers(objToApi).subscribe(result => {
-          debugger
+
           if (result['Token'] != undefined || result['Token'] != null) {
 
             //set new token
@@ -350,6 +358,15 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
       }
     });
   }
+
+  goToCustomer(customerId: number) {
+    let Customer = {
+      customerId: customerId
+    }
+    this.urlSharingService.changeMessage(JSON.stringify(Customer));
+    this.router.navigate(['/public/customer']);
+  }
+
   ngAfterViewInit() {
     if (this.dataSource != undefined) {
       this.dataSource.paginator = this.paginator;

@@ -16,6 +16,8 @@ export interface DialogData {
 })
 export class AdminLogInComponent implements OnInit {
 
+  /**   not in use  this component   */
+
   constructor(public dialogRef: MatDialogRef<AdminLogInComponent>, 
               @Inject(MAT_DIALOG_DATA) public data: DialogData, 
               private route: Router) { }

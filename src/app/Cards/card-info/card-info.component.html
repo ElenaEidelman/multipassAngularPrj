@@ -82,11 +82,13 @@
         <div class="page-element innerElement">
             <div class="element-page-title element-page-title2">נתוני הזמנה</div>
             <!-- <div class="wrapInnerElCol"> -->
-            <div class="wrapData dataRow">
+            <div class="wrapData dataRow" *ngIf="OrderDetails">
                 <div class="customer-info-element">
                     <div class="customerDataTitle">מספר הזמנה</div>
                     <div class="detailsRow">
-                        <a [routerLink]="['/public/order/', OrderDetails.Id, OrderDetails.UserId]" matTooltip="להזמנה של השובר">{{OrderDetails.IdEx}}</a>
+
+                        <!--[routerLink]="['/public/order/', OrderDetails.Id, OrderDetails.UserId]"-->
+                        <a  (click)="goToOrder(OrderDetails.Id, OrderDetails.UserId)" matTooltip="להזמנה של השובר">{{OrderDetails.IdEx}}</a>
                         </div>
                 </div>
                 <div class="customer-info-element">

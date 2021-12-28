@@ -5,21 +5,23 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute, RouterLinkActive } from '@angular/router';
+import { ActivatedRoute, Router, RouterLinkActive } from '@angular/router';
 import { CustomerData } from 'src/app/Classes/customerData';
 import { MsgList } from 'src/app/Classes/msgsList';
 import { DataServiceService } from 'src/app/data-service.service';
 import { DatePickerDialog } from 'src/app/Orders/exec-order/exec-order.component';
 import { DialogConfirmComponent } from 'src/app/PopUps/dialog-confirm/dialog-confirm.component';
 import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
-import { SharedService } from 'src/app/shared.service';
+import { SharedService } from 'src/app/Services/SharedService/shared.service';
+import { UrlSharingService } from 'src/app/Services/UrlSharingService/url-sharing.service';
+
 import { PhoneConfirmComponent } from 'src/app/SMSTemplate/all-sms-templates/all-sms-templates.component';
 
 @Component({
   selector: 'app-card-info',
   templateUrl: './card-info.component.html',
   styleUrls: ['./card-info.component.css'],
-  animations:[
+  animations: [
     trigger('openClose', [
       state('true', style({
         overflow: 'hidden',
@@ -46,7 +48,9 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
     private dataService: DataServiceService,
     private dialog: MatDialog,
     private sharedService: SharedService,
-    private fb: FormBuilder) { }
+    private fb: FormBuilder,
+    private urlSharingService: UrlSharingService,
+    private router: Router) { }
 
   // data table
   public historyTableTemplate = [
@@ -78,6 +82,8 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
 
   saveUserDetailsMSG: string = '';
   saveUserDetailsError: string = '';
+  errorSendSms: string = '';
+
 
   userDetailsForm = this.fb.group({
     FullName: ['', Validators.required],
@@ -94,17 +100,24 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
   Note = this.fb.control({ value: '', disabled: true });
 
 
-  unsubscribeId;
+  // unsubscribeId;
 
   ngOnInit(): void {
     window.scroll(0, 0);
-    this.unsubscribeId = this.activateRoute.params.subscribe(param => {
-      this.cardId = param['id'];
-      this.userId = param['userId'];
+    // this.unsubscribeId = this.activateRoute.params.subscribe(param => {
+    let urlParams = this.urlSharingService.messageSource.getValue();
+    if (urlParams == '') {
+      this.router.navigate(['/public/home']);
+    }
+    else {
+      this.cardId = JSON.parse(urlParams)['cardId'];
+      this.userId = JSON.parse(urlParams)['userId'];
       this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
+      this.urlSharingService.changeMessage('');
       this.getSmsTemplates();
       this.getTablesData();
-    });
+    }
+    // });
   }
 
   getSmsTemplates() {
@@ -114,7 +127,6 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
     }
 
     this.dataService.GetSMSFormats(objToApi).subscribe(result => {
-
 
       if (result['Token'] != undefined || result['Token'] != null) {
 
@@ -145,9 +157,10 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
       UserId: this.userId
     }
 
-    
+
+    debugger
     this.dataService.GetCardInfoById(objToApi).subscribe(result => {
-      
+      debugger
       if (result['Token'] != undefined || result['Token'] != null) {
         //set new token
         let tempObjUser = JSON.parse(localStorage.getItem('user'));
@@ -157,17 +170,17 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
 
         if (typeof result == 'object' && result.obj != null) {
           this.CardInfo = result.obj[1][0];
-          this.orderLine = result.obj[9]['Id'];
+          this.orderLine = result.obj[9] != null ? result.obj[9]['Id'] : [];
           this.OrderDetails = result.obj[3];
-          
+
           this.userDetailsForm.get('FullName').setValue(this.CardInfo.FullName);
           this.userDetailsForm.get('PhoneNumber').setValue(this.CardInfo.PhoneNumber);
-          
+
           // this.Note.setValue(result.obj[1][0]['RemarkNotes']);
 
           let historyData = result.obj[7]['lstHistoryTranInfoField'];
           this.historyDataSource.data = historyData;
-          
+
 
           this.createDisplayedColumns('historyLabelForTable', this.historyTableTemplate);
 
@@ -423,9 +436,9 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
     this.dialog.open(DialogConfirmComponent, {
       data: { message: 'האם לשנות את הקוד הסודי?', eventButton: 'לשנות' }
     }).afterClosed().subscribe(result => {
-      
 
-      if(result.result == 'yes'){
+
+      if (result.result == 'yes') {
         let objToApi = {
           Token: this.userToken.toString(),
           CardId: this.CardInfo.CardId.toString(),
@@ -433,20 +446,27 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
           // Pin: result.result.pinCode,
           UserId: this.userId,
         }
-  
-        
+
+
+        debugger
         this.dataService.UpdatePinCodeOfCards(objToApi).subscribe(result => {
-          
+          debugger
+
           if (result['Token'] != undefined || result['Token'] != null) {
-  
+
             //set new token
             let tempObjUser = JSON.parse(localStorage.getItem('user'));
             tempObjUser['Token'] = result['Token'];
             localStorage.setItem('user', JSON.stringify(tempObjUser));
             this.userToken = result['Token'];
-  
-            if (typeof result == 'object' && result.obj != null && Object.keys(result.obj).length > 0) {
+
+            if (result.err != -1) {
               this.CardInfo.PinCode = result.obj.PinCode;
+            }
+            else {
+              this.dialog.open(DialogComponent, {
+                data: { message: result.errdesc }
+              })
             }
           }
           else {
@@ -455,8 +475,8 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
             })
             this.sharedService.exitSystemEvent();
           }
-  
-  
+
+
         })
       }
     })
@@ -467,14 +487,14 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
 
     if (this.sendSms.valid) {
       this.dialog.open(DialogConfirmComponent, {
-        data: {message: 'האם לשלוח SMS?', eventButton:'שלח'}
-                
+        data: { message: 'האם לשלוח SMS?', eventButton: 'שלח' }
+
       }).afterClosed().subscribe(result => {
         if (result.result.includes('yes')) {
 
           let phone = result.result.split('phone: ')[1];
 
-          
+
           // let objToApi = {
           //   Token: this.userToken,
           //   TemplateFormat: this.sendSms.get('previewSmsTemplate').value,
@@ -498,9 +518,9 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
             From: this.OrderDetails.PrimaryUser.OrganizationName
           }
 
-          
+
           this.dataService.SendSMSByOrderLine(objToApi).subscribe(result => {
-            
+
             if (result['Token'] != undefined || result['Token'] != null) {
 
               //set new token
@@ -527,19 +547,27 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
       })
     }
     else {
-      // this.errorSendSms = 'נא לבחור תבנית ההודעה';
+      this.errorSendSms = 'נא לבחור תבנית ההודעה';
       setTimeout(() => {
-        // this.errorSendSms = '';
+        this.errorSendSms = '';
       }, 2000)
     }
   }
 
-  smsTempleteSelect(event){
-    if(event.value != undefined){
+  smsTempleteSelect(event) {
+    if (event.value != undefined) {
       this.sendSms.get('previewSmsTemplate').setValue(this.smsTemplatesData.filter(el => el.Id == event.value)[0]['TemplateFormat']);
     }
   }
 
+  goToOrder(orderId: number, customerId: number) {
+    let Order = {
+      orderId: orderId,
+      customerId: customerId
+    }
+    this.urlSharingService.changeMessage(JSON.stringify(Order));
+    this.router.navigate(['/public/order']);
+  }
   ngAfterViewInit() {
     if (this.historyDataSource != undefined) {
       this.historyDataSource.paginator = this.paginator;

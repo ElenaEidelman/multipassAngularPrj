@@ -14,8 +14,10 @@ import { faFileExcel } from '@fortawesome/free-solid-svg-icons';
 import { DataServiceService } from 'src/app/data-service.service';
 import { DialogConfirmComponent } from 'src/app/PopUps/dialog-confirm/dialog-confirm.component';
 import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
-import { SharedService } from 'src/app/shared.service';
+
 import { MsgList } from 'src/app/Classes/msgsList';
+import { UrlSharingService } from 'src/app/Services/UrlSharingService/url-sharing.service';
+import { SharedService } from 'src/app/Services/SharedService/shared.service';
 
 
 
@@ -55,19 +57,20 @@ export class ExistCustomerComponent implements OnInit {
     private fb: FormBuilder,
     private dataService: DataServiceService,
     public dialog: MatDialog,
-    private sharedService: SharedService) { }
+    private sharedService: SharedService,
+    private urlSharingService: UrlSharingService) { }
 
   CustomerForm = this.fb.group({
     OrganizationName: ['', Validators.required],//v
     FName: (''),
     LName: (''),
     Email: ['', [Validators.required, Validators.email]], //v
-    Phone: ['', [Validators.required, Validators.pattern('[0]{1}[0-9]{2,3}[0-9]{7}')]], //v
+    Phone: ['', [Validators.required, Validators.pattern('[[0][0-9]{8,9}]*')]], //v
     Permission: ['', Validators.required],//v
-    Phone1: ['',   Validators.pattern('[0]{1}[0-9]{2,3}[0-9]{7}')],
+    Phone1: ['', [Validators.pattern('[[0][0-9]{8,9}]*')]],
     userNumber: [{ value: '', disabled: true }], //v
     CityName: (''),//v
-    Streetno: (''),//v
+    Streetno: (''),//v 
     HouseNumber: (''), //new
     Entrance: (''),//v
     floor: (''), // new
@@ -78,11 +81,12 @@ export class ExistCustomerComponent implements OnInit {
     Tz: ['', Validators.required],//v
     Notes: (''), //v
     BusinessFile: ('/test.txt') //must to be required Validators.required
-  });
+  },
+    { updateOn: "blur" });
 
   idUnsubscribe;
 
-  rolesList = ['מנהל באק אופיס','מפעיל באק אופיס'];
+  rolesList = ['מנהל באק אופיס', 'מפעיל באק אופיס'];
 
 
   ngOnInit() {
@@ -90,57 +94,66 @@ export class ExistCustomerComponent implements OnInit {
     this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
     this.getUserStatus();
 
-    this.idUnsubscribe = this.activeRoute.params.subscribe(param => {
-      this.userId = param['id'];
+    // this.idUnsubscribe = this.activeRoute.params.subscribe(param => {
 
-      let objToApi = {
-        Token: this.userToken,
-        CustomerId: param['id']
+    let urlParams = this.urlSharingService.messageSource.getValue();
+    if (urlParams == '') {
+      this.router.navigate(['/public/home']);
+    }
+    else {
+      this.urlSharingService.changeMessage('');
+      this.userId = JSON.parse(urlParams)['customerId'];
+    }
+
+
+    let objToApi = {
+      Token: this.userToken,
+      CustomerId: this.userId
+    }
+
+    this.dataService.GetCustomersByFilter(objToApi).subscribe(result => {
+
+      if (result['Token'] != undefined || result['Token'] != null) {
+
+        if (typeof result == 'object' && result.obj != null) {
+          this.customerData = result.obj[0];
+
+          Object.keys(result.obj[0]).forEach(el => {
+            if (this.CustomerForm.get(el) != null && el != 'SEO_Description') {
+              this.CustomerForm.get(el).setValue(result.obj[0][el]);
+            }
+
+            if (el == 'SEO_Description') {
+              this.CustomerForm.get('Notes').setValue(result.obj[0][el]);
+            }
+
+            if (el == 'StatusId') {
+
+              let list = this.statusList.filter(status => status.StatusId == this.CustomerForm.get(el).value);
+
+              this.CustomerForm.get(el).setValue(list[0]['StatusId']);
+            }
+            else if (el == 'Address') {
+              this.CustomerForm.get('HouseNumber').setValue(result.obj[0]['Address']);
+            }
+          });
+          this.getChartData();
+        }
+        if (result.obj == null && result.errdesc != '') {
+          this.dialog.open(DialogComponent, {
+            data: { message: result.errdesc }
+          })
+          this.router.navigate(['/public/home']);
+        }
       }
-
-      this.dataService.GetCustomersByFilter(objToApi).subscribe(result => {
-        debugger
-        if (result['Token'] != undefined || result['Token'] != null) {
-
-          if (typeof result == 'object' && result.obj != null) {
-            this.customerData = result.obj[0];
-
-            Object.keys(result.obj[0]).forEach(el => {
-              debugger
-              if (this.CustomerForm.get(el) != null && el != 'SEO_Description') {
-                this.CustomerForm.get(el).setValue(result.obj[0][el]);
-              }
-
-              if(el == 'SEO_Description'){
-                this.CustomerForm.get('Notes').setValue(result.obj[0][el]);
-              }
-
-              if( el == 'StatusId'){
-  
-                let list = this.statusList.filter(status => status.StatusId == this.CustomerForm.get(el).value);
-  
-                this.CustomerForm.get(el).setValue(list[0]['StatusId']);
-              }
-              else if(el == 'Address'){
-                this.CustomerForm.get('HouseNumber').setValue(result.obj[0]['Address']);
-              }
-            });
-            this.getChartData();
-          }
-          if(result.obj == null && result.errdesc != ''){
-            this.dialog.open(DialogComponent, {
-              data: {message: result.errdesc}
-            })
-          }
-        }
-        else {
-          // this.dialog.open(DialogComponent, {
-          //   data: {message: MsgList.exitSystemAlert}
-          // })
-          this.sharedService.exitSystemEvent();
-        }
-      });
-    })
+      else {
+        // this.dialog.open(DialogComponent, {
+        //   data: {message: MsgList.exitSystemAlert}
+        // })
+        this.sharedService.exitSystemEvent();
+      }
+    });
+    // })
 
   }
 
@@ -190,7 +203,7 @@ export class ExistCustomerComponent implements OnInit {
 
           this.recOrdersChartLabels = createDateByOrder;
         }
-        if(result.errdesc!= null && result.errdesc.includes("No Data Found")){
+        if (result.errdesc != null && result.errdesc.includes("No Data Found")) {
 
           this.customerOrders = [];
           this.recOrdersChartData = [
@@ -210,14 +223,14 @@ export class ExistCustomerComponent implements OnInit {
 
   }
 
-  getUserStatus(){
+  getUserStatus() {
     let objToApi = {
       Token: this.userToken
     }
 
-    debugger
+
     this.dataService.GetUserStatus(objToApi).subscribe(result => {
-      debugger
+
       if (result['Token'] != undefined || result['Token'] != null) {
         //set new token
         let tempObjUser = JSON.parse(localStorage.getItem('user'));
@@ -225,11 +238,11 @@ export class ExistCustomerComponent implements OnInit {
         localStorage.setItem('user', JSON.stringify(tempObjUser));
         this.userToken = result['Token'];
 
-        if(result.obj != null && result.obj != undefined && Object.keys(result.obj).length > 0){
-          
-      
-        this.statusList = [...result.obj];
-        debugger
+        if (result.obj != null && result.obj != undefined && Object.keys(result.obj).length > 0) {
+
+
+          this.statusList = [...result.obj];
+
         }
       }
       else {
@@ -243,27 +256,27 @@ export class ExistCustomerComponent implements OnInit {
 
   saveForm() {
     if (this.CustomerForm.valid) {
-  
+
       this.saveFormSpinner = true;
 
       let data = this.CustomerForm.value;
 
       let objToApi = {
-        Token: this.userToken, 
+        Token: this.userToken,
         Id: this.customerData.id
       }
 
       Object.keys(data).forEach(key => {
-        if(key == 'StatusId'){
+        if (key == 'StatusId') {
           objToApi[key] = this.statusList.filter(status => status.StatusId == this.CustomerForm.get(key).value)[0]['StatusId']
         }
-        else if(key == 'HouseNumber'){
+        else if (key == 'HouseNumber') {
           objToApi['Address'] = this.CustomerForm.get(key).value;
         }
 
         //?????
         if (data[key] != '' && key == 'StatusId') {
-      
+
           objToApi[key] = data[key]
         }
         if (data[key] != '') {
@@ -274,10 +287,7 @@ export class ExistCustomerComponent implements OnInit {
       //change to numeric
       // objToApi['Tz'] = +objToApi['Tz'];
 
-  
-      debugger
       this.dataService.InsertUpdateUser(objToApi).subscribe(result => {
-    debugger
         this.saveFormSpinner = false;
 
         if (result['Token'] != undefined || result['Token'] != null) {
@@ -321,7 +331,7 @@ export class ExistCustomerComponent implements OnInit {
     else {
       this.errorActionButtons = 'שגיאת אימות שדות חובה';
 
-      setTimeout(()=>{
+      setTimeout(() => {
         this.errorActionButtons = '';
       }, 2000);
     }
@@ -341,9 +351,9 @@ export class ExistCustomerComponent implements OnInit {
           UserId: this.userId
         }
 
-    
+
         this.dataService.DeleteSuspendUsers(objToApi).subscribe(result => {
-      
+
           if (result['Token'] != undefined || result['Token'] != null) {
 
             //set new token
@@ -351,7 +361,7 @@ export class ExistCustomerComponent implements OnInit {
             tempObjUser['Token'] = result['Token'];
             localStorage.setItem('user', JSON.stringify(tempObjUser));
             this.userToken = result['Token'];
-        
+
             if (result.errdesc.includes('Successfully')) {
               this.router.navigate(['/public/allCustomers']);
               this.dialog.open(DialogComponent, {
@@ -378,7 +388,7 @@ export class ExistCustomerComponent implements OnInit {
 
   }
 
-  formatDate(dateToFormat){
+  formatDate(dateToFormat) {
     let date = new Date(dateToFormat.toString());
     let day = date.getDay() < 10 ? '0' + date.getDay() : date.getDay();
     let month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
@@ -386,11 +396,32 @@ export class ExistCustomerComponent implements OnInit {
     return day + '/' + month + '/' + year;
   }
 
+  goToOrderCards(cardId, customerId) {
+    //[routerLink]="['/public/orderCards',0,customerData.id]"
+
+    let Card = {
+      cardId: cardId,
+      customerId: customerId
+    }
+
+    this.urlSharingService.changeMessage(JSON.stringify(Card));
+    this.router.navigate(['/public/orderCards']);
+  }
+
+  goToAlOrdersByCustomer(customerName) {
+    let Customer = {
+      customerName: customerName
+    }
+
+    this.urlSharingService.changeMessage(JSON.stringify(Customer));
+    this.router.navigate(['/public/allOrders']);
+  }
+
   openDialog() {
 
   }
   ngOnDestroy() {
-    this.idUnsubscribe.unsubscribe();
+    // this.idUnsubscribe.unsubscribe();
   }
 
 }

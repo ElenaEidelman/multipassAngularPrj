@@ -1,6 +1,7 @@
 <div class="pageTitle main2-title sticky top100">
     <div *ngIf="customerData" class="headerData">
-        <div class="data"> {{customerData.OrganizationName != undefined ? customerData.OrganizationName : customerData.organizationName}} </div>
+        <div class="data"> {{customerData.OrganizationName != undefined ? customerData.OrganizationName :
+            customerData.organizationName}} </div>
         <div> :לקוח</div>
     </div>
 </div>
@@ -64,52 +65,53 @@
 
                             </div> -->
                             <div class="graph-buttons-wrap">
-                                    <div >
-                                        <div class="element-page-title">הזמנות אחרונות</div>
-                                        <div class="innerElement graphWrap">
-                                            <app-bar-chart 
-                                                            *ngIf="customerOrders != undefined" 
-                                                            chartTitle="" 
-                                                            [chartData]="recOrdersChartData"
-                                                            [chartLabels]="recOrdersChartLabels" 
-                                                            chartColor="#88C43E">
+                                <div>
+                                    <div class="element-page-title">הזמנות אחרונות</div>
+                                    <div class="innerElement graphWrap">
+                                        <app-bar-chart *ngIf="customerOrders != undefined" chartTitle=""
+                                            [chartData]="recOrdersChartData" [chartLabels]="recOrdersChartLabels"
+                                            chartColor="#88C43E">
 
-                                            </app-bar-chart>
+                                        </app-bar-chart>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="element-page-title">זימון שוברים</div>
+                                    <div class="buttonInElement innerElement createOrdersButtonsWrap">
+
+                                        <!--[routerLink]="['/public/orderCards',0,customerData.id]"-->
+                                        <div (click)="goToOrderCards(0,customerData.id)" mat-button class="sendButton">
+                                            <span>הזמנת שוברים דיגיטלים מאקסל </span>
+                                            <fa-icon [icon]="faFileExcel"></fa-icon>
+
+                                        </div>
+
+                                        <!--[routerLink]="['/public/orderCards',1,customerData.id]"-->
+                                        <div (click)="goToOrderCards(1,customerData.id)" mat-button class="sendButton">
+                                            <span>הזמנת שוברים דיגיטלים ידנית </span>
+                                            <mat-icon> settings </mat-icon>
+                                        </div>
+
+                                        <!--[routerLink]="['/public/orderCards',2,customerData.id]" -->
+                                        <div (click)="goToOrderCards(2,customerData.id)" mat-button class="sendButton">
+                                            <span>טעינת שוברים</span>
+                                            <mat-icon> file_upload</mat-icon>
+                                        </div>
+
+                                        <!--[routerLink]="['/public/allOrders',customerData.OrganizationName]"-->
+                                        <div (click)="goToAlOrdersByCustomer(customerData.OrganizationName)" mat-button
+                                            class="sendButton">
+                                            <span>לכל הזמנות הלקוח</span>
+                                            <mat-icon>list</mat-icon>
                                         </div>
                                     </div>
-                                    <div >
-                                        <div class="element-page-title">זימון שוברים</div>
-                                        <div class="buttonInElement innerElement createOrdersButtonsWrap">
-
-                                            <div [routerLink]="['/public/orderCards',0,customerData.id]" mat-button
-                                            class="sendButton">
-                                                    <span>הזמנת שוברים דיגיטלים מאקסל </span>
-                                                    <fa-icon [icon]="faFileExcel"></fa-icon>
-            
-                                            </div>
-                                            <div [routerLink]="['/public/orderCards',1,customerData.id]" mat-button
-                                            class="sendButton">
-                                                    <span>הזמנת שוברים דיגיטלים ידנית </span>
-                                                    <mat-icon> settings </mat-icon>
-                                            </div>
-                                            <div [routerLink]="['/public/orderCards',2,customerData.id]" mat-button
-                                            class="sendButton">
-                                                    <span>טעינת שוברים</span>
-                                                    <mat-icon> file_upload</mat-icon>
-                                            </div>
-                                            <div mat-button class="sendButton"
-                                            [routerLink]="['/public/allOrders',customerData.OrganizationName]">
-                                                    <span>לכל הזמנות הלקוח</span>
-                                                    <mat-icon>list</mat-icon>
-                                            </div>
-                                        </div>
-                                    </div>
+                                </div>
                             </div>
 
                         </mat-expansion-panel>
 
                         <!-- User -->
-                        <mat-expansion-panel  #newUser selectedIndex="1">
+                        <mat-expansion-panel #newUser selectedIndex="1">
                             <mat-expansion-panel-header>
                                 <mat-panel-title></mat-panel-title>
                                 <mat-panel-description>
@@ -132,62 +134,93 @@
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>שם חברה</mat-label>
-                                            <input matInput placeholder="שם חברה" formControlName="OrganizationName" tabindex="1">
-                                            <button class="clearButton" *ngIf="this.CustomerForm.get('OrganizationName').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('OrganizationName').setValue('')">
+                                            <input matInput placeholder="שם חברה" formControlName="OrganizationName"
+                                                tabindex="1">
+                                            <button class="clearButton"
+                                                *ngIf="this.CustomerForm.get('OrganizationName').value != ''" mat-button
+                                                matPrefix mat-icon-button aria-label="Clear"
+                                                (click)="this.CustomerForm.get('OrganizationName').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
-                                            <!-- <mat-error *ngIf="CustomerForm.get('OrganizationName').errors?.pattern">{{MsgList.lettersValidationErr}}</mat-error> -->
+                                            <mat-error *ngIf="CustomerForm.get('OrganizationName').errors?.pattern">
+                                                {{MsgList.lettersValidationErr}}
+                                                <mat-icon>error</mat-icon>
+                                            </mat-error>
+                                            <mat-error *ngIf="CustomerForm.get('OrganizationName').errors?.required">
+                                                {{MsgList.requiredField}}
+                                                <mat-icon>error</mat-icon>
+                                            </mat-error>
 
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>מספר טלפון*</mat-label>
-                                            <input 
-                                                    matInput 
-                                                    placeholder="מספר טלפון" 
-                                                    formControlName="Phone" 
-                                                    tabindex="5" 
-                                                    numbersOnly
-                                                    [attr.maxlength]="10">
-                                            <button class="clearButton" *ngIf="this.CustomerForm.get('Phone').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('Phone').setValue('')">
+                                            <input matInput placeholder="מספר טלפון" formControlName="Phone"
+                                                tabindex="5" numbersOnly [attr.maxlength]="10">
+                                            <button class="clearButton"
+                                                *ngIf="this.CustomerForm.get('Phone').value != ''" mat-button matPrefix
+                                                mat-icon-button aria-label="Clear"
+                                                (click)="this.CustomerForm.get('Phone').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
-                                            <mat-error *ngIf="CustomerForm.get('Phone').errors?.pattern">{{MsgList.phonePatternErr}}</mat-error>
+                                            <mat-error *ngIf="CustomerForm.get('Phone').errors?.pattern">
+                                                {{MsgList.phonePatternErr}}
+                                                <mat-icon>error</mat-icon>
+                                            </mat-error>
+                                            <mat-error *ngIf="CustomerForm.get('Phone').errors?.required">
+                                                {{MsgList.requiredField}}
+                                                <mat-icon>error</mat-icon>
+                                            </mat-error>
                                         </mat-form-field>
 
                                     </div>
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>שם פרטי</mat-label>
-                                            <input matInput placeholder="שם פרטי" formControlName="FName" tabindex="2" pattern="^([^0-9]*)$">
-                                            <button class="clearButton" *ngIf="this.CustomerForm.get('FName').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('FName').setValue('')">
+                                            <input matInput placeholder="שם פרטי" formControlName="FName" tabindex="2"
+                                                pattern="^([^0-9]*)$">
+                                            <button class="clearButton"
+                                                *ngIf="this.CustomerForm.get('FName').value != ''" mat-button matPrefix
+                                                mat-icon-button aria-label="Clear"
+                                                (click)="this.CustomerForm.get('FName').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
-                                            <mat-error *ngIf="CustomerForm.get('FName').errors?.pattern">{{MsgList.lettersValidationErr}}</mat-error>
+                                            <mat-error *ngIf="CustomerForm.get('FName').errors?.pattern">
+                                                {{MsgList.lettersValidationErr}}
+                                                <mat-icon>error</mat-icon>
+                                            </mat-error>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>מספר טלפון נוסף</mat-label>
-                                            <input 
-                                                    matInput 
-                                                    placeholder="מספר טלפון נוסף" 
-                                                    formControlName="Phone1" 
-                                                    tabindex="6" 
-                                                    [attr.maxlength]="10"
-                                                    numbersOnly>
-                                            <button class="clearButton" *ngIf="this.CustomerForm.get('Phone1').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('Phone1').setValue('')">
+                                            <input matInput placeholder="מספר טלפון נוסף" formControlName="Phone1"
+                                                tabindex="6" [attr.maxlength]="10" numbersOnly>
+                                            <button class="clearButton"
+                                                *ngIf="this.CustomerForm.get('Phone1').value != ''" mat-button matPrefix
+                                                mat-icon-button aria-label="Clear"
+                                                (click)="this.CustomerForm.get('Phone1').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
-                                            <mat-error *ngIf="CustomerForm.get('Phone1').errors?.pattern">{{MsgList.phonePatternErr}}</mat-error>
+                                            <mat-error *ngIf="CustomerForm.get('Phone1').errors?.pattern">
+                                                {{MsgList.phonePatternErr}}
+                                                <mat-icon>error</mat-icon>
+                                            </mat-error>
                                         </mat-form-field>
 
                                     </div>
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>שם משפחה</mat-label>
-                                            <input matInput placeholder="שם משפחה" formControlName="LName" tabindex="3" pattern="^([^0-9]*)$">
-                                            <button class="clearButton" *ngIf="this.CustomerForm.get('LName').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('LName').setValue('')">
+                                            <input matInput placeholder="שם משפחה" formControlName="LName" tabindex="3"
+                                                pattern="^([^0-9]*)$">
+                                            <button class="clearButton"
+                                                *ngIf="this.CustomerForm.get('LName').value != ''" mat-button matPrefix
+                                                mat-icon-button aria-label="Clear"
+                                                (click)="this.CustomerForm.get('LName').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
-                                            <mat-error *ngIf="CustomerForm.get('LName').errors?.pattern">{{MsgList.lettersValidationErr}}</mat-error>
+                                            <mat-error *ngIf="CustomerForm.get('LName').errors?.pattern">
+                                                {{MsgList.lettersValidationErr}}
+                                                <mat-icon>error</mat-icon>
+                                            </mat-error>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>תפקיד</mat-label>
@@ -206,31 +239,44 @@
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>דוא"ל</mat-label>
-                                            <input matInput type="email" placeholder='דוא"ל' formControlName="Email" tabindex="4"emailFormatValidationErr>
-                                            <button class="clearButton" *ngIf="CustomerForm.get('Email').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('Email').setValue('')">
+                                            <input matInput type="email" placeholder='דוא"ל' formControlName="Email"
+                                                tabindex="4" emailFormatValidationErr>
+                                            <button class="clearButton" *ngIf="CustomerForm.get('Email').value != ''"
+                                                mat-button matPrefix mat-icon-button aria-label="Clear"
+                                                (click)="this.CustomerForm.get('Email').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
                                             <mat-error
                                                 *ngIf="CustomerForm != undefined && CustomerForm.get('Email').hasError('email')">
                                                 {{MsgList.emailFormatValidationErr}}
+                                                <mat-icon>error</mat-icon>
+                                            </mat-error>
+                                            <mat-error
+                                                *ngIf="CustomerForm != undefined && CustomerForm.get('Email').hasError('required')">
+                                                {{MsgList.requiredField}}
+                                                <mat-icon>error</mat-icon>
                                             </mat-error>
                                         </mat-form-field>
 
                                         <mat-form-field>
                                             <mat-label>ח.פ./עוסק מורש</mat-label>
-                                            <input  matInput 
-                                                    placeholder="ח.פ./עוסק מורש" 
-                                                    formControlName="Tz" 
-                                                    tabindex="8"  
-                                                    numbersOnly
-                                                    [attr.maxlength]="9" 
-                                                    numbersOnly>
+                                            <input matInput placeholder="ח.פ./עוסק מורש" formControlName="Tz"
+                                                tabindex="8" numbersOnly [attr.maxlength]="9" numbersOnly>
 
-                                            <button class="clearButton" *ngIf="CustomerForm.get('Tz').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('Tz').setValue('')">
+                                            <button class="clearButton" *ngIf="CustomerForm.get('Tz').value != ''"
+                                                mat-button matPrefix mat-icon-button aria-label="Clear"
+                                                (click)="this.CustomerForm.get('Tz').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
-                                            <mat-error *ngIf="CustomerForm.get('Tz').errors?.pattern">{{MsgList.numbersValidationErr}}</mat-error>
+                                            <mat-error *ngIf="CustomerForm.get('Tz').errors?.pattern">
+                                                {{MsgList.numbersValidationErr}}
+                                                <mat-icon>error</mat-icon>
+                                            </mat-error>
 
+                                            <mat-error *ngIf="CustomerForm.get('Tz').errors?.required">
+                                                {{MsgList.requiredField}}
+                                                <mat-icon>error</mat-icon>
+                                            </mat-error>
                                         </mat-form-field>
                                     </div>
                                 </div>
@@ -257,62 +303,104 @@
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>עיר</mat-label>
-                                            <input matInput placeholder="עיר" formControlName="CityName" tabindex="9" pattern="^([^0-9]*)$">
-                                            <button class="clearButton" *ngIf="CustomerForm.get('CityName').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('CityName').setValue('')">
+                                            <input matInput placeholder="עיר" formControlName="CityName" tabindex="9"
+                                                pattern="^([^0-9]*)$">
+                                            <button class="clearButton" *ngIf="CustomerForm.get('CityName').value != ''"
+                                                mat-button matPrefix mat-icon-button aria-label="Clear"
+                                                (click)="this.CustomerForm.get('CityName').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
-                                            <mat-error *ngIf="CustomerForm.get('CityName').errors?.pattern">{{MsgList.lettersValidationErr}}</mat-error>
+                                            <mat-error *ngIf="CustomerForm.get('CityName').errors?.pattern">
+                                                {{MsgList.lettersValidationErr}}
+                                                <mat-icon>error</mat-icon>
+                                            </mat-error>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>מספר דירה</mat-label>
-                                            <input matInput placeholder="מספר דירה" formControlName="ApartmentNo" tabindex="13" pattern="[0-9]*" numbersOnly>
-                                            <button class="clearButton" *ngIf="CustomerForm.get('ApartmentNo').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('ApartmentNo').setValue('')">
+                                            <input matInput placeholder="מספר דירה" formControlName="ApartmentNo"
+                                                tabindex="13" pattern="[0-9]*" numbersOnly>
+                                            <button class="clearButton"
+                                                *ngIf="CustomerForm.get('ApartmentNo').value != ''" mat-button matPrefix
+                                                mat-icon-button aria-label="Clear"
+                                                (click)="this.CustomerForm.get('ApartmentNo').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
-                                            <mat-error *ngIf="CustomerForm.get('ApartmentNo').errors?.pattern">{{MsgList.numbersValidationErr}}</mat-error>
+                                            <mat-error *ngIf="CustomerForm.get('ApartmentNo').errors?.pattern">
+                                                {{MsgList.numbersValidationErr}}
+                                                <mat-icon>error</mat-icon>
+                                            </mat-error>
                                         </mat-form-field>
                                     </div>
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>רחוב</mat-label>
-                                            <input matInput placeholder="רחוב" formControlName="Streetno" tabindex="10" pattern="^([^0-9]*)$">
-                                            <button class="clearButton" *ngIf="CustomerForm.get('Streetno').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('Streetno').setValue('')">
+                                            <input matInput placeholder="רחוב" formControlName="Streetno" tabindex="10"
+                                                pattern="^([^0-9]*)$">
+                                            <button class="clearButton" *ngIf="CustomerForm.get('Streetno').value != ''"
+                                                mat-button matPrefix mat-icon-button aria-label="Clear"
+                                                (click)="this.CustomerForm.get('Streetno').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
-                                            <mat-error *ngIf="CustomerForm.get('Streetno').errors?.pattern">{{MsgList.lettersValidationErr}}</mat-error>
+                                            <mat-error *ngIf="CustomerForm.get('Streetno').errors?.pattern">
+                                                {{MsgList.lettersValidationErr}}
+                                                <mat-icon>error</mat-icon>
+                                            </mat-error>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>קומה</mat-label>
-                                            <input matInput placeholder="קומה" formControlName="floor" tabindex="14" pattern="[0-9]*" numbersOnly>
-                                            <button class="clearButton" *ngIf="CustomerForm.get('floor').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('floor').setValue('')">
+                                            <input matInput placeholder="קומה" formControlName="floor" tabindex="14"
+                                                pattern="[0-9]*" numbersOnly>
+                                            <button class="clearButton" *ngIf="CustomerForm.get('floor').value != ''"
+                                                mat-button matPrefix mat-icon-button aria-label="Clear"
+                                                (click)="this.CustomerForm.get('floor').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
-                                            <mat-error *ngIf="CustomerForm.get('floor').errors?.pattern">{{MsgList.numbersValidationErr}}</mat-error>
+                                            <mat-error *ngIf="CustomerForm.get('floor').errors?.pattern">
+                                                {{MsgList.numbersValidationErr}}
+                                                <mat-icon>error</mat-icon>
+                                            </mat-error>
                                         </mat-form-field>
                                     </div>
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>מספר בית</mat-label>
-                                            <input matInput placeholder="מספר בית" formControlName="HouseNumber" tabindex="11" pattern="[0-9]*" numbersOnly>
-                                            <button class="clearButton" *ngIf="CustomerForm.get('HouseNumber').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('HouseNumber').setValue('')">
+                                            <input matInput placeholder="מספר בית" formControlName="HouseNumber"
+                                                tabindex="11" pattern="[0-9]*" numbersOnly>
+                                            <button class="clearButton"
+                                                *ngIf="CustomerForm.get('HouseNumber').value != ''" mat-button matPrefix
+                                                mat-icon-button aria-label="Clear"
+                                                (click)="this.CustomerForm.get('HouseNumber').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
-                                            <mat-error *ngIf="CustomerForm.get('HouseNumber').errors?.pattern">{{MsgList.numbersValidationErr}}</mat-error>
+                                            <mat-error *ngIf="CustomerForm.get('HouseNumber').errors?.pattern">
+                                                {{MsgList.numbersValidationErr}}
+                                                <mat-icon>error</mat-icon>
+                                            </mat-error>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>מיקוד</mat-label>
-                                            <input matInput placeholder="מיקוד" formControlName="ZIP" tabindex="15" pattern="[0-9]*"  numbersOnly>
-                                            <button class="clearButton" *ngIf="CustomerForm.get('ZIP').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('ZIP').setValue('')">
+                                            <input matInput placeholder="מיקוד" formControlName="ZIP" tabindex="15"
+                                                pattern="[0-9]*" numbersOnly>
+                                            <button class="clearButton" *ngIf="CustomerForm.get('ZIP').value != ''"
+                                                mat-button matPrefix mat-icon-button aria-label="Clear"
+                                                (click)="this.CustomerForm.get('ZIP').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
-                                            <mat-error *ngIf="CustomerForm.get('ZIP').errors?.pattern">{{MsgList.numbersValidationErr}}</mat-error>
+                                            <mat-error *ngIf="CustomerForm.get('ZIP').errors?.pattern">
+                                                {{MsgList.numbersValidationErr}}
+                                                <mat-icon>error</mat-icon>
+                                            </mat-error>
                                         </mat-form-field>
                                     </div>
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>כניסה</mat-label>
-                                            <input matInput placeholder="כניסה" formControlName="Entrance" tabindex="12" >
-                                            <button class="clearButton" *ngIf="this.CustomerForm.get('Entrance').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('Entrance').setValue('')">
+                                            <input matInput placeholder="כניסה" formControlName="Entrance"
+                                                tabindex="12">
+                                            <button class="clearButton"
+                                                *ngIf="this.CustomerForm.get('Entrance').value != ''" mat-button
+                                                matPrefix mat-icon-button aria-label="Clear"
+                                                (click)="this.CustomerForm.get('Entrance').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
                                         </mat-form-field>
@@ -360,8 +448,12 @@
                                     <div class="formWrapColumn">
                                         <mat-form-field>
                                             <mat-label>הערות</mat-label>
-                                            <textarea class="multipassTextArea" matInput placeholder="הערות" formControlName="Notes" minlength="1"></textarea>
-                                            <button class="clearButton" *ngIf="this.CustomerForm.get('Notes').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('Notes').setValue('')">
+                                            <textarea class="multipassTextArea" matInput placeholder="הערות"
+                                                formControlName="Notes" minlength="1"></textarea>
+                                            <button class="clearButton"
+                                                *ngIf="this.CustomerForm.get('Notes').value != ''" mat-button matPrefix
+                                                mat-icon-button aria-label="Clear"
+                                                (click)="this.CustomerForm.get('Notes').setValue('')">
                                                 <mat-icon>close</mat-icon>
                                             </button>
                                         </mat-form-field>
@@ -375,10 +467,10 @@
                     </mat-accordion>
 
                 </div>
-                
+
             </div>
         </form>
-        
+
         <div class="delCustButtonWrap">
             <button mat-button class="deleteButton" (click)="deleteCustomer()">מחק לקוח
                 <mat-icon>delete</mat-icon>

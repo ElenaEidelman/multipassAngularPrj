@@ -1,13 +1,14 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, EventEmitter, OnInit } from '@angular/core';
 import { map, catchError } from 'rxjs/operators';
-import { Observable, of, Subject, throwError} from 'rxjs';
-import { SharedService } from './shared.service';
+import { Observable, of, Subject, throwError } from 'rxjs';
+
 import { environment } from '../../src/environments/environment';
+import { SharedService } from './Services/SharedService/shared.service';
 // import * as urlData from 'src/assets/Files/HostFile.json';
 
 const httpOptions = {
-  headers: new HttpHeaders({'Content-Type': 'application/json'})
+  headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 }
 
 @Injectable({
@@ -20,14 +21,15 @@ export class DataServiceService implements OnInit {
   //git merge origin/subBranch
 
   // baseUrl = '';
-  
-// baseUrl = 'http://tempdomain-test-3.mltp.co.il';
-// baseUrl = 'http://localhost:45036';
-// baseUrl = '';
-baseUrl = localStorage.getItem('baseUrl');
+
+  // baseUrl = 'http://tempdomain-test-3.mltp.co.il';
+  // baseUrl = 'http://localhost:45036';
+  // baseUrl = 'http://multitav.co.il';
+  // baseUrl = '';
+  baseUrl = localStorage.getItem('baseUrl');
 
 
-// baseUrl = environment.apiUrl;
+  // baseUrl = environment.apiUrl;
 
   //test beforeMerge
   /**
@@ -43,61 +45,63 @@ $ git commit –m "Some commit message"
 $ git checkout master
 $ git merge new-branch
    */
-  
 
-  constructor(private http: HttpClient, private sharedService: SharedService) { 
+
+  constructor(private http: HttpClient, private sharedService: SharedService) {
+
     this.getHost().subscribe(result => {
-      // debugger
-      localStorage.setItem('baseUrl',result['baseUrl']);
+      this.sharedService.pagesPermission.next(result['pagesPermission']);
+
+      localStorage.setItem('baseUrl', result['baseUrl']);
+
     });
   }
 
 
 
-  ngOnInit(){
-    debugger
+  ngOnInit() {
+
   }
 
-  getHost(){
+  getHost() {
     return this.http.get('../assets/Files/HostFile.json');
-
-}
-
-  SendOtp(obj){
-    debugger
-      return this.http.post(`${this.baseUrl}/api/Users/SendOtp`,obj).pipe(
-        map(result => {
-          return result;
-        }),
-        catchError(err => {
-          // localStorage.removeItem('baseUrl');
-          return of(err.message);
-
-        })
-      );
   }
-  ValidateOtp(objToOtp){
-    //debugger
-    return this.http.post(`${this.baseUrl}/api/Users/ValidateOtp`,objToOtp).pipe(
+
+  SendOtp(obj) {
+    debugger
+    return this.http.post(`${this.baseUrl}/api/Users/SendOtp`, obj).pipe(
+      map(result => {
+        return result;
+      }),
+      catchError(err => {
+        // localStorage.removeItem('baseUrl');
+        return of(err.message);
+
+      })
+    );
+  }
+  ValidateOtp(objToOtp) {
+    //
+    return this.http.post(`${this.baseUrl}/api/Users/ValidateOtp`, objToOtp).pipe(
       map(result => {
         return result;
       })
     );
-}
+  }
 
-GetHomeData(objToApi){
-  return this.http.post(`${this.baseUrl}/api/DashBoard/GetHomeData`, objToApi, httpOptions).pipe(
-    map(result => {
-      return result;
-    }),
-    catchError(err => {
-      return of(err.message);
-    })
-  );
-}
+  GetHomeData(objToApi) {
+    return this.http.post(`${this.baseUrl}/api/DashBoard/GetHomeData`, objToApi, httpOptions).pipe(
+      map(result => {
+        return result;
+      }),
+      catchError(err => {
+        return of(err.message);
+      })
+    );
+  }
 
 
-  getAllOrders(objToApi){
+  getAllOrders(objToApi) {
     return this.http.post(`${this.baseUrl}/api/Orders/GetOrders`, objToApi, httpOptions).pipe(
       map(result => {
         return result;
@@ -108,7 +112,7 @@ GetHomeData(objToApi){
     );
   }
 
-  GetOrderDetails(orderData){
+  GetOrderDetails(orderData) {
     return this.http.post(`${this.baseUrl}/api/Orders/GetOrderDetailsById`, orderData, httpOptions).pipe(
       map(result => {
         return result;
@@ -120,9 +124,9 @@ GetHomeData(objToApi){
   }
 
 
-  ApproveOrder(objToApi){
-    //debugger
-    return this.http.post(`${this.baseUrl}/api/InsertUpdateOrder/ApproveOrder`,objToApi).pipe(
+  ApproveOrder(objToApi) {
+    //
+    return this.http.post(`${this.baseUrl}/api/InsertUpdateOrder/ApproveOrder`, objToApi).pipe(
       map(result => {
         return result;
       }),
@@ -131,11 +135,11 @@ GetHomeData(objToApi){
       })
     );
   }
-  GetAllCards(objToApi){
-    //debugger
-    return this.http.post(`${this.baseUrl}/api/AllCards/GetAllCards`,objToApi).pipe(
+  GetAllCards(objToApi) {
+    //
+    return this.http.post(`${this.baseUrl}/api/AllCards/GetAllCards`, objToApi).pipe(
       map(result => {
-        //debugger
+        //
         return result;
       }),
       catchError(err => {
@@ -143,7 +147,7 @@ GetHomeData(objToApi){
       })
     );
   }
-  GetCardsByOrderId(objToApi){
+  GetCardsByOrderId(objToApi) {
     return this.http.post(`${this.baseUrl}/api/InsertUpdateOrder/GetCardsByOrderId`, objToApi).pipe(
       map(result => {
         return result;
@@ -155,7 +159,7 @@ GetHomeData(objToApi){
     );
   }
 
-  GetCardInfoById(objToApi){
+  GetCardInfoById(objToApi) {
     return this.http.post(`${this.baseUrl}/api/AllCards/GetCardInfoById`, objToApi).pipe(
       map(result => {
         return result;
@@ -166,12 +170,12 @@ GetHomeData(objToApi){
 
     );
   }
-//GetOrderExObjectById
-  
+  //GetOrderExObjectById
 
-  InsertUpdateOrder(objToApi){
+
+  InsertUpdateOrder(objToApi) {
     //api/InsertUpdateOrder/InsertUpdateOrder
-    // debugger
+    // 
     return this.http.post(`${this.baseUrl}/api/InsertUpdateOrder/InsertUpdateOrder`, objToApi).pipe(
       map(result => {
         return result;
@@ -181,7 +185,7 @@ GetHomeData(objToApi){
       })
     );
   }
-  InsertUpdateLines(objToApi){
+  InsertUpdateLines(objToApi) {
     //api/InsertUpdateOrder/InsertUpdateOrder
 
     return this.http.post(`${this.baseUrl}/api/InsertUpdateOrder/InsertUpdateLines`, objToApi).pipe(
@@ -195,7 +199,7 @@ GetHomeData(objToApi){
   }
 
 
-  GetOrdersByFilter(objToApi){
+  GetOrdersByFilter(objToApi) {
     return this.http.post(`${this.baseUrl}/api/Orders/GetOrdersByFilter`, objToApi).pipe(
       map(result => {
         return result;
@@ -206,7 +210,7 @@ GetHomeData(objToApi){
     );
   }
 
-  DeleteVoidOrder(objToApi){
+  DeleteVoidOrder(objToApi) {
     return this.http.post(`${this.baseUrl}/api/InsertUpdateOrder/DeleteVoidOrder`, objToApi).pipe(
       map(result => {
         return result;
@@ -217,22 +221,22 @@ GetHomeData(objToApi){
     );
   }
 
-  
-  GetAllCustomers(objToApi){
-    debugger
-    return this.http.post(`${this.baseUrl}/api/AllCustomers/GetAllCustomers`,objToApi).pipe(
+
+  GetAllCustomers(objToApi) {
+
+    return this.http.post(`${this.baseUrl}/api/AllCustomers/GetAllCustomers`, objToApi).pipe(
       map(result => {
-        //debugger
+        //
         return result;
       }),
       catchError(error => {
-        //debugger
+        //
         return of(error.message);
       })
     );
   }
 
-  GetCustomersByFilter(objToApi){
+  GetCustomersByFilter(objToApi) {
     return this.http.post(`${this.baseUrl}/api/AllCustomers/GetCustomersByFilter`, objToApi).pipe(
       map(result => {
         return result;
@@ -244,21 +248,21 @@ GetHomeData(objToApi){
   }
 
 
-  
-  GetAllUsers(objToApi){
-    return this.http.post(`${this.baseUrl}/api/AllUsers/GetAllUsers`,objToApi).pipe(
+
+  GetAllUsers(objToApi) {
+    return this.http.post(`${this.baseUrl}/api/AllUsers/GetAllUsers`, objToApi).pipe(
       map(result => {
-        // debugger
+        // 
         return result;
       }),
       catchError(error => {
-        // debugger
+        // 
         return of(error.message);
       })
     );
   }
 
-  GetUsersByFilter(objToApi){
+  GetUsersByFilter(objToApi) {
     return this.http.post(`${this.baseUrl}/api/AllUsers/GetUsersByFilter	`, objToApi).pipe(
       map(result => {
         return result;
@@ -269,7 +273,7 @@ GetHomeData(objToApi){
     );
   }
 
-  InsertUpdateUser(objToApi){
+  InsertUpdateUser(objToApi) {
     return this.http.post(`${this.baseUrl}/api/InsertUpdateUser/InsertUpdateUsers`, objToApi).pipe(
       map(result => {
         return result;
@@ -279,7 +283,7 @@ GetHomeData(objToApi){
       })
     );
   }
-  InsertUpdateBackOfficeUsers(objToApi){
+  InsertUpdateBackOfficeUsers(objToApi) {
     return this.http.post(`${this.baseUrl}/api/AllUsers/InsertUpdateBackOfficeUsers`, objToApi).pipe(
       map(result => {
         return result;
@@ -290,7 +294,7 @@ GetHomeData(objToApi){
     );
   }
 
-  GetUserStatus(objToApi){
+  GetUserStatus(objToApi) {
     return this.http.post(`${this.baseUrl}/api/AllUsers/GetUserStatus	
     `, objToApi).pipe(
       map(result => {
@@ -301,7 +305,7 @@ GetHomeData(objToApi){
       })
     );
   }
-  GetOrdersStatus(objToApi){
+  GetOrdersStatus(objToApi) {
     return this.http.post(`${this.baseUrl}/api/Orders/GetOrdersStatus`, objToApi).pipe(
       map(result => {
         return result;
@@ -312,8 +316,8 @@ GetHomeData(objToApi){
     );
   }
 
-  DeleteSuspendUsers(objToApi){
-    return this.http.post(`${this.baseUrl}/api/InsertUpdateUser/DeleteSuspendUsers`,objToApi).pipe(
+  DeleteSuspendUsers(objToApi) {
+    return this.http.post(`${this.baseUrl}/api/InsertUpdateUser/DeleteSuspendUsers`, objToApi).pipe(
       map(result => {
         return result;
       }),
@@ -323,8 +327,8 @@ GetHomeData(objToApi){
     );
   }
 
-  DeleteSuspendBackOfficeUsers(objToApi){
-    return this.http.post(`${this.baseUrl}/api/AllUsers/DeleteSuspendBackOfficeUsers`,objToApi).pipe(
+  DeleteSuspendBackOfficeUsers(objToApi) {
+    return this.http.post(`${this.baseUrl}/api/AllUsers/DeleteSuspendBackOfficeUsers`, objToApi).pipe(
       map(result => {
         return result;
       }),
@@ -335,9 +339,9 @@ GetHomeData(objToApi){
   }
 
 
-  
-  GetSMSFormats(objToApi){
-    return this.http.post(`${this.baseUrl}/api/SMS/GetSMSFormats`,objToApi).pipe(
+
+  GetSMSFormats(objToApi) {
+    return this.http.post(`${this.baseUrl}/api/SMS/GetSMSFormats`, objToApi).pipe(
       map(result => {
         return result;
       }),
@@ -347,8 +351,8 @@ GetHomeData(objToApi){
     );
   }
 
-  CreateOrUpdateSMSTemplate(objToApi){
-    return this.http.post(`${this.baseUrl}/api/SMS/CreateOrUpdateSMSTemplate`,objToApi).pipe(
+  CreateOrUpdateSMSTemplate(objToApi) {
+    return this.http.post(`${this.baseUrl}/api/SMS/CreateOrUpdateSMSTemplate`, objToApi).pipe(
       map(result => {
         return result;
       }),
@@ -358,8 +362,8 @@ GetHomeData(objToApi){
     );
   }
 
-  DeleteSMSTemplate(objToApi){
-    return this.http.post(`${this.baseUrl}/api/SMS/DeleteSMSTemplate`,objToApi).pipe(
+  DeleteSMSTemplate(objToApi) {
+    return this.http.post(`${this.baseUrl}/api/SMS/DeleteSMSTemplate`, objToApi).pipe(
       map(result => {
         return result;
       }),
@@ -369,8 +373,8 @@ GetHomeData(objToApi){
     );
   }
 
-  SendSampleMessage(objToApi){
-    return this.http.post(`${this.baseUrl}/api/SMS/SendSampleMessage`,objToApi).pipe(
+  SendSampleMessage(objToApi) {
+    return this.http.post(`${this.baseUrl}/api/SMS/SendSampleMessage`, objToApi).pipe(
       map(result => {
         return result;
       }),
@@ -380,11 +384,11 @@ GetHomeData(objToApi){
     );
   }
 
-  SendSMSByOrderId(objToApi){
+  SendSMSByOrderId(objToApi) {
     return this.http.post(`${this.baseUrl}/api/SMSController/SendSMSByOrderId
 
 
-    `,objToApi).pipe(
+    `, objToApi).pipe(
       map(result => {
         return result;
       }),
@@ -394,9 +398,9 @@ GetHomeData(objToApi){
     );
   }
 
-  
-  SendSMSByOrderLine(objToApi){
-    return this.http.post(`${this.baseUrl}/api/SMS/SendSMSByOrderLine`,objToApi).pipe(
+
+  SendSMSByOrderLine(objToApi) {
+    return this.http.post(`${this.baseUrl}/api/SMS/SendSMSByOrderLine`, objToApi).pipe(
       map(result => {
         return result;
       }),
@@ -406,110 +410,189 @@ GetHomeData(objToApi){
     );
   }
 
-  InsertUpdateOrderByExcel(objToApi){
-    //debugger
-    return this.http.post(`${this.baseUrl}/api/InsertUpdateOrder/InsertUpdateOrderByExcel`,objToApi).pipe(
+  InsertUpdateOrderByExcel(objToApi) {
+    //
+    return this.http.post(`${this.baseUrl}/api/InsertUpdateOrder/InsertUpdateOrderByExcel`, objToApi).pipe(
       map(result => {
-        //debugger
+        //
         return result;
       }),
       catchError(error => {
-        //debugger
+        //
         return of(error.message);
       })
     );
   }
 
-  ActivateCards(objToApi){
-    //debugger
-    return this.http.post(`${this.baseUrl}/api/AllCards/ActivateCards`,objToApi).pipe(
+  ActivateCards(objToApi) {
+    //
+    return this.http.post(`${this.baseUrl}/api/AllCards/ActivateCards`, objToApi).pipe(
       map(result => {
-        //debugger
+        //
         return result;
       }),
       catchError(error => {
-        //debugger
+        //
         return of(error.message);
       })
     );
   }
-  VoidCards(objToApi){
-    //debugger
-    return this.http.post(`${this.baseUrl}/api/AllCards/VoidCards`,objToApi).pipe(
+  VoidCards(objToApi) {
+    //
+    return this.http.post(`${this.baseUrl}/api/AllCards/VoidCards`, objToApi).pipe(
       map(result => {
-        //debugger
+        //
         return result;
       }),
       catchError(error => {
-        //debugger
+        //
         return of(error.message);
       })
     );
   }
-  CreateRealizationReports(objToApi){
-    return this.http.post(`${this.baseUrl}/api/AllReports/CreateRealizationReports`,objToApi).pipe(
+  CreateRealizationReports(objToApi) {
+    return this.http.post(`${this.baseUrl}/api/AllReports/CreateRealizationReports`, objToApi).pipe(
       map(result => {
-        //debugger
+        //
         return result;
       }),
       catchError(error => {
-        //debugger
+        //
         return of(error.message);
       })
     );
   }
-  UpdateCards(objToApi){
-    //debugger
-    return this.http.post(`${this.baseUrl}/api/AllCards/UpdateCards`,objToApi).pipe(
+  UpdateCards(objToApi) {
+    //
+    return this.http.post(`${this.baseUrl}/api/AllCards/UpdateCards`, objToApi).pipe(
       map(result => {
-        //debugger
+        //
         return result;
       }),
       catchError(error => {
-        //debugger
-        return of(error.message);
-      })
-    );
-  }
-
-  UpdateExpirationDateOfCards(objToApi){
-    //debugger
-    return this.http.post(`${this.baseUrl}/api/AllCards/UpdateExpirationDateOfCards`,objToApi).pipe(
-      map(result => {
-        //debugger
-        return result;
-      }),
-      catchError(error => {
-        //debugger
+        //
         return of(error.message);
       })
     );
   }
 
-  GetDigitalFilesList(objToApi){
-    //debugger
-    return this.http.post(`${this.baseUrl}/api/DigitalFilesList/GetDigitalFilesList`,objToApi).pipe(
+  UpdateExpirationDateOfCards(objToApi) {
+    //
+    return this.http.post(`${this.baseUrl}/api/AllCards/UpdateExpirationDateOfCards`, objToApi).pipe(
       map(result => {
-        //debugger
+        //
         return result;
       }),
       catchError(error => {
-        //debugger
+        //
         return of(error.message);
       })
     );
   }
-  
-  
-  UpdatePinCodeOfCards(objToApi){
-    //debugger
-    return this.http.post(`${this.baseUrl}/api/AllCards/UpdatePinCodeOfCards`,objToApi).pipe(
+
+  GetDigitalFilesList(objToApi) {
+    //
+    return this.http.post(`${this.baseUrl}/api/DigitalFilesList/GetDigitalFilesList`, objToApi).pipe(
       map(result => {
-        //debugger
+        //
         return result;
       }),
       catchError(error => {
-        //debugger
+        //
+        return of(error.message);
+      })
+    );
+  }
+
+
+  UpdatePinCodeOfCards(objToApi) {
+    //
+    return this.http.post(`${this.baseUrl}/api/AllCards/UpdatePinCodeOfCards`, objToApi).pipe(
+      map(result => {
+        //
+        return result;
+      }),
+      catchError(error => {
+        //
+        return of(error.message);
+      })
+    );
+  }
+
+  GetIFrameCompanyInfo(objToApi) {
+    return this.http.post(`${this.baseUrl}/api/B2CIFrame/GetIFrameCompanyInfo`, objToApi).pipe(
+      map(result => {
+        //
+        debugger
+        return result;
+      }),
+      catchError(error => {
+        //
+        return of(error.message);
+      })
+    );
+  }
+
+  InsertUpdateIFrame(objToApi) {
+    return this.http.post(`${this.baseUrl}/api/B2CIFrame/InsertUpdateIFrame`, objToApi).pipe(
+      map(result => {
+        //
+        return result;
+      }),
+      catchError(error => {
+        //
+        return of(error.message);
+      })
+    );
+  }
+
+  GetIFrameB2CLink(objToApi) {
+    return this.http.post(`${this.baseUrl}/api/B2CIFrame/GetIFrameB2CLink`, objToApi).pipe(
+      map(result => {
+        //
+        return result;
+      }),
+      catchError(error => {
+        //
+        return of(error.message);
+      })
+    );
+  }
+  GetMenuPages(objToApi) {
+    return this.http.post(`${this.baseUrl}/api/Credential/GetMenuPages`, objToApi).pipe(
+      map(result => {
+        //
+        return result;
+      }),
+      catchError(error => {
+        //
+        return of(error.message);
+      })
+    );
+  }
+
+
+  GetRoles(objToApi) {
+    return this.http.post(`${this.baseUrl}/api/Credential/GetRoles`, objToApi).pipe(
+      map(result => {
+        //
+        return result;
+      }),
+      catchError(error => {
+        //
+        return of(error.message);
+      })
+    );
+  }
+
+  GetUserToRole(objToApi) {
+    return this.http.post(`${this.baseUrl}/api/Credential/GetUserToRole`, objToApi).pipe(
+      map(result => {
+        //
+        return result;
+      }),
+      catchError(error => {
+        //
         return of(error.message);
       })
     );

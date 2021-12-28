@@ -1,8 +1,5 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { AdminNewCardComponent } from './Admin/admin-new-card/admin-new-card.component';
-import { AdminNewUserComponent } from './Admin/admin-new-user/admin-new-user.component';
-import { AdminComponent } from './Admin/admin/admin.component';
 import { AppComponent } from './app.component';
 import { AllCardsComponent } from './Cards/all-cards/all-cards.component';
 import { CardInfoComponent } from './Cards/card-info/card-info.component';
@@ -28,52 +25,78 @@ import { ExistUserComponent } from './Users/exist-user/exist-user.component';
 import { NewUserComponent } from './Users/new-user/new-user.component';
 import { ExcelFileViewComponent } from './excel/excel-file-view/excel-file-view.component';
 import { TestComponent } from './test/test.component';
+import { AdminIframeComponent } from './Admin/admin-iframe/admin-iframe.component';
+import { IframeSettingsComponent } from './Admin/admin-iframe/iframeChildren/iframe-page2/iframe-settings.component';
+import { IframeSetupComponent } from './Admin/admin-iframe/iframeChildren/iframe-thankyou/iframe-setup.component';
+import { IframeComponent } from './Admin/admin-iframe/iframeChildren/iframe-enterSum/iframe.component';
+import { LogInIframeComponent } from './Iframe/components/log-in/log-in.component';
+import { PurchasingGiftComponent } from './Iframe/components/purchasing-gift/purchasing-gift.component';
+import { ThanksPageComponent } from './Iframe/components/thanks-page/thanks-page.component';
+import { PagePermissionGuardGuard } from './guards/pagePermissionGuard/page-permission-guard.guard';
 
 const routes: Routes = [
-  {path:'', redirectTo: 'logIn', pathMatch: 'full'},
-  // { path: '**', redirectTo: 'public/home' },
-  {path: '', component: LogInComponent},
-  {path: 'logIn', component: LogInComponent},
-  {path: 'public', component: PublicComponent, canActivate: [LoginGuardGuard], children: [
-    {path: 'home', component: HomeComponent},
-    {path: 'order', component: ExecOrderComponent},
-    {path: 'order/:id', component: ExecOrderComponent},
-    {path: 'order/:id/:customerId', component: ExecOrderComponent},
-    {path: 'newOrder/:customerId', component: ExecOrderComponent},
-    // {path: 'excelOrder/:customerId', component: ExecOrderComponent},
-    // {path: 'excelOrder/:customerId', component: ExcelOrderComponent},
-    {path: 'allOrders', component: AllOrdersComponent},
-    {path: 'allOrders/:customerName', component: AllOrdersComponent},
-    {path: 'allCustomers', component: AllCustomersComponent},
-    {path: 'allCustomers/:id', component: AllCustomersComponent},
-    {path: 'newCustomer', component: NewCustomerComponent},
-    {path: 'customer/:id', component: ExistCustomerComponent  },
-    {path: 'allCards', component: AllCardsComponent},
-    {path: 'orderCards', component: OrderCardsComponent},
-    {path: 'cardInfo/:id/:userId', component: CardInfoComponent},
-    {path: 'orderLines/:orderId/:userId', component: OrderLinesComponent},
-    {path: 'orderCards/:indexId/:userId', component: OrderCardsComponent},
-    {path: 'digitalFilesList', component: DigitalFilesListComponent},
-    {path: 'reports', component: ReportsComponent},
-    {path: 'allUsers', component: AllUsersComponent},
-    // {path: 'newUser', component: NewUserComponent},
-    {path: 'user/:id', component: ExistUserComponent},
-    {path: 'newUser', component: NewUserComponent},
-    {path: 'allSMStemplates', component: AllSmsTemplatesComponent},
-    {path: 'testExpandingTable', component: TestExpandingTableComponent},
-    {path: 'excelView', component: ExcelFileViewComponent},
-    {path: 'admin', component: AdminComponent, children: [
-      {path: 'createNewUser', component: AdminNewUserComponent},
-      {path: 'createNewCard', component: AdminNewCardComponent},
-    ]},
-    {path: 'test', component: TestComponent}
-  ]},
+  { path: 'logIn', component: LogInComponent },
+  // { path: '', component: LogInComponent },
 
+  {
+    path: 'public', component: PublicComponent, canActivate: [LoginGuardGuard], children: [
+      { path: 'home', component: HomeComponent },
+      { path: 'order', component: ExecOrderComponent, canActivate: [PagePermissionGuardGuard] },
+      { path: 'newOrder', component: ExecOrderComponent, canActivate: [PagePermissionGuardGuard] },
+      { path: 'allOrders', component: AllOrdersComponent },
+      { path: 'allCustomers', component: AllCustomersComponent },
+      { path: 'newCustomer', component: NewCustomerComponent, canActivate: [PagePermissionGuardGuard] },
+      { path: 'customer', component: ExistCustomerComponent, canActivate: [PagePermissionGuardGuard] },
+      { path: 'allCards', component: AllCardsComponent },
+      { path: 'orderCards', component: OrderCardsComponent, canActivate: [PagePermissionGuardGuard] },
+      { path: 'cardInfo', component: CardInfoComponent, canActivate: [PagePermissionGuardGuard] },
+      { path: 'orderLines', component: OrderLinesComponent, canActivate: [PagePermissionGuardGuard] },
+      { path: 'digitalFilesList', component: DigitalFilesListComponent, canActivate: [PagePermissionGuardGuard] },
+      { path: 'reports', component: ReportsComponent },
+      { path: 'allUsers', component: AllUsersComponent },
+      { path: 'user', component: ExistUserComponent, canActivate: [PagePermissionGuardGuard] },
+      { path: 'newUser', component: NewUserComponent, canActivate: [PagePermissionGuardGuard] },
+      { path: 'allSMStemplates', component: AllSmsTemplatesComponent },
+      { path: 'testExpandingTable', component: TestExpandingTableComponent },
+      { path: 'excelView', component: ExcelFileViewComponent, canActivate: [PagePermissionGuardGuard] },
+
+
+      {
+        path: 'IFrame', component: AdminIframeComponent, children: [
+          {
+            path: 'iframeView', component: IframeComponent, children: [
+              { path: 'giftCard', component: LogInIframeComponent },
+            ]
+          },
+          {
+            path: 'iframeSettings', component: IframeSettingsComponent, children: [
+              { path: 'giftCard2Page', component: PurchasingGiftComponent }
+            ]
+          },
+          {
+            path: 'thankyouIframe', component: IframeSetupComponent, children: [
+              { path: 'thankyou', component: ThanksPageComponent }
+            ]
+          }
+        ]
+      },
+      { path: 'test', component: TestComponent }
+    ]
+  },
+
+  { path: 'giftCard/login', component: LogInIframeComponent },
+  { path: 'gift-card/:sum', component: PurchasingGiftComponent },
+  { path: 'gift-card', component: PurchasingGiftComponent },
+  { path: 'thankyou', component: ThanksPageComponent },
+  { path: '', redirectTo: 'logIn', pathMatch: 'full' },
+  { path: '**', component: LogInComponent },
 ];
+//http://localhost:4200/giftCard/login?companyid=bC1uVdEINfm7oJNltQd3PA2
+//https://tempdomain-test-3.mltp.co.il/giftCard/login?companyid=bC1uVdEINfm7oJNltQd3PA2
 
 @NgModule({
   imports: [RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' })],
   exports: [RouterModule]
 })
 export class AppRoutingModule {
- }
+}

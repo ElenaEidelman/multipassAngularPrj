@@ -1,0 +1,16 @@
+.iframeWrap{
+    margin: 15px 8em;
+}
+
+.iframeWrap iframe{
+    width: 100%;
+    min-height: 650px;
+    border: none;
+}
+
+
+@media screen  and (max-width: 1024px) {
+    .iframeWrap{
+        margin: 15px 1em;
+    }
+}

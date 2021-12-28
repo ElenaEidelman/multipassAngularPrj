@@ -6,13 +6,16 @@
         localStorage.setItem('user', JSON.stringify(tempObjUser));
         this.userToken = result['Token'];
 
-        if (typeof result == 'object' && result.obj != null && result.obj.length > 0) {
+        if (result.err != -1) {
 
+        }
+        else {
+          this.dialog.open(DialogComponent, {
+            data: { message: result.errdesc }
+          })
         }
       }
       else {
-          this.dialog.open(DialogComponent, {
-            data: {message: MsgList.exitSystemAlert}
-          })
-          this.sharedService.exitSystemEvent();
+
+        this.sharedService.exitSystemEvent();
       }

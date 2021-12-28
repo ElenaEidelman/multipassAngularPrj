@@ -20,8 +20,12 @@
                             <mat-form-field>
                                 <mat-label>שם לקוח</mat-label>
                                 <input matInput placeholder="שם לקוח" formControlName="OrganizationName">
-                                <mat-icon matPrefix *ngIf="this.filterCustomerForm.get('OrganizationName').value == ''">person</mat-icon>
-                                <button class="clearButton" *ngIf="this.filterCustomerForm.get('OrganizationName').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.filterCustomerForm.get('customerTz').setValue('')">
+                                <mat-icon matPrefix *ngIf="this.filterCustomerForm.get('OrganizationName').value == ''">
+                                    person</mat-icon>
+                                <button class="clearButton"
+                                    *ngIf="this.filterCustomerForm.get('OrganizationName').value != ''" mat-button
+                                    matPrefix mat-icon-button aria-label="Clear"
+                                    (click)="this.filterCustomerForm.get('OrganizationName').setValue('')">
                                     <mat-icon>close</mat-icon>
                                 </button>
                                 <!-- <mat-error *ngIf="filterCustomerForm.get('customerTz').errors?.pattern">{{MsgList.numbersValidationErr}}</mat-error> -->
@@ -33,9 +37,14 @@
                         <div>
                             <mat-form-field>
                                 <mat-label>מזהה לקוח</mat-label>
-                                <input matInput placeholder="ח.פ/עוסק מורשה" formControlName="customerTz" [attr.maxlength]="9" numbersOnly>
-                                <mat-icon matPrefix *ngIf="this.filterCustomerForm.get('customerTz').value == ''">person</mat-icon>
-                                <button class="clearButton" *ngIf="this.filterCustomerForm.get('customerTz').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.filterCustomerForm.get('customerTz').setValue('')">
+                                <input matInput placeholder="ח.פ/עוסק מורשה" formControlName="customerTz"
+                                    [attr.maxlength]="9" numbersOnly>
+                                <mat-icon matPrefix *ngIf="this.filterCustomerForm.get('customerTz').value == ''">person
+                                </mat-icon>
+                                <button class="clearButton"
+                                    *ngIf="this.filterCustomerForm.get('customerTz').value != ''" mat-button matPrefix
+                                    mat-icon-button aria-label="Clear"
+                                    (click)="this.filterCustomerForm.get('customerTz').setValue('')">
                                     <mat-icon>close</mat-icon>
                                 </button>
                                 <!-- <mat-error *ngIf="filterCustomerForm.get('customerTz').errors?.pattern">{{MsgList.numbersValidationErr}}</mat-error> -->
@@ -48,13 +57,17 @@
                             <mat-form-field dir="ltr">
                                 <mat-label>דוא''ל</mat-label>
                                 <input matInput placeholder="exp@gmail.com" formControlName="customerEmail">
-                                <mat-icon matPrefix *ngIf="this.filterCustomerForm.get('customerEmail').value == ''">email</mat-icon>
-                                <button class="clearButton" *ngIf="this.filterCustomerForm.get('customerEmail').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.filterCustomerForm.get('customerEmail').setValue('')">
+                                <mat-icon matPrefix *ngIf="this.filterCustomerForm.get('customerEmail').value == ''">
+                                    email</mat-icon>
+                                <button class="clearButton"
+                                    *ngIf="this.filterCustomerForm.get('customerEmail').value != ''" mat-button
+                                    matPrefix mat-icon-button aria-label="Clear"
+                                    (click)="this.filterCustomerForm.get('customerEmail').setValue('')">
                                     <mat-icon>close</mat-icon>
                                 </button>
                                 <mat-error *ngIf="this.filterCustomerForm.get('customerEmail').hasError('email')">
                                     {{MsgList.emailFormatValidationErr}}
-                                  </mat-error>
+                                </mat-error>
                             </mat-form-field>
                         </div>
                     </div>
@@ -62,7 +75,9 @@
                         <div>
                             <mat-form-field class="selectedFormFieldWidth">
                                 <mat-label>סטטוס</mat-label>
-                                <button class="clearButton" *ngIf="filterCustomerForm.get('OrderStatus').value != ''"  mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="filterCustomerForm.get('OrderStatus').setValue('')">
+                                <button class="clearButton" *ngIf="filterCustomerForm.get('OrderStatus').value != ''"
+                                    mat-button matPrefix mat-icon-button aria-label="Clear"
+                                    (click)="filterCustomerForm.get('OrderStatus').setValue('')">
                                     <mat-icon>close</mat-icon>
                                 </button>
                                 <mat-select formControlName="OrderStatus">
@@ -94,7 +109,7 @@
             <mat-form-field class="not100width">
                 <mat-label>סינון</mat-label>
                 <input matInput (keyup)="applyFilter($event)" placeholder="לדוגמה: פעיל" #input>
-                <mat-icon  matPrefix>filter_list</mat-icon>
+                <mat-icon matPrefix>filter_list</mat-icon>
             </mat-form-field>
 
             <div class="mat-elevation-z8">
@@ -102,11 +117,15 @@
 
                     <!-- ID Column -->
                     <ng-container *ngFor="let column of displayedColumns">
-                        <ng-container matColumnDef="{{column}}" *ngIf="column != 'newOrder'" >
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> {{returnHebTranslation(customerLabelForTable,column)}} </th>
+                        <ng-container matColumnDef="{{column}}" *ngIf="column != 'newOrder'">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                                {{returnHebTranslation(customerLabelForTable,column)}} </th>
                             <td mat-cell *matCellDef="let row">
                                 <span *ngIf="column != 'organizationName'">{{row[column]}} </span>
-                                <a [routerLink]="['/public/customer',row['id']]" *ngIf="column == 'organizationName'">{{row[column] != undefined ? row[column] : row['OrganizationName']}}</a>
+
+                                <!--[routerLink]="['/public/customer',row['id']]"-->
+                                <a (click)="goToCustomer(row['id'])" *ngIf="column == 'organizationName'">{{row[column]
+                                    != undefined ? row[column] : row['OrganizationName']}}</a>
                             </td>
                         </ng-container>
                         <ng-container matColumnDef="{{column}}" *ngIf="column == 'newOrder'" style="width:100px">
@@ -114,10 +133,12 @@
                             <td mat-cell *matCellDef="let row">
                                 <div class="flexTD">
                                     <div>
-                                        <button mat-button class="addButton tableButton" [routerLink]="['/public/orderCards',0,row['id']]">הזמנה חדשה</button>
+                                        <button mat-button class="addButton tableButton"
+                                            [routerLink]="['/public/orderCards',0,row['id']]">הזמנה חדשה</button>
                                     </div>
                                     <div>
-                                        <mat-icon class="deleteIcon" matTooltip="חסום" (click)="deleteCustomer(row)">block</mat-icon>
+                                        <mat-icon class="deleteIcon" matTooltip="חסום" (click)="deleteCustomer(row)">
+                                            block</mat-icon>
                                     </div>
                                 </div>
                             </td>

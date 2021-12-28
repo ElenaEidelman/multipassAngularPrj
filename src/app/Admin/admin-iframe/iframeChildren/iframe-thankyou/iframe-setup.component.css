@@ -1,0 +1,66 @@
+.iframeWrap{
+    /* margin: 15px 8em; */
+}
+
+.iframeWrap iframe{
+    width: 100%;
+    min-height: 650px;
+    border: none;
+}
+.wrapForm{
+    /* border: 1px solid #DDE0E0; */
+    padding: 5px;
+
+    border-top: none;
+    border-top-right-radius: 0;
+    border-right: none;
+    border-top-left-radius: 0;
+    border-bottom: none;
+}
+
+.formRow > mat-form-field{
+    width: 100%;
+}
+
+.mat-form-field{
+    padding: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+.retunPicToIframeHint{
+    text-align: left;
+}
+mat-icon.close{
+    font-size: 100%;
+}
+
+
+
+/**test*/
+
+.iframeWrap{
+    display: flex;
+    flex-direction: row-reverse;
+}
+.iframeWrap > div{
+
+}
+.iframePreview{
+    flex-grow: 2;
+    padding: 10px;
+}
+.buttonSaveIframe{
+    text-align: center;
+}
+
+/**/
+.form-wrap{
+    border-left: 1px solid #DDE0E0;
+}
+
+
+@media screen  and (max-width: 1024px) {
+    .iframeWrap{
+        margin: 15px 1em;
+    }
+}

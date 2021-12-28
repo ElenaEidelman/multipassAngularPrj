@@ -30,6 +30,19 @@ body { margin: 0; font-family: 'Assistant'; }
 table {
   width: 100%;
 }
+
+.nextLevelButton{
+  width: 100%;
+}
+
+.matIconSVGWrap{
+  width: auto;
+  height: 100% !important;
+}
+.matIconSVGWrap svg{
+  margin: auto;
+}
+
 app-main-menu{
   background: #686866;
 }
@@ -187,6 +200,9 @@ mat-form-field{
 .mat-form-field-hint-wrapper{
   flex-direction: column;
 }
+.errorColor{
+  color: red;
+}
 .error{
   color: red !important;
   text-align: center;
@@ -317,10 +333,25 @@ div.wrapStickyButtons > div > a:hover{
   color: #8FC636;
   border: 1px solid #8FC636 !important;
 }
-button.linkButton:hover{
-  border: 1px solid #EDEDED !important;
-  background: #EDEDED;
+.linkButton:hover{
+  /* border: 1px solid #EDEDED !important;
+  background: #EDEDED; */
+  background: #8FC636;
+  color: #fff;
 }
+.margin{
+  margin: auto auto auto 0 !important;
+}
+
+.linkButton:hover .icon-svg{
+  fill: white !important;
+}
+.icon-svg{
+  fill: #8FC636;
+  height: 100%;
+  margin: auto;
+}
+
 .mat-header-cell{
   font-weight: 700;
 }
@@ -388,6 +419,14 @@ table.digitalFilesTable td{
 .wrapAB > mat-spinner{
   position: absolute;
   top: -15px;
+}
+
+.spinnerWrap{
+  background: rgba(0,0,0,0.2);
+  width: 100%;
+  z-index: 9999;
+  height: 100%;
+  position: absolute;
 }
 
 .datePickerPadding div.mat-form-field-flex{
@@ -734,12 +773,20 @@ textarea.templateTextArea + span > label{
   color: #8FC636;
   /* font-weight: bold; */
 }
+.infoIcon{
+  width: 100% !important;
+  text-align: center;
+}
 .infoMessage{
-  color: #F7B32B;
+  color: #535353;
   font-weight: bold;
+  text-align: center;
+}
+.infoMsg{
+  position: relative;
 }
 .flickerTitle{
-  color: #F7B32B;
+  color: #535353;
   -webkit-animation: flickerAnimation 1s infinite;
   -moz-animation: flickerAnimation 1s infinite;
   -o-animation: flickerAnimation 1s infinite;
@@ -788,6 +835,17 @@ mat-form-field.Picker input.mat-datepicker-input ~ span.mat-form-field-label-wra
 .logInForm label
 {
     color: #676766 !important;
+}
+
+.spinner{
+  position: absolute !important;
+  /* top: -2em;
+  left: 1em; */
+  width: 100% !important;
+}
+
+.spinner svg{
+  width: 100% !important;
 }
 
 
@@ -1052,6 +1110,18 @@ th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:
 /* rewrite end */
 
 
+
+.adminPageSideNav .mat-button-wrapper{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+.adminPageSideNav .mat-button-wrapper mat-icon{
+  height: 100%;
+  margin: auto 0;
+}
+
+
 /* mobile */
 
 @media screen and (max-width: 1024px){
@@ -1295,6 +1365,13 @@ th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:
 button.darkGreyButton:hover{
   background: #88C43E !important;
 }
+mat-icon:hover{
+  cursor: pointer;
+}
+mat-icon.routActive{
+  color: #88C43E !important;
+  background: #fff !important;
+}
 .routActive{
   background: #88C43E !important;
   box-shadow: none !important;
@@ -1340,8 +1417,14 @@ fa-icon > svg{
 }
 
 
+.dirRTL{
+  direction: rtl;
+}
 
 
+mat-form-field.marginTop0 > div.mat-form-field-wrapper > div.mat-form-field-flex > div.mat-form-field-infix > span.mat-form-field-label-wrapper > label.mat-form-field-label{
+  margin-top: 0 !important;
+}
 
 
 @media screen and (max-width: 1024px){
@@ -1375,6 +1458,12 @@ fa-icon > svg{
     /* width: unset;  order/id mobile problem*/ 
 }
 }
+
+
+
+
+
+
 
 
 

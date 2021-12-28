@@ -1,7 +1,7 @@
 <div class="pageTitle main2-title sticky top100">
     <div>הפקת דוחות</div>
 </div>
-<div class="page-wrap">
+<div class="page-wrap reports">
     <div class="page-element width-block-auto">
         <!-- <div class="element-page-title">{{elementTitle}}</div> -->
 
@@ -49,12 +49,15 @@
                                                 {{MsgList.requiredField}}</mat-error>
                                             <mat-error *ngIf="Report1Form.get('CustomerEmail').hasError('email')">
                                                 {{MsgList.emailFormatValidationErr}}</mat-error>
-                                            <mat-hint class="error2 textAlignRight"
+                                            <!-- <mat-hint class="error2 textAlignRight"
                                                 [@openClose]="radioCurrentDayPressed1Form">* הדוח לא יכיל מידע עבור יום
-                                                העסקים הנוכחי</mat-hint>
-                                                <button class="clearButton" *ngIf="Report1Form.get('CustomerEmail').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="Report1Form.get('CustomerEmail').setValue('')">
-                                                    <mat-icon>close</mat-icon>
-                                                </button>
+                                                העסקים הנוכחי</mat-hint> -->
+                                            <button class="clearButton"
+                                                *ngIf="Report1Form.get('CustomerEmail').value != ''" mat-button
+                                                matPrefix mat-icon-button aria-label="Clear"
+                                                (click)="Report1Form.get('CustomerEmail').setValue('')">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
                                         </mat-form-field>
 
                                     </div>
@@ -89,13 +92,15 @@
                                                 class="datePicker datePickerPadding marginTop-1">
                                                 <mat-label>מתאריך</mat-label>
                                                 <input matInput [matDatepicker]="picker"
-                                                    [disabled]="!rangeOfDatesDatePickerView1Form" formControlName="FDate" [max]="maxDateForReport">
+                                                    [disabled]="!rangeOfDatesDatePickerView1Form"
+                                                    formControlName="FDate" [max]="maxDateForReport">
                                                 <!-- <button class="clearButton" *ngIf="Report1Form.get('ValidateDate').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('ValidateDate').setValue('')">
                                                     <mat-icon>close</mat-icon>
                                                 </button> -->
                                                 <mat-datepicker-toggle
                                                     [class.matDatepickerDisabled]="!rangeOfDatesDatePickerView1Form"
-                                                    [disabled]="!rangeOfDatesDatePickerView1Form" matSuffix [for]="picker">
+                                                    [disabled]="!rangeOfDatesDatePickerView1Form" matSuffix
+                                                    [for]="picker">
                                                 </mat-datepicker-toggle>
                                                 <mat-datepicker #picker></mat-datepicker>
                                                 <mat-error *ngIf="Report1Form.get('FDate').hasError('required')">
@@ -109,7 +114,8 @@
                                             class="datePicker datePickerPadding marginTop-1">
                                             <mat-label>עד תאריך</mat-label>
                                             <input matInput [matDatepicker]="picker2"
-                                                [disabled]="!rangeOfDatesDatePickerView1Form" formControlName="TDate" [max]="maxDateForReport">
+                                                [disabled]="!rangeOfDatesDatePickerView1Form" formControlName="TDate"
+                                                [max]="maxDateForReport">
                                             <mat-datepicker-toggle
                                                 [class.matDatepickerDisabled]="!rangeOfDatesDatePickerView1Form"
                                                 [disabled]="!rangeOfDatesDatePickerView1Form" matSuffix [for]="picker2">
@@ -127,6 +133,12 @@
                                 </div>
 
                             </div>
+                            <div class="dirRTL hintMargin">
+                                <mat-hint class="error2 textAlignRight" [@openClose]="radioCurrentDayPressed1Form">*
+                                    הדוח לא יכיל מידע עבור יום
+                                    העסקים הנוכחי
+                                </mat-hint>
+                            </div>
                             <!-- <div class="error textAlignRight" [@openClose]="radioCurrentDayPressed">* הדוח לא יכיל מידע עבור יום העסקים הנוכחי</div> -->
                             <div class="buttonsWrap">
                                 <button mat-button class="linkButton" (click)="resetForm('Report1Form')">אפס</button>
@@ -134,6 +146,12 @@
                             </div>
                         </form>
 
+                        <!-- <div class="dirRTL">
+                            <mat-hint class="error2 textAlignRight"
+                                      [@openClose]="radioCurrentDayPressed1Form">* הדוח לא יכיל מידע עבור יום
+                                        העסקים הנוכחי
+                            </mat-hint>
+                        </div> -->
                     </div>
                 </div>
 
@@ -158,7 +176,7 @@
                                         <div>
                                             <mat-form-field>
                                                 <mat-label>שם לקוח</mat-label>
-                                                <mat-select formControlName="customer" 
+                                                <mat-select formControlName="customer"
                                                     (selectionChange)="optionChange($event)">
                                                     <ng-container *ngFor="let customer of customers; let i = index">
                                                         <mat-option [value]="customer">
@@ -182,9 +200,12 @@
                                                     {{MsgList.requiredField}}</mat-error>
                                                 <mat-error *ngIf="Report2Form.get('CustomerEmail').hasError('email')">
                                                     {{MsgList.emailFormatValidationErr}}</mat-error>
-                                                    <button class="clearButton" *ngIf="Report2Form.get('CustomerEmail').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="Report2Form.get('CustomerEmail').setValue('')">
-                                                        <mat-icon>close</mat-icon>
-                                                    </button>
+                                                <button class="clearButton"
+                                                    *ngIf="Report2Form.get('CustomerEmail').value != ''" mat-button
+                                                    matPrefix mat-icon-button aria-label="Clear"
+                                                    (click)="Report2Form.get('CustomerEmail').setValue('')">
+                                                    <mat-icon>close</mat-icon>
+                                                </button>
                                             </mat-form-field>
                                         </div>
                                     </div>
@@ -292,12 +313,12 @@
                                                 {{MsgList.requiredField}}</mat-error>
                                             <mat-error *ngIf="Report3Form.get('CustomerEmail').hasError('email')">
                                                 {{MsgList.emailFormatValidationErr}}</mat-error>
-                                            <mat-hint class="error2 textAlignRight"
-                                                [@openClose]="radioCurrentDayPressed3Form">* הדוח לא יכיל מידע עבור יום
-                                                העסקים הנוכחי</mat-hint>
-                                                <button class="clearButton" *ngIf="Report3Form.get('CustomerEmail').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="Report3Form.get('CustomerEmail').setValue('')">
-                                                    <mat-icon>close</mat-icon>
-                                                </button>
+                                            <button class="clearButton"
+                                                *ngIf="Report3Form.get('CustomerEmail').value != ''" mat-button
+                                                matPrefix mat-icon-button aria-label="Clear"
+                                                (click)="Report3Form.get('CustomerEmail').setValue('')">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
                                         </mat-form-field>
 
                                     </div>
@@ -332,13 +353,15 @@
                                                 class="datePicker datePickerPadding marginTop-1">
                                                 <mat-label>מתאריך</mat-label>
                                                 <input matInput [matDatepicker]="picker"
-                                                    [disabled]="!rangeOfDatesDatePickerView3Form" formControlName="FDate" [max]="maxDateForReport">
+                                                    [disabled]="!rangeOfDatesDatePickerView3Form"
+                                                    formControlName="FDate" [max]="maxDateForReport">
                                                 <!-- <button class="clearButton" *ngIf="Report3Form.get('ValidateDate').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('ValidateDate').setValue('')">
                                                     <mat-icon>close</mat-icon>
                                                 </button> -->
                                                 <mat-datepicker-toggle
                                                     [class.matDatepickerDisabled]="!rangeOfDatesDatePickerView3Form"
-                                                    [disabled]="!rangeOfDatesDatePickerView3Form" matSuffix [for]="picker">
+                                                    [disabled]="!rangeOfDatesDatePickerView3Form" matSuffix
+                                                    [for]="picker">
                                                 </mat-datepicker-toggle>
                                                 <mat-datepicker #picker></mat-datepicker>
                                                 <mat-error *ngIf="Report3Form.get('FDate').hasError('required')">
@@ -352,7 +375,8 @@
                                             class="datePicker datePickerPadding marginTop-1">
                                             <mat-label>עד תאריך</mat-label>
                                             <input matInput [matDatepicker]="picker2"
-                                                [disabled]="!rangeOfDatesDatePickerView3Form" formControlName="TDate" [max]="maxDateForReport">
+                                                [disabled]="!rangeOfDatesDatePickerView3Form" formControlName="TDate"
+                                                [max]="maxDateForReport">
                                             <mat-datepicker-toggle
                                                 [class.matDatepickerDisabled]="!rangeOfDatesDatePickerView3Form"
                                                 [disabled]="!rangeOfDatesDatePickerView3Form" matSuffix [for]="picker2">
@@ -370,13 +394,18 @@
                                 </div>
 
                             </div>
+                            <div class="dirRTL hintMargin">
+                                <mat-hint class="error2 textAlignRight" [@openClose]="radioCurrentDayPressed3Form">*
+                                    הדוח לא יכיל מידע עבור יום
+                                    העסקים הנוכחי
+                                </mat-hint>
+                            </div>
                             <!-- <div class="error textAlignRight" [@openClose]="radioCurrentDayPressed">* הדוח לא יכיל מידע עבור יום העסקים הנוכחי</div> -->
                             <div class="buttonsWrap">
                                 <button mat-button class="linkButton" (click)="resetForm('Report3Form')">אפס</button>
                                 <button type="submit" mat-button class="addButton">שלח</button>
                             </div>
                         </form>
-
                     </div>
                 </div>
 

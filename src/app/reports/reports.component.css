@@ -3,6 +3,10 @@
     flex-direction: column;
     justify-content: space-around;
 }
+
+.reports .formWrap{
+    flex-direction: column;
+}
 .wrapReportForm > div{
     width: 100%;
 }
@@ -21,6 +25,9 @@ mat-form-field{
 }
 .checkBoxWrap{
     margin: 23px 0;
+}
+.hintMargin{
+    margin: 0 30px;
 }
 
 .mat-form-field-appearance-fill .mat-form-field-label {

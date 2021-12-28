@@ -1,17 +1,36 @@
 <div class="sticky">
     <div class="align-center ">
-        <button mat-fab routerLink="/public/orderCards" routerLinkActive="routActive" matTooltip="הזמנה חדשה" matTooltipPosition="after"  class="darkGreyButton important-button-margin">
+        <button mat-fab routerLink="/public/orderCards" routerLinkActive="routActive" matTooltip="הזמנה חדשה"
+            matTooltipPosition="after" class="addButton important-button-margin">
             <mat-icon>post_add</mat-icon>
         </button>
     </div>
     <div class="wrap-main-menu bgColorMainMenu">
-        <div><a mat-button [routerLink]="['/public/allOrders']" routerLinkActive="routActive" >הזמנות</a></div>
+        <div *ngFor="let menu of permissionMenuList">
+            <div>
+                <a mat-button [routerLink]="['/public/', menu.MenuEngName]"
+                    routerLinkActive="routActive">{{menu.MenuName}}</a>
+            </div>
+            <!-- <div *ngIf="menu.MenuEngName == 'IFrame'">
+                <a mat-button [routerLink]="['/public/iframe']" routerLinkActive="routActive">{{menu.MenuName}}</a>
+            </div> -->
+        </div>
+
+
+
+
+
+        <!-- <div><a mat-button [routerLink]="['/public/allOrders']" routerLinkActive="routActive">הזמנות</a></div>
         <div><a mat-button [routerLink]="['/public/allCards']" routerLinkActive="routActive">שוברים</a></div>
-        <!-- <div><a mat-button routerLink="/public/digitalFilesList" routerLinkActive="routActive">קבצים דיגיטלים</a></div> -->
         <div><a mat-button [routerLink]="['/public/allCustomers']" routerLinkActive="routActive">לקוחות</a></div>
         <div><a mat-button [routerLink]="['/public/reports']" routerLinkActive="routActive">דוחות</a></div>
         <div><a mat-button [routerLink]="['/public/allUsers']" routerLinkActive="routActive">משתמשים</a></div>
-        <div><a mat-button [routerLink]="['/public/allSMStemplates']" routerLinkActive="routActive">SMS תבנית </a></div>
+        <div><a mat-button [routerLink]="['/public/allSMStemplates']" routerLinkActive="routActive">SMS תבנית </a></div> -->
+
+
+
+
+
         <!-- <div><a mat-button routerLink="/public/home" routerLinkActive="routActive">מימושים</a></div> -->
     </div>
 </div>

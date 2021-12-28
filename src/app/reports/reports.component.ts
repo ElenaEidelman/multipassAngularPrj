@@ -4,9 +4,10 @@ import { DataServiceService } from 'src/app/data-service.service';
 import { ActivatedRoute, RouterLinkActive } from '@angular/router';
 import { DialogComponent } from '../PopUps/dialog/dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-import { SharedService } from '../shared.service';
+
 import { MsgList } from '../Classes/msgsList';
 import { animate, state, style, transition, trigger } from '@angular/animations';
+import { SharedService } from '../Services/SharedService/shared.service';
 @Component({
   selector: 'app-reports',
   templateUrl: './reports.component.html',
@@ -58,7 +59,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
 
   Report1Form = this.fb.group({
     // sendImmedCheckB:[{ value: '', disabled: false }],
-    CurrentReport: "Loading",
+    CurrentReport: "Realization",
     FDate: [{ value: '', disabled: false }],
     TDate: [{ value: '', disabled: false }],
     CustomerEmail: [{ value: '', disabled: false }, [Validators.required, Validators.email]],
@@ -85,7 +86,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
 
   Report3Form = this.fb.group({
     // sendImmedCheckB:[{ value: '', disabled: false }],
-    CurrentReport: "Realization",
+    CurrentReport: "Loading",
     FDate: [{ value: '', disabled: false }],
     TDate: [{ value: '', disabled: false }],
     CustomerEmail: [{ value: '', disabled: false }, [Validators.required, Validators.email]],
@@ -145,10 +146,9 @@ export class ReportsComponent implements OnInit, AfterViewInit {
 
 
     let maxDateForRep = new Date(new Date().setDate(new Date().getDate() - 1));
-    this.maxDateForReport = new Date(maxDateForRep.getFullYear(), maxDateForRep.getMonth(), maxDateForRep.getDate(), 23,59,59);
-    this.maxDateForReportSpare = new Date(maxDateForRep.getFullYear(), maxDateForRep.getMonth(), maxDateForRep.getDate(), 23,59,59);
-    
-    debugger
+    this.maxDateForReport = new Date(maxDateForRep.getFullYear(), maxDateForRep.getMonth(), maxDateForRep.getDate(), 23, 59, 59);
+    this.maxDateForReportSpare = new Date(maxDateForRep.getFullYear(), maxDateForRep.getMonth(), maxDateForRep.getDate(), 23, 59, 59);
+
   }
 
   loadingReport(reportName) {
@@ -159,19 +159,26 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         this[reportName].get('TDate').setValue(new Date(reportDate.getFullYear(), reportDate.getMonth(), reportDate.getDate(), 23, 59, 59));
       }
 
+
+      //2019 11 21 09:53:10 GMT
+
+      let FDate = new Date(this[reportName].get('FDate').value);
+      let TDate = new Date(this[reportName].get('TDate').value.toISOString());
+
+      let fdTEST = FDate.getFullYear() + ' ' + ((FDate.getMonth() + 1) < 10 ? '0' + (FDate.getMonth() + 1) : (FDate.getMonth() + 1)) + ' ' + (FDate.getDate() < 10 ? '0' + FDate.getDate() : FDate.getDate()) + ' 00:00:00 GMT';
+      let tdTEST = TDate.getFullYear() + ' ' + ((TDate.getMonth() + 1) < 10 ? '0' + (TDate.getMonth() + 1) : (TDate.getMonth() + 1)) + ' ' + (TDate.getDate() < 10 ? '0' + TDate.getDate() : TDate.getDate()) + ' 23:59:59 GMT';
+
       let objToApi = {
         Token: this.userToken,
         UserId: this[reportName].get('customer').value.id,
         CurrentReport: this[reportName].get('CurrentReport').value,
         CanceledCheckB: this[reportName].get('CanceledCheckB').value.toString() == '' ? 'false' : this[reportName].get('CanceledCheckB').value.toString(),
-        FDate: this[reportName].get('FDate').value,
-        TDate: this[reportName].get('TDate').value,
+        FDate: new Date(fdTEST).toISOString(),
+        TDate: new Date(tdTEST).toISOString(),
         customeremail: this[reportName].get('CustomerEmail').value
       }
 
-      debugger
       this.dataService.CreateRealizationReports(objToApi).subscribe(result => {
-        debugger
         if (result['Token'] != undefined || result['Token'] != null) {
           //set new token
           let tempObjUser = JSON.parse(localStorage.getItem('user'));
@@ -201,7 +208,6 @@ export class ReportsComponent implements OnInit, AfterViewInit {
           // this.dialog.open(DialogComponent, {
           //   data: {message: MsgList.exitSystemAlert}
           // })
-          debugger
           this.sharedService.exitSystemEvent();
         }
       })
@@ -256,7 +262,6 @@ export class ReportsComponent implements OnInit, AfterViewInit {
           // this.dialog.open(DialogComponent, {
           //   data: {message: MsgList.exitSystemAlert}
           // })
-          debugger
           this.sharedService.exitSystemEvent();
         }
 
@@ -354,7 +359,11 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         this.userToken = result['Token'];
 
         if (typeof result == 'object' && result.obj != null && result.obj.length > 0) {
-          this.customers = result['obj'];
+          this.customers = result['obj'].sort(function (a, b) {
+            if (a.organizationName < b.organizationName) { return -1; }
+            if (a.organizationName > b.organizationName) { return 1; }
+            return 0;
+          });;
           this.Report1Form.get('customer').setValue({ organizationName: 'כל הלקוחות', id: '0' });
           this.Report3Form.get('customer').setValue({ organizationName: 'כל הלקוחות', id: '0' });
           this.customers.unshift({ organizationName: 'כל הלקוחות', id: '0' })
@@ -385,7 +394,6 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         // this.dialog.open(DialogComponent, {
         //   data: {message: MsgList.exitSystemAlert}
         // })
-        debugger
         this.sharedService.exitSystemEvent();
       }
 
@@ -428,6 +436,8 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         this.maxDateForReport = this.maxDateForReportSpare;
 
         this[form].get('FDate').setValue(new Date(date.getFullYear(), date.getMonth(), 1, 0, 0, 0))
+
+
         this[form].get('TDate').setValue(new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1, 23, 59, 59))
 
       }
@@ -443,7 +453,6 @@ export class ReportsComponent implements OnInit, AfterViewInit {
       }
     }
     else if (form == 'Report3Form') {
-      debugger
       if (event.value == 'currentDay') {
         this.radioCurrentDayPressed3Form = false;
         this.rangeOfDatesDatePickerView3Form = false;

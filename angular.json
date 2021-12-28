@@ -25,12 +25,12 @@
             ],
             "allowedCommonJsDependencies": [
               "lodash"
-           ],
+            ],
             "styles": [
-            
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/custom-theme.scss",
-              "src/styles.css"
+              "src/styles.css",
+              "src/stylesIframe.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
@@ -98,7 +98,8 @@
             ],
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "src/styles.css"
+              "src/styles.css",
+              "src/stylesIframe.css"
             ],
             "scripts": []
           }
@@ -126,9 +127,6 @@
             "production": {
               "devServerTarget": "RamiLeviAngularPrj:serve:production"
             }
-
-
-            
           }
         }
       }

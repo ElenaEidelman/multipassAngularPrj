@@ -1,10 +1,12 @@
-export const MsgList =  {
-    numbersValidationErr: 'נא להזין רק מספרים', 
+export const MsgList = {
+    numbersValidationErr: 'נא להזין רק מספרים',
     lettersValidationErr: 'נא להזין רק  אותיות',
     dateFormatValidationErr: 'נא להזין רק תאריך',
     emailFormatValidationErr: 'כתובת אימייל לא תקינה',
     requiredField: 'שדה חובה',
     exitSystemAlert: 'התנתקת מהמערכת, נא להתחבר שוב',
     phonePatternErr: 'מספר טלפון שגוי',
-    sendSuccessfully: 'נשלח בהצלחה'
+    sendSuccessfully: 'נשלח בהצלחה',
+    fillAllFieldsError: 'נא להזין שדות חובה',
+    savedSuccessfully: 'נשמר בהצלחה',
 }

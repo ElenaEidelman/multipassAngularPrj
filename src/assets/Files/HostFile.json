@@ -1,4 +1,5 @@
 {
     "baseUrl": "http://localhost:45036",
-    "DevMode" : "true"
+    "DevMode": "true",
+    "pagesPermission": "true"
 }

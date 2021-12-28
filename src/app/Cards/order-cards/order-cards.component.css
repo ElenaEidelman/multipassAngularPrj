@@ -1,19 +1,32 @@
-.formWrapRow{
+.formRow{
+    /* display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between; */
+}
+
+.wrapForm{
+    display: flex;
+    flex-direction: column;
+}
+
+.formRow{
     display: flex;
     flex-direction: row-reverse;
     justify-content: space-between;
 }
 
-.formWrapRow > div{
+.formRow > div.formRowChild{
     flex-grow: 1;
-    margin: 1em 2em;
-    justify-content: center;
     flex-basis: 0;
+    margin: 0 15px;
 
 }
-.formWrapRow > div > mat-form-field{
-    width:100%;
+.formRowChild mat-form-field{
+    width: 100%;
 }
+/* .formRow > div > mat-form-field{
+    width:100%;
+} */
 .wrapSelectUser{
     display: flex;
     flex-direction: row-reverse;
@@ -99,6 +112,9 @@ mat-hint{
     color: #272626;
 }
 
+.formWrapRow  mat-form-field{
+    width: 100%;
+}
 /* .addButton {
     background: #88C43E !important;
     color: #fff !important;

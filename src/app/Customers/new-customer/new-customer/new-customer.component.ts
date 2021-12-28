@@ -7,13 +7,14 @@ import { Router } from '@angular/router';
 import { MsgList } from 'src/app/Classes/msgsList';
 import { DataServiceService } from 'src/app/data-service.service';
 import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
-import { SharedService } from 'src/app/shared.service';
+import { SharedService } from 'src/app/Services/SharedService/shared.service';
+
 
 @Component({
   selector: 'app-new-customer',
   templateUrl: './new-customer.component.html',
   styleUrls: ['./new-customer.component.css'],
-  animations:[
+  animations: [
     trigger('openClose', [
       state('true', style({
         overflow: 'hidden',
@@ -39,6 +40,8 @@ export class NewCustomerComponent implements OnInit {
 
   @ViewChild(MatAccordion) accordion: MatAccordion;
   @Input() IfComponentDialog = false;
+  @Input() formNewCustomer = '';
+  @Input() controllerNewCustomer = '';
 
   userToken: string;
   errorActionButtons: string = '';
@@ -53,10 +56,10 @@ export class NewCustomerComponent implements OnInit {
     OrganizationName: ['', Validators.required], //Validators.required
     FName: (''),
     LName: (''),
-    Email: ['', [Validators.email, Validators.required]], //Validators.required,
-    Phone: ['',  [Validators.required, Validators.pattern('[[0][0-9]{9}]*')]],
+    Email: ['', [Validators.required, Validators.email]], //Validators.required,
+    Phone: ['', [Validators.required, Validators.pattern('[[0][0-9]{8,9}]*')]],//["", { validators: [Validators.required], updateOn: "blur" }]
     Permission: ['מנהל באק אופיס', Validators.required], // Validators.required
-    Phone1: ['', Validators.pattern('[[0][0-9]{9}]*')],
+    Phone1: ['', [Validators.pattern('[[0][0-9]{8,9}]*')]],
     userNumber: [{ value: '', disabled: true }], //?
     CityName: (''),//v
     Streetno: (''),//v
@@ -70,9 +73,10 @@ export class NewCustomerComponent implements OnInit {
     Tz: ['', Validators.required], //, Validators.required
     Notes: (''),
     BusinessFile: ('/test.txt') //must to be required Validators.required
-  });
+  },
+    { updateOn: "blur" });
 
-  rolesList = ['מנהל באק אופיס','מפעיל באק אופיס'];
+  rolesList = ['מנהל באק אופיס', 'מפעיל באק אופיס'];
 
 
 
@@ -80,12 +84,9 @@ export class NewCustomerComponent implements OnInit {
     window.scroll(0, 0);
     this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
     this.getUserStatus();
-
-    let test = this.IfComponentDialog;
-    debugger
   }
 
-  getUserStatus(){
+  getUserStatus() {
     let objToApi = {
       Token: this.userToken
     }
@@ -98,16 +99,20 @@ export class NewCustomerComponent implements OnInit {
         localStorage.setItem('user', JSON.stringify(tempObjUser));
         this.userToken = result['Token'];
 
-        if(result.obj != null && result.obj != undefined && Object.keys(result.obj).length > 0){
-          
-        this.statusList = [...result.obj];
-      
+        if (result.obj != null && result.obj != undefined && Object.keys(result.obj).length > 0) {
 
-        let statusSet = this.statusList.filter(status => {
-          return status.StatusId == 2;
-        });
+          this.statusList = [...result.obj].sort(function (a, b) {
+            if (a.Description < b.Description) { return -1; }
+            if (a.Description > b.Description) { return 1; }
+            return 0;
+          });;
 
-        this.newCustomerForm.get('StatusId').setValue(statusSet[0]['StatusId']);
+
+          let statusSet = this.statusList.filter(status => {
+            return status.StatusId == 2;
+          });
+
+          this.newCustomerForm.get('StatusId').setValue(statusSet[0]['StatusId']);
         }
       }
       else {
@@ -123,7 +128,7 @@ export class NewCustomerComponent implements OnInit {
   saveForm() {
     if (this.newCustomerForm.valid) {
       this.saveFormSpinner = true;
-      
+
       let objToApi = {
         Token: this.userToken, //req
       }
@@ -132,19 +137,16 @@ export class NewCustomerComponent implements OnInit {
         if (this.newCustomerForm.get(control).value != '' && control != 'StatusId') {
           objToApi[control] = this.newCustomerForm.get(control).value
         }
-        else if(control == 'HouseNumber'){
+        else if (control == 'HouseNumber') {
           objToApi['Address'] = this.newCustomerForm.get(control).value;
         }
-        else if(control == 'StatusId'){
-        
+        else if (control == 'StatusId') {
+
           objToApi[control] = this.statusList.filter(status => status.StatusId == this.newCustomerForm.get(control).value)[0]['StatusId']
         }
       });
 
-    
-      debugger
       this.dataService.InsertUpdateUser(objToApi).subscribe(result => {
-      debugger
         this.saveFormSpinner = false;
         if (result['Token'] != undefined || result['Token'] != null) {
 
@@ -161,22 +163,37 @@ export class NewCustomerComponent implements OnInit {
               this.errorActionButtons = '';
             }, 3000);
           }
-          if (typeof result == 'object' && result.obj != null) {
-          
+          if (typeof result == 'object' && result.err != -1) {
+
+            //if have created new customer from dropdown menu from orderCards page
+            if (this.formNewCustomer != '' && this.controllerNewCustomer != '') {
+              let objForShare = {
+                form: this.formNewCustomer,
+                controller: this.controllerNewCustomer,
+                createdCustomer: result.obj[0]
+              }
+
+              debugger
+              this.sharedService.newCustomerData.next(JSON.stringify(objForShare));
+              debugger
+            }
+
+
+
             this.msgActionButtons = 'לקוח חדש נשמר בהצלחה';
 
             setTimeout(() => {
               this.msgActionButtons = '';
 
-              if(this.IfComponentDialog){
+              if (this.IfComponentDialog) {
                 this.dialog.closeAll();
               }
-              else{
+              else {
                 this.router.navigate(['/public/customer/', result.obj[0].id]);
               }
             }, 2000);
           }
-          if(result.obj == null && result.errdesc != ''){
+          if (result.obj == null && result.errdesc != '') {
             this.errorActionButtons = result.errdesc;
 
             setTimeout(() => {
@@ -199,5 +216,14 @@ export class NewCustomerComponent implements OnInit {
         this.errorActionButtons = '';
       }, 3000);
     }
+  }
+
+  validatePhone($event) {
+    // let eneteredParam = $event.currentTarget.value;
+    // let formControlName = $event.currentTarget.getAttribute('formControlName');
+
+    // debugger
+    // this.newCustomerForm.get(formControlName).setValidators(Validators.pattern('[[0][0-9]{8,9}]*'));
+
   }
 }

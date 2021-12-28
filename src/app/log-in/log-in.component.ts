@@ -1,7 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router, RouterOutlet } from '@angular/router';
+import { CookieService } from 'ngx-cookie-service';
 import { DataServiceService } from '../data-service.service';
+import { SharedService } from '../Services/SharedService/shared.service';
+
+
+
 
 @Component({
   selector: 'app-log-in',
@@ -21,11 +26,16 @@ export class LogInComponent implements OnInit {
 
   loginSpinner: boolean = false;
 
-  constructor(private dataService: DataServiceService, private fb: FormBuilder, private route: Router) { }
+  constructor(
+    private dataService: DataServiceService,
+    private fb: FormBuilder,
+    private route: Router,
+    private sharedService: SharedService,
+    private cookieService: CookieService) { }
 
   ngOnInit(): void {
     window.scroll(0, 0);
-    localStorage.removeItem('user');
+    // localStorage.removeItem('user');
     localStorage.removeItem('excelFileData');
   }
 
@@ -39,13 +49,12 @@ export class LogInComponent implements OnInit {
         PhoneNumber: phone,
         CompanyId: this.loginForm.get('CompanyId').value
       }
-
-      
+      debugger
       this.dataService.SendOtp(objToApi).subscribe(result => {
         debugger
         this.loginSpinner = false;
         if (result['Token'] != undefined || result['Token'] != null) {
-          if (Object.values(result).length > 0) {
+          if (result.err != -1) {
             this.validKind = 'ValidateOtp';
 
             this.dataService.getHost().subscribe(hostResult => {
@@ -57,18 +66,22 @@ export class LogInComponent implements OnInit {
 
           }
           else {
-            this.msgAlert = 'שגיאה, נא לנסות שוב פעם';
-            setTimeout(() => {
-              this.msgAlert = '';
-            }, 3000);
+            if (result['errdesc'].includes('Could not find User with phone number')) {
+              this.msgAlert = result.errdesc.replace('Could not find User with phone number', 'לא נמצא משתמש עם מספר טלפון');
+              setTimeout(() => {
+                this.msgAlert = '';
+              }, 3000);
+            }
+            else {
+              this.msgAlert = 'שגיאה, נא לנסות שוב פעם';
+              setTimeout(() => {
+                this.msgAlert = '';
+              }, 3000);
+            }
           }
         }
-
-        else if (result.errdesc.includes('Could not find User with phone number')) {
-          this.msgAlert = result.errdesc.replace('Could not find User with phone number', 'לא נמצא משתמש עם מספר טלפון');
-          setTimeout(() => {
-            this.msgAlert = '';
-          }, 3000);
+        else if (result['Token'] == null && result.err == 1) {
+          this.msgAlert = result.errdesc;
         }
         else if (typeof result == 'string') {
           this.msgAlert = result;
@@ -96,12 +109,18 @@ export class LogInComponent implements OnInit {
         CompanyId: this.loginForm.get('CompanyId').value,
         OtpKey: this.loginForm.get('OtpKey').value
       }
-
-      debugger
       this.dataService.ValidateOtp(objToApi).subscribe(result => {
-debugger
+
         if (result['Token'] != '' && result['obj'] != null) {
-          localStorage.setItem('user', JSON.stringify(result));
+          let userObj = {
+            Token: result['Token'],
+            obj: {
+              Fname: result['obj']['Fname'],
+              Lname: result['obj']['Lname'],
+              Image: result['obj']['Image']
+            }
+          }
+          localStorage.setItem('user', JSON.stringify(userObj));
 
           this.route.navigate(['/public/home']);
           this.validKind = 'SendOtp';

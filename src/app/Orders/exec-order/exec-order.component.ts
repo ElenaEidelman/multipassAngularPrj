@@ -16,18 +16,19 @@ import { MsgList } from 'src/app/Classes/msgsList';
 import { DataServiceService } from 'src/app/data-service.service';
 import { DialogConfirmComponent } from 'src/app/PopUps/dialog-confirm/dialog-confirm.component';
 import { DialogComponent, DialogData } from 'src/app/PopUps/dialog/dialog.component';
-import { SharedService } from 'src/app/shared.service';
+
 import { AlertMessage } from 'src/assets/alertMessage';
 import * as fs from 'file-saver';
-import { UrlSharingService } from 'src/app/Services/url-sharing.service';
+import { UrlSharingService } from 'src/app/Services/UrlSharingService/url-sharing.service';
 import { animate, state, style, transition, trigger } from '@angular/animations';
+import { SharedService } from 'src/app/Services/SharedService/shared.service';
 
 @Component({
   selector: 'app-exec-order',
   templateUrl: './exec-order.component.html',
   styleUrls: ['./exec-order.component.css'],
   encapsulation: ViewEncapsulation.None,
-  animations:[
+  animations: [
     trigger('openClose', [
       state('true', style({
         overflow: 'hidden',
@@ -59,7 +60,9 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     private sharedService: SharedService,
     private router: Router,
     private dialog: MatDialog,
-    private urlSharingService: UrlSharingService) { }
+    private urlSharingService: UrlSharingService,
+    private activatedRoute: ActivatedRoute) {
+  }
 
   insertOrderLineSpinner: boolean = false;
   createCardsSpinner: boolean = false;
@@ -117,12 +120,12 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   statusListArr;
   Customer;
 
-  
+
   sendSmsGroup = this.fb.group({
     smsTemplates: ['', Validators.required],
     previewSmsTemplate: ['', Validators.required]
   });
-  
+
   smsTemplatesData = [];
 
   //orderDetail must contain one row with empty data
@@ -167,8 +170,8 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
   //for additional empty row foraddToExecOrderForm
   addToExecOrderForm = this.fb.group({
-    ticketCount: ['', [Validators.required, Validators.min(1), Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
-    chargeAmount: ['', [Validators.required, Validators.min(1), Validators.max(1000), Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
+    ticketCount: ['', [Validators.required, Validators.min(1)]],
+    chargeAmount: ['', [Validators.required, Validators.min(1), Validators.max(1000)]],
     validity: [this.getLastDateOfCurrentMonthAnd5Years(), Validators.required],
     TotalForItem: [{ value: '', disabled: true }]
   });
@@ -179,6 +182,9 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   ngOnInit() {
     window.scroll(0, 0);
     let url = this.router.url;
+    this.userToken = JSON.parse(localStorage.getItem('user')).Token;
+
+
 
     this.orderDetails = [
       { id: 0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem: 0 }
@@ -186,18 +192,22 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
 
     //this code need when i will change url
-    let orderandcustomerid = this.urlSharingService.currentMessage;
-    debugger
+    let urlParams = this.urlSharingService.messageSource.getValue();
 
-    // this.getCalendarFilter();
 
-    this.idUnsubscribe = this.activeRoute.params.subscribe(param => {
-      this.userToken = JSON.parse(localStorage.getItem('user')).Token;
+    if (urlParams == '') {
+      this.router.navigate(['/public/home']);
+    }
+    else {
+
+
+      // this.idUnsubscribe = this.activeRoute.params.subscribe(param => {
+      this.urlSharingService.changeMessage('');
 
       //manual order
       if (url.includes('order')) {
-        this.orderId = param['id'];
-        this.customerId = param['customerId'];
+        this.orderId = JSON.parse(urlParams)['orderId'];
+        this.customerId = JSON.parse(urlParams)['customerId'];
         this.newOrder = false;
 
         this.GetOrderDetails();
@@ -205,16 +215,19 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
       //new order
       if (url.includes('newOrder')) {
-        
+
         this.orderStatus.description = 'הזמנה חדשה';
-        this.customerId = param['customerId'];
+        this.customerId = JSON.parse(urlParams)['customerId'];
         this.newOrder = true;
 
         let objToApi = {
           Token: this.userToken,
-          CustomerId: param['customerId']
+          CustomerId: this.customerId
         }
+
+
         this.dataService.GetCustomersByFilter(objToApi).subscribe(result => {
+
           if (result['Token'] != undefined || result['Token'] != null) {
 
             //set new token
@@ -230,9 +243,9 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
               Object.keys(this.Customer).forEach(element => {
                 this.newCustomer[element.toLowerCase()] = this.Customer[element]
               });
-              
+
               this.dataByPage = result.obj[0];
-              debugger
+
 
               //if order created from excel file
               this.excelOrder = (this.dataByPage.DigitalBatch > 0 || this.dataByPage.DigitalBatch != 0) && this.dataByPage.DigitalBatch != null;
@@ -254,12 +267,13 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         let orderDetails = [{ id: 0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem: 0 }];
         this.orderDetailsTable = new MatTableDataSource(orderDetails);
       }
-    })
-    this.GetCards();
-    this.getStatusList();
-    // this.RefControl.setValue(this.orderId);
-    this.totalData();
-    this.getSmsTemplates();
+      // })
+      this.GetCards();
+      this.getStatusList();
+      // this.RefControl.setValue(this.orderId);
+      this.totalData();
+      this.getSmsTemplates();
+    }
   }
 
   // getCalendarFilter() {
@@ -281,12 +295,12 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   //   this.maxDate = new Date(Fyear, +Fmonth, +Fday);
   // }
 
-  GetOrderDetails(){
+  GetOrderDetails() {
     let objToApi = {
       Token: this.userToken,
       CoreOrderID: this.orderId
     }
-  
+
     this.dataService.GetOrderDetails(objToApi).subscribe(result => {
       if (result['Token'] != undefined || result['Token'] != null) {
 
@@ -303,7 +317,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
           this.orderStatus.description = statusData[0].Description;
 
           this.dataByPage = result['obj'][0];
-          debugger
+
 
           //if order created from excel file
           this.excelOrder = (this.dataByPage.DigitalBatch > 0 || this.dataByPage.DigitalBatch != 0) && this.dataByPage.DigitalBatch != null;
@@ -334,7 +348,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         }
 
       }
-      else if(typeof result == 'string'){
+      else if (typeof result == 'string') {
         this.dialog.open(DialogComponent, {
           data: { message: result }
         });
@@ -605,7 +619,11 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       buttonClicked.disabled = true;
       this.createCardsSpinner = true;
       this.descriptionStatusInjected = 'בייצור'
-      this.infoMsg = 'פעולה יכולה לקחת כמה דקות';
+      this.infoMsg = `
+      פעולה יכולה לקחת כמה דקות
+      </br>
+      נא להמתין ליצירת הכרטיסים
+      `;
 
 
       let objToApi = {
@@ -614,38 +632,38 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         UserID: this.customerId
       }
 
-      
+
+
       this.dataService.ApproveOrder(objToApi).subscribe(result => {
-        
+
         this.descriptionStatusInjected = '';
         buttonClicked.disabled = false;
         this.createCardsSpinner = false;
         this.infoMsg = '';
-
         if (result['Token'] != undefined || result['Token'] != null) {
-
-
-
           //set new token
           let tempObjUser = JSON.parse(localStorage.getItem('user'));
           tempObjUser['Token'] = result['Token'];
           localStorage.setItem('user', JSON.stringify(tempObjUser));
           this.userToken = result['Token'];
 
-          if (typeof result == 'object' && result.obj != null && result.obj.length > 0) {
+          if (result.err != -1) {
             localStorage.setItem('createOrderByExcel', '');
-            this.orderMsg = 'הזמנה נקלטה בהצלחה';
+            this.infoMsg = 'הזמנה נקלטה בהצלחה';
+
             setTimeout(() => {
-              this.orderMsg = '';
-              this.router.navigate(['/public/order/', result.obj[0]['orderid'], this.customerId]);
-              this.ngOnInit();
+              this.infoMsg = '';
+              // this.router.navigate(['/public/order/', result.obj[0]['orderid'], this.customerId]);
+
+              this.goToOrder(result.obj[0]['orderid'], this.customerId);
+              // this.ngOnInit();
             }, 2000);
 
           }
           // if (result.obj == null) {
           //   alert('order already created => orderId: ' + this.orderId);
           // }
-         else if (result.errdesc != null && result.errdesc != '') {
+          else {
             this.errorMsg = result.errdesc;
 
             setTimeout(() => {
@@ -683,10 +701,10 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
           OpCode: "delete"
         }
 
-        this.deleteCardsSpinner = true;
+        this.createCardsSpinner = true;
 
         this.dataService.DeleteVoidOrder(objToApi).subscribe(result => {
-          this.deleteCardsSpinner = false;
+          this.createCardsSpinner = false;
 
           if (result['Token'] != undefined || result['Token'] != null) {
 
@@ -697,35 +715,29 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
             this.userToken = result['Token'];
 
             if (typeof result == 'object' && result.obj != null && Object.values(result.obj[0]).includes('Order is deleted Successfully')) {
-              this.orderMsgDelete = 'ההזמנה נמחקה בהצלחה';
+              this.infoMsg = 'ההזמנה נמחקה בהצלחה';
               setTimeout(() => {
-                this.orderMsgDelete = '';
+                this.infoMsg = '';
                 this.router.navigate(['/public/allOrders']);
               }, 2000);
             }
-            if (typeof result == 'object' && result.obj != null && Object.values(result.obj[0]).includes('Order is Voided Successfully')) {
-              this.orderMsgDelete = 'בוטל בהצלחה';
+            if (result.err != -1) {
+              this.infoMsg = 'בוטל בהצלחה';
               setTimeout(() => {
-                this.orderMsgDelete = '';
+                this.infoMsg = '';
                 this.router.navigate(['/public/allOrders']);
               }, 2000);
             }
-            if (result.obj == null && result.errdesc != '') {
+            else {
               this.dialog.open(DialogComponent, {
                 data: { message: result.errdesc }
               });
             }
-            if (typeof result == 'string') {
-              this.errorMsgDelete = result;
-              setTimeout(() => {
-                this.errorMsgDelete = '';
-              }, 3000);
-            }
           }
-          else if(typeof result == 'string'){
-            this.errorMsgDelete = result;
+          else if (typeof result == 'string') {
+            this.errorMsg = result;
             setTimeout(() => {
-              this.errorMsgDelete = '';
+              this.errorMsg = '';
             }, 2000);
           }
           else {
@@ -753,49 +765,58 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   saveChanges() {
-      this.saveChangesSpinner = true;
-      
-      let objToApi = {
-        Token: this.userToken,
-        UserID: this.customerId,
-        OrderID: this.orderId,
-        Reference: this.RefControl.value == '' ? 0 : this.RefControl.value
-      }
+    this.createCardsSpinner = true;
 
-      this.chagesToServer = [];
-      this.dataService.InsertUpdateOrder(objToApi).subscribe(result => {
-        // 
-        this.saveChangesSpinner = false;
-        if (result['Token'] != undefined || result['Token'] != null) {
+    let objToApi = {
+      Token: this.userToken,
+      UserID: this.customerId,
+      OrderID: this.orderId,
+      OpCode: "Save",
+      Reference: this.RefControl.value == '' ? 0 : this.RefControl.value
+    }
 
-          //set new token
-          let tempObjUser = JSON.parse(localStorage.getItem('user'));
-          tempObjUser['Token'] = result['Token'];
-          localStorage.setItem('user', JSON.stringify(tempObjUser));
-          this.userToken = result['Token'];
+    this.chagesToServer = [];
 
-          if (typeof result == 'object' && result.obj != null && result.obj.length > 0) {
-            this.orderRefMsg = 'שינויים נשמרו בהצלחה';
-            this.GetOrderDetails();
-            setTimeout(() => {
-              this.orderRefMsg = '';
-            }, 2000);
-          }
+
+    this.dataService.InsertUpdateOrder(objToApi).subscribe(result => {
+
+      this.createCardsSpinner = false;
+      if (result['Token'] != undefined || result['Token'] != null) {
+
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
+
+        if (result.err != -1) {
+          // this.orderRefMsg = 'שינויים נשמרו בהצלחה';
+          this.infoMsg = 'שינויים נשמרו בהצלחה';
+          this.GetOrderDetails();
+          setTimeout(() => {
+            this.infoMsg = '';
+          }, 2000);
         }
         else {
-          // this.dialog.open(DialogComponent, {
-          //   data: {message: MsgList.exitSystemAlert}
-          // })
-          this.sharedService.exitSystemEvent();
+          this.dialog.open(DialogComponent, {
+            data: { message: 'אנא מלא תחילה את פרטי ההזמנה' }
+          })
         }
-      });
+      }
+      else {
+        // this.dialog.open(DialogComponent, {
+        //   data: {message: MsgList.exitSystemAlert}
+        // })
+        this.sharedService.exitSystemEvent();
+      }
+    });
 
   }
 
   changeDateOfRow(element, controlName) {
     // 
     let t = element.ValidationDate;
-    
+
 
     this.dialog.open(DatePickerDialog, {
       data: {
@@ -852,19 +873,19 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         }
       })
     });
-  }  
+  }
 
 
 
 
-  getSmsTemplates(){
+  getSmsTemplates() {
 
     let objToApi = {
       Token: this.userToken
     }
 
     this.dataService.GetSMSFormats(objToApi).subscribe(result => {
-      
+
 
       if (result['Token'] != undefined || result['Token'] != null) {
 
@@ -886,79 +907,79 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       }
     });
   }
-  
-  sendSMS(){
+
+  sendSMS() {
 
 
-    if(this.sendSmsGroup.valid){
-    this.dialog.open(DialogConfirmComponent, {
-      data: {message: 'האם לשלוח SMS?', eventButton:'שלח'}
-    }).afterClosed().subscribe(result => {
-      debugger
-      if(result.result == 'yes'){
-        if(this.orderCardsData.length > 0){
-          let selectedCards = [];
-          this.orderCardsData.forEach(card => {
-            selectedCards.push(card.Id)
-          });
-    
-        let objToApi = {
-          Token: this.userToken,
-          TemplateId: this.sendSmsGroup.get('smsTemplates').value,
-          UserId: this.customerId,
-          OrderLineIds: selectedCards,
-          CoreOrderId: this.orderId,
-          From: this.smsTemplatesData.filter(el => el.Id == this.sendSmsGroup.get('smsTemplates').value)[0]['SenderName']
-        }
-    
-        debugger
-        this.dataService.SendSMSByOrderLine(objToApi).subscribe(result => {
-          if (result['Token'] != undefined || result['Token'] != null) {
-    
-            //set new token
-            let tempObjUser = JSON.parse(localStorage.getItem('user'));
-            tempObjUser['Token'] = result['Token'];
-            localStorage.setItem('user', JSON.stringify(tempObjUser));
-            this.userToken = result['Token'];
-    
-            if (result.errdesc == 'OK') {
-              
-              this.dialog.open(DialogComponent, {
-                data: {title: '', message: 'ההודעות נשלחות ברקע' ,subTitle: ' ההודעה נשלחה ל ' + this.orderCardsData.length  + ' נמענים '  }
-              })
+    if (this.sendSmsGroup.valid) {
+      this.dialog.open(DialogConfirmComponent, {
+        data: { message: 'האם לשלוח SMS?', eventButton: 'שלח' }
+      }).afterClosed().subscribe(result => {
 
-              this.sendSmsGroup.reset();
-              this.openSendSmsBlock();
+        if (result.result == 'yes') {
+          if (this.orderCardsData.length > 0) {
+            let selectedCards = [];
+            this.orderCardsData.forEach(card => {
+              selectedCards.push(card.Id)
+            });
+
+            let objToApi = {
+              Token: this.userToken,
+              TemplateId: this.sendSmsGroup.get('smsTemplates').value,
+              UserId: this.customerId,
+              OrderLineIds: selectedCards,
+              CoreOrderId: this.orderId,
+              From: this.smsTemplatesData.filter(el => el.Id == this.sendSmsGroup.get('smsTemplates').value)[0]['SenderName']
             }
-            else{
-              this.dialog.open(DialogComponent, {
-                data: {message: result.errdesc}
-              });
-            }
+
+
+            this.dataService.SendSMSByOrderLine(objToApi).subscribe(result => {
+              if (result['Token'] != undefined || result['Token'] != null) {
+
+                //set new token
+                let tempObjUser = JSON.parse(localStorage.getItem('user'));
+                tempObjUser['Token'] = result['Token'];
+                localStorage.setItem('user', JSON.stringify(tempObjUser));
+                this.userToken = result['Token'];
+
+                if (result.errdesc == 'OK') {
+
+                  this.dialog.open(DialogComponent, {
+                    data: { title: '', message: 'ההודעות נשלחות ברקע', subTitle: ' ההודעה נשלחה ל ' + this.orderCardsData.length + ' נמענים ' }
+                  })
+
+                  this.sendSmsGroup.reset();
+                  this.openSendSmsBlock();
+                }
+                else {
+                  this.dialog.open(DialogComponent, {
+                    data: { message: result.errdesc }
+                  });
+                }
+              }
+              else {
+                // this.dialog.open(DialogComponent, {
+                //   data: {message: MsgList.exitSystemAlert}
+                // })
+                this.sharedService.exitSystemEvent();
+              }
+            });
+
           }
-          else {
-            // this.dialog.open(DialogComponent, {
-            //   data: {message: MsgList.exitSystemAlert}
-            // })
-            this.sharedService.exitSystemEvent();
-          }
-        });
-    
         }
-      }
-    })
-  }
-  else{
-    this.errorSendSms = 'נא לבחור תבנית ההודעה';
-    setTimeout(()=>{
-      this.errorSendSms = '';
-    }, 2000)
-  }
+      })
+    }
+    else {
+      this.errorSendSms = 'נא לבחור תבנית ההודעה';
+      setTimeout(() => {
+        this.errorSendSms = '';
+      }, 2000)
+    }
   }
 
   //enable/disable send sms button
-  smsTempleteSelect(event){
-    if(event.value != undefined){
+  smsTempleteSelect(event) {
+    if (event.value != undefined) {
 
       // this.smsTemplatesData;
       this.sendSmsGroup.get('previewSmsTemplate').setValue(this.smsTemplatesData.filter(el => el.Id == event.value)[0]['TemplateFormat']);
@@ -974,7 +995,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       OrderId: this.orderId,
       userId: this.customerId
     }
-    
+
     this.dataService.GetCardsByOrderId(objToAPI).subscribe(result => {
       if (result['Token'] != undefined || result['Token'] != null) {
 
@@ -991,7 +1012,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         }
         else {
           this.dialog.open(DialogComponent, {
-            data: {message: result}
+            data: { message: result }
           })
         }
       }
@@ -1005,12 +1026,12 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   }
 
 
-  openSendSmsBlock(){
+  openSendSmsBlock() {
 
     this.additionalOptionsSMS = !this.additionalOptionsSMS;
   }
 
-  excelFileExport(){
+  excelFileExport() {
     let tableLabels = [
       { value: 'ItemId', viewValue: "מס''ד" },
       { value: 'CardId', viewValue: 'קוד דיגיטלי' },
@@ -1021,48 +1042,72 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       { value: 'KindOfLoadSumDesc', viewValue: 'סוג שובר טעינה	' },
       { value: 'DSendLastSent', viewValue: 'נשלח לאחרונה' }
     ];
-    
+
     //add another column to file if order created from excel file
-    if(this.DigitalBatch != ''){
-      tableLabels.push({value: 'ValidationField', viewValue: 'שדה אימות'})
+    if (this.DigitalBatch != '') {
+      tableLabels.push({ value: 'ValidationField', viewValue: 'שדה אימות' })
     }
 
     let tableData = JSON.parse(JSON.stringify(this.orderCardsData));
-    
+
     let workbook = new Workbook();
     let worksheet = workbook.addWorksheet('ProductSheet');
- 
+
     var worksheetArr = [];
     tableLabels.forEach(label => {
-      worksheetArr.push({header: label.viewValue, key: label.value, width: 20});
+      worksheetArr.push({ header: label.viewValue, key: label.value, width: 20 });
     });
 
     worksheet.columns = worksheetArr;
 
-    for(let data of Object.values(tableData)){
-      for(let element of Object.keys(data)){
-        if(element == 'CardId'){
+    for (let data of Object.values(tableData)) {
+      for (let element of Object.keys(data)) {
+        if (element == 'CardId') {
           let oldData = data[element];
           data[element] = oldData + '' + data['PinCode']
         }
       }
     }
     worksheet.addRows(tableData, "n")
-   
+
     let userData = JSON.parse(localStorage.getItem('user')).obj;
     workbook.xlsx.writeBuffer().then((data) => {
       let blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      fs.saveAs(blob, userData['Fname'] + '_' + userData['Lname']  + '_' + this.orderId + '.xlsx');
+      fs.saveAs(blob, userData['Fname'] + '_' + userData['Lname'] + '_' + this.orderId + '.xlsx');
     })
   }
 
+  goToOrderLines(orderId, customerId) {
+    let OrderLine = {
+      orderId: orderId,
+      customerId: customerId
+    }
+
+    this.urlSharingService.changeMessage(JSON.stringify(OrderLine));
+    this.router.navigate(['/public/orderLines']);
+  }
+
+  goToOrder(orderId: number, customerId: number) {
+    let Order = {
+      orderId: orderId,
+      customerId: customerId
+    }
+    this.urlSharingService.changeMessage(JSON.stringify(Order));
+
+    if (this.router.url.includes('order')) {
+      this.ngOnInit();
+    }
+    else if (this.router.url.includes('newOrder')) {
+      this.router.navigate(['/public/order']);
+    }
+  }
 
   ngOnChanges(changes: SimpleChanges) {
 
   }
 
   ngOnDestroy() {
-    this.idUnsubscribe.unsubscribe();
+    // this.idUnsubscribe.unsubscribe();
   }
 }
 
@@ -1095,12 +1140,12 @@ export class DatePickerDialog implements OnInit {
 
 
   ngOnInit(): void {
-    
+
     this.validity.setValue(this.validityChangeFormat());//new Date
   }
 
   validityChangeFormat() {
-    
+
     let date = this.data.date.split('/');
     let year = date[2];
     let month = date[0];

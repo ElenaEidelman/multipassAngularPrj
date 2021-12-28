@@ -1,0 +1,22 @@
+<div>
+    <div class="close-icon-wrap" (click)="dialogClose()" >
+        <mat-icon matTooltip="סגור" matTooltipPosition="right">cancel</mat-icon>
+    </div>
+
+
+    <div class="log-in">
+        <div class="wrap-form">
+            <div class="title">
+                <!-- {{data.title}} -->
+            </div>
+          <div class="dialogMessage">
+            <img [src]="data.imgSrc">
+          </div>
+            <div class="wrapSendButton">
+                <div>
+                    <button mat-button class="addButton" (click)="no()">סגור</button>
+                </div>
+            </div>
+        </div>
+      </div>
+</div>

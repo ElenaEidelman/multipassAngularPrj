@@ -7,20 +7,21 @@ import { faFileExcel } from '@fortawesome/free-solid-svg-icons';
 import { debounceTime } from 'rxjs/operators';
 import { CustomerData } from 'src/app/Classes/customerData';
 import { DataServiceService } from 'src/app/data-service.service';
-import {CdkTextareaAutosize} from '@angular/cdk/text-field';
+import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { SharedService } from 'src/app/shared.service';
 import { MsgList } from 'src/app/Classes/msgsList';
 import { DialogWithTableDataComponent } from './Dialogs/dialog-with-table-data/dialog-with-table-data.component';
 import { animate, state, style, transition, trigger } from '@angular/animations';
+import { UrlSharingService } from 'src/app/Services/UrlSharingService/url-sharing.service';
+import { SharedService } from 'src/app/Services/SharedService/shared.service';
 
 @Component({
   selector: 'app-order-cards',
   templateUrl: './order-cards.component.html',
   styleUrls: ['./order-cards.component.css'],
   encapsulation: ViewEncapsulation.None,
-  animations:[
+  animations: [
     trigger('openClose', [
       state('true', style({
         overflow: 'hidden',
@@ -42,6 +43,14 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
 
   @ViewChild('autosize') autosize: CdkTextareaAutosize;
   @ViewChild('uploadDoc') uploadDoc: ElementRef;
+  @ViewChild('customersSelectExcel') customersSelectExcel: any;
+  @ViewChild('customersSelectManual') customersSelectManual: any;
+
+  tabGroups = [
+    { index: 0, tabName: 'excelCardCreatingForm' },
+    { index: 1, tabName: 'manualCardgroup' },
+    { index: 2, tabName: 'loadingCardGroup' },
+  ];
 
 
 
@@ -54,7 +63,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
 
   selectedCustomer;
   faFileExcel = faFileExcel;
-  customers;
+  customers = [];
 
   cardsData = [];
   fileUploadButtonDisabled: boolean = true;
@@ -84,12 +93,12 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
   });
 
   manualCardgroup = this.fb.group({
-    selectedCustomerControl: (''),
+    customer: (''),
     orderDescription: ('')
   });
 
   loadingCardGroup = this.fb.group({
-    selectedCustomerControl: ['', Validators.required],
+    customer: ['', Validators.required],
     userId: [{ value: '', disabled: true }, Validators.required],
     fromCardNumber: ['', { value: '' }, Validators.required],
     toCardNumber: ['', { value: '' }, Validators.required],
@@ -114,7 +123,21 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
     private dataService: DataServiceService,
     private router: Router,
     private dialog: MatDialog,
-    private sharedService: SharedService) { }
+    private sharedService: SharedService,
+    private urlSharingService: UrlSharingService) {
+    this.sharedService.newCustomerObservable.subscribe(customer => {
+      if (customer != '') {
+        let createdCustomer = JSON.parse(customer);
+        this.userId = createdCustomer['createdCustomer']['id'];
+
+        this.indexId = this.tabGroups.filter(tab => tab.tabName == createdCustomer['form'])[0]['index'];
+        this.customersSelectExcel.close();
+        this.customersSelectManual.close();
+        this.getAllCustomers();
+        this.sharedService.newCustomerData.next('');
+      }
+    })
+  }
 
 
   ngOnInit(): void {
@@ -122,30 +145,36 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
     window.scroll(0, 0);
 
     this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
-    //this.getCustomersData();
     this.getAllCustomers();
-    this.userDataUnsubscribe = this.activeRoute.params.subscribe(param => {
-      this.userId = param['userId'];
-      this.indexId = param['indexId'];
 
-    });
+
+
+    let urlParams = this.urlSharingService.messageSource.getValue();
+    if (urlParams != '') {
+      this.userId = JSON.parse(urlParams)['customerId'];
+      this.indexId = JSON.parse(urlParams)['cardId'];
+    }
+
 
     this.loadingCardGroupChange();
   }
 
-  getAllCustomers() {
 
+  getAllCustomers() {
+    debugger
     let objToApi = {
       Token: this.userToken
     }
+
     this.dataService.GetAllCustomers(objToApi).subscribe(result => {
+      debugger
       if (typeof result == 'string') {
         // this.errorMsg = result;
         setTimeout(() => {
           // this.errorMsg = '';
         }, 5000)
       }
-      else if(result.Token == null){
+      else if (result.Token == null) {
         // this.dialog.open(DialogComponent, {
         //   data: {message: MsgList.exitSystemAlert}
         // })
@@ -153,11 +182,19 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
       }
       else {
         if (typeof result == 'object' && result['obj'] != null && result['obj'].length > 0) {
-          this.customers = result['obj'];
+          this.customers = result['obj'].sort(function (a, b) {
+            if (a.organizationName < b.organizationName) { return -1; }
+            if (a.organizationName > b.organizationName) { return 1; }
+            return 0;
+          });
           if (this.userId != undefined && this.indexId != undefined) {
-            this.excelCardCreatingForm.controls['customer'].setValue(this.fillteringUserData(this.userId));
-            this.manualCardgroup.controls['selectedCustomerControl'].setValue(this.fillteringUserData(this.userId));
-            this.loadingCardGroup.controls['selectedCustomerControl'].setValue(this.fillteringUserData(this.userId));
+            debugger
+
+            this[this.tabGroups.filter(tab => tab.index == this.indexId)[0]['tabName']].get('customer').setValue(this.fillteringUserData(this.userId));
+
+            // this.excelCardCreatingForm.controls['customer'].setValue(this.fillteringUserData(this.userId));
+            // this.manualCardgroup.controls['customer'].setValue(this.fillteringUserData(this.userId));
+            // this.loadingCardGroup.controls['customer'].setValue(this.fillteringUserData(this.userId));
           }
           else {
             this.indexId = 0;
@@ -174,15 +211,22 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
   }
 
   fillteringUserData(userId) {
+    debugger
     return this.customers.filter(customer => customer.id == userId)[0];
   }
 
   //check manual order
   checkFormValidity() {
-    let customerSelectedId = this.manualCardgroup.get('selectedCustomerControl').value.id;
+    debugger
+    let customerSelectedId = this.manualCardgroup.get('customer').value.id;
     if (customerSelectedId != undefined) {
-      let route = ['/public/newOrder', this.manualCardgroup.get('selectedCustomerControl').value != undefined ? this.manualCardgroup.get('selectedCustomerControl').value['id'] : '-1']
-      this.router.navigate(route);
+
+      let Customer = {
+        customerId: this.manualCardgroup.get('customer').value != undefined ? this.manualCardgroup.get('customer').value['id'] : '-1'
+      }
+      this.urlSharingService.changeMessage(JSON.stringify(Customer));
+      // let route = ['/public/newOrder', this.manualCardgroup.get('customer').value != undefined ? this.manualCardgroup.get('customer').value['id'] : '-1']
+      this.router.navigate(['/public/newOrder']);
     }
     else {
       this.manualError = 'נא לבחור את הלקוח';
@@ -192,20 +236,9 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
     }
   }
 
-  optionChange() {
-
-    
-
-    // this.fileUploadButtonDisabled = false
-    // if (this.loadingCardGroup.get('selectedCustomerControl').value) {
-    //   this.showHiddenLoadingCardContent = true;
-    //   // this.getCardsData();
-    //   // this.loadingCardGroup.get('userId').enable();
-    // }
-  }
 
   fileOptionChange(event) {
-    if(this.excelCardCreatingForm.get('customer').valid){
+    if (this.excelCardCreatingForm.get('customer').valid) {
       if (event.target.files.length > 0) {
         const file = event.target.files[0];
         if (!file.type.includes('excel') && !file.type.includes('sheet')) {
@@ -221,68 +254,68 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
         }
         else {
           this.fileUploading = true;
-  
+
           const formData = new FormData();
           formData.append('Token', this.userToken);
           formData.append('UserId', this.excelCardCreatingForm.get('customer').value.id);
           formData.append('OpCode', 'upload');
           formData.append('Description', this.excelCardCreatingForm.get('fileDesc').value);
           formData.append('ExcelFile', file);
-  
-          debugger
+
+
           this.dataService.InsertUpdateOrderByExcel(formData).subscribe(result => {
 
-            debugger
+
             this.fileUploading = false;
             this.fileUplodadeValid = false;
             if (result['Token'] != undefined || result['Token'] != null) {
-            
+
               //set new token
               let tempObjUser = JSON.parse(localStorage.getItem('user'));
               tempObjUser['Token'] = result['Token'];
               localStorage.setItem('user', JSON.stringify(tempObjUser));
               this.userToken = result['Token'];
 
-              if(result.err != -1){
-                  this.fileUplodadeValid = true;
-                  this.filename = result.obj[1][0].NewFileName;
-                  let objGetFile = {
-                    excelName: this.filename,
-                    customerId: this.excelCardCreatingForm.get('customer').value.id,
-                    fileData: JSON.stringify(result),
-                    fileDescription: this.excelCardCreatingForm.get('fileDesc').value
-                  }
-                  localStorage.setItem('excelFileData', JSON.stringify(objGetFile));
-                  this.uploadDoc.nativeElement.value = '';
-                
+              if (result.err != -1) {
+                this.fileUplodadeValid = true;
+                this.filename = result.obj[1][0].NewFileName;
+                let objGetFile = {
+                  excelName: this.filename,
+                  customerId: this.excelCardCreatingForm.get('customer').value.id,
+                  fileData: JSON.stringify(result),
+                  fileDescription: this.excelCardCreatingForm.get('fileDesc').value
+                }
+                localStorage.setItem('excelFileData', JSON.stringify(objGetFile));
+                this.uploadDoc.nativeElement.value = '';
+
               }
-              if(result.err == -1){
+              if (result.err == -1) {
 
                 //if have missing data in file
-                if(result.obj != null && result.obj.length > 0){
+                if (result.obj != null && result.obj.length > 0) {
                   let dataOBJ = {};
                   let data_Source = new MatTableDataSource([]);
                   let data = [];
                   let dataLabelsList = ['FirstName', 'LastName', 'Cellular', 'Amount'];
 
                   result.obj[0].forEach(element => {
-                      dataLabelsList.forEach(labels => {
-                        dataOBJ[labels] = element[labels]
-                      })
-                      data.push(dataOBJ);
+                    dataLabelsList.forEach(labels => {
+                      dataOBJ[labels] = element[labels]
+                    })
+                    data.push(dataOBJ);
                   });
-                  
-                data_Source.data = data;
-                this.dialog.open(DialogWithTableDataComponent, {
-                  maxHeight: '200px',
-                  data: {
-                    title: result.errdesc,
-                    data_Source: data,
-                    dataLabelsList: dataLabelsList
-                  }
-                });
+
+                  data_Source.data = data;
+                  this.dialog.open(DialogWithTableDataComponent, {
+                    maxHeight: '200px',
+                    data: {
+                      title: result.errdesc,
+                      data_Source: data,
+                      dataLabelsList: dataLabelsList
+                    }
+                  });
                 }
-                else{
+                else {
                   this.dialog.open(DialogComponent, {
                     data: {
                       title: '',
@@ -297,7 +330,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
                 this.filename = '';
               }
             }
-            else if(typeof result == 'string'){
+            else if (typeof result == 'string') {
 
               this.dialog.open(DialogComponent, {
                 data: {
@@ -308,15 +341,15 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
               });
               // this.excelFileError = result;
             }
-            else{
+            else {
               this.sharedService.exitSystemEvent();
             }
           });
         }
-  
+
       }
     }
-    else{
+    else {
       this.excelCardCreatingForm.get('file').setValue('');
       // this.excelCustomerError = 'נא לבחור לקוח';
       // this.uploadDoc.nativeElement.value = '';
@@ -328,9 +361,11 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
 
 
   loadingCardGroupChange() {
+    debugger
     this.loadingCardGroup.valueChanges.pipe(
       debounceTime(1000)
     ).subscribe(val => {
+      debugger
       //check from card number
       if (val['fromCardNumber'] != '') {
         let card = this.cardsData.filter(el => el['cardId'] == val['fromCardNumber']);
@@ -386,57 +421,71 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
     });
   }
 
-  getCardsData() {
-    this.cardsData = [
-      { customerName: 'multipass1', customerId: '11111', cardId: '15245814', dataIssues: '03/01/2021', orderId: '900000025', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום' },
-      { customerName: 'multipass2', customerId: '22222', cardId: '15245815', dataIssues: '03/02/2021', orderId: '900000025', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום' },
-      { customerName: 'multipass3', customerId: '33333', cardId: '15245816', dataIssues: '03/03/2021', orderId: '900000025', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום' },
-      { customerName: 'multipass4', customerId: '44444', cardId: '15245817', dataIssues: '03/04/2021', orderId: '900000028', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום' },
-      { customerName: 'multipass5', customerId: '55555', cardId: '15245818', dataIssues: '03/05/2021', orderId: '900000029', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום' },
-      { customerName: 'multipass6', customerId: '66666', cardId: '15245819', dataIssues: '03/06/2021', orderId: '900000030', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום' },
-      { customerName: 'multipass7', customerId: '77777', cardId: '152458110', dataIssues: '03/07/2021', orderId: '900000031', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום' },
-      { customerName: 'multipass8', customerId: '88888', cardId: '152458111', dataIssues: '03/08/2021', orderId: '900000032', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום' },
-      { customerName: 'multipass9', customerId: '99999', cardId: '152458112', dataIssues: '03/09/2021', orderId: '900000033', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום' },
-      { customerName: 'multipass12', customerId: '12121', cardId: '152458113', dataIssues: '04/01/2021', orderId: '900000034', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום' },
-      { customerName: 'multipass13', customerId: '13131', cardId: '152458114', dataIssues: '05/01/2021', orderId: '900000035', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום' },
-      { customerName: 'multipass14', customerId: '14141', cardId: '15245815', dataIssues: '06/01/2021', orderId: '900000036', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום' },
-      { customerName: 'multipass15', customerId: '15151', cardId: '152458116', dataIssues: '07/01/2021', orderId: '900000037', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום' },
-    ];
-  }
+  // getCardsData() {
+  //   this.cardsData = [
+  //     { customerName: 'multipass1', customerId: '11111', cardId: '15245814', dataIssues: '03/01/2021', orderId: '900000025', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום' },
+  //     { customerName: 'multipass2', customerId: '22222', cardId: '15245815', dataIssues: '03/02/2021', orderId: '900000025', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום' },
+  //     { customerName: 'multipass3', customerId: '33333', cardId: '15245816', dataIssues: '03/03/2021', orderId: '900000025', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום' },
+  //     { customerName: 'multipass4', customerId: '44444', cardId: '15245817', dataIssues: '03/04/2021', orderId: '900000028', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום' },
+  //     { customerName: 'multipass5', customerId: '55555', cardId: '15245818', dataIssues: '03/05/2021', orderId: '900000029', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום' },
+  //     { customerName: 'multipass6', customerId: '66666', cardId: '15245819', dataIssues: '03/06/2021', orderId: '900000030', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום' },
+  //     { customerName: 'multipass7', customerId: '77777', cardId: '152458110', dataIssues: '03/07/2021', orderId: '900000031', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום' },
+  //     { customerName: 'multipass8', customerId: '88888', cardId: '152458111', dataIssues: '03/08/2021', orderId: '900000032', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום' },
+  //     { customerName: 'multipass9', customerId: '99999', cardId: '152458112', dataIssues: '03/09/2021', orderId: '900000033', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום' },
+  //     { customerName: 'multipass12', customerId: '12121', cardId: '152458113', dataIssues: '04/01/2021', orderId: '900000034', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום' },
+  //     { customerName: 'multipass13', customerId: '13131', cardId: '152458114', dataIssues: '05/01/2021', orderId: '900000035', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום' },
+  //     { customerName: 'multipass14', customerId: '14141', cardId: '15245815', dataIssues: '06/01/2021', orderId: '900000036', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום' },
+  //     { customerName: 'multipass15', customerId: '15151', cardId: '152458116', dataIssues: '07/01/2021', orderId: '900000037', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום' },
+  //   ];
+  // }
   loadCard() {
+    debugger
     this.showHiddenLoadingCardContent = false;
   }
   cancelLoadCard() {
     this.showHiddenLoadingCardContent = false;
+    debugger
     this.loadingCardGroup.get('userId').enable();
-    this.loadingCardGroup.get('selectedCustomerControl').enable();
+    this.loadingCardGroup.get('customer').enable();
   }
 
   isNumber(val): boolean {
     return typeof val === 'number';
   }
 
-  goToExcelView(){
+  goToExcelView() {
     ///public/excelView
-    debugger
-    if(this.excelCardCreatingForm.valid){
+    if (this.excelCardCreatingForm.valid) {
       this.router.navigate(['/public/excelView']);
     }
-    else{
-        this.excelSendError = 'נא לבחור את הקובץ';
-        setTimeout(() => {
-          this.excelSendError = '';
-        }, 2000)
+    else {
+      this.excelSendError = 'נא לבחור את הקובץ';
+      setTimeout(() => {
+        this.excelSendError = '';
+      }, 2000)
     }
   }
 
-  resetFileUploaded(){
-    alert();
-  }
+  // resetFileUploaded() {
+  //   alert();
+  // }
 
-  openAddCustomerDialog(){
+  openAddCustomerDialog(formName, controllerName) {
+    // let customer = JSON.parse('{"id":4000,"FName":"eeee","LName":"eeeeee","Email":"ee989899@ddde.com","organizationName":"tet444te","Password":null,"Phone":"0523385694","Phone1":null,"role":"מנהל באק אופיס","fileName":"/test.txt","businessValidDate":"1753-01-01T00:00:00","Address":"","Streetno":null,"ApartmentNo":null,"entrance":null,"floor":null,"CityId":0,"CityName":null,"AreaId":0,"ZIP":null,"Address2":null,"CityId2":0,"CityName2":null,"ZIP2":null,"AreaId2":0,"UserType":6,"Tz":"332232","contactof":0,"NameInSite":null,"Fax":null,"StatusId":2,"ClubType":0,"AcceptNewsLetter":0,"ExternalId":0,"Logo":null,"image":null,"DealerItemPriceListId":0,"DealerCredit":0,"DealerContactInYbitanb2b":0,"DealerPaymentCondition":"0","DealerDiscountPercent":0,"Website":null,"Latitude":0,"Longitude":0,"Priority":0,"ShowInSite":0,"SEO_H1Title":null,"SEO_KeyWords":null,"SEO_Description":null,"PosNo":0,"LastPassUpdated":"2020-12-22T14:54:57.62","CreationDate":"2021-12-22T14:54:57.62","Tenant":1006,"MltpId":0,"OrdersCount":null,"LastOrderDate":null,"LastOrderTotal":null,"LastOrderId":null,"StatusDescription":"פעיל"}')
+    // debugger
+    // this.customers.push(customer);
+    // // this[formName].get(controllerName).setValue(customer);
+
+    // setTimeout(() => {
+    //   this.excelCardCreatingForm.controls['customer'].setValue(customer);
+
+
+    //   this.excelCardCreatingForm.updateValueAndValidity();
+    //   this.customersSelectExcel.close();
+    // }, 0);
+
     this.dialog.open(AddCustomerDialogComponent, {
-      data: {data: 'test'}
+      data: { data: 'test', form: formName, controller: controllerName }
     }).afterClosed().subscribe(result => {
       // debugger
       // this.ngOnInit();
@@ -445,7 +494,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.userDataUnsubscribe.unsubscribe();
+    // this.userDataUnsubscribe.unsubscribe();
     // localStorage.setItem('excelFileData', '')
   }
 }
@@ -476,6 +525,7 @@ export class AddCustomerDialogComponent implements OnInit {
 
 
   ngOnInit(): void {
+
   }
 
 

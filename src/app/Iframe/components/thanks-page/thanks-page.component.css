@@ -1,0 +1,203 @@
+.wrapPage{
+    /* background: linear-gradient(to bottom, #CDBBA7, #F9F9F9); */
+    /* background-image: url(../../../assets/img/bg4.jpg); */
+    /* background-size: cover; */
+    /* background: #fff; */
+    /* min-height: 100vh; */
+    display: flex;
+    margin: auto;
+    /* padding: 15px 20%; */
+}
+
+button mat-icon{
+    color: unset;
+}
+.thankYouTitle{
+    text-align: center;
+    font-size: 4em;
+    color: #5e5446;
+    /* font-family: 'mainFont'; */
+}
+
+.iconTitle{
+    text-align: center;
+    padding: 0 2em 1em 2em;
+}
+.iconTitle > img{
+    width: 85px;
+}
+
+.thankYouSubTitle{
+    color: #5e5446;
+    text-align: center;
+    font-size: 1.2em;
+    padding: 2em 0 0 0;
+}
+.thankYouSubTitle > div{
+    margin: 0 39%;
+    display: flex;
+    direction: rtl;
+}
+.thankYouSubTitle > div > span{
+    flex-grow: 1;
+    flex-basis: 0;
+}
+.thankYouSubTitle > div > span:first-child{
+    color: #857B6C;
+}
+.wrapData{
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    padding: 1.5em 0;
+}
+
+.wrapData > div{
+    flex-grow: 1;
+    text-align: right;
+    direction: rtl;
+    flex-basis: 0;
+}
+.rowData{
+    display: flex;
+}
+
+.rowData > span{
+    flex-grow: 1;
+    flex-basis: 0;
+}
+.rowData > span:first-child{
+    color: #857B6C;
+    font-size: 1.2em;
+    padding: 1px 6px;
+
+ }
+.rowData > span:last-child{
+   color: #5e5446;
+   font-size: 1.2em;
+   padding: 1px 6px;
+   margin: auto;
+}
+
+.wrapData > div > div.rowData:nth-child(odd){
+    
+    background: #F0EDE9;
+
+}
+.wrapData > div{
+    margin: 10px;
+    
+}
+
+.subButtonsWrap{
+    display: flex;
+    justify-content: center;
+}
+
+
+.wrapContent{
+    width: 100%;
+    margin: 0em 6em;
+    background: #fff;
+    border-radius: 10px;
+    min-height: unset;
+    padding: 1em;
+}
+
+.wrapNextPrevButton {
+    display: flex;
+    margin-top: 0.5em;
+    flex-direction: column;
+    margin: 16px 10px;
+    justify-content: space-around;
+    
+}
+.wrapNextPrevButton button:first-child {
+    flex-shrink: 4;
+    margin-left: 1em;
+}
+.wrapNextPrevButton > button {
+    background: #fea841;
+    padding: 5px;
+    color: #fff;
+    width: 100%;
+    font-size: 18px;
+}
+button.prevButton {
+    border: 2px solid #847A6C;
+    background: transparent !important;
+    color: #847A6C !important;
+}
+/* .wrapNextPrevButton button:not(:first-child) {
+    flex-shrink: 1;
+    margin-right: 1em;
+}
+
+.wrapNextPrevButton button:first-child {
+    flex-shrink: 3;
+    margin-left: 1em;
+} */
+
+
+.mainText{
+    text-align: center;
+    margin: 2em;
+    font-size: 1.6em;
+    color: #5E5446;
+}
+.mainText > div{
+    display: flex;
+    flex-direction: column;
+    line-height: 1.6em;
+    font-size: 0.9em;
+}
+.mainText > div.secondText{
+    margin-top: 1em;
+}
+
+.buttonColumn > button{
+   border: 1px solid #fea841;
+   height: 100%;
+}
+.iconwhatsapp i{
+    color: #4AC559;
+    font-size: 3em;
+}
+
+.wrapResendBless{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    /* width: 100%; */
+    text-align: CENTER;
+    margin: 0 auto;
+    font-size: 1.8em;
+    color: #5E5446;
+    direction: rtl;
+}
+.tabLabel {
+    color: #847A6C;
+    font-weight: bold;
+    text-align: center;
+    margin: 0 0 1em 0;
+    font-size: 1.3em;
+}
+.resendButton{
+    margin: 0  auto 1em auto;
+    width: 100%;
+}
+
+@media screen and (max-width: 1024px){
+    .wrapPage{
+        padding: 0px;
+    }
+    .thankYouSubTitle > div{
+        margin: 0 15%;
+    }
+    .wrapData{
+        flex-direction: column;
+    }
+    .iconTitle > img{
+        width: 5em;
+    }
+}
