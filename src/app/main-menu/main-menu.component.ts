@@ -54,7 +54,9 @@ export class MainMenuComponent implements OnInit {
 
             if (result.err != -1) {
               if (result.obj != null) {
+
                 this.permissionMenuList = this.distinctMenu(result.obj[1]);
+
                 // this.permissionMenuList = this.distinctMenu(this.mockMenu);
 
               }
@@ -84,14 +86,26 @@ export class MainMenuComponent implements OnInit {
   distinctMenu(menu) {
     let menuSet = [];
 
-
     menu.forEach(element => {
-      if (menuSet.some(menu => menu.MenuEngName === element.MenuEngName)) { }
-      else {
-        menuSet.push(element)
+      if (element['In_Use'] === 1) {
+        menuSet.push(element);
       }
     });
 
+
+    // menu.forEach(element => {
+    //   
+    //   if (menuSet.some(menu => {
+    //     
+    //     return menu.MenuEngName === element.MenuEngName
+    //   })) {
+    //     
+    //   }
+    //   else {
+    //     
+    //     menuSet.push(element)
+    //   }
+    // });
     return menuSet;
   }
 

@@ -9,4 +9,7 @@ export const MsgList = {
     sendSuccessfully: 'נשלח בהצלחה',
     fillAllFieldsError: 'נא להזין שדות חובה',
     savedSuccessfully: 'נשמר בהצלחה',
+    smsTemplateNameExist: 'נא לבחור שם אחר לתבנית',
+    wrongDate: 'נא לבחור תאריך אחר',
+    fillRequiredFields: 'נא למלא לפחות אחד מהשדות'
 }

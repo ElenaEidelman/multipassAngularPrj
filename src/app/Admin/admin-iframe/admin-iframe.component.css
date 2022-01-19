@@ -114,8 +114,12 @@ mat-accordion mat-expansion-panel mat-expansion-panel-header .mat-icon{
   }
   .smallSideNav{
     background: #fff;
-    margin: -5px 15px 0 -5px;
+    /* margin: -5px 15px 0 -5px; */
     width: 50px;
+  }
+
+  .marginTopMenu{
+    margin: -15px 0 4em 0 !important;
   }
   .iconMenu{
     text-align: center;
@@ -137,12 +141,17 @@ mat-accordion mat-expansion-panel mat-expansion-panel-header .mat-icon{
 
   } */
 
+  .collapsIcon{
+    margin-top: -30px !important;
+    margin-bottom: 3em !important;
+  }
+
   .topMenu{
     background: #fff;
     border-radius: 4px;
     padding: 3px;
     display: flex;
-    justify-content: end;
+    justify-content: center;
   }
   .topMenu mat-icon{
     color: #686866;
@@ -153,6 +162,11 @@ mat-accordion mat-expansion-panel mat-expansion-panel-header .mat-icon{
   .mat-drawer-side{
     border-right: none;
     border-radius: 4px;
+  }
+
+  .flexView{
+    display: flex;
+    justify-content: space-between;
   }
 
   @media screen and (max-width: 1024px){

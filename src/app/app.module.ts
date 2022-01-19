@@ -1,4 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
+import { APP_BASE_HREF } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
@@ -36,6 +37,7 @@ import { MatStepperModule } from '@angular/material/stepper';
 
 
 import { ChartsModule } from 'ng2-charts';
+// import { ChartsModule, WavesModule } from 'angular-bootstrap-md';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
@@ -43,7 +45,7 @@ import { MainMenuComponent } from './main-menu/main-menu.component';
 import { MainViewComponent } from './main-view/main-view.component';
 import { ExecOrderComponent, DatePickerDialog } from './Orders/exec-order/exec-order.component';
 import { AllOrdersComponent } from './Orders/all-orders/all-orders.component';
-import { MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
+import { DateAdapter, MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
 import { DialogConfirmComponent } from './PopUps/dialog-confirm/dialog-confirm.component';
 import { AllCustomersComponent } from './Customers/all-customers/all-customers/all-customers.component';
 import { NewCustomerComponent } from './Customers/new-customer/new-customer/new-customer.component';
@@ -93,6 +95,10 @@ import { PurchasingGiftComponent, VideoImageDialogComponent, VideosDialogCompone
 import { ThanksPageComponent } from './Iframe/components/thanks-page/thanks-page.component';
 import { PopupDialogComponent } from './Iframe/Dialogs/popupDialog/popup-dialog/popup-dialog.component';
 import { SafeHtmlPipe } from './Iframe/Pipes/safe-html.pipe';
+import { MockCodeToNullPipe } from './Pipes/convertMockDateToNull/mock-date-to-null.pipe';
+import { CustomDateAdapter } from './Support/custom.date.adapter';
+
+
 
 @NgModule({
   declarations: [
@@ -147,7 +153,8 @@ import { SafeHtmlPipe } from './Iframe/Pipes/safe-html.pipe';
     VideoImageDialogComponent,
     ThanksPageComponent,
     PopupDialogComponent,
-    SafeHtmlPipe
+    SafeHtmlPipe,
+    MockCodeToNullPipe
 
   ],
   imports: [
@@ -203,6 +210,7 @@ import { SafeHtmlPipe } from './Iframe/Pipes/safe-html.pipe';
     DataServiceService,
     { provide: MatPaginatorIntl, useClass: MatPaginatorIntlCro },
     { provide: MAT_DATE_LOCALE, useValue: 'en-GB' },
+    { provide: DateAdapter, useClass: CustomDateAdapter },
     CookieService
   ],
   bootstrap: [AppComponent]

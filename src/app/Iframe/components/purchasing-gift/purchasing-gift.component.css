@@ -134,8 +134,39 @@
     width: 100%;
   }
   div.iframe .mat-card{
-    margin: auto;
+    margin: 30px auto;
     background: #878789;
+    padding: 0;
+  }
+  .wrapImgSum{
+    position: relative;
+  }
+  .wrapImgSum > mat-card-title{
+    position: absolute;
+    right: 0;
+    padding: 5px 10px;
+    background: rgba(255,255,255,0.8);
+    border-radius: 5px;
+    margin: 10px;
+  }
+  mat-card-actions{
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+    padding: 0 !important;
+    text-align: center;
+
+  }
+  .inputIcon{
+    font-size: 2em;
+  }
+  .sumInputWrap{
+    width: 100%;
+  }
+  .sumInputWrap input{
+    text-align: center;
+  }
+  .mat-card>.mat-card-actions:last-child{
+    width: 100%;
   }
   .mat-card-avatar{
     border-radius: 0 !important;
@@ -518,7 +549,7 @@ cursor: pointer;
   font-size: 0.8em;
 }
 
-mat-error{
+.ifarme mat-error{
   /* text-align: center; */
   padding: 15px 0 0 0;  
 }

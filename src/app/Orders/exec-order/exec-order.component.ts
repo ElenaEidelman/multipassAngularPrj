@@ -48,6 +48,7 @@ import { SharedService } from 'src/app/Services/SharedService/shared.service';
 export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   @ViewChildren('orderLinesChildren') orderLinesChildren;
   faFileExcel = faFileExcel;
+  MsgList = MsgList;
 
 
 
@@ -69,6 +70,8 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   deleteCardsSpinner: boolean = false;
   orderFromExcel: boolean = false;
   additionalOptionsSMS: boolean = false;
+
+
 
 
   errorMsg: string = '';
@@ -179,30 +182,41 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   //מספר אסמכתה
   RefControl = new FormControl('');
 
+  OrderNameGroup = this.fb.group({
+    Comments: ['', Validators.required]
+  });
+  Comments = new FormControl(['', Validators.required]);
+
   ngOnInit() {
     window.scroll(0, 0);
     let url = this.router.url;
     this.userToken = JSON.parse(localStorage.getItem('user')).Token;
+    debugger
 
 
 
     this.orderDetails = [
       { id: 0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem: 0 }
     ];
+    this.getStatusList();
+    this.getSmsTemplates();
 
 
     //this code need when i will change url
     let urlParams = this.urlSharingService.messageSource.getValue();
+
+    debugger
 
 
     if (urlParams == '') {
       this.router.navigate(['/public/home']);
     }
     else {
-
-
       // this.idUnsubscribe = this.activeRoute.params.subscribe(param => {
       this.urlSharingService.changeMessage('');
+
+      let t = urlParams;
+
 
       //manual order
       if (url.includes('order')) {
@@ -220,11 +234,14 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         this.customerId = JSON.parse(urlParams)['customerId'];
         this.newOrder = true;
 
+        //set comments to field
+
+        this.OrderNameGroup.get('Comments').setValue(JSON.parse(urlParams)['orderDescription']);
+
         let objToApi = {
           Token: this.userToken,
           CustomerId: this.customerId
         }
-
 
         this.dataService.GetCustomersByFilter(objToApi).subscribe(result => {
 
@@ -245,6 +262,8 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
               });
 
               this.dataByPage = result.obj[0];
+
+
 
 
               //if order created from excel file
@@ -269,10 +288,10 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       }
       // })
       this.GetCards();
-      this.getStatusList();
+
+
       // this.RefControl.setValue(this.orderId);
       this.totalData();
-      this.getSmsTemplates();
     }
   }
 
@@ -301,7 +320,12 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       CoreOrderID: this.orderId
     }
 
+
+
+
     this.dataService.GetOrderDetails(objToApi).subscribe(result => {
+      debugger
+
       if (result['Token'] != undefined || result['Token'] != null) {
 
         //set new token
@@ -312,11 +336,17 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
         if (typeof result == 'object' && result.obj != null) {
           this.orderIdToPreview = result.obj[0].idex;
+
+
           let statusData = this.statusListArr.filter(status => status.StatusId == result.obj[0].StatusId);
           this.orderStatus.id = statusData[0].StatusId;
           this.orderStatus.description = statusData[0].Description;
 
           this.dataByPage = result['obj'][0];
+
+
+
+          this.OrderNameGroup.get('Comments').setValue(result['obj'][0]['OrderName']);
 
 
           //if order created from excel file
@@ -340,6 +370,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
           this.orderDetailsTable = new MatTableDataSource(this.orderDetails);
           this.totalData();
+          debugger
         }
         if (result.obj == null && result.errdesc != null && result.errdesc != '') {
           this.dialog.open(DialogComponent, {
@@ -377,6 +408,8 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       Token: this.userToken
     }
 
+
+
     this.dataService.GetOrdersStatus(objToApi).subscribe(result => {
 
       if (result['Token'] != undefined || result['Token'] != null) {
@@ -389,6 +422,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
 
         if (typeof result == 'object' && result.obj != null) {
+
           this.statusListArr = [...result.obj];
         }
       }
@@ -500,7 +534,8 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
           ChargeAmount: chargeAmount,
           TicketCount: ticketCount,
           Validity: validity,
-          OpCode: "insert"
+          OpCode: "insert",
+          OrderName: this.OrderNameGroup.get('Comments').value
         }
         //query for insert update order lines, but not for the first line
         if (this.orderDetailsTable.data.length > 1) {
@@ -550,7 +585,10 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
         //insert first line, create new order
         else {
+
           this.dataService.InsertUpdateOrder(objToApi).subscribe(result => {
+            debugger
+
             this.addToExecOrderForm.get('validity').setValue(this.getLastDateOfCurrentMonthAnd5Years());
             if (result['Token'] != undefined || result['Token'] != null) {
               this.insertOrderLineSpinner = false;
@@ -559,6 +597,8 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
                 this.orderDetails = [
                   { id: 0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem: 0 }
                 ];
+
+                this.dataByPage['MDate'] = new Date();
 
                 this.orderIdToPreview = result.obj[0].idex;
 
@@ -576,6 +616,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
                 let statusData = this.statusListArr.filter(status => status.StatusId == result.obj[0].OrderStatus);
                 this.orderStatus.id = statusData[0].StatusId;
                 this.orderStatus.description = statusData[0].Description;
+
               }
             }
             else {
@@ -765,57 +806,65 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   saveChanges() {
-    this.createCardsSpinner = true;
 
-    let objToApi = {
-      Token: this.userToken,
-      UserID: this.customerId,
-      OrderID: this.orderId,
-      OpCode: "Save",
-      Reference: this.RefControl.value == '' ? 0 : this.RefControl.value
-    }
-
-    this.chagesToServer = [];
+    if (this.OrderNameGroup.valid) {
+      this.createCardsSpinner = true;
 
 
-    this.dataService.InsertUpdateOrder(objToApi).subscribe(result => {
+      let objToApi = {
+        Token: this.userToken,
+        UserID: this.customerId,
+        OrderID: this.orderId,
+        OpCode: "Save",
+        Reference: this.RefControl.value == '' ? 0 : this.RefControl.value,
+        OrderName: this.OrderNameGroup.get('Comments').value
+      }
 
-      this.createCardsSpinner = false;
-      if (result['Token'] != undefined || result['Token'] != null) {
+      this.chagesToServer = [];
 
-        //set new token
-        let tempObjUser = JSON.parse(localStorage.getItem('user'));
-        tempObjUser['Token'] = result['Token'];
-        localStorage.setItem('user', JSON.stringify(tempObjUser));
-        this.userToken = result['Token'];
 
-        if (result.err != -1) {
-          // this.orderRefMsg = 'שינויים נשמרו בהצלחה';
-          this.infoMsg = 'שינויים נשמרו בהצלחה';
-          this.GetOrderDetails();
-          setTimeout(() => {
-            this.infoMsg = '';
-          }, 2000);
+      this.dataService.InsertUpdateOrder(objToApi).subscribe(result => {
+
+        this.createCardsSpinner = false;
+        if (result['Token'] != undefined || result['Token'] != null) {
+
+          //set new token
+          let tempObjUser = JSON.parse(localStorage.getItem('user'));
+          tempObjUser['Token'] = result['Token'];
+          localStorage.setItem('user', JSON.stringify(tempObjUser));
+          this.userToken = result['Token'];
+
+          if (result.err != -1) {
+            // this.orderRefMsg = 'שינויים נשמרו בהצלחה';
+            this.infoMsg = 'שינויים נשמרו בהצלחה';
+            this.GetOrderDetails();
+            setTimeout(() => {
+              this.infoMsg = '';
+            }, 2000);
+          }
+          else {
+            this.dialog.open(DialogComponent, {
+              data: { message: 'אנא מלא תחילה את פרטי ההזמנה' }
+            })
+          }
         }
         else {
-          this.dialog.open(DialogComponent, {
-            data: { message: 'אנא מלא תחילה את פרטי ההזמנה' }
-          })
+          // this.dialog.open(DialogComponent, {
+          //   data: {message: MsgList.exitSystemAlert}
+          // })
+          this.sharedService.exitSystemEvent();
         }
-      }
-      else {
-        // this.dialog.open(DialogComponent, {
-        //   data: {message: MsgList.exitSystemAlert}
-        // })
-        this.sharedService.exitSystemEvent();
-      }
-    });
+      });
+    }
+    else {
+      this.OrderNameGroup.markAllAsTouched();
+    }
 
   }
 
   changeDateOfRow(element, controlName) {
-    // 
-    let t = element.ValidationDate;
+    // // 
+    // let t = element.ValidationDate;
 
 
     this.dialog.open(DatePickerDialog, {
@@ -826,52 +875,60 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       }
     }).afterClosed().subscribe(dialogResult => {
 
-      let validityDate = new Date(dialogResult.result.date);
-      validityDate.setHours(23, 59, 59);
-      let objToApi = {
-        Token: this.userToken,
-        OrderId: this.orderId,
-        UserID: this.customerId,
-        OpCode: "update",
-        Validity: validityDate,
-        ChargeAmount: element.LoadSum,
-        TicketCount: element.QTY
+      debugger
+      if (new Date(dialogResult.result.date) < new Date()) {
+        this.dialog.open(DialogComponent, {
+          data: { message: MsgList.wrongDate }
+        })
       }
+      else {
+        let validityDate = new Date(dialogResult.result.date);
+        validityDate.setHours(23, 59, 59);
+        let objToApi = {
+          Token: this.userToken,
+          OrderId: this.orderId,
+          UserID: this.customerId,
+          OpCode: "update",
+          Validity: validityDate,
+          ChargeAmount: element.LoadSum,
+          TicketCount: element.QTY
+        }
 
-      this.dataService.InsertUpdateLines(objToApi).subscribe(result => {
-        if (result['Token'] != undefined || result['Token'] != null) {
+        this.dataService.InsertUpdateLines(objToApi).subscribe(result => {
+          if (result['Token'] != undefined || result['Token'] != null) {
 
-          //set new token
-          let tempObjUser = JSON.parse(localStorage.getItem('user'));
-          tempObjUser['Token'] = result['Token'];
-          localStorage.setItem('user', JSON.stringify(tempObjUser));
-          this.userToken = result['Token'];
+            //set new token
+            let tempObjUser = JSON.parse(localStorage.getItem('user'));
+            tempObjUser['Token'] = result['Token'];
+            localStorage.setItem('user', JSON.stringify(tempObjUser));
+            this.userToken = result['Token'];
 
-          if (typeof result == 'object' && result.obj != null && result.obj.length > 0) {
-            this.dialog.open(DialogComponent, {
-              data: { message: 'נשמר בהצלחה' }
-            })
+            if (typeof result == 'object' && result.obj != null && result.obj.length > 0) {
+              this.dialog.open(DialogComponent, {
+                data: { message: 'נשמר בהצלחה' }
+              })
 
-            this.orderDetails = [
-              { id: 0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem: 0 }
-            ];
+              this.orderDetails = [
+                { id: 0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem: 0 }
+              ];
 
-            this.Orders = new MatTableDataSource(result['obj'][0]['Lines']);
-            this.Orders.data.forEach((element, index) => {
-              this.orderDetails.unshift(element);
-            });
+              this.Orders = new MatTableDataSource(result['obj'][0]['Lines']);
+              this.Orders.data.forEach((element, index) => {
+                this.orderDetails.unshift(element);
+              });
 
-            this.orderDetailsTable = new MatTableDataSource(this.orderDetails);
-            this.totalData();
+              this.orderDetailsTable = new MatTableDataSource(this.orderDetails);
+              this.totalData();
+            }
           }
-        }
-        else {
-          // this.dialog.open(DialogComponent, {
-          //   data: {message: MsgList.exitSystemAlert}
-          // })
-          this.sharedService.exitSystemEvent();
-        }
-      })
+          else {
+            // this.dialog.open(DialogComponent, {
+            //   data: {message: MsgList.exitSystemAlert}
+            // })
+            this.sharedService.exitSystemEvent();
+          }
+        })
+      }
     });
   }
 
@@ -932,7 +989,6 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
               From: this.smsTemplatesData.filter(el => el.Id == this.sendSmsGroup.get('smsTemplates').value)[0]['SenderName']
             }
 
-
             this.dataService.SendSMSByOrderLine(objToApi).subscribe(result => {
               if (result['Token'] != undefined || result['Token'] != null) {
 
@@ -958,9 +1014,9 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
                 }
               }
               else {
-                // this.dialog.open(DialogComponent, {
-                //   data: {message: MsgList.exitSystemAlert}
-                // })
+                this.dialog.open(DialogComponent, {
+                  data: { message: result.errdesc }
+                })
                 this.sharedService.exitSystemEvent();
               }
             });
@@ -996,7 +1052,9 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       userId: this.customerId
     }
 
+    debugger
     this.dataService.GetCardsByOrderId(objToAPI).subscribe(result => {
+      debugger
       if (result['Token'] != undefined || result['Token'] != null) {
 
         //set new token
@@ -1145,7 +1203,7 @@ export class DatePickerDialog implements OnInit {
   }
 
   validityChangeFormat() {
-
+    debugger
     let date = this.data.date.split('/');
     let year = date[2];
     let month = date[0];
@@ -1159,6 +1217,7 @@ export class DatePickerDialog implements OnInit {
   }
 
   select() {
+    debugger
     this.dialogRef.close({
       result: {
         date: this.validity.value,

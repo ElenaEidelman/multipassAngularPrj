@@ -34,13 +34,14 @@ export class IframeComponent implements OnInit, OnChanges {
 
   previewForm = this.fb.group({
     ExternalLink: [''],
+    CompanyName: [''],
     GiftCardPic: [''],
     BackGround: [''],
     Logo: [''],
-    Phone: ['', Validators.pattern('[0]{1}[0-9]{2,3}[0-9]{7}')],
+    Phone: ['', Validators.pattern('[0]{1}[0-9]{1,2}[0-9]{7}')],
     Mail: ['', Validators.email],
-    Website: [''],
-    BranchLinks: [''], // temporary using Website !!!!!!
+    // Website: [''],
+    LinktoBranches: [''],
     ShortDescription: [''],
     LongDescription: [''],
     Marketing: [''],
@@ -81,6 +82,7 @@ export class IframeComponent implements OnInit, OnChanges {
       CompanyIdEnc: this.companyId
     }
     this.dataService.GetIFrameCompanyInfo(objToApi).subscribe(result => {
+      debugger
       this.setupSpinner = false;
       if (typeof result == 'object') {
         if (result.err != -1) {
@@ -159,10 +161,11 @@ export class IframeComponent implements OnInit, OnChanges {
     if (this.previewForm.valid) {
       this.setupSpinner = true;
       this.iframePicsFormData.append('CompanyIdEnc', this.companyId)
+      this.iframePicsFormData.append('CompanyName', this.previewForm.get('CompanyName').value)
       this.iframePicsFormData.append('ExternalLink', this.previewForm.get('ExternalLink').value)
       this.iframePicsFormData.append('Phone', this.previewForm.get('Phone').value)
       this.iframePicsFormData.append('Mail', this.previewForm.get('Mail').value)
-      this.iframePicsFormData.append('Website', this.previewForm.get('Website').value)
+      this.iframePicsFormData.append('LinktoBranches', this.previewForm.get('LinktoBranches').value)
       this.iframePicsFormData.append('ShortDescription', this.previewForm.get('ShortDescription').value)
       this.iframePicsFormData.append('LongDescription', this.previewForm.get('LongDescription').value)
       this.iframePicsFormData.append('Marketing', this.previewForm.get('Marketing').value)
@@ -171,6 +174,7 @@ export class IframeComponent implements OnInit, OnChanges {
       let t = this.iframePicsFormData.getAll('CompanyIdEnc');
       debugger
       this.dataService.InsertUpdateIFrame(this.iframePicsFormData).subscribe(result => {
+        debugger
         this.setupSpinner = false;
         if (typeof result == 'object') {
           if (result.errdesc != -1) {

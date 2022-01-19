@@ -10,7 +10,9 @@
 .tableActions > div{
     margin-left: 10px;
 }
-
+.tableWrap{
+    position: relative;
+}
 .main2-title{
     flex-direction: column;
 }
@@ -19,10 +21,13 @@
     bottom: 0.3em;
     right: 2em;
 }
-.additionalOptionsSMS{
+
+.additionalOptions{
     display: flex;
     flex-direction: column;
-    margin: 2em 0;
+    margin: 0 auto !important;
+    overflow: visible !important;
+    width: 50%;
 }
 .additionalOptionsSMS > div{
     /* margin: auto;
@@ -41,6 +46,7 @@
 }
 .voidBWrap{
     position: relative;
+    text-align: center;
 }
 .voidSpinner{
     position: absolute;
@@ -52,7 +58,7 @@
     background:#DDE0E0;
 } */
 .checkBoxBG{
-    background:#EFEFED;
+    /* background:#EFEFED; */
 }
 
 .textAreaWrap{

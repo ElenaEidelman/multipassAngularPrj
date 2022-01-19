@@ -13,6 +13,9 @@ mat-spinner >  svg{
     height: 50px !important;
 } */
 
+.marginTop{
+    margin-top: 20px !important;
+}
 .wrapAprDel{
     position: relative;
 }
@@ -122,8 +125,12 @@ tr.example-element-row:not(.example-expanded-row):hover {
     justify-content: center;
     margin-top: auto;
     position: relative;
+    padding-top: 20px;
   }
 
+  .comments mat-form-field{
+    width: 100%;
+  }
   .changeDate{
       display: flex;
   }
@@ -141,7 +148,7 @@ tr.example-element-row:not(.example-expanded-row):hover {
     padding: 10px !important;
 }
 .formBorder{
-    padding: 0 !important;
+    padding: 10px !important;
 }
 
 .paddingB0{
@@ -151,9 +158,9 @@ tr.example-element-row:not(.example-expanded-row):hover {
     padding: 0 !important
 }
 
-.additionalOptionsSMS.formBorder{
-    padding: 1.5em !important;
-    margin: 2em 0;
+.additionalOptionsSMS{
+    padding: 0 1em !important;
+     margin: 2em auto !important;
 }
 
 

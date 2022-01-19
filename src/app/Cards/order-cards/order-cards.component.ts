@@ -46,6 +46,8 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
   @ViewChild('customersSelectExcel') customersSelectExcel: any;
   @ViewChild('customersSelectManual') customersSelectManual: any;
 
+  MsgList = MsgList;
+
   tabGroups = [
     { index: 0, tabName: 'excelCardCreatingForm' },
     { index: 1, tabName: 'manualCardgroup' },
@@ -88,13 +90,14 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
 
   excelCardCreatingForm = this.fb.group({
     customer: ['', Validators.required],
-    fileDesc: (''),
+    // fileDesc: (''),
+    orderDescription: ['', Validators.required],
     file: ['', Validators.required]
   });
 
   manualCardgroup = this.fb.group({
-    customer: (''),
-    orderDescription: ('')
+    customer: ['', Validators.required],
+    orderDescription: ['', Validators.required]
   });
 
   loadingCardGroup = this.fb.group({
@@ -153,6 +156,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
     if (urlParams != '') {
       this.userId = JSON.parse(urlParams)['customerId'];
       this.indexId = JSON.parse(urlParams)['cardId'];
+      this.urlSharingService.changeMessage('');
     }
 
 
@@ -161,7 +165,6 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
 
 
   getAllCustomers() {
-    debugger
     let objToApi = {
       Token: this.userToken
     }
@@ -187,8 +190,11 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
             if (a.organizationName > b.organizationName) { return 1; }
             return 0;
           });
+
+          this.customers = this.customers.filter(customer => customer.StatusId != 3);
+          debugger
           if (this.userId != undefined && this.indexId != undefined) {
-            debugger
+
 
             this[this.tabGroups.filter(tab => tab.index == this.indexId)[0]['tabName']].get('customer').setValue(this.fillteringUserData(this.userId));
 
@@ -211,34 +217,35 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
   }
 
   fillteringUserData(userId) {
-    debugger
+
     return this.customers.filter(customer => customer.id == userId)[0];
   }
 
   //check manual order
   checkFormValidity() {
-    debugger
-    let customerSelectedId = this.manualCardgroup.get('customer').value.id;
-    if (customerSelectedId != undefined) {
+    // let customerSelectedId = this.manualCardgroup.get('customer').value.id;
+    if (this.manualCardgroup.valid) {
 
       let Customer = {
-        customerId: this.manualCardgroup.get('customer').value != undefined ? this.manualCardgroup.get('customer').value['id'] : '-1'
+        customerId: this.manualCardgroup.get('customer').value != undefined ? this.manualCardgroup.get('customer').value['id'] : '-1',
+        orderDescription: this.manualCardgroup.get('orderDescription').value
       }
+
       this.urlSharingService.changeMessage(JSON.stringify(Customer));
       // let route = ['/public/newOrder', this.manualCardgroup.get('customer').value != undefined ? this.manualCardgroup.get('customer').value['id'] : '-1']
       this.router.navigate(['/public/newOrder']);
     }
-    else {
-      this.manualError = 'נא לבחור את הלקוח';
-      setTimeout(() => {
-        this.manualError = '';
-      }, 2000)
-    }
+    // else {
+    //   this.manualError = MsgList.requiredField;
+    //   setTimeout(() => {
+    //     this.manualError = '';
+    //   }, 2000)
+    // }
   }
 
 
   fileOptionChange(event) {
-    if (this.excelCardCreatingForm.get('customer').valid) {
+    if (this.excelCardCreatingForm.get('customer').valid && this.excelCardCreatingForm.get('orderDescription').valid) {
       if (event.target.files.length > 0) {
         const file = event.target.files[0];
         if (!file.type.includes('excel') && !file.type.includes('sheet')) {
@@ -259,12 +266,14 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
           formData.append('Token', this.userToken);
           formData.append('UserId', this.excelCardCreatingForm.get('customer').value.id);
           formData.append('OpCode', 'upload');
-          formData.append('Description', this.excelCardCreatingForm.get('fileDesc').value);
+          formData.append('OrderName', this.excelCardCreatingForm.get('orderDescription').value);
+          // formData.append('Description', this.excelCardCreatingForm.get('orderDescription').value);
           formData.append('ExcelFile', file);
 
 
+          debugger
           this.dataService.InsertUpdateOrderByExcel(formData).subscribe(result => {
-
+            debugger
 
             this.fileUploading = false;
             this.fileUplodadeValid = false;
@@ -283,7 +292,9 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
                   excelName: this.filename,
                   customerId: this.excelCardCreatingForm.get('customer').value.id,
                   fileData: JSON.stringify(result),
-                  fileDescription: this.excelCardCreatingForm.get('fileDesc').value
+                  // fileDescription: this.excelCardCreatingForm.get('orderDescription').value
+                  OrderName: this.excelCardCreatingForm.get('orderDescription').value
+
                 }
                 localStorage.setItem('excelFileData', JSON.stringify(objGetFile));
                 this.uploadDoc.nativeElement.value = '';
@@ -361,11 +372,11 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
 
 
   loadingCardGroupChange() {
-    debugger
+
     this.loadingCardGroup.valueChanges.pipe(
       debounceTime(1000)
     ).subscribe(val => {
-      debugger
+
       //check from card number
       if (val['fromCardNumber'] != '') {
         let card = this.cardsData.filter(el => el['cardId'] == val['fromCardNumber']);
@@ -421,30 +432,13 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
     });
   }
 
-  // getCardsData() {
-  //   this.cardsData = [
-  //     { customerName: 'multipass1', customerId: '11111', cardId: '15245814', dataIssues: '03/01/2021', orderId: '900000025', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום' },
-  //     { customerName: 'multipass2', customerId: '22222', cardId: '15245815', dataIssues: '03/02/2021', orderId: '900000025', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום' },
-  //     { customerName: 'multipass3', customerId: '33333', cardId: '15245816', dataIssues: '03/03/2021', orderId: '900000025', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום' },
-  //     { customerName: 'multipass4', customerId: '44444', cardId: '15245817', dataIssues: '03/04/2021', orderId: '900000028', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום' },
-  //     { customerName: 'multipass5', customerId: '55555', cardId: '15245818', dataIssues: '03/05/2021', orderId: '900000029', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום' },
-  //     { customerName: 'multipass6', customerId: '66666', cardId: '15245819', dataIssues: '03/06/2021', orderId: '900000030', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום' },
-  //     { customerName: 'multipass7', customerId: '77777', cardId: '152458110', dataIssues: '03/07/2021', orderId: '900000031', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום' },
-  //     { customerName: 'multipass8', customerId: '88888', cardId: '152458111', dataIssues: '03/08/2021', orderId: '900000032', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום' },
-  //     { customerName: 'multipass9', customerId: '99999', cardId: '152458112', dataIssues: '03/09/2021', orderId: '900000033', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום' },
-  //     { customerName: 'multipass12', customerId: '12121', cardId: '152458113', dataIssues: '04/01/2021', orderId: '900000034', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום' },
-  //     { customerName: 'multipass13', customerId: '13131', cardId: '152458114', dataIssues: '05/01/2021', orderId: '900000035', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום' },
-  //     { customerName: 'multipass14', customerId: '14141', cardId: '15245815', dataIssues: '06/01/2021', orderId: '900000036', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום' },
-  //     { customerName: 'multipass15', customerId: '15151', cardId: '152458116', dataIssues: '07/01/2021', orderId: '900000037', phoneNumber: '0523335611', dataSend: '03/01/2021', balance: '150.00', cardStatus: 'חסום' },
-  //   ];
-  // }
+
   loadCard() {
-    debugger
+
     this.showHiddenLoadingCardContent = false;
   }
   cancelLoadCard() {
     this.showHiddenLoadingCardContent = false;
-    debugger
     this.loadingCardGroup.get('userId').enable();
     this.loadingCardGroup.get('customer').enable();
   }
@@ -455,7 +449,9 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
 
   goToExcelView() {
     ///public/excelView
+    debugger
     if (this.excelCardCreatingForm.valid) {
+      debugger
       this.router.navigate(['/public/excelView']);
     }
     else {
@@ -472,7 +468,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
 
   openAddCustomerDialog(formName, controllerName) {
     // let customer = JSON.parse('{"id":4000,"FName":"eeee","LName":"eeeeee","Email":"ee989899@ddde.com","organizationName":"tet444te","Password":null,"Phone":"0523385694","Phone1":null,"role":"מנהל באק אופיס","fileName":"/test.txt","businessValidDate":"1753-01-01T00:00:00","Address":"","Streetno":null,"ApartmentNo":null,"entrance":null,"floor":null,"CityId":0,"CityName":null,"AreaId":0,"ZIP":null,"Address2":null,"CityId2":0,"CityName2":null,"ZIP2":null,"AreaId2":0,"UserType":6,"Tz":"332232","contactof":0,"NameInSite":null,"Fax":null,"StatusId":2,"ClubType":0,"AcceptNewsLetter":0,"ExternalId":0,"Logo":null,"image":null,"DealerItemPriceListId":0,"DealerCredit":0,"DealerContactInYbitanb2b":0,"DealerPaymentCondition":"0","DealerDiscountPercent":0,"Website":null,"Latitude":0,"Longitude":0,"Priority":0,"ShowInSite":0,"SEO_H1Title":null,"SEO_KeyWords":null,"SEO_Description":null,"PosNo":0,"LastPassUpdated":"2020-12-22T14:54:57.62","CreationDate":"2021-12-22T14:54:57.62","Tenant":1006,"MltpId":0,"OrdersCount":null,"LastOrderDate":null,"LastOrderTotal":null,"LastOrderId":null,"StatusDescription":"פעיל"}')
-    // debugger
+    // 
     // this.customers.push(customer);
     // // this[formName].get(controllerName).setValue(customer);
 
@@ -487,7 +483,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
     this.dialog.open(AddCustomerDialogComponent, {
       data: { data: 'test', form: formName, controller: controllerName }
     }).afterClosed().subscribe(result => {
-      // debugger
+      // 
       // this.ngOnInit();
       this.getAllCustomers();
     });

@@ -41,8 +41,9 @@ export class AllSmsTemplatesComponent implements OnInit {
   spinnerId = -1;
   spinnerById = [];
   newSMSSend: boolean = false;
-  voucherNumberInsered: boolean = false;
-  voucherValidityInsered: boolean = false;
+  voucherNumberInsered: boolean = true;
+  voucherValidityInsered: boolean = true;
+  newTemplateFormView: boolean = true;
 
   voucherNumberInseredById: string = '';
   voucherValidityInseredById: string = '';
@@ -92,6 +93,7 @@ export class AllSmsTemplatesComponent implements OnInit {
   }
 
   GetSMSFormats() {
+    // this.templatesSMS = [];
 
     let objToApi = {
       Token: this.userToken
@@ -108,7 +110,10 @@ export class AllSmsTemplatesComponent implements OnInit {
 
         if (typeof result == 'object' && result['obj'] != null && result['obj'].length > 0) {
 
+          debugger
+          this.templatesSMS = [];
           this.templatesSMS.push(...result.obj);
+          debugger
 
           this.createForm('SMSForm', this.templatesSMS, 'Id-');
         }
@@ -168,70 +173,85 @@ export class AllSmsTemplatesComponent implements OnInit {
 
   saveTemplate(template) {
     if (template != 'newTemplate') {
-      debugger
       if (this.SMSForm.get('Id-' + template.Id).valid) {
 
         this.voucherValidityInseredById = this.SMSForm.get('Id-' + template.Id).value['TemplateFormat' + template.Id].indexOf('<תוקף>') == -1 ? 'voucherValidityInseredById' + template.Id : '';
         this.voucherNumberInseredById = this.SMSForm.get('Id-' + template.Id).value['TemplateFormat' + template.Id].indexOf('<מספר שובר>') == -1 ? 'voucherNumberInseredById' + template.Id : '';
-        debugger
+
         if (this.SMSForm.get('Id-' + template.Id).value['TemplateFormat' + template.Id].indexOf('<תוקף>') != -1 &&
           this.SMSForm.get('Id-' + template.Id).value['TemplateFormat' + template.Id].indexOf('<מספר שובר>') != -1) {
 
 
-          this.voucherNumberInseredById = '';
+          //check if template name exist in another template
+          debugger
+          let tempName = this.SMSForm.get('Id-' + template.Id).get('TemplateName' + template.Id).value;
+          if (this.templatesSMS.filter(tmp => tmp.TemplateName == tempName && tmp.Id != template.Id).length > 0) {
+            document.getElementById('msgErrorBySms' + template.Id).innerHTML = MsgList.smsTemplateNameExist;
 
-          let objToApi = {
-            Token: this.userToken,
-            TemplateName: this.SMSForm.get('Id-' + template.Id).get('TemplateName' + template.Id).value,
-            SenderName: this.SMSForm.get('Id-' + template.Id).get('SenderName' + template.Id).value,
-            TemplateFormat: this.SMSForm.get('Id-' + template.Id).get('TemplateFormat' + template.Id).value,
-            TemplateId: template.Id
+            setTimeout(() => {
+              document.getElementById('msgErrorBySms' + template.Id).innerHTML = '';
+            }, 2000);
           }
+          else {
 
+            this.voucherNumberInseredById = '';
 
-          this.dataService.CreateOrUpdateSMSTemplate(objToApi).subscribe(result => {
-            if (result['Token'] != undefined || result['Token'] != null) {
+            this.templatesSMS;
 
-              //set new token
-              let tempObjUser = JSON.parse(localStorage.getItem('user'));
-              tempObjUser['Token'] = result['Token'];
-              localStorage.setItem('user', JSON.stringify(tempObjUser));
-              this.userToken = result['Token'];
-
-              if (typeof result == 'object' && result['obj'] != null && result['obj'].length > 0) {
-
-                document.getElementById('msgBySms' + template.Id).innerHTML = 'נשמר בהצלחה';
-                setTimeout(() => {
-                  document.getElementById('msgBySms' + template.Id).innerHTML = '';
-                  this.edit = !this.edit;
-                  this.editingTempId = -1;
-                }, 2000);
-
-                this.SMSForm.get('Id-' + template.Id).get('TemplateFormat' + template.Id).disable();
-                this.SMSForm.get('Id-' + template.Id).get('SenderName' + template.Id).disable();
-                this.SMSForm.get('Id-' + template.Id).get('TemplateName' + template.Id).disable();
-              }
-              if (typeof result == 'string') {
-                this.errorMessagenewSms = result;
-
-                setTimeout(() => {
-                  this.errorMessagenewSms = '';
-                }, 5000)
-              }
-              if (result.obj == null && result.errdesc != '' && result.errdesc != null) {
-                this.dialog.open(DialogComponent, {
-                  data: { message: result.errdesc }
-                })
-              }
-
+            let objToApi = {
+              Token: this.userToken,
+              TemplateName: this.SMSForm.get('Id-' + template.Id).get('TemplateName' + template.Id).value,
+              SenderName: this.SMSForm.get('Id-' + template.Id).get('SenderName' + template.Id).value,
+              TemplateFormat: this.SMSForm.get('Id-' + template.Id).get('TemplateFormat' + template.Id).value,
+              TemplateId: template.Id
             }
-            else {
-              // this.dialog.open(DialogComponent, {
-              //   data: {message: MsgList.exitSystemAlert}
-              // })
-              this.sharedService.exitSystemEvent();
-            }
-          });
+            this.dataService.CreateOrUpdateSMSTemplate(objToApi).subscribe(result => {
+              if (result['Token'] != undefined || result['Token'] != null) {
+
+                //set new token
+                let tempObjUser = JSON.parse(localStorage.getItem('user'));
+                tempObjUser['Token'] = result['Token'];
+                localStorage.setItem('user', JSON.stringify(tempObjUser));
+                this.userToken = result['Token'];
+
+                if (typeof result == 'object' && result['obj'] != null && result['obj'].length > 0) {
+
+                  document.getElementById('msgBySms' + template.Id).innerHTML = 'נשמר בהצלחה';
+                  setTimeout(() => {
+                    document.getElementById('msgBySms' + template.Id).innerHTML = '';
+                    this.edit = !this.edit;
+                    this.editingTempId = -1;
+                  }, 2000);
+                  setTimeout(() => {
+                    this.GetSMSFormats();
+                  }, 3000);
+
+                  this.SMSForm.get('Id-' + template.Id).get('TemplateFormat' + template.Id).disable();
+                  this.SMSForm.get('Id-' + template.Id).get('SenderName' + template.Id).disable();
+                  this.SMSForm.get('Id-' + template.Id).get('TemplateName' + template.Id).disable();
+                }
+                if (typeof result == 'string') {
+                  this.errorMessagenewSms = result;
+
+                  setTimeout(() => {
+                    this.errorMessagenewSms = '';
+                  }, 5000)
+                }
+                if (result.obj == null && result.errdesc != '' && result.errdesc != null) {
+                  this.dialog.open(DialogComponent, {
+                    data: { message: result.errdesc }
+                  })
+                }
+
+              }
+              else {
+                // this.dialog.open(DialogComponent, {
+                //   data: {message: MsgList.exitSystemAlert}
+                // })
+                this.sharedService.exitSystemEvent();
+              }
+            });
+          }
         }
         else {
           document.getElementById('msgErrorBySms' + template.Id).innerHTML = 'נא להזין שדות חובה';
@@ -250,14 +270,26 @@ export class AllSmsTemplatesComponent implements OnInit {
       }
     }
     else {
-      if (this.newTemplateForm.valid) {
+      debugger
+      this.voucherValidityInsered = this.newTemplateForm.get('TemplateFormat').value.indexOf('<תוקף>') == -1 ? false : true;
+      this.voucherNumberInsered = this.newTemplateForm.get('TemplateFormat').value.indexOf('<מספר שובר>') == -1 ? false : true;
+
+      if (this.newTemplateForm.valid && this.voucherValidityInsered && this.voucherNumberInsered) {
+
+        if (this.templatesSMS.filter(template => template.TemplateName == this.newTemplateForm.get('TemplateName').value).length > 0) {
+          this.errorMessagenewSms = MsgList.smsTemplateNameExist;
+
+          setTimeout(() => {
+            this.errorMessagenewSms = '';
+          }, 2000);
+          return false;
+
+        }
         this.voucherNumberInsered = this.newTemplateForm.value.TemplateFormat.indexOf('<מספר שובר>') == -1;
         this.voucherValidityInsered = this.newTemplateForm.value.TemplateFormat.indexOf('<תוקף>') == -1;
-        debugger
 
         if (this.newTemplateForm.value.TemplateFormat.indexOf('<תוקף>') != -1 &&
           this.newTemplateForm.value.TemplateFormat.indexOf('<מספר שובר>') != -1) {
-          debugger
           this.spinnerNewTemp = true;
           let objToApi = {
             Token: this.userToken,
@@ -281,10 +313,9 @@ export class AllSmsTemplatesComponent implements OnInit {
 
                 this.saveMessage = 'נשמר בהצלחה';
 
-
-                this.newTemplateForm.get('TemplateName').setValue('');
-                this.newTemplateForm.get('SenderName').setValue('');
-                this.newTemplateForm.get('TemplateFormat').setValue('');
+                this.resetNewTemplate();
+                this.voucherNumberInsered = true;
+                this.voucherValidityInsered = true;
 
                 setTimeout(() => {
                   this.saveMessage = '';
@@ -332,6 +363,18 @@ export class AllSmsTemplatesComponent implements OnInit {
     }
   }
 
+  resetNewTemplate() {
+
+    this.newTemplateForm.reset();
+    this.newTemplateForm.get('TemplateName').setValue('');
+    this.newTemplateForm.get('SenderName').setValue('');
+    this.newTemplateForm.get('TemplateFormat').setValue('');
+    this.newTemplateFormView = false;
+
+    setTimeout(() => {
+      this.newTemplateFormView = true;
+    }, 100);
+  }
   editTemplate(template, index) {
 
     //close another template if it been opened
@@ -359,7 +402,6 @@ export class AllSmsTemplatesComponent implements OnInit {
       this.SMSForm.get('Id-' + obj.Id).get('TemplateFormat' + obj.Id).setValue(textAreaValue + ' <' + buttonName + '>');
       //focus text area
 
-      debugger
       this.textAreas.find((item, idx) => {
         return (+item.nativeElement.id.split('textareas')[1]) === obj.Id;
       }).nativeElement.focus();
@@ -388,7 +430,7 @@ Json:
 }
      */
     this.dialog.open(DialogConfirmComponent, {
-      data: { message: 'האם למחוק ' + template.TemplateName + ' ?' }
+      data: { message: 'האם למחוק ' + template.TemplateName + ' ?', closeNameButton: 'בעצם לא' }
     }).afterClosed().subscribe(result => {
       if (result.result == 'yes') {
 
@@ -441,55 +483,64 @@ Json:
   }
 
   sendSMSForExample(template, newTmp: boolean) {
-    debugger
-    if (newTmp && !this.newTemplateForm.valid) {
+    if (newTmp) {
+      this.voucherValidityInsered = this.newTemplateForm.get('TemplateFormat').value.indexOf('<תוקף>') == -1 ? false : true;
+      this.voucherNumberInsered = this.newTemplateForm.get('TemplateFormat').value.indexOf('<מספר שובר>') == -1 ? false : true;
+    }
+    if (newTmp && !this.newTemplateForm.valid || (this.voucherValidityInsered == false || this.voucherNumberInsered == false)) {
       this.newTemplateSendError = 'נא למלא שדות חובה';
       setTimeout(() => {
         this.newTemplateSendError = '';
       }, 2000);
     }
-    if ((newTmp && this.newTemplateForm.valid) || !newTmp) {
+    if ((newTmp && this.newTemplateForm.valid && this.voucherValidityInsered && this.voucherNumberInsered) || !newTmp) {
+
+
       this.dialog.open(PhoneConfirmComponent, {
         data: { message: ' ?מה מספר טלפון לשליחת SMS' }
       }).afterClosed().subscribe(result => {
-        this.newSMSSend = newTmp;
-        if (result.result.includes('phone')) {
+        if (result != undefined && result.result != 'no') {
+          this.newSMSSend = newTmp;
+          if (result.result.includes('phone')) {
 
-          this.spinnerById[0] = template['Id'];
-          let phone = result.result.split('phone: ')[1];
+            this.spinnerById[0] = template['Id'];
+            let phone = result.result.split('phone: ')[1];
 
-          let objToApi = {
-            Token: this.userToken,
-            TemplateFormat: template.TemplateFormat,
-            Phone: phone
-          }
+            let objToApi = {
+              Token: this.userToken,
+              TemplateFormat: template.TemplateFormat,
+              Phone: phone
+            }
 
+            this.dataService.SendSampleMessage(objToApi).subscribe(result => {
+              this.spinnerById[0] = -1;
+              this.newSMSSend = !this.newSMSSend;
+              if (result['Token'] != undefined || result['Token'] != null) {
+                //set new token
+                let tempObjUser = JSON.parse(localStorage.getItem('user'));
+                tempObjUser['Token'] = result['Token'];
+                localStorage.setItem('user', JSON.stringify(tempObjUser));
+                this.userToken = result['Token'];
 
-          this.dataService.SendSampleMessage(objToApi).subscribe(result => {
-            this.spinnerById[0] = -1;
-            this.newSMSSend = !this.newSMSSend;
-            if (result['Token'] != undefined || result['Token'] != null) {
-              //set new token
-              let tempObjUser = JSON.parse(localStorage.getItem('user'));
-              tempObjUser['Token'] = result['Token'];
-              localStorage.setItem('user', JSON.stringify(tempObjUser));
-              this.userToken = result['Token'];
+                debugger
+                if (result.obj == 'OK') {
+                  this.dialog.open(DialogComponent, {
+                    data: { message: 'נשלח בהצלחה' }
+                  });
+                }
 
-              debugger
-              if (result.obj == 'OK') {
-                this.dialog.open(DialogComponent, {
-                  data: { message: 'נשלח בהצלחה' }
-                });
               }
-
-            }
-            else {
-              // this.dialog.open(DialogComponent, {
-              //   data: {message: MsgList.exitSystemAlert}
-              // })
-              this.sharedService.exitSystemEvent();
-            }
-          });
+              else {
+                // this.dialog.open(DialogComponent, {
+                //   data: {message: MsgList.exitSystemAlert}
+                // })
+                this.sharedService.exitSystemEvent();
+              }
+            });
+          }
+        }
+        else if (result.result == 'no') {
+          this.newSMSSend = false;
         }
       })
     }

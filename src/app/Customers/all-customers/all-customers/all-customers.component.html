@@ -134,7 +134,8 @@
                                 <div class="flexTD">
                                     <div>
                                         <button mat-button class="addButton tableButton"
-                                            [routerLink]="['/public/orderCards',0,row['id']]">הזמנה חדשה</button>
+                                            (click)="goToOrderCards(0,row['id'])">הזמנה חדשה</button>
+
                                     </div>
                                     <div>
                                         <mat-icon class="deleteIcon" matTooltip="חסום" (click)="deleteCustomer(row)">

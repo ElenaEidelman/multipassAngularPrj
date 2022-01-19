@@ -48,19 +48,19 @@
 
             <!-- contact data -->
             <div class="contactDataWrap">
-                <div class="contactDataChild" *ngIf="infoData.Website != ''">
+                <div class="contactDataChild" *ngIf="infoData.LinktoBranches != '' && infoData.LinktoBranches != null">
                     <div>
-                        <a [href]="'https://' + infoData.Website" target="_blank">קישור לרשימת הסניפים</a>
+                        <a [href]="'https://' + infoData.LinktoBranches" target="_blank">קישור לרשימת הסניפים</a>
                     </div>
                     <mat-icon>list_alt</mat-icon>
                 </div>
-                <div class="contactDataChild">
+                <div class="contactDataChild" *ngIf="infoData.Phone != ''">
                     <div>
-                        <div>
-                            <a [href]="'tel:' + infoData.Phone">{{infoData.Phone}}</a>
+                        <div class="dirLTR">
+                            <a [href]="'tel:' + infoData.Phone">{{addHyphenToPhoneNumber(infoData.Phone)}}</a>
                         </div>
                     </div>
-                    <mat-icon *ngIf="infoData.Phone != ''">phone</mat-icon>
+                    <mat-icon>phone</mat-icon>
                 </div>
                 <div class="contactDataChild">
                     <div>

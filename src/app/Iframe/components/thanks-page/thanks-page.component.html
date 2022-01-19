@@ -27,7 +27,7 @@
                 <span *ngIf="thankyouResponse.B2C_Mobile != ''"><span
                         *ngIf="thankyouResponse.B2C_Email != ''">ו</span><span *ngIf="thankyouResponse.B2C_Email == ''">
                         לידיעתך המתנה נשלחה </span>לטלפון:
-                    <span> {{thankyouResponse.B2C_Mobile}} </span>
+                    <span> {{addHyphenToPhoneNumber(thankyouResponse.B2C_Mobile)}} </span>
                 </span>
             </div>
         </div>
@@ -48,13 +48,22 @@
                         <span>להדפסת המתנה</span>
                         <mat-icon>print</mat-icon>
                     </button>
-                </div>
+                </div>-->
                 <div>
-                    <button mat-button class="prevButton">
-                        <span>לשליח בווטסאפ</span>
+                    <!-- <a #whatsapp href="whatsapp://send?text=www.google.com"
+                        data-text="Take a look at this awesome website:" class="wa_btn wa_btn_s"
+                        style="display:none">Share1</a>
+                        <a href="whatsapp://send?abid=phonenumber&text=Hello%2C%20World!">whatsapp</a> -->
+
+                    <!-- <a #whatsapp href="whatsapp://send?abid=+9720523385614&text=Hello%2C%20World!"
+                        style="color: white;">whatsapp</a> -->
+
+                    <!-- 
+                    <button (click)="whatsapp.click()" mat-button class="prevButton">
+                        <span>לשליחה בווטסאפ</span>
                         <mat-icon>whatsapp</mat-icon>
-                    </button>
-                </div> -->
+                    </button> -->
+                </div>
             </div>
 
             <mat-spinner *ngIf="navigateToPayment"></mat-spinner>

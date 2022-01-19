@@ -17,7 +17,7 @@
 
             <!-- template text area-->
             <div class="innerElement bgMint">
-                <form [formGroup]="newTemplateForm">
+                <form [formGroup]="newTemplateForm" *ngIf="newTemplateFormView">
                     <mat-card class="bgMint">
                         <mat-card-header class="sms">
                             <!-- <div mat-card-avatar class="smsIconNewTemplate">
@@ -27,33 +27,42 @@
                                 <div mat-card-avatar class="smsIconNewTemplate">
                                     <mat-icon>sms</mat-icon>
                                 </div>
-                                <div>
+                                <div class="wrapFielsTitle">
                                     <mat-form-field>
-                                        <input matInput value=""  placeholder="שם תבנית" formControlName="TemplateName">
+                                        <input matInput value="" placeholder="שם תבנית" formControlName="TemplateName">
+                                        <mat-error *ngIf="newTemplateForm.get('TemplateName').hasError('required')">
+                                            {{MsgList.requiredField}}</mat-error>
                                     </mat-form-field>
                                 </div>
-                                <div>
+                                <div class="wrapFielsTitle">
                                     <mat-form-field>
-                                        <input matInput value=""  placeholder="שם שולח" formControlName="SenderName">
+                                        <input matInput value="" placeholder="שם שולח" formControlName="SenderName">
+                                        <mat-error *ngIf="newTemplateForm.get('SenderName').hasError('required')">
+                                            {{MsgList.requiredField}}</mat-error>
                                     </mat-form-field>
                                 </div>
                             </mat-card-title>
                             <mat-card-subtitle></mat-card-subtitle>
                         </mat-card-header>
-                            <mat-card-content>
-                                <mat-form-field class="smsTA">
-                                    <textarea matInput #newTemplate  placeholder="SMS תבנית" class="templateTextArea" formControlName="TemplateFormat"></textarea>
-                                </mat-form-field>
-                            </mat-card-content> 
+                        <mat-card-content>
+                            <mat-form-field class="smsTA">
+                                <textarea matInput #newTemplate placeholder="SMS תבנית" class="templateTextArea"
+                                    formControlName="TemplateFormat"></textarea>
+                                <mat-error *ngIf="newTemplateForm.get('TemplateFormat').hasError('required')">
+                                    {{MsgList.requiredField}}</mat-error>
+                            </mat-form-field>
+                        </mat-card-content>
 
                         <!-- action buttons -->
                         <mat-card-actions class="newSMSActionButtons">
                             <div>
-                                <button mat-button class="linkButton" (click)="sendSMSForExample(newTemplateForm.value, true)">
+                                <button mat-button class="linkButton"
+                                    (click)="sendSMSForExample(newTemplateForm.value, true)">
                                     <span>שלח לדוגמא</span>
                                     <mat-icon>send</mat-icon>
                                 </button>
-                                <mat-error [@openClose]="newTemplateSendError != ''">{{newTemplateSendError}}</mat-error>
+                                <mat-error [@openClose]="newTemplateSendError != ''">{{newTemplateSendError}}
+                                </mat-error>
                                 <!-- <mat-hint [@openClose]="newTemplateSendSuccessfully" class="saveMessage">{{MsgList.sendSuccessfully}}</mat-hint> -->
                             </div>
                             <div class="spinnerBWrap">
@@ -78,28 +87,44 @@
                     <div>
                         <mat-card-actions class="edit-buttons-wrap">
                             <button mat-button class="linkButton" (click)="editButtonClicked('','שם פרטי')">
-                                <span><שם פרטי></span>
+                                <span>
+                                    <שם פרטי>
+                                </span>
                             </button>
                             <button mat-button class="linkButton" (click)="editButtonClicked('','שם משפחה')">
-                                <span><שם משפחה></span>
+                                <span>
+                                    <שם משפחה>
+                                </span>
                             </button>
                             <button mat-button class="linkButton" (click)="editButtonClicked('','שם חברה')">
-                                <span><שם חברה></span>
+                                <span>
+                                    <שם חברה>
+                                </span>
                             </button>
                             <button mat-button class="linkButton" (click)="editButtonClicked('','סכום טעינה')">
-                                <span><סכום טעינה></span>
+                                <span>
+                                    <סכום טעינה>
+                                </span>
                             </button>
-                            <button mat-button class="linkButton" [class.errorActionButton]="voucherNumberInsered" (click)="editButtonClicked('','מספר שובר')">
-                                <span><מספר שובר>*</span>
+                            <button mat-button class="linkButton" [class.errorActionButton]="!voucherNumberInsered"
+                                (click)="editButtonClicked('','מספר שובר')">
+                                <span>
+                                    <מספר שובר>*
+                                </span>
                             </button>
                             <!-- <button mat-button class="linkButton" (click)="editButtonClicked('','פין קוד')">
                                 <span><פין קוד></span>
                             </button> -->
-                            <button mat-button class="linkButton" [class.errorActionButton]="voucherValidityInsered"  (click)="editButtonClicked('','תוקף')">
-                                <span><תוקף>*</span>
+                            <button mat-button class="linkButton" [class.errorActionButton]="!voucherValidityInsered"
+                                (click)="editButtonClicked('','תוקף')">
+                                <span>
+                                    <תוקף>*
+                                </span>
                             </button>
                             <button mat-button class="linkButton" (click)="editButtonClicked('','לינק לברקוד')">
-                                <span><לינק לברקוד></span>
+                                <span>
+                                    <לינק לברקוד>
+                                </span>
                             </button>
                         </mat-card-actions>
                         <!-- <div class="save-edit-button">
@@ -124,105 +149,135 @@
 
             <form [formGroup]="SMSForm" *ngIf="SMSForm">
 
-                <div class="cards-wrap" >
-                        <div *ngFor="let temp of templatesSMS; let i = index;">
-                            <mat-card class="innerElement bgMint" formGroupName=Id-{{temp.Id}}>
-                                <mat-card-header class="sms">
-                                    <!-- <div mat-card-avatar class="example-header-image">
+                <div class="cards-wrap">
+                    <div *ngFor="let temp of templatesSMS; let i = index;">
+                        <mat-card class="innerElement bgMint" formGroupName=Id-{{temp.Id}}>
+                            <mat-card-header class="sms">
+                                <!-- <div mat-card-avatar class="example-header-image">
                                         <mat-icon>sms</mat-icon>
                                     </div> -->
-                                    <mat-card-title class="mat-card-sms">
-                                        <div mat-card-avatar class="example-header-image">
-                                            <mat-icon>sms</mat-icon>
-                                        </div>
-                                        <div>
-                                            <mat-form-field>
-                                                <input matInput value="{{temp.TemplateName}}"  placeholder="שם תבנית" formControlName="TemplateName{{temp.Id}}">
-                                            </mat-form-field>
-                                        </div>
-                                        <div>
-                                            <mat-form-field>
-                                                <input matInput value="{{temp.TemplateName}}"  placeholder="שם שולח" formControlName="SenderName{{temp.Id}}">
-                                            </mat-form-field>
-                                        </div>
-                                    </mat-card-title>
-                                    <mat-card-subtitle></mat-card-subtitle>
-                                </mat-card-header>
-                                    <mat-card-content>
+                                <mat-card-title class="mat-card-sms">
+                                    <div mat-card-avatar class="example-header-image">
+                                        <mat-icon>sms</mat-icon>
+                                    </div>
+                                    <div class="wrapFielsTitle">
                                         <mat-form-field>
-                                            <textarea 
-                                            matInput #txtArea [id]="'textareas' + temp.Id" formControlName="TemplateFormat{{temp.Id}}" placeholder="SMS תבנית" class="templateTextArea"></textarea>
+                                            <input matInput value="{{temp.TemplateName}}" placeholder="שם תבנית"
+                                                formControlName="TemplateName{{temp.Id}}">
+                                            <mat-error>{{MsgList.requiredField}}</mat-error>
                                         </mat-form-field>
-                                    </mat-card-content> 
-
-                                <!-- action buttons all templates-->
-                                <mat-card-actions class="actionWrapB newSMSActionButtons" *ngIf="temp.Id != editingTempId || !edit">
-
-                                    <div>
-                                        <button mat-button class="linkButton" (click)="sendSMSForExample(temp, false)">
-                                            <span>שלח לדוגמא</span>
-                                            <mat-icon>send</mat-icon>
-                                        </button>
                                     </div>
-                                    <div>
-                                        <button mat-button class="linkButton" (click)="editTemplate(temp, i)">
-                                            <span>ערוך</span>
-                                            <mat-icon>edit</mat-icon>
-                                        </button>
-
+                                    <div class="wrapFielsTitle">
+                                        <mat-form-field>
+                                            <input matInput value="{{temp.TemplateName}}" placeholder="שם שולח"
+                                                formControlName="SenderName{{temp.Id}}">
+                                            <mat-error>{{MsgList.requiredField}}</mat-error>
+                                        </mat-form-field>
                                     </div>
-                                    <div class="deleteB">
-                                            <!-- <span>מחק</span> -->
-                                            <mat-icon class="deleteIcon" (click)="deleteTemplate(temp)" matTooltip="מחק תבנית">delete</mat-icon>
-                                    </div>
+                                </mat-card-title>
+                                <mat-card-subtitle></mat-card-subtitle>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <mat-form-field>
+                                    <textarea matInput #txtArea [id]="'textareas' + temp.Id"
+                                        formControlName="TemplateFormat{{temp.Id}}" placeholder="SMS תבנית"
+                                        class="templateTextArea"></textarea>
+                                    <mat-error>{{MsgList.requiredField}}</mat-error>
+                                </mat-form-field>
+                            </mat-card-content>
 
-                                    <mat-spinner *ngIf="spinnerById[0] == temp.Id"></mat-spinner>
-                                </mat-card-actions>
+                            <!-- action buttons all templates-->
+                            <mat-card-actions class="actionWrapB newSMSActionButtons"
+                                *ngIf="temp.Id != editingTempId || !edit">
 
-                                <!-- edit template -->
-                                  <div [@openClose]="temp.Id == editingTempId && edit" >
-                                    <mat-card-actions class="edit-buttons-wrap" style="margin-right: -7px">
-                                        <button mat-button class="linkButton" (click)="editButtonClicked(temp,'שם פרטי')">
-                                            <span><שם פרטי></span>
-                                        </button>
-                                        <button mat-button class="linkButton" (click)="editButtonClicked(temp,'שם משפחה')">
-                                            <span><שם משפחה></span>
-                                        </button>
-                                        <button mat-button class="linkButton" (click)="editButtonClicked(temp,'שם חברה')">
-                                            <span><שם חברה></span>
-                                        </button>
-                                        <button mat-button class="linkButton" (click)="editButtonClicked(temp,'סכום טעינה')">
-                                            <span><סכום טעינה></span>
-                                        </button>
-                                        <button mat-button class="linkButton" [class.errorActionButton]="voucherNumberInseredById === 'voucherNumberInseredById' + temp.Id" (click)="editButtonClicked(temp,'מספר שובר')">
-                                            <span><מספר שובר>*</span>
-                                        </button>
-                                        <!-- <button mat-button class="linkButton" (click)="editButtonClicked(temp,'פין קוד')">
+                                <div>
+                                    <button mat-button class="linkButton" (click)="sendSMSForExample(temp, false)">
+                                        <span>שלח לדוגמא</span>
+                                        <mat-icon>send</mat-icon>
+                                    </button>
+                                </div>
+                                <div>
+                                    <button mat-button class="linkButton" (click)="editTemplate(temp, i)">
+                                        <span>ערוך</span>
+                                        <mat-icon>edit</mat-icon>
+                                    </button>
+
+                                </div>
+                                <div class="deleteB">
+                                    <!-- <span>מחק</span> -->
+                                    <mat-icon class="deleteIcon" (click)="deleteTemplate(temp)" matTooltip="מחק תבנית">
+                                        delete</mat-icon>
+                                </div>
+
+                                <mat-spinner *ngIf="spinnerById[0] == temp.Id"></mat-spinner>
+                            </mat-card-actions>
+
+                            <!-- edit template -->
+                            <div [@openClose]="temp.Id == editingTempId && edit">
+                                <mat-card-actions class="edit-buttons-wrap" style="margin-right: -7px">
+                                    <button mat-button class="linkButton" (click)="editButtonClicked(temp,'שם פרטי')">
+                                        <span>
+                                            <שם פרטי>
+                                        </span>
+                                    </button>
+                                    <button mat-button class="linkButton" (click)="editButtonClicked(temp,'שם משפחה')">
+                                        <span>
+                                            <שם משפחה>
+                                        </span>
+                                    </button>
+                                    <button mat-button class="linkButton" (click)="editButtonClicked(temp,'שם חברה')">
+                                        <span>
+                                            <שם חברה>
+                                        </span>
+                                    </button>
+                                    <button mat-button class="linkButton"
+                                        (click)="editButtonClicked(temp,'סכום טעינה')">
+                                        <span>
+                                            <סכום טעינה>
+                                        </span>
+                                    </button>
+                                    <button mat-button class="linkButton"
+                                        [class.errorActionButton]="voucherNumberInseredById === 'voucherNumberInseredById' + temp.Id"
+                                        (click)="editButtonClicked(temp,'מספר שובר')">
+                                        <span>
+                                            <מספר שובר>*
+                                        </span>
+                                    </button>
+                                    <!-- <button mat-button class="linkButton" (click)="editButtonClicked(temp,'פין קוד')">
                                             <span><פין קוד></span>
                                         </button> -->
-                                        <button mat-button class="linkButton" [class.errorActionButton]="voucherValidityInseredById === 'voucherValidityInseredById' + temp.Id" (click)="editButtonClicked(temp,'תוקף')">
-                                            <span><תוקף>*</span>
-                                        </button>
+                                    <button mat-button class="linkButton"
+                                        [class.errorActionButton]="voucherValidityInseredById === 'voucherValidityInseredById' + temp.Id"
+                                        (click)="editButtonClicked(temp,'תוקף')">
+                                        <span>
+                                            <תוקף>*
+                                        </span>
+                                    </button>
 
-                                        <button mat-button class="linkButton" (click)="editButtonClicked(temp,'לינק לברקוד')">
-                                            <span><לינק לברקוד></span>
-                                        </button>
-                                    </mat-card-actions>
-                                    <div class="save-edit-button">
-                                        <button mat-button class="addButton" (click)="closeTemplate(temp)">
-                                            <span>בטל</span>
-                                            <mat-icon>close</mat-icon>
-                                        </button>
-                                        <button mat-button class="primaryButton" (click)="saveTemplate(temp)">
-                                            <span>שמור</span>
-                                            <mat-icon>save</mat-icon>
-                                        </button>
-                                        <diV [@openClose]="('msgBySms' + temp.Id) != '' " [id]="'msgBySms' + temp.Id" class="saveMessage"></diV>
-                                        <diV [@openClose]="('msgErrorBySms' + temp.Id) != '' " [id]="'msgErrorBySms' + temp.Id" class="error"></diV>
-                                    </div>
+                                    <button mat-button class="linkButton"
+                                        (click)="editButtonClicked(temp,'לינק לברקוד')">
+                                        <span>
+                                            <לינק לברקוד>
+                                        </span>
+                                    </button>
+                                </mat-card-actions>
+                                <div class="save-edit-button">
+                                    <button mat-button class="linkButton" (click)="closeTemplate(temp)">
+                                        <span>בטל</span>
+                                        <mat-icon>close</mat-icon>
+                                    </button>
+                                    <button mat-button class="primaryButton" (click)="saveTemplate(temp)">
+                                        <span>שמור</span>
+                                        <mat-icon>save</mat-icon>
+                                    </button>
+                                    <diV [@openClose]="('msgBySms' + temp.Id) != '' " [id]="'msgBySms' + temp.Id"
+                                        class="saveMessage"></diV>
+                                    <diV [@openClose]="('msgErrorBySms' + temp.Id) != '' "
+                                        [id]="'msgErrorBySms' + temp.Id" class="error"></diV>
                                 </div>
-                            </mat-card>
-                        </div>
+                            </div>
+                        </mat-card>
+                    </div>
                 </div>
             </form>
         </div>

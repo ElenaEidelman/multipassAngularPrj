@@ -15,13 +15,13 @@
                     <fa-icon [icon]="faFileExcel"></fa-icon>
                 </button>
             </div>
-            <div *ngIf="this.OrderCreatedFromExcel">
+            <div *ngIf="this.OrderCreatedFromExcel && orderHaveCards">
                 <button mat-button class="addButton" (click)="addSelectForSmsColumn()">
-                     SMS שליחת
+                    SMS שליחת
                     <mat-icon>{{smsIcon}}</mat-icon>
                 </button>
             </div>
-            <div>
+            <div *ngIf="orderHaveCards">
                 <button mat-button class="deleteButton" (click)="addSelectForBlockedColumn()">
                     ביטול שוברים
                     <mat-icon>{{deleteIcon}}</mat-icon>
@@ -36,7 +36,8 @@
                 </button>
             </div>
         </div>
-        <div *ngIf="additionalOptionsSMS" class="additionalOptionsSMS formBorder">
+        <div [@openClose]="additionalOptionsSMS" class="additionalOptions formBorder">
+            <!-- [class.additionalOptionsSMS]="additionalOptionsSMS" [class.formBorder]="additionalOptionsSMS"-->
             <div class="selectWrap">
                 <mat-form-field>
                     <mat-label>בחר תבנית מסרון</mat-label>
@@ -55,9 +56,7 @@
             <div class="textAreaWrap">
                 <mat-form-field class="textAreaWrap" appearance="outline">
                     <textarea matInput [formControl]="previewSmsTemplate" cdkTextareaAutosize
-                        #autosize="cdkTextareaAutosize"
-                        cdkAutosizeMinRows="5"
-                        cdkAutosizeMaxRows="10" readonly>
+                        #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="5" cdkAutosizeMaxRows="10" readonly>
                         </textarea>
                 </mat-form-field>
             </div>
@@ -70,10 +69,10 @@
             </div>
         </div>
 
-        <div *ngIf="additionalOptionDelete" class="additionalOptionDelete formBorder">
+        <div [@openClose]="additionalOptionDelete" class="additionalOptions formBorder">
             <div class="voidBWrap">
                 <button mat-button class="deleteButton" (click)="voidCards()">בטל כל מסומנים</button>
-                <div *ngIf="cardsDeletedMsg" class="saveMessage">{{cardsDeletedMsg}}</div>
+                <div *ngIf="cardsDeletedMsg != ''" class="saveMessage">{{cardsDeletedMsg}}</div>
                 <div *ngIf="cardsDeletedError" class="error">{{cardsDeletedError}}</div>
                 <mat-spinner *ngIf="voidCardSpinner" class="voidSpinner"></mat-spinner>
             </div>
@@ -85,13 +84,13 @@
                 <mat-icon matPrefix>filter_list</mat-icon>
             </mat-form-field>
 
-            <div class="mat-elevation-z8">
+            <div class="mat-elevation-z8 tableWrap">
                 <table mat-table [dataSource]="dataTable" matSort class="tableView" dir="rtl">
 
                     <!-- Checkbox Column send sms -->
                     <ng-container matColumnDef="selectSMS">
                         <th mat-header-cell *matHeaderCellDef class="checkBoxBG">
-                            <span class="smsLabel">sms</span>
+                            <!-- <span class="smsLabel">sms</span> -->
                             <mat-checkbox (change)="$event ? masterToggle() : null"
                                 [checked]="selection.hasValue() && isAllSelected()"
                                 [indeterminate]="selection.hasValue() && !isAllSelected()"
@@ -109,14 +108,14 @@
                     <!-- Checkbox Column delete multi cards -->
                     <ng-container matColumnDef="selectDeleteCards">
                         <th mat-header-cell *matHeaderCellDef class="checkBoxBG">
-                            <span class="smsLabel">חסימה</span>
+                            <!-- <span class="smsLabel">חסימה</span> -->
                             <mat-checkbox (change)="$event ? masterToggle() : null"
                                 [checked]="selection.hasValue() && isAllSelected()"
                                 [indeterminate]="selection.hasValue() && !isAllSelected()"
                                 [aria-label]="checkboxLabel()">
                             </mat-checkbox>
                         </th>
-                        <td mat-cell *matCellDef="let row" class="checkBoxBG"> 
+                        <td mat-cell *matCellDef="let row" class="checkBoxBG">
                             <mat-checkbox (click)="$event.stopPropagation()"
                                 (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)"
                                 [aria-label]="checkboxLabel(row)">
@@ -131,17 +130,24 @@
                             <th mat-header-cell *matHeaderCellDef mat-sort-header> {{column['viewValue']}} </th>
                             <td mat-cell *matCellDef="let row">
                                 <span *ngIf="column['value'] != 'CardId' 
-                                            && column['value'] != 'IsActive'">
+                                            && column['value'] != 'IsActive'
+                                            && column['value'] != 'DSendLastSent'">
                                     {{row[column['value']]}}
                                 </span>
 
                                 <!--[routerLink]="['/public/cardInfo',row['CardId'], userId]"-->
                                 <a *ngIf="column['value'] == 'CardId' 
-                                          && column['value'] != 'IsActive'"
-                                         (click)="goToCardInfo(row['CardId'],userId)">
+                                          && column['value'] != 'IsActive' && column['value'] != 'DSendLastSent'"
+                                    (click)="goToCardInfo(row['CardId'],userId)">
                                     {{row[column['value']]}}
                                 </a>
-                                <span *ngIf="column['value'] == 'IsActive'">{{row[column['value']] == true ? 'פעיל': 'חסום'}}</span>
+                                <span
+                                    *ngIf="column['value'] == 'IsActive' && column['value'] != 'DSendLastSent'">{{row[column['value']]
+                                    == true ? 'פעיל':
+                                    'חסום'}}</span>
+                                <span
+                                    *ngIf="column['value'] == 'DSendLastSent' && column['value'] != 'CardId' && column['value'] != 'IsActive'">
+                                    {{row[column['value']] | formatDate}}</span>
                             </td>
                         </ng-container>
                     </ng-container>

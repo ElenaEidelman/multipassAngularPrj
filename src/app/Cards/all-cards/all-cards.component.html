@@ -81,7 +81,8 @@
                             <mat-form-field appearance="fill"
                                 class="datePicker datePickerPadding marginTop-1 marginTop0">
                                 <mat-label>מתאריך</mat-label>
-                                <input matInput [matDatepicker]="picker2" formControlName="FromDate" readonly>
+                                <input matInput [matDatepicker]="picker2" formControlName="FromDate" readonly
+                                    [max]="minFromDate" (dateChange)="dateFromChanged($event, 'FromDate')">
                                 <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
                                 <mat-datepicker #picker2></mat-datepicker>
                             </mat-form-field>
@@ -90,7 +91,8 @@
                             <mat-form-field appearance="fill"
                                 class="datePicker datePickerPadding marginTop-1 marginTop0">
                                 <mat-label>עד תאריך</mat-label>
-                                <input matInput [matDatepicker]="picker" formControlName="ToDate" readonly>
+                                <input matInput [matDatepicker]="picker" formControlName="ToDate" readonly
+                                    [min]="minToDate" (dateChange)="dateFromChanged($event, 'ToDate')">
                                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                                 <mat-datepicker #picker></mat-datepicker>
                             </mat-form-field>
@@ -99,8 +101,8 @@
                     <div class="formWrapRow">
                         <div>
                             <mat-form-field>
-                                <mat-label>ח"פ לקוח</mat-label>
-                                <input matInput placeholder='ח"פ לקוח' formControlName="CustomerId"
+                                <mat-label>ח.פ לקוח</mat-label>
+                                <input matInput placeholder='ח.פ לקוח' formControlName="CustomerId"
                                     [attr.maxlength]="9">
                                 <button class="clearButton" *ngIf="cardsForm.get('CustomerId').value != ''" mat-button
                                     matPrefix mat-icon-button aria-label="Clear"

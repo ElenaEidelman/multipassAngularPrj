@@ -6,15 +6,15 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class FormatDatePipe implements PipeTransform {
 
   transform(value: unknown, ...args: unknown[]): unknown {
-// debugger  
-    if(value != undefined){
+    //debugger
+    if (value != undefined) {
       let date = new Date(value.toString());
       let day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
       let month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
       let year = date.getFullYear();
       return day + '/' + month + '/' + year;
     }
-    else{
+    else {
       return value;
     }
   }

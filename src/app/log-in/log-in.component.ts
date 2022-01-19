@@ -49,9 +49,9 @@ export class LogInComponent implements OnInit {
         PhoneNumber: phone,
         CompanyId: this.loginForm.get('CompanyId').value
       }
-      debugger
+
       this.dataService.SendOtp(objToApi).subscribe(result => {
-        debugger
+
         this.loginSpinner = false;
         if (result['Token'] != undefined || result['Token'] != null) {
           if (result.err != -1) {
@@ -109,6 +109,7 @@ export class LogInComponent implements OnInit {
         CompanyId: this.loginForm.get('CompanyId').value,
         OtpKey: this.loginForm.get('OtpKey').value
       }
+
       this.dataService.ValidateOtp(objToApi).subscribe(result => {
 
         if (result['Token'] != '' && result['obj'] != null) {

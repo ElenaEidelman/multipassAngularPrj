@@ -38,10 +38,13 @@ mat-accordion mat-expansion-panel mat-expansion-panel-header .mat-icon{
     flex-direction: row-reverse;
   }
   .cards-wrap > div{
-    margin: 0 6px;
-    width: 49%;
+    width: calc(100% /2.02);
   }
 
+  .wrapFielsTitle{
+    width: 100%;
+    margin: 0 5px;
+  }
   mat-form-field{
       width: 100%;
   }
@@ -85,6 +88,11 @@ mat-accordion mat-expansion-panel mat-expansion-panel-header .mat-icon{
     text-align: CENTER;
     border-top: 1px solid #f0f0f0;
     padding: 10px;
+    display: flex;
+    justify-content: center;
+  }
+  .save-edit-button > button.primaryButton{
+    width: unset;
   }
   .save-edit-button > button{
     margin: 0 10px;

@@ -67,12 +67,15 @@ export class ExistUserComponent implements OnInit {
 
   ngOnInit(): void {
     window.scroll(0, 0);
+    debugger
     // this.idUnsubscribe = this.activeRoute.params.subscribe( param => {
     let urlParams = this.urlSharingService.messageSource.getValue();
+    debugger
     if (urlParams == '') {
       this.router.navigate(['/public/allUsers']);
     }
     else {
+      debugger
       this.urlSharingService.changeMessage('');
       this.id = JSON.parse(urlParams)['userId'];
       this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];

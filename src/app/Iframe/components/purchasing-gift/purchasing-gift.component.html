@@ -16,198 +16,201 @@
             <mat-horizontal-stepper [selectedIndex]="selectedIndex" #stepper
                 (selectionChange)="stepChanged($event, stepper);">
                 <!-- Send to who -->
-                <mat-step [editable]="!isEditable" label="step 1">
+                <mat-step [editable]="!isEditable" label="פרטי המתנה">
                     <!-- <form [formGroup]="FirstFormGroup" class="formWrap"> -->
 
                     <div class="stepWrap">
                         <div>
-                            <div class="tabLabel">למי המתנה?</div>
+                            <!-- <div class="tabLabel">פרטי המתנה</div> -->
+                            <div class="formFieldTitle titleFlex">
+                                <div class="fieldTitleMargin">פרטי המתנה</div>
+                            </div>
+
+                            <form [formGroup]="FormsArray.get('FirstFormGroup')" class="formWrap"
+                                (ngSubmit)="nextStep(stepper)">
+                                <div class="inputsWrap">
+                                    <div>
+                                        <span class="formFieldTitle">
+                                            <mat-icon>card_giftcard</mat-icon>
+
+                                            <span class="fieldTitle">פרטי המתנה</span>
+                                        </span>
+                                        <mat-form-field appearance="outline">
+
+                                            <input matInput formControlName="name" placeholder="שם מקבל המתנה">
+                                            <mat-error
+                                                *ngIf="FormsArray.get('FirstFormGroup').get('name').hasError('required')">
+                                                {{MsgList.requiredField}}</mat-error>
+                                        </mat-form-field>
+                                    </div>
+                                    <div>
+                                        <span class="formFieldTitle">
+                                            <mat-icon>card_giftcard</mat-icon>
+
+                                            <span class="fieldTitle">מה חוגגים</span>
+                                        </span>
+                                        <mat-form-field appearance="outline">
+                                            <mat-select formControlName="celebrating" placeholder=" ?לאיזה אירוע"
+                                                (selectionChange)="celebratingChanged($event)">
+                                                <mat-option *ngFor="let blessing of blessingList"
+                                                    [value]="blessing.typeBlessingId">
+                                                    {{blessing.Subject}}
+                                                </mat-option>
+                                            </mat-select>
+                                            <mat-error
+                                                *ngIf="FormsArray.get('FirstFormGroup').get('celebrating').hasError('required')">
+                                                {{MsgList.requiredField}}</mat-error>
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                                <div class="inputsWrap">
+                                    <div>
+                                        <span class="formFieldTitle">
+
+                                            <mat-icon>card_giftcard</mat-icon>
+                                            <span class="fieldTitle">ברכה</span>
+                                        </span>
+                                        <mat-form-field class="example-full-width" appearance="outline">
+                                            <textarea matInput
+                                                placeholder="מזל טוב, תודה רבה או פשוט מלא אהבה? כאן כותבים מילים טובות ואיחולים שמחים"
+                                                formControlName="blessingText" cdkTextareaAutosize maxlength="150">
+                                        </textarea>
+                                            <mat-error
+                                                *ngIf="FormsArray.get('FirstFormGroup').get('blessingText').hasError('required')">
+                                                {{MsgList.requiredField}}</mat-error>
+                                        </mat-form-field>
+                                        <div class="underTextAreaElements">
+                                            <div>
+                                                <div class="TAPaging"
+                                                    *ngIf="blessingFilteredList != undefined && blessingFilteredList.length > 0">
+                                                    <mat-icon class="primaryColor" (mousedown)="stepNext()">
+                                                        chevron_right</mat-icon>
+                                                    <span
+                                                        class="marginAuto">{{blessingTextCurrentStep}}/{{blessingFilteredList.length}}</span>
+                                                    <mat-icon class="primaryColor" (mousedown)="stepBefore()">
+                                                        chevron_left</mat-icon>
+                                                </div>
+                                            </div>
+                                            <div class="underTALeftElement">
+                                                <div class="clearAll primaryColor" (mousedown)="clearBlessingTA()">נקה
+                                                    הכל</div>
+                                                <div>
+                                                    {{FormsArray.get('FirstFormGroup').get('blessingText').value.length}}/150
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="formFieldTitle mobileTitle">
+                                        <span> צלמו או הוסיפו תמונות וסרטון </span>
+                                        <span class="lighterText"> (עד MB {{picSizeInMega}}) </span>
+                                    </div>
+
+                                    <div class="addSrcWrap">
+                                        <div>
+                                            <input [hidden]="true" id="file-upload" name="uploadDoc" #uploadDoc
+                                                (change)="fileUploadFunc($event)" type="file"
+                                                formControlName="imgVideo">
+
+                                            <button type="button" mat-icon-button class="mat-icon-button large"
+                                                (click)="uploadDoc.click()">
+                                                <mat-icon>add_a_photo</mat-icon>
+                                            </button>
+                                            <div class="buttonTitle">תמונה</div>
+
+
+
+
+
+                                            <!-- <div class="prevItemsWrap secondForm">
+                                        <div class="closeIcon" [@openClose]="emailOption">
+                                            <mat-icon type="button" [class.borderErrorRed]="ifSendOptionNotChoosed " (click)="openSendingOption('emailOption')">close</mat-icon>
+                                        </div>
+                                        <div>
+                                            <button type="button" mat-icon-button class="mat-icon-button large"
+                                                (click)="openSendingOption('emailOption')">
+                                                <mat-icon [class.borderErrorRed]="ifSendOptionNotChoosed ">mail_outline</mat-icon>
+                                            </button>
+                                        </div>
+                                    </div> -->
+
+
+
+
+
+
+
+
+
+
+                                            <!-- && FormGroup.get('imgVideo').invalid -->
+                                            <!-- <div *ngIf="FormsArray.get('FirstFormGroup').get('imgVideo').touched "
+                                        class="alert alert-danger">
+                                        <div
+                                            *ngIf="FormsArray.get('FirstFormGroup').get('imgVideo').errors.required">
+                                            File is
+                                            required.
+                                        </div>
+                                    </div> -->
+                                            <!-- <span [hidden]="false" id="file-upload-filename" >{{filename}}</span> -->
+                                            <!-- <mat-error *ngIf="excelFileError != ''">{{excelFileError}}</mat-error> -->
+                                        </div>
+                                        <!-- <div>
+                                    <button mat-icon-button class="mat-icon-button large">
+                                        <mat-icon (mousedown)="openVideoDialog()">video_library</mat-icon>
+                                    </button>
+                                    <div class="buttonTitle">סרטונים מוכנים</div>
+                                </div> -->
+                                        <mat-error class="addVideoImgError" *ngIf="addVideoImgError != ''">
+                                            {{addVideoImgError}}</mat-error>
+                                    </div>
+
+                                    <div class="previewImgsVideo">
+                                        <div *ngFor="let element of imgVideoAddedList; let i = index"
+                                            class="prevItemsWrap"
+                                            (mousedown)="largePreview(element.src, element.format)">
+                                            <div class="closeIcon">
+                                                <mat-icon (mousedown)="deleteAddedItems(element, i)">close
+                                                </mat-icon>
+                                            </div>
+                                            <div *ngIf="element.format ==='image'" class="previewItem"
+                                                [style.background-image]="'url(' + element.src + ')'">
+                                            </div>
+                                            <video class="previewItem" [src]="element.src"
+                                                *ngIf="element.format === 'video'">
+                                            </video>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <mat-error *ngIf="formError != ''">{{formError}}</mat-error>
+                                <div class="wrapNextPrevButton">
+                                    <button mat-button class="primaryButton" type="submit">המשך</button>
+                                </div>
+                            </form>
+
+
+                            <!---tab group start--->
                             <mat-tab-group mat-align-tabs="start" #GiftToWhoTabs
                                 (selectedTabChange)="tabChanged($event,stepper)">
 
                                 <!-- to another -->
-                                <mat-tab label="על מי חשבת?">
-                                    <ng-template matStepLabel>למי המתנה</ng-template>
-                                    <form [formGroup]="FormsArray.get('FirstFormGroup')" class="formWrap"
-                                        (ngSubmit)="nextStep(stepper)">
-                                        <div class="inputsWrap">
-                                            <div>
-                                                <span class="formFieldTitle">
-                                                    <mat-icon>card_giftcard</mat-icon>
-                                                    <!-- <span class="titleCircle"></span> -->
-                                                    <span class="fieldTitle">למי המתנה</span>
-                                                </span>
-                                                <mat-form-field appearance="outline">
-                                                    <!-- <mat-label>שם מקבל המתנה</mat-label> -->
-                                                    <input matInput formControlName="name" placeholder="שם מקבל המתנה">
-                                                    <mat-error
-                                                        *ngIf="FormsArray.get('FirstFormGroup').get('name').hasError('required')">
-                                                        {{MsgList.requiredField}}</mat-error>
-                                                </mat-form-field>
-                                            </div>
-                                            <div>
-                                                <span class="formFieldTitle">
-                                                    <mat-icon>card_giftcard</mat-icon>
-                                                    <!-- <span class="titleCircle"></span> -->
-                                                    <span class="fieldTitle">מה חוגגים</span>
-                                                </span>
-                                                <mat-form-field appearance="outline">
-                                                    <mat-select formControlName="celebrating"
-                                                        placeholder=" ?לאיזה אירוע"
-                                                        (selectionChange)="celebratingChanged($event)">
-                                                        <mat-option *ngFor="let blessing of blessingList"
-                                                            [value]="blessing.typeBlessingId">
-                                                            {{blessing.Subject}}
-                                                        </mat-option>
-                                                    </mat-select>
-                                                    <mat-error
-                                                        *ngIf="FormsArray.get('FirstFormGroup').get('celebrating').hasError('required')">
-                                                        {{MsgList.requiredField}}</mat-error>
+                                <!-- <mat-tab label="על מי חשבת?">
+                                    <ng-template matStepLabel>פרטי המתנה</ng-template> -->
+                                <!-- Form was here before [formGroup]="FormsArray.get('FirstFormGroup')" -->
+                                <!-- </mat-tab> -->
+                                <!---------------------------------------------------------------------------------------------->
 
-
-                                                    <!-- <mat-hint>Errors appear instantly!</mat-hint>
-                                                        <mat-error *ngIf="selected.hasError('required')">You must make a selection</mat-error>
-                                                        <mat-error *ngIf="selected.hasError('pattern') && !selected.hasError('required')">
-                                                        Your selection is invalid
-                                                        </mat-error> -->
-                                                </mat-form-field>
-                                            </div>
-                                        </div>
-                                        <div class="inputsWrap">
-                                            <div>
-                                                <span class="formFieldTitle">
-                                                    <!-- <span class="titleCircle"></span> -->
-                                                    <mat-icon>card_giftcard</mat-icon>
-                                                    <span class="fieldTitle">ברכה</span>
-                                                </span>
-                                                <mat-form-field class="example-full-width" appearance="outline">
-                                                    <textarea matInput
-                                                        placeholder="מזל טוב, תודה רבה או פשוט מלא אהבה? כאן כותבים מילים טובות ואיחולים שמחים"
-                                                        formControlName="blessingText" cdkTextareaAutosize
-                                                        maxlength="150">
-                                                    </textarea>
-                                                    <mat-error
-                                                        *ngIf="FormsArray.get('FirstFormGroup').get('blessingText').hasError('required')">
-                                                        {{MsgList.requiredField}}</mat-error>
-                                                </mat-form-field>
-                                                <div class="underTextAreaElements">
-                                                    <div>
-                                                        <div class="TAPaging"
-                                                            *ngIf="blessingFilteredList != undefined && blessingFilteredList.length > 0">
-                                                            <mat-icon class="primaryColor" (mousedown)="stepNext()">
-                                                                chevron_right</mat-icon>
-                                                            <span
-                                                                class="marginAuto">{{blessingTextCurrentStep}}/{{blessingFilteredList.length}}</span>
-                                                            <mat-icon class="primaryColor" (mousedown)="stepBefore()">
-                                                                chevron_left</mat-icon>
-                                                        </div>
-                                                    </div>
-                                                    <div class="underTALeftElement">
-                                                        <div class="clearAll primaryColor"
-                                                            (mousedown)="clearBlessingTA()">נקה
-                                                            הכל</div>
-                                                        <div>
-                                                            {{FormsArray.get('FirstFormGroup').get('blessingText').value.length}}/150
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div>
-                                            <div class="formFieldTitle mobileTitle">
-                                                <span> צלמו או הוסיפו תמונות וסרטון </span>
-                                                <span class="lighterText"> (עד MB {{picSizeInMega}}) </span>
-                                            </div>
-
-                                            <div class="addSrcWrap">
-                                                <div>
-                                                    <input [hidden]="true" id="file-upload" name="uploadDoc" #uploadDoc
-                                                        (change)="fileUploadFunc($event)" type="file"
-                                                        formControlName="imgVideo">
-
-                                                    <button type="button" mat-icon-button class="mat-icon-button large"
-                                                        (click)="uploadDoc.click()">
-                                                        <mat-icon>add_a_photo</mat-icon>
-                                                    </button>
-                                                    <div class="buttonTitle">תמונה</div>
-
-
-
-
-
-                                                    <!-- <div class="prevItemsWrap secondForm">
-                                                    <div class="closeIcon" [@openClose]="emailOption">
-                                                        <mat-icon type="button" [class.borderErrorRed]="ifSendOptionNotChoosed " (click)="openSendingOption('emailOption')">close</mat-icon>
-                                                    </div>
-                                                    <div>
-                                                        <button type="button" mat-icon-button class="mat-icon-button large"
-                                                            (click)="openSendingOption('emailOption')">
-                                                            <mat-icon [class.borderErrorRed]="ifSendOptionNotChoosed ">mail_outline</mat-icon>
-                                                        </button>
-                                                    </div>
-                                                </div> -->
-
-
-
-
-
-
-
-
-
-
-                                                    <!-- && FormGroup.get('imgVideo').invalid -->
-                                                    <!-- <div *ngIf="FormsArray.get('FirstFormGroup').get('imgVideo').touched "
-                                                    class="alert alert-danger">
-                                                    <div
-                                                        *ngIf="FormsArray.get('FirstFormGroup').get('imgVideo').errors.required">
-                                                        File is
-                                                        required.
-                                                    </div>
-                                                </div> -->
-                                                    <!-- <span [hidden]="false" id="file-upload-filename" >{{filename}}</span> -->
-                                                    <!-- <mat-error *ngIf="excelFileError != ''">{{excelFileError}}</mat-error> -->
-                                                </div>
-                                                <!-- <div>
-                                                <button mat-icon-button class="mat-icon-button large">
-                                                    <mat-icon (mousedown)="openVideoDialog()">video_library</mat-icon>
-                                                </button>
-                                                <div class="buttonTitle">סרטונים מוכנים</div>
-                                            </div> -->
-                                                <mat-error class="addVideoImgError" *ngIf="addVideoImgError != ''">
-                                                    {{addVideoImgError}}</mat-error>
-                                            </div>
-
-                                            <div class="previewImgsVideo">
-                                                <div *ngFor="let element of imgVideoAddedList; let i = index"
-                                                    class="prevItemsWrap"
-                                                    (mousedown)="largePreview(element.src, element.format)">
-                                                    <div class="closeIcon">
-                                                        <mat-icon (mousedown)="deleteAddedItems(element, i)">close
-                                                        </mat-icon>
-                                                    </div>
-                                                    <div *ngIf="element.format ==='image'" class="previewItem"
-                                                        [style.background-image]="'url(' + element.src + ')'">
-                                                    </div>
-                                                    <video class="previewItem" [src]="element.src"
-                                                        *ngIf="element.format === 'video'">
-                                                    </video>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                        <mat-error *ngIf="formError != ''">{{formError}}</mat-error>
-                                        <div class="wrapNextPrevButton">
-                                            <button mat-button class="primaryButton" type="submit">המשך</button>
-                                        </div>
-                                    </form>
-                                </mat-tab>
-
+                                <!--no delete-->
                                 <!-- To myself -->
-                                <mat-tab label="מתנה בשבילי" (mousedown)="nextStep(stepper)"></mat-tab>
+                                <!-- <mat-tab label="מתנה בשבילי" (mousedown)="nextStep(stepper)"></mat-tab> -->
 
                             </mat-tab-group>
+
+
+                            <!------tab group end--------->
                         </div>
                     </div>
                     <!-- </form> -->
@@ -463,13 +466,16 @@
                 <!-- img -->
                 <div class="imgWrap ">
                     <mat-card class="example-card">
+                        <div class="wrapImgSum">
+                            <mat-card-title>₪{{selectedSum}}</mat-card-title>
+                            <img mat-card-image [src]="giftCardImg" alt="גיפט קארד">
+                        </div>
                         <mat-card-header>
                             <!-- <div mat-card-avatar class="example-header-image"></div> -->
-                            <mat-card-title>₪{{selectedSum}}</mat-card-title>
-                            <mat-card-subtitle>שובר כספי בסך ₪{{selectedSum}} למימוש בסולטאם
+                            <!-- <mat-card-title>₪{{selectedSum}}</mat-card-title> -->
+                            <mat-card-subtitle>שובר כספי בסך <strong>₪{{selectedSum}}</strong> למימוש ב{{companyName}}
                             </mat-card-subtitle>
                         </mat-card-header>
-                        <img mat-card-image [src]="giftCardImg" alt="גיפט קארד">
                         <mat-card-content *ngIf="viewChangeSum">
 
 
@@ -492,7 +498,7 @@
                             </div>
                         </mat-card-content>
                         <mat-card-actions *ngIf="!viewChangeSum">
-                            <button mat-button class="primaryButton" (mousedown)="changeSum()">שינוי סכום
+                            <button mat-button class="purpleBorderButton" (mousedown)="changeSum()">שינוי סכום
                                 המתנה</button>
                         </mat-card-actions>
                     </mat-card>

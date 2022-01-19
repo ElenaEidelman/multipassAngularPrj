@@ -39,6 +39,8 @@ export class ExcelFileViewComponent implements OnInit, OnDestroy {
 
   getExcelFile() {
     debugger
+    let t = localStorage.getItem('excelFileData')
+    debugger
     if (localStorage.getItem('excelFileData') != '') {
       this.excelFileData = JSON.parse(localStorage.getItem('excelFileData'));
       this.customerId = this.excelFileData.customerId;
@@ -52,16 +54,7 @@ export class ExcelFileViewComponent implements OnInit, OnDestroy {
 
 
   goToCreateOrder() {
-    // let localStorageObj = {
-    //   UserID: this.customerId,
-    //   FileName: this.excelFileData.excelName
-    // }
-    // localStorage.setItem('createOrderByExcel', JSON.stringify(localStorageObj));
-    // localStorage.removeItem('excelFileData');
-    // this.router.navigate(['/public/excelOrder/', this.customerId]);
 
-
-    // let forNewOrderData = JSON.parse(localStorage.getItem('createOrderByExcel'));
 
     //object for insert orderLines
 
@@ -69,10 +62,11 @@ export class ExcelFileViewComponent implements OnInit, OnDestroy {
     let formDataForOrdersLine = new FormData();
     formDataForOrdersLine.append('Token', this.userToken)
     formDataForOrdersLine.append('UserID', this.customerId)
-    formDataForOrdersLine.append('Description', this.excelFileData.fileDescription)
+    formDataForOrdersLine.append('OrderName', this.excelFileData.OrderName)
     formDataForOrdersLine.append('OpCode', 'create')
     formDataForOrdersLine.append('FileName', this.excelFileData.excelName)
 
+    debugger
     this.dataService.InsertUpdateOrderByExcel(formDataForOrdersLine).subscribe(result => {
       this.createOrderSpinner = false;
       if (result['Token'] != undefined || result['Token'] != null) {

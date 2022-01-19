@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { formatDate } from '@angular/common';
 import { MatTableDataSource } from '@angular/material/table';
@@ -41,7 +41,7 @@ import { SharedService } from 'src/app/Services/SharedService/shared.service';
     ])
   ]
 })
-export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
+export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
 
 
   constructor(
@@ -53,6 +53,10 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     private dialog: MatDialog,
     private urlSharingService: UrlSharingService
   ) { }
+  ngOnChanges(changes: SimpleChanges): void {
+
+    throw new Error('Method not implemented.');
+  }
 
   faFileExcel = faFileExcel;
 
@@ -71,6 +75,10 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
   userId;
   statusListArr = [];
   MsgList = MsgList;
+
+  minToDate;
+  minFromDate;
+
 
 
   //pattern="[a-zA-Z ]*"
@@ -98,13 +106,12 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     { value: 'MDate', viewValue: 'תאריך יצירת הזמנה' },
     { value: 'ApproveDate', viewValue: 'תאריך שליחה' },//v
     { value: 'CrmOrderId', viewValue: 'מספר אסמכתא' },//v
-    { value: 'Status', viewValue: 'סטטוס הזמנה' },
+    { value: 'Status', viewValue: 'בתהליך יצירה' },
   ];
 
 
   ngOnInit() {
     window.scroll(0, 0);
-
     this.filterActionButtonSpinner = true;
     this.userToken = JSON.parse(localStorage.getItem('user')).Token
     this.getStatusList();
@@ -112,8 +119,10 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // this.activeRouteUnsubscribe = this.acivatedRoute.params.subscribe(param => {
 
+
     let urlParams = this.urlSharingService.messageSource.getValue();
     if (urlParams == '') {
+
       this.getOrdersList();
     }
     else {
@@ -125,6 +134,18 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
 
   }
 
+  dateFromChanged(event, controller) {
+
+
+    if (controller == 'FromDate') {
+      this.minToDate = new Date(event.value);
+    }
+    else if (controller == 'ToDate') {
+      this.minFromDate = new Date(event.value);
+    }
+    // return this.filterTableGroup.get('ToDate').value != '' ? new Date(this.filterTableGroup.get('ToDate').value) : '';
+  }
+
   getStatusList() {
     //api/Orders/GetOrdersStatus
     //Token
@@ -134,6 +155,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.dataService.GetOrdersStatus(objToApi).subscribe(result => {
+      debugger
       if (result['Token'] != undefined || result['Token'] != null) {
 
         //set new token
@@ -174,9 +196,11 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     //GetOrdersByFilter
 
 
+
+
     this.dataService.getAllOrders(objToApi).subscribe(result => {
 
-      debugger
+
       this.filterActionButtonSpinner = false;
 
       if (result['Token'] != undefined || result['Token'] != null) {
@@ -386,7 +410,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
     if (!inputSelected) {
-      this.errorMsg = 'נא למלא לפחות אחת מהשדות';
+      this.errorMsg = MsgList.fillRequiredFields;
       setTimeout(() => {
         this.errorMsg = '';
       }, 3000);
@@ -423,6 +447,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
       })
     }
   }
+
 
   goToCustomer(customerId: number) {
     let Customer = {

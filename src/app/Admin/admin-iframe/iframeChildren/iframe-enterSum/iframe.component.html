@@ -1,17 +1,59 @@
 <div class="iframeWrap">
     <div class="form-wrap">
         <form [formGroup]="previewForm">
+
+
             <div class="wrapForm">
+
+                <!--logo image-->
+                <div class="formRow">
+                    <mat-form-field class="iframePrevieSmallImg">
+                        <mat-label>לוגו</mat-label>
+                        <input [hidden]="true" name="Logo" #Logo (change)="fileOptionChange($event, 'Logo')"
+                            type="file">
+                        <input [hidden]="true" matInput readonly [value]="Logo.value" formControlName="Logo">
+                        <img [src]="LogoSrc != '' ? LogoSrc :  previewForm.get('Logo').value" class="smallPrevImg">
+                        <mat-icon (click)="Logo.click()" matPrefix *ngIf="previewForm.get('Logo').value == ''">
+                            attach_file</mat-icon>
+                        <mat-icon matPrefix *ngIf="previewForm.get('Logo').value != ''"
+                            (click)="cleareAttachedFile('Logo')" class="close" matTooltip="למחוק">close
+                        </mat-icon>
+                        <mat-error>{{MsgList.requiredField}}</mat-error>
+                        <mat-icon matSuffix (click)="returnDataToIframe('Logo')" class="retunPicToIframeHint"
+                            matTooltip="שחזור תמונה">rotate_right</mat-icon>
+                    </mat-form-field>
+                </div>
+
+                <!--company name-->
+                <div class="formRow">
+                    <mat-form-field>
+                        <mat-label>שם בית העסק</mat-label>
+                        <input matInput formControlName="CompanyName">
+
+                        <mat-icon matPrefix *ngIf="previewForm.get('CompanyName').value == ''">domain</mat-icon>
+                        <mat-icon matPrefix *ngIf="previewForm.get('CompanyName').value != ''"
+                            (click)=" previewForm.get('CompanyName').setValue('')" class="close" matTooltip="למחוק">
+                            close
+                        </mat-icon>
+                        <!-- <mat-error *ngIf="previewForm.get('CompanyName').hasError('required')">
+                            {{MsgList.requiredField}}</mat-error>
+                        <mat-error *ngIf="previewForm.get('CompanyName').hasError('pattern')">
+                            {{MsgList.phonePatternErr}}</mat-error> -->
+                    </mat-form-field>
+                </div>
+
+
+                <!-- short description-->
                 <div class="formRow">
                     <!-- <mat-form-field>
-                        <mat-label>תיאור קצר</mat-label>
-                        <input matInput placeholder="תיאור קצר" formControlName="ShortDescription">
+                        <mat-label>תאור קצר</mat-label>
+                        <input matInput placeholder="תאור קצר" formControlName="ShortDescription">
                         <mat-icon matPrefix *ngIf="previewForm.get('ShortDescription').value != ''"
                             (click)="previewForm.get('ShortDescription').setValue('')">close
                         </mat-icon>
                     </mat-form-field> -->
                     <mat-form-field>
-                        <textarea matInput placeholder="תיאור קצר" cdkTextareaAutosize #autosize="cdkTextareaAutosize"
+                        <textarea matInput placeholder="תאור קצר" cdkTextareaAutosize #autosize="cdkTextareaAutosize"
                             cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5" formControlName="ShortDescription">
                         </textarea>
                         <mat-icon matPrefix *ngIf="previewForm.get('ShortDescription').value != ''"
@@ -24,9 +66,11 @@
 
 
                 </div>
+
+                <!--long description-->
                 <div class="formRow">
                     <mat-form-field>
-                        <textarea matInput placeholder="תיאור רחב" cdkTextareaAutosize #autosize="cdkTextareaAutosize"
+                        <textarea matInput placeholder="תאור רחב" cdkTextareaAutosize #autosize="cdkTextareaAutosize"
                             cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5" formControlName="LongDescription">
                         </textarea>
                         <mat-icon matPrefix *ngIf="previewForm.get('LongDescription').value != ''"
@@ -36,6 +80,55 @@
                         <mat-error>{{MsgList.requiredField}}</mat-error>
                     </mat-form-field>
                 </div>
+
+                <!--phone-->
+                <div class="formRow">
+                    <mat-form-field>
+                        <mat-label>טלפון</mat-label>
+                        <input matInput formControlName="Phone" [maxLength]="10" numbersOnly>
+
+                        <mat-icon matPrefix *ngIf="previewForm.get('Phone').value == ''">phone</mat-icon>
+                        <mat-icon matPrefix *ngIf="previewForm.get('Phone').value != ''"
+                            (click)="previewForm.get('Phone').setValue('')" class="close" matTooltip="למחוק">close
+                        </mat-icon>
+                        <mat-error *ngIf="previewForm.get('Phone').hasError('required')">
+                            {{MsgList.requiredField}}</mat-error>
+                        <mat-error *ngIf="previewForm.get('Phone').hasError('pattern')">
+                            {{MsgList.phonePatternErr}}</mat-error>
+                    </mat-form-field>
+                </div>
+
+                <!--mail-->
+                <div class="formRow">
+                    <mat-form-field>
+                        <mat-label>מייל</mat-label>
+                        <input matInput formControlName="Mail">
+                        <mat-icon matPrefix *ngIf="previewForm.get('Mail').value == ''">mail_outline</mat-icon>
+                        <mat-icon matPrefix *ngIf="previewForm.get('Mail').value != ''"
+                            (click)="previewForm.get('Mail').setValue('')" class="close" matTooltip="למחוק">close
+                        </mat-icon>
+                        <mat-error *ngIf="previewForm.get('Mail').hasError('required')">
+                            {{MsgList.requiredField}}</mat-error>
+                        <mat-error *ngIf="previewForm.get('Mail').hasError('email')">
+                            {{MsgList.emailFormatValidationErr}}</mat-error>
+                    </mat-form-field>
+                </div>
+
+                <!-- branches list link-->
+                <div class="formRow">
+                    <mat-form-field>
+                        <mat-label>קישור לרשימת הסניפים</mat-label>
+                        <input matInput formControlName="LinktoBranches">
+                        <mat-icon matPrefix *ngIf="previewForm.get('LinktoBranches').value == ''">list_alt</mat-icon>
+                        <mat-icon matPrefix *ngIf="previewForm.get('LinktoBranches').value != ''"
+                            (click)="previewForm.get('LinktoBranches').setValue('')" class="close" matTooltip="למחוק">
+                            close
+                        </mat-icon>
+                        <mat-error>{{MsgList.requiredField}}</mat-error>
+                    </mat-form-field>
+                </div>
+
+                <!--gift card image-->
                 <div class="formRow">
                     <mat-form-field class="iframePrevieSmallImg">
                         <mat-label>גיפט קארד</mat-label>
@@ -57,6 +150,8 @@
 
                     </mat-form-field>
                 </div>
+
+                <!--background image-->
                 <div class="formRow">
                     <mat-form-field class="iframePrevieSmallImg">
                         <mat-label>רקע כללי</mat-label>
@@ -76,62 +171,7 @@
                             matTooltip="שחזור תמונה">rotate_right</mat-icon>
                     </mat-form-field>
                 </div>
-                <div class="formRow">
-                    <mat-form-field class="iframePrevieSmallImg">
-                        <mat-label>לוגו</mat-label>
-                        <input [hidden]="true" name="Logo" #Logo (change)="fileOptionChange($event, 'Logo')"
-                            type="file">
-                        <input [hidden]="true" matInput readonly [value]="Logo.value" formControlName="Logo">
-                        <img [src]="LogoSrc != '' ? LogoSrc :  previewForm.get('Logo').value" class="smallPrevImg">
-                        <mat-icon (click)="Logo.click()" matPrefix *ngIf="previewForm.get('Logo').value == ''">
-                            attach_file</mat-icon>
-                        <mat-icon matPrefix *ngIf="previewForm.get('Logo').value != ''"
-                            (click)="cleareAttachedFile('Logo')" class="close" matTooltip="למחוק">close
-                        </mat-icon>
-                        <mat-error>{{MsgList.requiredField}}</mat-error>
-                        <mat-icon matSuffix (click)="returnDataToIframe('Logo')" class="retunPicToIframeHint"
-                            matTooltip="שחזור תמונה">rotate_right</mat-icon>
-                    </mat-form-field>
-                </div>
-                <div class="formRow">
-                    <mat-form-field>
-                        <mat-label>טלפון</mat-label>
-                        <input matInput formControlName="Phone" [maxLength]="10" numbersOnly>
-                        <mat-icon matPrefix *ngIf="previewForm.get('Phone').value == ''">phone</mat-icon>
-                        <mat-icon matPrefix *ngIf="previewForm.get('Phone').value != ''"
-                            (click)="previewForm.get('Phone').setValue('')" class="close" matTooltip="למחוק">close
-                        </mat-icon>
-                        <mat-error *ngIf="previewForm.get('Phone').hasError('required')">
-                            {{MsgList.requiredField}}</mat-error>
-                        <mat-error *ngIf="previewForm.get('Phone').hasError('pattern')">
-                            {{MsgList.phonePatternErr}}</mat-error>
-                    </mat-form-field>
-                </div>
-                <div class="formRow">
-                    <mat-form-field>
-                        <mat-label>מייל</mat-label>
-                        <input matInput formControlName="Mail">
-                        <mat-icon matPrefix *ngIf="previewForm.get('Mail').value == ''">mail_outline</mat-icon>
-                        <mat-icon matPrefix *ngIf="previewForm.get('Mail').value != ''"
-                            (click)="previewForm.get('Mail').setValue('')" class="close" matTooltip="למחוק">close
-                        </mat-icon>
-                        <mat-error *ngIf="previewForm.get('Mail').hasError('required')">
-                            {{MsgList.requiredField}}</mat-error>
-                        <mat-error *ngIf="previewForm.get('Mail').hasError('email')">
-                            {{MsgList.emailFormatValidationErr}}</mat-error>
-                    </mat-form-field>
-                </div>
-                <div class="formRow">
-                    <mat-form-field>
-                        <mat-label>קישור לרשימת הסניפים</mat-label>
-                        <input matInput formControlName="Website">
-                        <mat-icon matPrefix *ngIf="previewForm.get('Website').value == ''">list_alt</mat-icon>
-                        <mat-icon matPrefix *ngIf="previewForm.get('Website').value != ''"
-                            (click)="previewForm.get('Website').setValue('')" class="close" matTooltip="למחוק">close
-                        </mat-icon>
-                        <mat-error>{{MsgList.requiredField}}</mat-error>
-                    </mat-form-field>
-                </div>
+
                 <!-- <div class="formRow">
                     <mat-form-field>
                         <mat-label>אתר אינטרנט</mat-label>
@@ -153,6 +193,8 @@
                         <mat-error>{{MsgList.requiredField}}</mat-error>
                     </mat-form-field>
                 </div> -->
+
+                <!--instruction-->
                 <div class="formRow">
                     <mat-form-field>
                         <textarea matInput placeholder="הוראות" cdkTextareaAutosize #autosize="cdkTextareaAutosize"
@@ -165,6 +207,7 @@
                         <mat-error>{{MsgList.requiredField}}</mat-error>
                     </mat-form-field>
                 </div>
+
                 <!-- <div class="formRow">
                     <mat-form-field>
                         <mat-label>קישור חיצוני</mat-label>
@@ -177,6 +220,8 @@
                         <mat-error>{{MsgList.requiredField}}</mat-error>
                     </mat-form-field>
                 </div> -->
+
+
                 <div class="formRow buttonSaveIframe">
                     <button mat-button class="addButton" (click)="saveDataForIframe()"> שמור</button>
                     <mat-spinner *ngIf="setupSpinner"></mat-spinner>

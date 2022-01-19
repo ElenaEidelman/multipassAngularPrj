@@ -161,6 +161,7 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
     }
 
     this.dataService.GetAllCustomers(objToApi).subscribe(result => {
+      debugger
 
       this.filterSpinner = false;
       if (result['Token'] != undefined || result['Token'] != null) {
@@ -285,11 +286,23 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
       });
     }
     else {
-      this.filterMsg = 'נא למלא לפחות אחד מהשדות';
+      this.filterMsg = MsgList.fillRequiredFields;
       setTimeout(() => {
         this.filterMsg = '';
       }, 3000);
     }
+  }
+
+  goToOrderCards(cardId, customerId) {
+    //[routerLink]="['/public/orderCards',0,customerData.id]"
+
+    let Card = {
+      cardId: cardId,
+      customerId: customerId
+    }
+
+    this.urlSharingService.changeMessage(JSON.stringify(Card));
+    this.router.navigate(['/public/orderCards']);
   }
 
   recoverTable() {
@@ -317,7 +330,7 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
 
     let oName = element.organizationName != undefined ? element.organizationName : element.OrganizationName;
     const dialogRef = this.dialog.open(DialogConfirmComponent, {
-      data: { message: 'האם למחוק ' + oName + '?' }
+      data: { message: 'האם לחסום לקוח  ' + oName + '?', eventButton: 'לחסום' }
     }).afterClosed().subscribe(response => {
       if (response.result == 'yes') {
 

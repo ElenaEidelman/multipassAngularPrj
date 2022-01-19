@@ -97,7 +97,8 @@
                         <div>
                             <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
                                 <mat-label>מתאריך</mat-label>
-                                <input matInput [matDatepicker]="picker" formControlName="FromDate" readonly>
+                                <input matInput [matDatepicker]="picker" formControlName="FromDate" readonly
+                                    (dateChange)="dateFromChanged($event, 'FromDate')" [max]="minFromDate">
                                 <button class="clearButton" *ngIf="this.filterTableGroup.get('FromDate').value != ''"
                                     mat-button matPrefix mat-icon-button aria-label="Clear"
                                     (click)="this.filterTableGroup.get('FromDate').setValue('')">
@@ -111,7 +112,8 @@
                         <div>
                             <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
                                 <mat-label>עד תאריך</mat-label>
-                                <input matInput [matDatepicker]="picker2" formControlName="ToDate" readonly>
+                                <input matInput [matDatepicker]="picker2" formControlName="ToDate" readonly
+                                    [min]="minToDate" (dateChange)="dateFromChanged($event, 'ToDate')">
                                 <button class="clearButton" *ngIf="this.filterTableGroup.get('ToDate').value != ''"
                                     mat-button matPrefix mat-icon-button aria-label="Clear"
                                     (click)="this.filterTableGroup.get('ToDate').setValue('')">

@@ -8,6 +8,7 @@ import { MsgList } from 'src/app/Classes/msgsList';
 import { DataServiceService } from 'src/app/data-service.service';
 import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
 import { SharedService } from 'src/app/Services/SharedService/shared.service';
+import { UrlSharingService } from 'src/app/Services/UrlSharingService/url-sharing.service';
 
 
 @Component({
@@ -36,7 +37,8 @@ export class NewCustomerComponent implements OnInit {
     private dataService: DataServiceService,
     private router: Router,
     private sharedService: SharedService,
-    private dialog: MatDialog) { }
+    private dialog: MatDialog,
+    private urlSharingService: UrlSharingService) { }
 
   @ViewChild(MatAccordion) accordion: MatAccordion;
   @Input() IfComponentDialog = false;
@@ -146,7 +148,9 @@ export class NewCustomerComponent implements OnInit {
         }
       });
 
+      debugger
       this.dataService.InsertUpdateUser(objToApi).subscribe(result => {
+        debugger
         this.saveFormSpinner = false;
         if (result['Token'] != undefined || result['Token'] != null) {
 
@@ -156,14 +160,7 @@ export class NewCustomerComponent implements OnInit {
           localStorage.setItem('user', JSON.stringify(tempObjUser));
           this.userToken = result['Token'];
 
-          if (typeof result == 'string') {
-            this.errorActionButtons = result;
-
-            setTimeout(() => {
-              this.errorActionButtons = '';
-            }, 3000);
-          }
-          if (typeof result == 'object' && result.err != -1) {
+          if (result.err != -1) {
 
             //if have created new customer from dropdown menu from orderCards page
             if (this.formNewCustomer != '' && this.controllerNewCustomer != '') {
@@ -177,9 +174,6 @@ export class NewCustomerComponent implements OnInit {
               this.sharedService.newCustomerData.next(JSON.stringify(objForShare));
               debugger
             }
-
-
-
             this.msgActionButtons = 'לקוח חדש נשמר בהצלחה';
 
             setTimeout(() => {
@@ -189,11 +183,16 @@ export class NewCustomerComponent implements OnInit {
                 this.dialog.closeAll();
               }
               else {
-                this.router.navigate(['/public/customer/', result.obj[0].id]);
+                // this.router.navigate(['/public/customer/', result.obj[0].id]);
+                let Customer = {
+                  customerId: result.obj[0].id
+                }
+                this.urlSharingService.changeMessage(JSON.stringify(Customer));
+                this.router.navigate(['/public/customer']);
               }
             }, 2000);
           }
-          if (result.obj == null && result.errdesc != '') {
+          else {
             this.errorActionButtons = result.errdesc;
 
             setTimeout(() => {

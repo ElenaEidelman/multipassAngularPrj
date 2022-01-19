@@ -97,6 +97,7 @@ export class ExistCustomerComponent implements OnInit {
     // this.idUnsubscribe = this.activeRoute.params.subscribe(param => {
 
     let urlParams = this.urlSharingService.messageSource.getValue();
+
     if (urlParams == '') {
       this.router.navigate(['/public/home']);
     }

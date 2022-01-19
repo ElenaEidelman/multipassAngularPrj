@@ -8,6 +8,7 @@ import { MsgList } from 'src/app/Classes/msgsList';
 import { DataServiceService } from 'src/app/data-service.service';
 import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
 import { SharedService } from 'src/app/Services/SharedService/shared.service';
+import { UrlSharingService } from 'src/app/Services/UrlSharingService/url-sharing.service';
 
 import { resourceLimits } from 'worker_threads';
 
@@ -42,7 +43,8 @@ export class NewUserComponent implements OnInit {
     private fb: FormBuilder,
     private dataService: DataServiceService,
     private sharedService: SharedService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private urlSharingService: UrlSharingService
   ) { }
 
 
@@ -104,7 +106,9 @@ export class NewUserComponent implements OnInit {
       objToApi['OrganizationName'] = '';
       objToApi['BusinessFile'] = '';
 
+      debugger
       this.dataService.InsertUpdateBackOfficeUsers(objToApi).subscribe(result => {
+        debugger
         this.saveFormSpinner = false;
         if (result['Token'] != undefined || result['Token'] != null) {
 
@@ -120,7 +124,9 @@ export class NewUserComponent implements OnInit {
 
             setTimeout(() => {
               this.msgActionButtons = '';
-              this.router.navigate(['/public/user/', result.obj[0]['id']]);
+              debugger
+              this.goToUser(result.obj[0]['id']);
+              // this.router.navigate(['/public/user/', result.obj[0]['id']]);
             }, 2000)
           }
           else {
@@ -228,6 +234,14 @@ export class NewUserComponent implements OnInit {
     //   { RoleId: '4', Description: 'admin' },
     //   { RoleId: '5', Description: 'admin' }
     // ]
+  }
+
+  goToUser(userId: number) {
+    let User = {
+      userId: userId
+    }
+    this.urlSharingService.changeMessage(JSON.stringify(User));
+    this.router.navigate(['/public/user']);
   }
 
 }

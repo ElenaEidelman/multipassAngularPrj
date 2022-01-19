@@ -36,6 +36,7 @@
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
 
@@ -56,7 +57,8 @@
                                 <div class="customerDataTitle">:סה"כ להזמנה </div>
                             </div>
                             <div>
-                                <div class="dataBolder">₪ {{dataByPage.Ballance}} </div>
+                                <div class="dataBolder">₪ {{dataByPage.Ballance == undefined ? 0 : dataByPage.Ballance}}
+                                </div>
                                 <div class="customerDataTitle">:סה"כ יתרה </div>
                             </div>
                         </div>
@@ -68,12 +70,12 @@
                             </div>
                             <div>
                                 <div class="dataBolder"> {{(dataByPage != undefined ? dataByPage['ApproveDate'] : '') |
-                                    formatDate}} </div>
+                                    formatDate | mockDateToNull}} </div>
                                 <div class="customerDataTitle">:תאריך הנפקה</div>
                             </div>
                             <div>
                                 <div class="dataBolder"> {{(dataByPage != undefined ? dataByPage['CancelationDate']: '')
-                                    | formatDate}} </div>
+                                    | formatDate | mockDateToNull}} </div>
                                 <div class="customerDataTitle">:תאריך ביטול</div>
                             </div>
                         </div>
@@ -112,7 +114,8 @@
 
                     <!-- send sms view block -->
                     <!-- additionalOptionsSMS -->
-                    <div *ngIf="additionalOptionsSMS" class="additionalOptionsSMS padding0">
+                    <div [@openClose]="additionalOptionsSMS" [class.additionalOptionsSMS]="additionalOptionsSMS"
+                        [class.padding0]="additionalOptionsSMS">
                         <form [formGroup]="sendSmsGroup">
                             <div class="smsFormWrap">
                                 <div class="selectWrap">
@@ -143,12 +146,28 @@
                                     {{errorSendSms}}
                                 </div>
                             </div>
+
                         </form>
                     </div>
 
 
                 </div>
             </div>
+
+            <div>
+                <div class="element-page-title  marginTop">תאור של הזמנה</div>
+                <div class="innerElement margin0 comments">
+                    <form [formGroup]="OrderNameGroup">
+                        <mat-form-field>
+                            <textarea matInput placeholder="...תאור של הזמנה" formControlName="Comments"
+                                cdkTextareaAutosize #autosize="cdkTextareaAutosize"></textarea>
+                            <mat-error>{{MsgList.requiredField}}</mat-error>
+                        </mat-form-field>
+                    </form>
+                </div>
+            </div>
+
+
             <div class="flexButtonsElement">
                 <div *ngIf="orderStatus.id == '1' || orderStatus.id == '4'" class="deleteB margin">
                     <!-- <button mat-button class="deleteButton" (click)="deleteOrder()">מחק הזמנה -->
@@ -158,6 +177,9 @@
                     <!-- <div class="saveMessage" [@openClose]="orderMsgDelete != ''">{{orderMsgDelete}}</div>
                     <div class="error" [@openClose]="errorMsgDelete != ''">{{errorMsgDelete}}</div> -->
                 </div>
+
+
+
 
                 <div class="wrapAprDel">
                     <button mat-button class="linkButton" (click)="saveChanges()">שמור שינויים

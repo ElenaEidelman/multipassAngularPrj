@@ -61,6 +61,8 @@ export class AllCardsComponent implements OnInit, AfterViewInit, OnChanges {
   smsTemplatesData = [];
 
   MsgList = MsgList;
+  minFromDate;
+  minToDate;
 
 
   constructor(
@@ -131,7 +133,13 @@ export class AllCardsComponent implements OnInit, AfterViewInit, OnChanges {
     Object.keys(this.cardsForm.value).forEach(val => {
       if (this.cardsForm.get(val).value != '') {
         formSearchFiled = true;
-        objToApi[val] = this.cardsForm.get(val).value;
+        if (val == 'ToDate') {
+          let toDate = this.cardsForm.get(val).value;
+          objToApi[val] = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate(), 23, 59, 59);
+        }
+        else {
+          objToApi[val] = this.cardsForm.get(val).value;
+        }
       }
     })
 
@@ -139,6 +147,7 @@ export class AllCardsComponent implements OnInit, AfterViewInit, OnChanges {
       this.spinner = true;
 
 
+      debugger
       this.dataService.GetAllCards(objToApi).subscribe(result => {
         debugger
 
@@ -179,11 +188,23 @@ export class AllCardsComponent implements OnInit, AfterViewInit, OnChanges {
 
 
     else {
-      this.formErrorMsg = 'נא למלא לפחות אחת מהשדות';
+      this.formErrorMsg = MsgList.fillRequiredFields;
       setTimeout(() => {
         this.formErrorMsg = '';
       }, 3000);
     }
+  }
+
+  dateFromChanged(event, controller) {
+
+    debugger
+    if (controller == 'FromDate') {
+      this.minToDate = new Date(event.value);
+    }
+    else if (controller == 'ToDate') {
+      this.minFromDate = new Date(event.value);
+    }
+    // return this.filterTableGroup.get('ToDate').value != '' ? new Date(this.filterTableGroup.get('ToDate').value) : '';
   }
 
 

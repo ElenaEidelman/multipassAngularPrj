@@ -151,7 +151,7 @@ export class AllUsersComponent implements OnInit {
 
   deleteUser(user) {
     this.dialog.open(DialogConfirmComponent, {
-      data: { message: 'האם למחוק ' + user.FName + ' ' + user.LName + '?' }
+      data: { message: 'האם לחסום ' + user.FName + ' ' + user.LName + '?', eventButton: 'לחסום' }
     }).afterClosed().subscribe(response => {
       if (response.result == 'yes') {
 

@@ -17,12 +17,27 @@ import * as fs from 'file-saver';
 import { MsgList } from 'src/app/Classes/msgsList';
 import { UrlSharingService } from 'src/app/Services/UrlSharingService/url-sharing.service';
 import { SharedService } from 'src/app/Services/SharedService/shared.service';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 
 
 @Component({
   selector: 'app-order-lines',
   templateUrl: './order-lines.component.html',
-  styleUrls: ['./order-lines.component.css']
+  styleUrls: ['./order-lines.component.css'],
+  animations: [
+    trigger('openClose', [
+      state('true', style({
+        overflow: 'hidden',
+        height: '*'
+      })),
+      state('false', style({
+        opacity: '0',
+        overflow: 'hidden',
+        height: '0px',
+      })),
+      transition('false <=> true', animate('600ms ease-in-out'))
+    ])
+  ]
 })
 export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
 
@@ -38,7 +53,8 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
   orderId;
   orderIdToPreview = '';
 
-  tableSpinner: boolean = false;
+  tableSpinner: boolean = true;
+  orderHaveCards: boolean = false;
 
   errorMsg: string = '';
   errorSendSms: string = '';
@@ -154,10 +170,20 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
     //   {Row:'1',CardId: '2',DSendName: '3', DSendPhone: '4', LoadSum: '5', ValidationDate: '6', KindOfLoadSumDesc: '7', DSendLastSent: '8'}
     // ]);
 
-    debugger
     this.dataService.GetCardsByOrderId(objToAPI).subscribe(result => {
-      debugger
       this.tableSpinner = false;
+
+      //check if order have created cards
+      result['obj'][0].every(element => {
+        if (element['CardId'] != null) {
+          this.orderHaveCards = true;
+          return false;
+        }
+        else {
+          this.orderHaveCards = false;
+          return true;
+        }
+      });
 
       if (result['Token'] != undefined || result['Token'] != null) {
 
@@ -174,6 +200,7 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
           this.orderIdToPreview = result['obj'][2];
 
           this.dataTable.data = result['obj'][0];
+          debugger
           //DigitalBatch number, only if order created from excel
           this.OrderCreatedFromExcel = result['obj'][1] != '' ? true : false;
           this.DigitalBatch = result['obj'][1];
@@ -218,6 +245,7 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     else {
 
+      this.deleteIcon = 'block';
       this.smsIcon = 'cancel';
       this.getSmsTemplates();
       this.tabelLabelsList.unshift('selectSMS');
@@ -240,11 +268,13 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.tabelLabelsList.indexOf('selectDeleteCards') > -1) {
 
       this.deleteIcon = 'block';
+
       this.tabelLabelsList = this.tabelLabelsList.filter(el => el != 'selectDeleteCards');
 
     }
     else {
 
+      this.smsIcon = 'sms';
       this.deleteIcon = 'cancel';
       this.getSmsTemplates();
       this.tabelLabelsList.unshift('selectDeleteCards');
@@ -278,7 +308,9 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
         CoreOrderId: this.orderId,
         From: this.smsTemplatesData.filter(el => el.Id == this.smsTemplates.value)[0]['SenderName']
       }
+      debugger
       this.dataService.SendSMSByOrderLine(objToApi).subscribe(result => {
+        debugger
         if (result['Token'] != undefined || result['Token'] != null) {
 
           //set new token
@@ -288,7 +320,7 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
           this.userToken = result['Token'];
 
           if (result.errdesc == 'OK') {
-
+            debugger
             this.dialog.open(DialogComponent, {
               data: { title: 'ההודעות נשלחות ברקע', message: this.previewSmsTemplate.value, subTitle: ' ההודעה נשלחה ל ' + selectedRows.length + ' נמענים ' }
             })
@@ -315,8 +347,6 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
   voidCards() {
-
-
     let selectedRows = this.selection.selected;
     if (selectedRows.length > 0) {
       this.voidCardSpinner = true;
@@ -345,12 +375,14 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
           this.userToken = result['Token'];
 
           if (result.obj == true && result.errdesc == 'OK') {
+            this.GetCards();
             this.cardsDeletedMsg = 'נחסם בהצלחה';
+            this.selection.clear();
+
             setTimeout(() => {
               this.cardsDeletedMsg = '';
             }, 2000);
 
-            this.GetCards();
           }
           if (result.errdesc != 'OK') {
             this.cardsDeletedMsg = result.errdesc;

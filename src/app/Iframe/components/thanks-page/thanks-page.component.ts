@@ -21,16 +21,16 @@ export class ThanksPageComponent implements OnInit {
   @Input() orderId = '';
   ngOnInit() {
     this.activatedRoute.queryParams.subscribe(params => {
-      debugger
+
       if (Object.keys(params).length > 0) {
         let orderid = params['orderid'];
         this.GetResume(orderid);
       }
       else {
         this.thankyouResponse = {
-          B2C_ThoWho: 'טסט',
-          B2C_Email: 'טסט@טסט',
-          B2C_Mobile: '0500000000'
+          B2C_ThoWho: 'ישראל',
+          B2C_Email: 'MyFriend@test.com',
+          B2C_Mobile: '050-0000000'
         }
       }
     });
@@ -52,17 +52,31 @@ export class ThanksPageComponent implements OnInit {
     localStorage.removeItem('companyInfo');
 
     // let rout = this.router.url;
-    // debugger
+    // 
     // let test = this.activatedRoute.params.subscribe(result => {
-    //   debugger
+    //   
     // })
 
     // let test = document.location.host + '/login?companyid=' + companyInfo;
 
     // let k = "localhost:4200/login?companyid=bC1uVdEINfm7oJNltQd3PA2";
-    // debugger
+    // 
 
     window.location.href = companyInfo;
+  }
+
+  addHyphenToPhoneNumber(phoneNumber) {
+    let phoneIncludeHyphen = '';
+    if (phoneNumber.includes('-')) {
+      return phoneNumber;
+    }
+    if (phoneNumber.length >= 10) {
+      phoneIncludeHyphen = [...Array.from(phoneNumber).slice(0, 3), '-', ...Array.from(phoneNumber).slice(3)].join('');
+    }
+    else if (phoneNumber.length <= 9) {
+      phoneIncludeHyphen = [...Array.from(phoneNumber).slice(0, 2), '-', ...Array.from(phoneNumber).slice(2)].join('');
+    }
+    return phoneIncludeHyphen;
   }
 
 }

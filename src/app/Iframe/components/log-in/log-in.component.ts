@@ -76,9 +76,7 @@ export class LogInIframeComponent implements OnInit {
 
 
     if (localStorage.getItem('baseUrl') == '') {
-      debugger
       this.dataService.getHost().subscribe(result => {
-        debugger
         this.sharedService.pagesPermission.next(result['pagesPermission']);
 
         localStorage.setItem('baseUrl', result['baseUrl']);
@@ -213,5 +211,20 @@ export class LogInIframeComponent implements OnInit {
     else {
 
     }
+  }
+
+
+  addHyphenToPhoneNumber(phoneNumber) {
+    let phoneIncludeHyphen = '';
+    if (phoneNumber.includes('-')) {
+      return phoneNumber;
+    }
+    if (phoneNumber.length >= 10) {
+      phoneIncludeHyphen = [...Array.from(phoneNumber).slice(0, 3), '-', ...Array.from(phoneNumber).slice(3)].join('');
+    }
+    else if (phoneNumber.length <= 9) {
+      phoneIncludeHyphen = [...Array.from(phoneNumber).slice(0, 2), '-', ...Array.from(phoneNumber).slice(2)].join('');
+    }
+    return phoneIncludeHyphen;
   }
 }

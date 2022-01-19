@@ -157,10 +157,7 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
       UserId: this.userId
     }
 
-
-    debugger
     this.dataService.GetCardInfoById(objToApi).subscribe(result => {
-      debugger
       if (result['Token'] != undefined || result['Token'] != null) {
         //set new token
         let tempObjUser = JSON.parse(localStorage.getItem('user'));
@@ -361,60 +358,70 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
     }).afterClosed().subscribe(dialogResult => {
 
 
-      let validityDate = new Date(dialogResult.result.date);
-      validityDate.setHours(23, 59, 59);
-
-      let dateForApi = new Date(validityDate);
-      let day = dateForApi.getDate() < 10 ? '0' + dateForApi.getDate() : dateForApi.getDate();
-      let month = (dateForApi.getMonth() + 1) < 10 ? '0' + (dateForApi.getMonth() + 1) : (dateForApi.getMonth() + 1);
-      let year = dateForApi.getFullYear();
-
-      let objToApi = {
-        Token: this.userToken,
-        CardLst: [this.CardInfo.CardId + ''],
-        OrderId: this.OrderDetails.Id,
-        UserId: +this.userId,
-        ValidationDate: day + '/' + month + '/' + year
+      if (new Date(dialogResult.result.date) < new Date()) {
+        this.dialog.open(DialogComponent, {
+          data: { message: MsgList.wrongDate }
+        })
       }
+      else {
+        let validityDate = new Date(dialogResult.result.date);
+        validityDate.setHours(23, 59, 59);
+
+        let dateForApi = new Date(validityDate);
+        let day = dateForApi.getDate() < 10 ? '0' + dateForApi.getDate() : dateForApi.getDate();
+        let month = (dateForApi.getMonth() + 1) < 10 ? '0' + (dateForApi.getMonth() + 1) : (dateForApi.getMonth() + 1);
+        let year = dateForApi.getFullYear();
+
+        let objToApi = {
+          Token: this.userToken,
+          CardLst: [this.CardInfo.CardId + ''],
+          OrderId: this.OrderDetails.Id,
+          UserId: +this.userId,
+          ValidationDate: day + '/' + month + '/' + year
+        }
 
 
-      this.dataService.UpdateExpirationDateOfCards(objToApi).subscribe(result => {
+        debugger
+        this.dataService.UpdateExpirationDateOfCards(objToApi).subscribe(result => {
+          debugger
 
-        if (result['Token'] != undefined || result['Token'] != null) {
+          if (result['Token'] != undefined || result['Token'] != null) {
 
-          //set new token
-          let tempObjUser = JSON.parse(localStorage.getItem('user'));
-          tempObjUser['Token'] = result['Token'];
-          localStorage.setItem('user', JSON.stringify(tempObjUser));
-          this.userToken = result['Token'];
+            //set new token
+            let tempObjUser = JSON.parse(localStorage.getItem('user'));
+            tempObjUser['Token'] = result['Token'];
+            localStorage.setItem('user', JSON.stringify(tempObjUser));
+            this.userToken = result['Token'];
 
-          if (typeof result == 'object' && result.obj != null) {
+            if (typeof result == 'object' && result.obj != null) {
 
-            let respDate = new Date(result.obj.ValidationDate);
+              let respDate = new Date(result.obj.ValidationDate);
 
-            this.CardInfo.ExpirationDate = new Date(respDate.getFullYear(), respDate.getMonth(), respDate.getDate());
+              this.CardInfo.ExpirationDate = new Date(respDate.getFullYear(), respDate.getMonth(), respDate.getDate());
+              this.dialog.open(DialogComponent, {
+                data: { message: MsgList.savedSuccessfully }
+              })
+            }
+            else if (result.obj == null) {
+              this.dialog.open(DialogComponent, {
+                data: { message: result.errdesc }
+              });
+            }
           }
-          else if (result.obj == null) {
+
+          else if (typeof result == 'string') {
             this.dialog.open(DialogComponent, {
-              data: { message: result.errdesc }
-            });
+              data: { message: result }
+            })
           }
-        }
-
-        else if (typeof result == 'string') {
-          this.dialog.open(DialogComponent, {
-            data: { message: result }
-          })
-        }
-        else {
-          // this.dialog.open(DialogComponent, {
-          //   data: {message: MsgList.exitSystemAlert}
-          // })
-          this.sharedService.exitSystemEvent();
-        }
-      });
-
-
+          else {
+            // this.dialog.open(DialogComponent, {
+            //   data: {message: MsgList.exitSystemAlert}
+            // })
+            this.sharedService.exitSystemEvent();
+          }
+        });
+      }
     });
 
   }

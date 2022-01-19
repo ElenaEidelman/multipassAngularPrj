@@ -41,8 +41,11 @@ export class PagePermissionGuardGuard implements CanActivate {
 
           if (result['err'] != -1) {
             this.permissionMenuList = result['obj'][3];
+
+
             this.permissionMenuList.forEach(element => {
-              if (element['PageName'] === route.routeConfig.path) {
+              if (element['PageName'] === route.routeConfig.path && element['In_Use'] === 1) {
+
                 this.canActivatePath = true;
               }
             });
@@ -54,7 +57,6 @@ export class PagePermissionGuardGuard implements CanActivate {
           }
         }
         else {
-
           this.sharedService.exitSystemEvent();
         }
       });
@@ -62,6 +64,7 @@ export class PagePermissionGuardGuard implements CanActivate {
     catch (error) {
       this.canActivatePath = false;
     }
+
 
     if (this.canActivatePath) {
       return true;

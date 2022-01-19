@@ -27,7 +27,6 @@
                         <div class="element-page-title">טעינת קובץ אקסל</div>
                         <div class="formBorder formElement">
                             <form [formGroup]="excelCardCreatingForm">
-
                                 <div class="wrapForm">
                                     <div class="formRow">
                                         <div class="formRowChild">
@@ -49,22 +48,24 @@
                                                     </ng-container>
                                                 </mat-select>
                                                 <!-- <mat-error *ngIf="excelCustomerError">{{excelCustomerError}}</mat-error> -->
-                                                <mat-error
+                                                <!-- <mat-error
                                                     [@openClose]="excelCardCreatingForm.get('customer').hasError('required')">
                                                     נא
-                                                    לבחור לקוח</mat-error>
+                                                    לבחור לקוח</mat-error> -->
+                                                <mat-error>{{MsgList.requiredField}}</mat-error>
                                             </mat-form-field>
                                         </div>
                                         <div class="formRowChild">
                                             <div class="example-full-width">
                                                 <mat-form-field>
                                                     <!-- <mat-label>תאור ההזמנה</mat-label> -->
-                                                    <textarea placeholder="נא להכניס תיאור של ההזמנה" matInput
-                                                        formControlName="fileDesc" cdkTextareaAutosize
+                                                    <textarea placeholder="נא להכניס תאור של ההזמנה*" matInput
+                                                        formControlName="orderDescription" cdkTextareaAutosize
                                                         #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1">
                                                                 {{uploadDoc.value}}
                                                            
                                                     </textarea>
+                                                    <mat-error>{{MsgList.requiredField}}</mat-error>
                                                 </mat-form-field>
                                             </div>
 
@@ -73,8 +74,7 @@
                                         <!--alignRight-->
                                         <div class="formRowChild">
                                             <input [hidden]="true" id="file-upload" name="uploadDoc" #uploadDoc
-                                                (change)="fileOptionChange($event)" #uploadDoc type="file"
-                                                formControlName="file">
+                                                (change)="fileOptionChange($event)" type="file" formControlName="file">
 
                                             <div class="wrapUserButton">
                                                 <!-- [class.addButton]="!fileUploadButtonDisabled" [disabled]="fileUploadButtonDisabled" -->
@@ -103,7 +103,6 @@
                                                 <a href="../assets/Files/Template.xls" class="getForExampleExcelFile" >קובץ אקסל לדוגמא</a>
                                             </div> -->
                                         </div>
-
                                     </div>
 
                                     <!--sendButtonWrap-->
@@ -131,10 +130,10 @@
                         <div class="element-page-title">הזמנה ידנית</div>
                         <div class="formBorder formElement">
                             <form [formGroup]="manualCardgroup">
-                                <div class="formWrapRow">
+                                <div class="wrapForm">
                                     <div class="formRow">
                                         <div class="formRowChild">
-                                            <mat-form-field class="marginSelectTop">
+                                            <mat-form-field>
                                                 <mat-label>בחר או הוסף לקוח</mat-label>
                                                 <mat-select formControlName="customer" #customersSelectManual>
                                                     <button mat-button class="sendButton addOptionFromDropDown"
@@ -149,31 +148,33 @@
                                                         </mat-option>
                                                     </ng-container>
                                                 </mat-select>
+                                                <mat-error>{{MsgList.requiredField}}</mat-error>
                                             </mat-form-field>
                                         </div>
-                                        <div class="formRowChild"></div>
-                                        <!-- <div class="formRowChild">
-                                            <mat-form-field class="width100 textA">
-                                                <mat-label>תאור ההזמנה</mat-label>
-                                                <textarea 
-                                                            placeholder="נא להכניס תיאור של ההזמנה" 
-                                                            matInput
-                                                            formControlName="orderDescription"
-                                                            cdkTextareaAutosize
-                                                            #autosize="cdkTextareaAutosize"
-                                                            cdkAutosizeMinRows="2">
-                                                </textarea>
-                                            </mat-form-field>
-                                        </div> -->
+                                        <div class="formRowChild">
+                                            <div class="example-full-width">
+                                                <mat-form-field>
+                                                    <!-- <mat-label>תאור ההזמנה</mat-label> -->
+                                                    <textarea placeholder="נא להכניס תאור של ההזמנה*" matInput
+                                                        formControlName="orderDescription" cdkTextareaAutosize
+                                                        #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1">
+                                                                {{uploadDoc.value}}
+                                                           
+                                                    </textarea>
+                                                    <mat-error>{{MsgList.requiredField}}</mat-error>
+                                                </mat-form-field>
+                                            </div>
+
+                                        </div>
 
                                         <div class="formRowChild"></div>
                                     </div>
-                                </div>
-                                <div class="sendButtonWrap">
-                                    <button mat-button class="addButton" (click)="checkFormValidity()">
-                                        הכנס
-                                    </button>
-                                    <mat-error [@openClose]="manualError != ''">{{manualError}}</mat-error>
+                                    <div class="formRow sendButtonWrap">
+                                        <button mat-button class="addButton" (click)="checkFormValidity()">
+                                            הכנס
+                                        </button>
+                                        <mat-error [@openClose]="manualError != ''">{{manualError}}</mat-error>
+                                    </div>
                                 </div>
                             </form>
                         </div>

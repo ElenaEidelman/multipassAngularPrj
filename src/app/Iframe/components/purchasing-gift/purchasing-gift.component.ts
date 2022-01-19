@@ -78,8 +78,13 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
     private sharingIframeService: IframeSharingServiceService,
     private getDataService: DataServiceService,
     @Inject(DOCUMENT) private document: Document) { }
+
+
   ngAfterViewInit(): void {
+    this.colorMatStepHorizontalLine(this.selectedIndex);
   }
+
+
 
   picSizeInMega;
   destroyActivateR;
@@ -101,6 +106,7 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
   blessingFilteredList;
   blessingTextCurrentStep: number = 1;
   formError: string = '';
+  companyName: string = '';
 
   addVideoImgError: string = '';
   selectedIndex = 0;
@@ -172,8 +178,9 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
 
       if (Object.keys(result).indexOf('orderid') != -1) {
         this.orderId = result['orderid'];
-
         this.selectedIndex = 2;
+        // this.colorMatStepHorizontalLine(this.selectedIndex);
+
       }
       else {
 
@@ -210,6 +217,7 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
 
   }
 
+
   ngOnDestroy() {
     this.destroyActivateR.unsubscribe();
   }
@@ -219,13 +227,12 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
       CompanyIdEnc: this.companyId
     }
 
-    debugger
     this.getDataService.GetIFrameCompanyInfo(objToApi).subscribe(result => {
-      debugger
       if (result.obj != undefined && result.obj != null && result.err != -1) {
         // this.sharingIframeService.companyInfoService.next(JSON.stringify(result));
         this.giftCardImgSpare = result.obj[0]['GiftCardPic'];
         this.giftCardImg = result.obj[0]['GiftCardPic'];
+        this.companyName = result.obj[0]['CompanyName'];
       }
     })
   }
@@ -372,61 +379,73 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
     const file = event.target.files[0];
     const imgSizeFrobMbToByte = this.picSizeInMega * Math.pow(1024, 2);
 
-
     if (file.size <= imgSizeFrobMbToByte) {//<= imgSizeFrobMbToByte
       let format: string;
       let imageSrc: string;
-      this.spinner = true;
+
 
       if (file.type.indexOf('image') > -1) {
+        this.spinner = true;
+        if (this.sharingIframeService.iframeCalledFromMultitav.value == 'false') {
+          format = 'image';
 
-        format = 'image';
-
-        let objToApi = new FormData();
-        objToApi.append('uploadedFile', file);
+          let objToApi = new FormData();
+          objToApi.append('uploadedFile', file);
 
 
-        this.dataService.SavePicForGreeting(objToApi).subscribe(result => {
+          this.dataService.SavePicForGreeting(objToApi).subscribe(result => {
+            this.spinner = false;
+            if (typeof result.obj == 'string' && result.obj.length > 0) {
+
+              this.FormsArray.get('FirstFormGroup').get('imgsSrc').setValue(result.obj);
+
+              //preview img
+              const reader = new FileReader();
+              reader.readAsDataURL(file);
+              reader.onload = () => {
+                imageSrc = reader.result as string;
+                // this.giftCardImg = imageSrc;
+                // this.imgVideoAddedList.push({ format: format, src: imageSrc });
+
+                this.imgVideoAddedList[0] = { format: format, src: imageSrc };
+              };
+            }
+            else if (typeof result == 'string') {
+              this.dialog.open(PopupDialogComponent, {
+                width: '330px',
+                // height: '400px',
+                data: { title: '', text: result }
+              })
+            }
+            else {
+              this.dialog.open(PopupDialogComponent, {
+                width: '330px',
+                // height: '400px',
+                data: { title: '', text: result.errdesc }
+              })
+
+
+              //alert(result.errdesc);
+            }
+          })
+        }
+        else {
+          format = 'image';
           this.spinner = false;
-          if (typeof result.obj == 'string' && result.obj.length > 0) {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = () => {
+            imageSrc = reader.result as string;
+            // this.giftCardImg = imageSrc;
+            // this.imgVideoAddedList.push({ format: format, src: imageSrc });
 
-            this.FormsArray.get('FirstFormGroup').get('imgsSrc').setValue(result.obj);
-
-            //preview img
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => {
-              imageSrc = reader.result as string;
-              // this.giftCardImg = imageSrc;
-              // this.imgVideoAddedList.push({ format: format, src: imageSrc });
-
-              this.imgVideoAddedList[0] = { format: format, src: imageSrc };
-            };
-          }
-          else if (typeof result == 'string') {
-            this.dialog.open(PopupDialogComponent, {
-              width: '330px',
-              // height: '400px',
-              data: { title: '', text: result }
-            })
-          }
-          else {
-            this.dialog.open(PopupDialogComponent, {
-              width: '330px',
-              // height: '400px',
-              data: { title: '', text: result.errdesc }
-            })
-
-
-            //alert(result.errdesc);
-          }
-        })
-
-
-
+            this.imgVideoAddedList[0] = { format: format, src: imageSrc };
+          };
+        }
 
       }
       else if (file.type.indexOf('video') > -1) {
+        this.spinner = true;
         format = 'video';
       }
       else {
@@ -486,6 +505,7 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   tabChanged(event, stepper) {
+    debugger
     this.FormsArray.get('FirstFormGroup').get('B2C_IsForFriend').setValue(event.index == 0 ? 1 : 0);
     if (event.index + 1 == 2) {
       stepper.next();
@@ -498,8 +518,6 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   stepChanged(event, stepper) {
-
-
     stepper.selected.interacted = false;
   }
 
@@ -535,10 +553,10 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
 
     // stepper.selectedIndex = 2;
     // 
-
     if (!this.viewChangeSum) {
       this.selectedIndex = stepper.selectedIndex;
-
+      debugger
+      this.colorMatStepHorizontalLine(stepper.selectedIndex + 1);
       //to who send gift card stepper
       if (this.selectedIndex == 0) {
         if (this.FormsArray.get(this.FormSelected).valid) {
@@ -791,6 +809,26 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
     }
   }
 
+
+  colorMatStepHorizontalLine(toStepper) {
+    debugger
+    if (toStepper != 0) {
+      let selectedInd = toStepper;
+      let auxiliaryArr = [];
+      for (let i = 0; i < selectedInd; i++) {
+        auxiliaryArr.push(i);
+      }
+      this.document.querySelectorAll('.mat-stepper-horizontal-line').forEach((result, index) => {
+        if (auxiliaryArr[index] == index) {
+          debugger
+          (result as HTMLBodyElement).style.borderTopWidth = '4px';
+        }
+        // debugger
+        // (result as HTMLBodyElement).style.borderTopWidth = '4px';
+      })
+    }
+
+  }
 
 
 }

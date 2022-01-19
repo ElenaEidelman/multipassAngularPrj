@@ -2,9 +2,10 @@ import { Component, Inject, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 
-export interface DialogData{
+export interface DialogData {
   message: any,
-  eventButton: any
+  eventButton: any,
+  closeNameButton: any
 }
 @Component({
   selector: 'app-dialog-confirm',
@@ -15,22 +16,22 @@ export interface DialogData{
 export class DialogConfirmComponent implements OnInit {
 
   constructor(public dialog: MatDialog,
-              public dialogRef: MatDialogRef<DialogConfirmComponent>, 
-              @Inject(MAT_DIALOG_DATA) public data: DialogData, 
-              private route: Router) { }
+    public dialogRef: MatDialogRef<DialogConfirmComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: DialogData,
+    private route: Router) { }
 
   ngOnInit(): void {
-    
+
   }
 
-  dialogClose(){
+  dialogClose() {
     this.dialogRef.close();
   }
-  yes(){
-    this.dialogRef.close({result: 'yes'}); 
+  yes() {
+    this.dialogRef.close({ result: 'yes' });
   }
-  no(){
-    this.dialogRef.close({result: 'no'});
+  no() {
+    this.dialogRef.close({ result: 'no' });
   }
 }
 

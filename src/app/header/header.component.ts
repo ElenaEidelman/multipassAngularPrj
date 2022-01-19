@@ -54,6 +54,7 @@ export class HeaderComponent implements OnInit {
 
   exitSystem() {
     localStorage.removeItem('baseUrl');
+    debugger
     this.http.get('../../assets/Files/HostFile.json').subscribe(result => {
       localStorage.setItem('baseUrl', result['baseUrl']);
     })

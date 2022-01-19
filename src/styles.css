@@ -226,6 +226,18 @@ mat-form-field{
 .wrap-fab-button{
   margin: 1em auto;
 }
+.purpleBorderButton{
+  
+  border: 1px solid #59576C !important;
+  color: #59576C !important;
+  margin: 5px auto !important;
+  width: 92%;
+
+}
+.purpleBorderButton:hover{
+  background: #59576C;
+  color: #fff !important;
+}
 .primary-button{
   background: #267491;
   color: #fff;
@@ -254,6 +266,7 @@ mat-form-field{
 
 .errorBG{
   color: #f4a293;
+  /* font-size: 1.2em !important; */
 }
 .deleteIcon:hover{
   cursor: pointer;
@@ -270,6 +283,7 @@ mat-form-field{
 .addButton{
   background: #88C43E !important;
   color: #fff !important;
+  border: 1px solid #88C43E !important;
 }
 .addButton:hover{
   background: #36362f;
@@ -679,9 +693,15 @@ button.additionalColButton{
 .mat-dialog-container{
   overflow: unset !important;
 }
+.mat-error {
+  font-size: 12px;
+}
 svg{
   font-size: 24px  !important;
   margin-bottom: -4px;
+}
+.mat-card-header .mat-card-title{
+  font-size: 16px;
 }
 .mat-dialog-container{
   background: rgba(255,255,255,0.8);
@@ -771,7 +791,12 @@ textarea.templateTextArea + span > label{
 }
 .saveMessage{
   color: #8FC636;
+  text-align: center;
+  padding: 10px;
   /* font-weight: bold; */
+}
+div.dialogMessage button{
+  height: 1.5em !important;
 }
 .infoIcon{
   width: 100% !important;
@@ -1122,6 +1147,13 @@ th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:
 }
 
 
+.strong{
+  font-weight: 700;
+}
+
+.important-button-margin span.mat-button-wrapper{
+  padding: 0!important;
+}
 /* mobile */
 
 @media screen and (max-width: 1024px){

@@ -12,6 +12,9 @@ mat-label{
     flex-grow: 1;
     margin: 10px 15px;
 }
+button.mat-focus-indicator{
+    height: unset;
+}
 .addButtonWrap{
     margin: 42px 15px !important;
 }

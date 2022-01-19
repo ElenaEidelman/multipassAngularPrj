@@ -153,6 +153,7 @@ button.prevButton {
 }
 .mainText > div.secondText{
     margin-top: 1em;
+    direction: rtl;
 }
 
 .buttonColumn > button{

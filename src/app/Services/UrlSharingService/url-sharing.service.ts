@@ -22,7 +22,7 @@ export class UrlSharingService {
   // baseUrl = this.baseUrlSource.asObservable();
 
   public messageSource = new BehaviorSubject('');
-  currentMessage = this.messageSource.asObservable();
+  public currentMessage = this.messageSource.asObservable();
 
   // replaySubject = this.ReplaySubject.asObservable();
 

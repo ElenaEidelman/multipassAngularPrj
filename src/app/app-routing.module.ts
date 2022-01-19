@@ -40,24 +40,24 @@ const routes: Routes = [
 
   {
     path: 'public', component: PublicComponent, canActivate: [LoginGuardGuard], children: [
-      { path: 'home', component: HomeComponent },
+      { path: 'home', component: HomeComponent, canActivate: [PagePermissionGuardGuard] },
       { path: 'order', component: ExecOrderComponent, canActivate: [PagePermissionGuardGuard] },
       { path: 'newOrder', component: ExecOrderComponent, canActivate: [PagePermissionGuardGuard] },
-      { path: 'allOrders', component: AllOrdersComponent },
-      { path: 'allCustomers', component: AllCustomersComponent },
+      { path: 'allOrders', component: AllOrdersComponent, canActivate: [PagePermissionGuardGuard] },
+      { path: 'allCustomers', component: AllCustomersComponent, canActivate: [PagePermissionGuardGuard] },
       { path: 'newCustomer', component: NewCustomerComponent, canActivate: [PagePermissionGuardGuard] },
       { path: 'customer', component: ExistCustomerComponent, canActivate: [PagePermissionGuardGuard] },
-      { path: 'allCards', component: AllCardsComponent },
+      { path: 'allCards', component: AllCardsComponent, canActivate: [PagePermissionGuardGuard] },
       { path: 'orderCards', component: OrderCardsComponent, canActivate: [PagePermissionGuardGuard] },
       { path: 'cardInfo', component: CardInfoComponent, canActivate: [PagePermissionGuardGuard] },
       { path: 'orderLines', component: OrderLinesComponent, canActivate: [PagePermissionGuardGuard] },
       { path: 'digitalFilesList', component: DigitalFilesListComponent, canActivate: [PagePermissionGuardGuard] },
-      { path: 'reports', component: ReportsComponent },
-      { path: 'allUsers', component: AllUsersComponent },
+      { path: 'reports', component: ReportsComponent, canActivate: [PagePermissionGuardGuard] },
+      { path: 'allUsers', component: AllUsersComponent, canActivate: [PagePermissionGuardGuard] },
       { path: 'user', component: ExistUserComponent, canActivate: [PagePermissionGuardGuard] },
       { path: 'newUser', component: NewUserComponent, canActivate: [PagePermissionGuardGuard] },
-      { path: 'allSMStemplates', component: AllSmsTemplatesComponent },
-      { path: 'testExpandingTable', component: TestExpandingTableComponent },
+      { path: 'allSMStemplates', component: AllSmsTemplatesComponent, canActivate: [PagePermissionGuardGuard] },
+      { path: 'testExpandingTable', component: TestExpandingTableComponent, canActivate: [PagePermissionGuardGuard] },
       { path: 'excelView', component: ExcelFileViewComponent, canActivate: [PagePermissionGuardGuard] },
 
 
