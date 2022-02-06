@@ -232,7 +232,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
       objToApi['CanceledCheckB'] = false;
 
       this.dataService.CreateRealizationReports(objToApi).subscribe(result => {
-        debugger
+
         if (result['Token'] != undefined || result['Token'] != null) {
 
           //set new token
@@ -323,7 +323,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
   //         // this.dialog.open(DialogComponent, {
   //         //   data: {message: MsgList.exitSystemAlert}
   //         // })
-  //         debugger
+  //          
   //         this.sharedService.exitSystemEvent();
   //       }
   //     })
@@ -331,7 +331,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
   // }
 
   resetForm(form) {
-    // debugger
+    //  
     // this[form].reset();
     // this[form + 'View'] = false;
 

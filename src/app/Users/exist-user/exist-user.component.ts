@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -39,8 +39,8 @@ export class ExistUserComponent implements OnInit {
   roleList = [];
 
   userDataForm = this.fb.group({
-    FName: ['', Validators.required], // new  V ---------FName
-    LName: ['', Validators.required], // new  V ---------LName
+    FName: ['', [Validators.required, this.noWhitespaceValidator]], // new  V ---------FName
+    LName: ['', [Validators.required, this.noWhitespaceValidator]], // new  V ---------LName
     Email: ['', [Validators.required, Validators.email]],// -----------Email
     StatusId: (''), // -------------StatusDescription
     // Tz: (''),//מספר משתמש של המערכת -------------Tz
@@ -67,15 +67,15 @@ export class ExistUserComponent implements OnInit {
 
   ngOnInit(): void {
     window.scroll(0, 0);
-    debugger
+
     // this.idUnsubscribe = this.activeRoute.params.subscribe( param => {
     let urlParams = this.urlSharingService.messageSource.getValue();
-    debugger
+
     if (urlParams == '') {
       this.router.navigate(['/public/allUsers']);
     }
     else {
-      debugger
+
       this.urlSharingService.changeMessage('');
       this.id = JSON.parse(urlParams)['userId'];
       this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
@@ -271,7 +271,7 @@ export class ExistUserComponent implements OnInit {
 
           }
           else {
-            objToApi[control] = this.userDataForm.get(control).value;
+            objToApi[control] = this.userDataForm.get(control).value != null ? this.userDataForm.get(control).value.toString().trim() : this.userDataForm.get(control).value;
           }
         }
       });
@@ -279,6 +279,7 @@ export class ExistUserComponent implements OnInit {
       objToApi['OrganizationName'] = '';
       objToApi['BusinessFile'] = '';
       objToApi['BackOfficeUserId'] = this.id;
+
 
       this.dataService.InsertUpdateBackOfficeUsers(objToApi).subscribe(result => {
 
@@ -293,6 +294,11 @@ export class ExistUserComponent implements OnInit {
 
           if (result.obj != null && result.obj != undefined && Object.keys(result.obj[0]).length > 0) {
             this.userData = result.obj[0];
+
+            debugger
+            Object.keys(this.userDataForm.controls).forEach(control => {
+              this.userDataForm.get(control).setValue(this.userData[control])
+            })
 
             this.msgActionButtons = 'נשמר בהצלחה';
             setTimeout(() => {
@@ -369,4 +375,9 @@ export class ExistUserComponent implements OnInit {
     });
   }
 
+  public noWhitespaceValidator(control: FormControl) {
+    const isWhitespace = (control.value || '').trim().length === 0;
+    const isValid = !isWhitespace;
+    return isValid ? null : { 'whitespace': true };
+  }
 }

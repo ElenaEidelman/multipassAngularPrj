@@ -21,7 +21,7 @@ export class TableComponent implements OnInit {
   links;  //[{linkName: '', linkSrc: '', downloadFile: false}]
   linksById;
 
-  
+
   linkURL: string = ''
   downloadFile: string = '';
 
@@ -38,22 +38,22 @@ export class TableComponent implements OnInit {
     this.links = this.linksList;
     this.linksById = this.linksListById;
 
-    if(this.dataLabelsList != undefined){
+    if (this.dataLabelsList != undefined) {
       this.createDisplayedColumns(this.dataLabelsList);
     }
-    if(this.data_Source != undefined){
+    if (this.data_Source != undefined) {
       this.dataSource = this.data_Source;
     }
 
   }
 
-  createDisplayedColumns(columns){
-    columns.forEach( el => {
+  createDisplayedColumns(columns) {
+    columns.forEach(el => {
       this.displayedColumns.unshift(el.value);
     });
   }
-  
-  returnHebTranslation(obj,value){
+
+  returnHebTranslation(obj, value) {
     return obj.filter(el => el.value == value)[0].viewValue;
   }
 
@@ -65,29 +65,29 @@ export class TableComponent implements OnInit {
       this.dataSource.paginator.firstPage();
     }
   }
-  translateTitles(){
+  translateTitles() {
     document.querySelectorAll('.mat-paginator-page-size-label').forEach(title => {
       title.innerHTML = 'פריטים פר עמוד';
     });
   }
 
-  checkIfLink(rowData){
-    //debugger
+  checkIfLink(rowData) {
+    // 
     let ifLink = false;
-    //debugger
+    // 
 
     //if table have column with links
-    if(this.links != undefined){
+    if (this.links != undefined) {
       this.links.forEach(element => {
-        //debugger
-        if(element.linkName == rowData){
+        // 
+        if (element.linkName == rowData) {
           ifLink = true;
         }
       });
     }
-    if(this.linksById != undefined){
-        this.linksById.forEach(element => {
-        if(element.linkName == rowData){
+    if (this.linksById != undefined) {
+      this.linksById.forEach(element => {
+        if (element.linkName == rowData) {
           ifLink = true;
         }
       });
@@ -95,14 +95,14 @@ export class TableComponent implements OnInit {
     return ifLink;
   }
 
-  returnUrl(url){
+  returnUrl(url) {
     return this.links.filter(el => el.linkName == url)[0].linkSrc;
   }
-  returnUrlById(url, obj){
+  returnUrlById(url, obj) {
     let urlData = this.linksById.filter(el => el.linkName == url)[0];
     return '/public/' + urlData.linkSrc + '/' + obj[urlData.linkIdName];
   }
-  checkIfDownload(data){
+  checkIfDownload(data) {
     return this.links.filter(el => el.linkName == data)[0].downloadFile;
   }
 

@@ -96,7 +96,7 @@ export class AllCardsComponent implements OnInit, AfterViewInit, OnChanges {
 
   cardsLabelForTable = [
     { value: 'CardId', viewValue: 'מספר שובר' },
-    { value: 'CompanyName', viewValue: 'שם לקוח' },
+    { value: 'FullName', viewValue: 'שם לקוח' },
     { value: 'PhoneNumber', viewValue: 'מספר טלפון' },
     { value: 'CurrentBudget', viewValue: 'יתרה' },// no data !!!!
     { value: 'OrderId', viewValue: 'מספר הזמנה' },
@@ -145,6 +145,7 @@ export class AllCardsComponent implements OnInit, AfterViewInit, OnChanges {
 
     if (formSearchFiled) {
       this.spinner = true;
+
 
 
       debugger
@@ -197,7 +198,7 @@ export class AllCardsComponent implements OnInit, AfterViewInit, OnChanges {
 
   dateFromChanged(event, controller) {
 
-    debugger
+
     if (controller == 'FromDate') {
       this.minToDate = new Date(event.value);
     }
@@ -213,7 +214,7 @@ export class AllCardsComponent implements OnInit, AfterViewInit, OnChanges {
     this.createDisplayedColumns(this.cardsLabelForTable);
     this.viewTable = true;
     this.cardsDataSource.data = obj;
-
+    debugger
     setTimeout(() => {
       this.cardsDataSource.paginator = this.paginator;
       this.cardsDataSource.sort = this.sort;

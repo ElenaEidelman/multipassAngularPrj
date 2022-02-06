@@ -191,7 +191,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     window.scroll(0, 0);
     let url = this.router.url;
     this.userToken = JSON.parse(localStorage.getItem('user')).Token;
-    debugger
+
 
 
 
@@ -205,7 +205,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     //this code need when i will change url
     let urlParams = this.urlSharingService.messageSource.getValue();
 
-    debugger
+
 
 
     if (urlParams == '') {
@@ -324,7 +324,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
 
     this.dataService.GetOrderDetails(objToApi).subscribe(result => {
-      debugger
+
 
       if (result['Token'] != undefined || result['Token'] != null) {
 
@@ -370,7 +370,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
           this.orderDetailsTable = new MatTableDataSource(this.orderDetails);
           this.totalData();
-          debugger
+
         }
         if (result.obj == null && result.errdesc != null && result.errdesc != '') {
           this.dialog.open(DialogComponent, {
@@ -587,7 +587,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         else {
 
           this.dataService.InsertUpdateOrder(objToApi).subscribe(result => {
-            debugger
+
 
             this.addToExecOrderForm.get('validity').setValue(this.getLastDateOfCurrentMonthAnd5Years());
             if (result['Token'] != undefined || result['Token'] != null) {
@@ -875,7 +875,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       }
     }).afterClosed().subscribe(dialogResult => {
 
-      debugger
+
       if (new Date(dialogResult.result.date) < new Date()) {
         this.dialog.open(DialogComponent, {
           data: { message: MsgList.wrongDate }
@@ -1052,9 +1052,12 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       userId: this.customerId
     }
 
-    debugger
+
+
+
     this.dataService.GetCardsByOrderId(objToAPI).subscribe(result => {
-      debugger
+
+
       if (result['Token'] != undefined || result['Token'] != null) {
 
         //set new token
@@ -1066,6 +1069,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         if (typeof result == 'object') {
           this.orderCardsData = result['obj'][0];
           this.DigitalBatch = result['obj'][1];
+
 
         }
         else {
@@ -1090,6 +1094,8 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   excelFileExport() {
+
+
     let tableLabels = [
       { value: 'ItemId', viewValue: "מס''ד" },
       { value: 'CardId', viewValue: 'קוד דיגיטלי' },
@@ -1102,7 +1108,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     ];
 
     //add another column to file if order created from excel file
-    if (this.DigitalBatch != '') {
+    if (this.DigitalBatch != '' && this.DigitalBatch != undefined) {
       tableLabels.push({ value: 'ValidationField', viewValue: 'שדה אימות' })
     }
 
@@ -1116,6 +1122,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       worksheetArr.push({ header: label.viewValue, key: label.value, width: 20 });
     });
 
+
     worksheet.columns = worksheetArr;
 
     for (let data of Object.values(tableData)) {
@@ -1127,6 +1134,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       }
     }
     worksheet.addRows(tableData, "n")
+
 
     let userData = JSON.parse(localStorage.getItem('user')).obj;
     workbook.xlsx.writeBuffer().then((data) => {
@@ -1203,7 +1211,7 @@ export class DatePickerDialog implements OnInit {
   }
 
   validityChangeFormat() {
-    debugger
+
     let date = this.data.date.split('/');
     let year = date[2];
     let month = date[0];
@@ -1217,7 +1225,7 @@ export class DatePickerDialog implements OnInit {
   }
 
   select() {
-    debugger
+
     this.dialogRef.close({
       result: {
         date: this.validity.value,

@@ -12,7 +12,8 @@
                         <input [hidden]="true" name="Logo" #Logo (change)="fileOptionChange($event, 'Logo')"
                             type="file">
                         <input [hidden]="true" matInput readonly [value]="Logo.value" formControlName="Logo">
-                        <img [src]="LogoSrc != '' ? LogoSrc :  previewForm.get('Logo').value" class="smallPrevImg">
+                        <img [src]="checkPath(LogoSrc != '' ? LogoSrc :  previewForm.get('Logo').value)"
+                            class="smallPrevImg">
                         <mat-icon (click)="Logo.click()" matPrefix *ngIf="previewForm.get('Logo').value == ''">
                             attach_file</mat-icon>
                         <mat-icon matPrefix *ngIf="previewForm.get('Logo').value != ''"
@@ -136,7 +137,7 @@
                             (change)="fileOptionChange($event, 'GiftCardPic')" type="file">
                         <input [hidden]="true" matInput formControlName="GiftCardPic" readonly
                             [value]="GiftCardPic.value">
-                        <img [src]="GiftCardPicSrc != '' ? GiftCardPicSrc :  previewForm.get('GiftCardPic').value"
+                        <img [src]="checkPath(GiftCardPicSrc != '' ? GiftCardPicSrc :  previewForm.get('GiftCardPic').value)"
                             class="smallPrevImg">
                         <mat-icon (click)="GiftCardPic.click()" matPrefix
                             *ngIf="previewForm.get('GiftCardPic').value == ''">attach_file</mat-icon>
@@ -159,7 +160,7 @@
                             (change)="fileOptionChange($event, 'BackGround')" type="file">
                         <input [hidden]="true" matInput readonly [value]="BackGround.value"
                             formControlName="BackGround">
-                        <img [src]="BackGroundSrc != '' ? BackGroundSrc :  previewForm.get('BackGround').value"
+                        <img [src]="checkPath(BackGroundSrc != '' ? BackGroundSrc :  previewForm.get('BackGround').value)"
                             class="smallPrevImg">
                         <mat-icon (click)="BackGround.click()" matPrefix
                             *ngIf="previewForm.get('BackGround').value == ''">attach_file</mat-icon>

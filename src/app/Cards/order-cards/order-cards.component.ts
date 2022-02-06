@@ -91,13 +91,13 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
   excelCardCreatingForm = this.fb.group({
     customer: ['', Validators.required],
     // fileDesc: (''),
-    orderDescription: ['', Validators.required],
+    orderDescription: ['', [Validators.required, this.noWhitespaceValidator]],
     file: ['', Validators.required]
   });
 
   manualCardgroup = this.fb.group({
     customer: ['', Validators.required],
-    orderDescription: ['', Validators.required]
+    orderDescription: ['', [Validators.required, this.noWhitespaceValidator]]
   });
 
   loadingCardGroup = this.fb.group({
@@ -170,7 +170,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
     }
 
     this.dataService.GetAllCustomers(objToApi).subscribe(result => {
-      debugger
+
       if (typeof result == 'string') {
         // this.errorMsg = result;
         setTimeout(() => {
@@ -192,7 +192,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
           });
 
           this.customers = this.customers.filter(customer => customer.StatusId != 3);
-          debugger
+
           if (this.userId != undefined && this.indexId != undefined) {
 
 
@@ -271,9 +271,9 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
           formData.append('ExcelFile', file);
 
 
-          debugger
+
           this.dataService.InsertUpdateOrderByExcel(formData).subscribe(result => {
-            debugger
+
 
             this.fileUploading = false;
             this.fileUplodadeValid = false;
@@ -449,9 +449,9 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
 
   goToExcelView() {
     ///public/excelView
-    debugger
+
     if (this.excelCardCreatingForm.valid) {
-      debugger
+
       this.router.navigate(['/public/excelView']);
     }
     else {
@@ -492,6 +492,12 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     // this.userDataUnsubscribe.unsubscribe();
     // localStorage.setItem('excelFileData', '')
+  }
+
+  public noWhitespaceValidator(control: FormControl) {
+    const isWhitespace = (control.value || '').trim().length === 0;
+    const isValid = !isWhitespace;
+    return isValid ? null : { 'whitespace': true };
   }
 }
 

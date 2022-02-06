@@ -1,10 +1,10 @@
-<div *ngIf="infoData" class="wrapComponent" style='background-image: url("{{infoData.BackGround}}")'>
+<div *ngIf="infoData" class="wrapComponent" style='background-image: url("{{checkPath(infoData.BackGround)}}")'>
     <div class="logInWrap">
         <div class="logInInfo">
 
             <!-- logo data -->
             <div class="customerLogoWrap">
-                <img [src]="infoData.Logo">
+                <img [src]="checkPath(infoData.Logo)">
             </div>
 
             <!-- main title -->
@@ -85,7 +85,7 @@
                     <!-- <p> -->
                     <form [formGroup]="sumForm" class="example-form" (ngSubmit)="onSubmit()">
                         <div class="loginFormImgWrap">
-                            <img [src]="infoData.GiftCardPic">
+                            <img [src]="checkPath(infoData.GiftCardPic)">
 
                         </div>
                         <mat-form-field class="example-full-width sumInputWrap" appearance="outline">

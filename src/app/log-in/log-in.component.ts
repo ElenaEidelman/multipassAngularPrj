@@ -110,8 +110,9 @@ export class LogInComponent implements OnInit {
         OtpKey: this.loginForm.get('OtpKey').value
       }
 
+      debugger
       this.dataService.ValidateOtp(objToApi).subscribe(result => {
-
+        debugger
         if (result['Token'] != '' && result['obj'] != null) {
           let userObj = {
             Token: result['Token'],

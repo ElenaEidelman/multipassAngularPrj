@@ -8,19 +8,19 @@ import { DataServiceService } from '../data-service.service';
 })
 export class LoginGuardGuard implements CanActivate {
 
-  constructor(private route: Router, private dataService: DataServiceService){}
+  constructor(private route: Router, private dataService: DataServiceService) { }
 
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-      let userData = localStorage.getItem('user');
-      if(userData != null && Object.keys(JSON.parse(userData)).includes('obj') && JSON.parse(userData).obj != null){
-        return true;
-      }
-      else{
-        this.route.navigate(['logIn']);
-        return false;
-      }
+    let userData = localStorage.getItem('user');
+    if (userData != null && Object.keys(JSON.parse(userData)).includes('obj') && JSON.parse(userData).obj != null) {
+      return true;
+    }
+    else {
+      this.route.navigate(['logIn']);
+      return false;
+    }
   }
-  
+
 }

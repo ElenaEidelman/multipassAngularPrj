@@ -92,9 +92,9 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
     { value: 'ValidationDate', viewValue: '	תוקף	' },
     { value: 'KindOfLoadSumDesc', viewValue: 'סוג שובר טעינה	' },
     { value: 'DSendLastSent', viewValue: 'נשלח לאחרונה' },
-    { value: 'IsActive', viewValue: 'סטטוס שובר' },
+    { value: 'active', viewValue: 'סטטוס שובר' },
   ];
-  tabelLabelsList = ['Row', 'CardId', 'DSendName', 'DSendPhone', 'LoadSum', 'ValidationDate', 'KindOfLoadSumDesc', 'DSendLastSent', 'IsActive'];
+  tabelLabelsList = ['Row', 'CardId', 'DSendName', 'DSendPhone', 'LoadSum', 'ValidationDate', 'KindOfLoadSumDesc', 'DSendLastSent', 'active'];
 
   selection = new SelectionModel<any>(true, []);
 
@@ -170,7 +170,9 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
     //   {Row:'1',CardId: '2',DSendName: '3', DSendPhone: '4', LoadSum: '5', ValidationDate: '6', KindOfLoadSumDesc: '7', DSendLastSent: '8'}
     // ]);
 
+    debugger
     this.dataService.GetCardsByOrderId(objToAPI).subscribe(result => {
+      debugger
       this.tableSpinner = false;
 
       //check if order have created cards
@@ -201,6 +203,7 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
 
           this.dataTable.data = result['obj'][0];
           debugger
+
           //DigitalBatch number, only if order created from excel
           this.OrderCreatedFromExcel = result['obj'][1] != '' ? true : false;
           this.DigitalBatch = result['obj'][1];
@@ -308,9 +311,9 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
         CoreOrderId: this.orderId,
         From: this.smsTemplatesData.filter(el => el.Id == this.smsTemplates.value)[0]['SenderName']
       }
-      debugger
+
       this.dataService.SendSMSByOrderLine(objToApi).subscribe(result => {
-        debugger
+
         if (result['Token'] != undefined || result['Token'] != null) {
 
           //set new token
@@ -320,7 +323,7 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
           this.userToken = result['Token'];
 
           if (result.errdesc == 'OK') {
-            debugger
+
             this.dialog.open(DialogComponent, {
               data: { title: 'ההודעות נשלחות ברקע', message: this.previewSmsTemplate.value, subTitle: ' ההודעה נשלחה ל ' + selectedRows.length + ' נמענים ' }
             })
@@ -446,9 +449,11 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
     //add another column to file if order created from excel file
-    if (this.DigitalBatch != '') {
+    if (this.DigitalBatch != '' && this.DigitalBatch != undefined) {
       tableLabels.push({ value: 'ValidationField', viewValue: 'שדה אימות' })
     }
+
+    debugger
     let tableData = JSON.parse(JSON.stringify(this.dataTable.data));
 
     let workbook = new Workbook();

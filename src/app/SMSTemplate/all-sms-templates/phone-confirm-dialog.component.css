@@ -65,7 +65,7 @@ mat-label{
     flex-direction: column;
     /* margin-top:10vh; */
     }
-    .wrap-button-login{
+    /* .wrap-button-login{
     text-align: center;
     position: relative;
     }
@@ -73,7 +73,7 @@ mat-label{
     position: absolute;
     right: 27%;
     top:-50%;
-    }
+    } */
     /* .wrap-button-login > button{
     background: lightgray;
     color: #404040;

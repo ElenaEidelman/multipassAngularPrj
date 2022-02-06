@@ -38,9 +38,9 @@ export class ExcelFileViewComponent implements OnInit, OnDestroy {
   }
 
   getExcelFile() {
-    debugger
+
     let t = localStorage.getItem('excelFileData')
-    debugger
+
     if (localStorage.getItem('excelFileData') != '') {
       this.excelFileData = JSON.parse(localStorage.getItem('excelFileData'));
       this.customerId = this.excelFileData.customerId;
@@ -66,7 +66,7 @@ export class ExcelFileViewComponent implements OnInit, OnDestroy {
     formDataForOrdersLine.append('OpCode', 'create')
     formDataForOrdersLine.append('FileName', this.excelFileData.excelName)
 
-    debugger
+
     this.dataService.InsertUpdateOrderByExcel(formDataForOrdersLine).subscribe(result => {
       this.createOrderSpinner = false;
       if (result['Token'] != undefined || result['Token'] != null) {

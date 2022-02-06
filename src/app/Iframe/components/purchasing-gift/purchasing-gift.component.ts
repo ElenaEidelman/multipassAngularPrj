@@ -247,7 +247,9 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
 
 
 
+
     this.dataService.GetBlessings(objToApi).subscribe(result => {
+
 
       if (typeof result == 'object') {
         if (result.err != -1) {
@@ -393,7 +395,9 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
           objToApi.append('uploadedFile', file);
 
 
+
           this.dataService.SavePicForGreeting(objToApi).subscribe(result => {
+
             this.spinner = false;
             if (typeof result.obj == 'string' && result.obj.length > 0) {
 
@@ -505,7 +509,7 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   tabChanged(event, stepper) {
-    debugger
+
     this.FormsArray.get('FirstFormGroup').get('B2C_IsForFriend').setValue(event.index == 0 ? 1 : 0);
     if (event.index + 1 == 2) {
       stepper.next();
@@ -549,13 +553,15 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
     this[option] = !this[option];
   }
 
+
+  //next step of creating blessing
   nextStep(stepper: MatStepper) {
 
     // stepper.selectedIndex = 2;
     // 
     if (!this.viewChangeSum) {
       this.selectedIndex = stepper.selectedIndex;
-      debugger
+
       this.colorMatStepHorizontalLine(stepper.selectedIndex + 1);
       //to who send gift card stepper
       if (this.selectedIndex == 0) {
@@ -670,9 +676,10 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
       NotesInOrder: this.FormsArray.get('FirstFormGroup').get('blessingText').value,
       Phone: this.FormsArray.get('SecondFormGroup').get('phoneSender').value,
       B2C_DateTimeToSend: month + '/' + day + '/' + year + ' ' + hour + ':' + minute,
-      Media: '/assets/images/B2COrderImage/' + this.FormsArray.get('FirstFormGroup').get('imgsSrc').value,
+      Media: this.FormsArray.get('FirstFormGroup').get('imgsSrc').value != '' ? '/assets/images/B2COrderImage/' + this.FormsArray.get('FirstFormGroup').get('imgsSrc').value : '',
       Mail: this.FormsArray.get('SecondFormGroup').get('mailSender').value
     }
+
 
     this.dataService.InsertUpdateB2COrder(objToApi).subscribe(result => {
       if (result.obj != undefined && result.obj != null) {
@@ -748,9 +755,10 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
 
 
       if (result.obj != undefined && Object.keys(result.obj).length > 0) {
-        let t = `${this.dataService.baseUrl.replace('/api', '')}/clearance/PaymetCC?param=` + result.obj[0]['PaymentToken'];
 
-        this.document.location.href = `${this.dataService.baseUrl.replace('/api', '')}/clearance/PaymetCC?param=` + result.obj[0]['PaymentToken'];
+        let t = `${localStorage.getItem('baseUrlIframe').replace('/api', '')}/clearance/PaymetCC?param=` + result.obj[0]['PaymentToken'];
+
+        this.document.location.href = `${localStorage.getItem('baseUrlIframe').replace('/api', '')}/clearance/PaymetCC?param=` + result.obj[0]['PaymentToken'];
 
         /**
          * this.document.location.href == 
@@ -811,7 +819,7 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
 
 
   colorMatStepHorizontalLine(toStepper) {
-    debugger
+
     if (toStepper != 0) {
       let selectedInd = toStepper;
       let auxiliaryArr = [];
@@ -820,10 +828,10 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
       }
       this.document.querySelectorAll('.mat-stepper-horizontal-line').forEach((result, index) => {
         if (auxiliaryArr[index] == index) {
-          debugger
+
           (result as HTMLBodyElement).style.borderTopWidth = '4px';
         }
-        // debugger
+        //  
         // (result as HTMLBodyElement).style.borderTopWidth = '4px';
       })
     }

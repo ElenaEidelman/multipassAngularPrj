@@ -9,12 +9,12 @@ export class Max10DigDirective {
   constructor(private _el: ElementRef) { }
 
   @HostListener('input', ['$event']) onInputChange(event) {
-    debugger
+
     const lengthVal = this._el.nativeElement.value.length;
     // const newValue = initalValue.replace(/[^0-9]*/g, '');
     //    this._el.nativeElement.value = newValue;
     //    this.valueChange.emit(newValue);
-    if ( lengthVal == 10) {
+    if (lengthVal == 10) {
       event.stopPropagation();
     }
   }

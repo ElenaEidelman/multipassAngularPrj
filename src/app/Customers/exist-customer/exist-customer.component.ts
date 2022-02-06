@@ -61,7 +61,7 @@ export class ExistCustomerComponent implements OnInit {
     private urlSharingService: UrlSharingService) { }
 
   CustomerForm = this.fb.group({
-    OrganizationName: ['', Validators.required],//v
+    OrganizationName: ['', [Validators.required, this.noWhitespaceValidator]],//v
     FName: (''),
     LName: (''),
     Email: ['', [Validators.required, Validators.email]], //v
@@ -274,21 +274,18 @@ export class ExistCustomerComponent implements OnInit {
         else if (key == 'HouseNumber') {
           objToApi['Address'] = this.CustomerForm.get(key).value;
         }
+        else if (data[key] != '' && data[key] != null && key != 'HouseNumber' && key != 'StatusId') {
 
-        //?????
-        if (data[key] != '' && key == 'StatusId') {
-
-          objToApi[key] = data[key]
-        }
-        if (data[key] != '') {
-          objToApi[key] = data[key]
+          objToApi[key] = data[key].trim();
         }
       })
 
       //change to numeric
       // objToApi['Tz'] = +objToApi['Tz'];
 
+
       this.dataService.InsertUpdateUser(objToApi).subscribe(result => {
+
         this.saveFormSpinner = false;
 
         if (result['Token'] != undefined || result['Token'] != null) {
@@ -310,19 +307,24 @@ export class ExistCustomerComponent implements OnInit {
             this.customerData.ValidateDate = result.obj[0]['businessValidDate'];
 
             Object.keys(result.obj[0]).forEach(el => {
+
+
+              //in response we get organizationName but need OrganizationName !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+              //if organizationName will not be change, need add to statemant bellow part that add value into OrganizationName controll
               if (this.CustomerForm.get(el) != null) {
                 this.CustomerForm.get(el).setValue(result.obj[0][el]);
               }
             });
 
           }
-          if (typeof result == 'string') {
-            this.errorActionButtons = result;
+        }
 
-            setTimeout(() => {
-              this.errorActionButtons = '';
-            }, 3000);
-          }
+        else if (typeof result == 'string') {
+          this.errorActionButtons = result;
+
+          setTimeout(() => {
+            this.errorActionButtons = '';
+          }, 3000);
         }
         else {
           this.sharedService.exitSystemEvent();
@@ -416,6 +418,12 @@ export class ExistCustomerComponent implements OnInit {
 
     this.urlSharingService.changeMessage(JSON.stringify(Customer));
     this.router.navigate(['/public/allOrders']);
+  }
+
+  public noWhitespaceValidator(control: FormControl) {
+    const isWhitespace = (control.value || '').trim().length === 0;
+    const isValid = !isWhitespace;
+    return isValid ? null : { 'whitespace': true };
   }
 
   openDialog() {

@@ -146,7 +146,8 @@
                                                 {{MsgList.lettersValidationErr}}
                                                 <mat-icon>error</mat-icon>
                                             </mat-error>
-                                            <mat-error *ngIf="CustomerForm.get('OrganizationName').errors?.required">
+                                            <mat-error
+                                                *ngIf="CustomerForm.get('OrganizationName').errors?.required || CustomerForm.get('OrganizationName').errors?.whitespace">
                                                 {{MsgList.requiredField}}
                                                 <mat-icon>error</mat-icon>
                                             </mat-error>

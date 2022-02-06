@@ -1,5 +1,5 @@
 {
-    "baseUrl": "http://tempdomain-test-3.mltp.co.il",
+    "baseUrl": "https://tempdomain-test-3.mltp.co.il",
     "DevMode": "true",
     "pagesPermission": "true"
 }

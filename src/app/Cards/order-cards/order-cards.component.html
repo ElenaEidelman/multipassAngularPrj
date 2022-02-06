@@ -52,7 +52,10 @@
                                                     [@openClose]="excelCardCreatingForm.get('customer').hasError('required')">
                                                     נא
                                                     לבחור לקוח</mat-error> -->
-                                                <mat-error>{{MsgList.requiredField}}</mat-error>
+                                                <mat-error>
+                                                    {{MsgList.requiredField}}
+                                                    <mat-icon>error</mat-icon>
+                                                </mat-error>
                                             </mat-form-field>
                                         </div>
                                         <div class="formRowChild">
@@ -65,7 +68,10 @@
                                                                 {{uploadDoc.value}}
                                                            
                                                     </textarea>
-                                                    <mat-error>{{MsgList.requiredField}}</mat-error>
+                                                    <mat-error>
+                                                        {{MsgList.requiredField}}
+                                                        <mat-icon>error</mat-icon>
+                                                    </mat-error>
                                                 </mat-form-field>
                                             </div>
 
@@ -110,7 +116,9 @@
                                         <button mat-button class="addButton" (click)="goToExcelView()">
                                             טען קובץ
                                         </button>
-                                        <mat-error [@openClose]="excelSendError != ''">{{excelSendError}}</mat-error>
+                                        <mat-error [@openClose]="excelSendError != ''">
+                                            {{excelSendError}}
+                                        </mat-error>
                                     </div>
                                 </div>
                             </form>
@@ -148,7 +156,10 @@
                                                         </mat-option>
                                                     </ng-container>
                                                 </mat-select>
-                                                <mat-error>{{MsgList.requiredField}}</mat-error>
+                                                <mat-error>
+                                                    {{MsgList.requiredField}}
+                                                    <mat-icon>error</mat-icon>
+                                                </mat-error>
                                             </mat-form-field>
                                         </div>
                                         <div class="formRowChild">
@@ -161,7 +172,10 @@
                                                                 {{uploadDoc.value}}
                                                            
                                                     </textarea>
-                                                    <mat-error>{{MsgList.requiredField}}</mat-error>
+                                                    <mat-error>
+                                                        {{MsgList.requiredField}}
+                                                        <mat-icon>error</mat-icon>
+                                                    </mat-error>
                                                 </mat-form-field>
                                             </div>
 
@@ -173,7 +187,10 @@
                                         <button mat-button class="addButton" (click)="checkFormValidity()">
                                             הכנס
                                         </button>
-                                        <mat-error [@openClose]="manualError != ''">{{manualError}}</mat-error>
+                                        <mat-error [@openClose]="manualError != ''">
+                                            {{manualError}}
+                                            <mat-icon>error</mat-icon>
+                                        </mat-error>
                                     </div>
                                 </div>
                             </form>

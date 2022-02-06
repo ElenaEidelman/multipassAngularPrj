@@ -82,7 +82,7 @@ export class IframeComponent implements OnInit, OnChanges {
       CompanyIdEnc: this.companyId
     }
     this.dataService.GetIFrameCompanyInfo(objToApi).subscribe(result => {
-      debugger
+
       this.setupSpinner = false;
       if (typeof result == 'object') {
         if (result.err != -1) {
@@ -135,7 +135,7 @@ export class IframeComponent implements OnInit, OnChanges {
           let imageSrc = '';
           reader.readAsDataURL(file);
           reader.onload = () => {
-            debugger
+
             imageSrc = reader.result as string;
             this[controlName + 'Src'] = imageSrc;
             this.previewForm.get(controlName).setValue(imageSrc);
@@ -157,6 +157,16 @@ export class IframeComponent implements OnInit, OnChanges {
     this[controlName].nativeElement.value = '';
   }
 
+  //remove double back slash //
+  checkPath(path) {
+    let checkedPath = '';
+    let getHttpValue = Object.values(path.split('//')).splice(0, 1);
+    let getPathWithoutHttp = Object.values(path.split('//')).splice(1).join('/');
+
+    checkedPath = getHttpValue + '//' + getPathWithoutHttp;
+    return checkedPath;
+  }
+
   saveDataForIframe() {
     if (this.previewForm.valid) {
       this.setupSpinner = true;
@@ -172,9 +182,9 @@ export class IframeComponent implements OnInit, OnChanges {
       this.iframePicsFormData.append('Instructions', this.previewForm.get('Instructions').value)
 
       let t = this.iframePicsFormData.getAll('CompanyIdEnc');
-      debugger
+
       this.dataService.InsertUpdateIFrame(this.iframePicsFormData).subscribe(result => {
-        debugger
+
         this.setupSpinner = false;
         if (typeof result == 'object') {
           if (result.errdesc != -1) {

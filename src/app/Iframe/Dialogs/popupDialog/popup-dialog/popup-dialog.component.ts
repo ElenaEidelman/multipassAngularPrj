@@ -3,7 +3,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { Router } from '@angular/router';
 
 
-export interface PopupDialog{
+export interface PopupDialog {
   title: '',
   text: ''
 }
@@ -26,7 +26,7 @@ export class PopupDialogComponent implements OnInit {
   ngOnInit(): void {
     let data = this.data;
     console.log(this.data)
-    debugger
+
   }
 
 

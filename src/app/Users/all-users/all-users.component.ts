@@ -91,7 +91,7 @@ export class AllUsersComponent implements OnInit {
       Token: this.userToken
     }
     this.dataService.GetAllUsers(objToApi).subscribe(result => {
-      debugger
+
       if (result['Token'] != undefined || result['Token'] != null) {
         //set new token
         let tempObjUser = JSON.parse(localStorage.getItem('user'));
@@ -162,7 +162,7 @@ export class AllUsersComponent implements OnInit {
 
         this.dataService.DeleteSuspendBackOfficeUsers(objToApi).subscribe(result => {
 
-          debugger
+
           if (result['Token'] != undefined || result['Token'] != null) {
 
             //set new token

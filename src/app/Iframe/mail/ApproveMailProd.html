@@ -5,316 +5,492 @@
    <meta http-equiv="X-UA-Compatible" content="IE=edge">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>Mail</title>
-   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+   <script src="https://kit.fontawesome.com/dd0377dac0.js" crossorigin="anonymous"></script>
+
    <style>
       body {
+         margin: 0;
+         padding: 0;
          font-family: Poppins, sans-serif;
       }
 
-      .table {
-         width: 100%;
-         padding: 15px;
-      }
-
-      .wrapMail {
-         /* background-image: url('http://tempdomain-test-3.mltp.co.il/assets/img/confetti.jpg'); */
-         /* margin: 0 15%; */
-         margin: 0 auto;
-         background-position: center;
-         background-repeat: no-repeat;
+      .topPart {
+         background-image: url('https://tempdomain-test-3.mltp.co.il/assets/images/email/confetti.jpg');
          background-size: cover;
-         display: table;
-         max-width: 700px;
-         /* width: -webkit-fill-available; */
-      }
-
-      .mailContent {
-         margin: 15px 7%;
-         background: rgba(255, 255, 255, 0.9);
-         border-radius: 10px;
-         padding: 15px;
-         /* max-width: 520px; */
-      }
-
-      .wrapMailFooter {
-         background: #f0f0f0;
-         min-height: 100px;
+         text-align: center;
+         position: relative;
+         width: 100%;
+         height: 95%;
          display: flex;
-         flex-direction: row;
-         direction: rtl;
-         padding: 10px 30px;
       }
 
+      .bottomPart {
+         width: 100%;
+         height: 500px;
+         background: #fff;
+      }
 
-      .title {
+      .centerInfo {
+         margin: auto 20%;
+         width: 100%;
+         height: auto;
+         background: rgba(255, 255, 255, 0.6);
+         border-radius: 10px;
+         display: flex;
+         justify-content: space-between;
+      }
+
+      .leftSide {
+         background: rgba(255, 255, 255, 0.9);
+         border-top-left-radius: 10px;
+         border-bottom-left-radius: 10px;
+         padding: 4%;
+         flex: 2 1 0;
+         margin-right: 1px;
+         display: flex;
+         flex-direction: column;
+         justify-content: space-between;
+      }
+
+      .giftCardPic>img {
+         border-radius: 10px;
+         width: 100%;
+      }
+
+      .rightSide {
+         background: rgba(255, 255, 255, 0.9);
+         border-top-right-radius: 10px;
+         border-bottom-right-radius: 10px;
+         flex: 1 1 0;
+         padding: 4% 2%;
+         margin-left: 1px;
+      }
+
+      .logoSmall>img {
+         width: 95%;
+      }
+
+      .flexLogoText {
+         display: flex;
+         flex-direction: row-reverse;
+         margin-top: 10px;
+      }
+
+      .flexLogoText>div {
+         /* margin: auto 5px; */
+      }
+
+      .flexLogoText>div.logoSmall {
+         flex-grow: 1;
+         /* background: red;
+         height: 10px; */
+         width: 100px;
+      }
+
+      .flexLogoText>div.textSmall {
+         flex-grow: 3;
+         width: auto;
+         font-size: 1.2em;
+         font-family: sans-serif;
+         text-align: right;
+         line-height: 1.1;
+         margin: auto 20px auto 0;
+      }
+
+      .titleRS {
+         font-size: 1.2em;
+         font-family: sans-serif;
+         text-align: right;
+         line-height: 1.1;
+         font-weight: 700;
+         margin-bottom: 15px;
+      }
+
+      .BlessingRS {
+         font-size: 1.1em;
+         font-family: sans-serif;
+         text-align: right;
+         line-height: 1.1;
+         direction: rtl;
+      }
+
+      .imgBlessing>img {
+         width: 100%;
+      }
+
+      .imgbuttonBlessingWrap {
+         margin: 10px 0;
+      }
+
+      .anotherDetailsButton {
+         position: relative;
+      }
+
+      .anotherDetailsButton>button:hover {
+         cursor: pointer;
+      }
+
+      .arrowDown i {
+         font-size: 1.5em;
+      }
+
+      .anotherDetailsText {
+         margin-bottom: 10px;
+      }
+
+      .anotherDetailsButton>button {
+         position: absolute;
+         right: 0;
+         left: 0;
+         top: -37px;
+         margin: auto;
+         /* border-radius: 3px; */
+         color: #231F20;
+         /* background: #59576C; */
+         background: transparent;
+         direction: rtl;
+         display: inline-block;
+         font-family: 'Open Sans Hebrew', Helvetica, Arial, sans-serif;
+         font-size: 22px;
+         font-weight: 700;
+         line-height: 1.3;
+         padding: 8px 14px;
+         text-align: center;
+         width: 50%;
+         text-decoration: none;
+         border: none;
+      }
+
+      .arrowDown {
+         animation: bounce 1600ms infinite cubic-bezier(0.445, 0.05, 0.55, 0.95);
+         cursor: pointer;
+         /* height: 20px; */
+      }
+
+      .barCodeWrap {
+         text-align: center;
+         padding: 4em;
+         margin: 0 30%;
+      }
+
+      .barCodeTitle {
+         font-size: 1.2em;
+         font-family: sans-serif;
+         line-height: 1.1;
+         font-weight: 700;
+         margin-bottom: 15px;
+      }
+
+      .barCodeImg img {
+         width: 100%;
+      }
+
+      .additionalInformation {
+         display: flex;
+         direction: rtl;
+         padding: 2em;
+         background: #fff;
+      }
+
+      .addInfoRight {
+         flex: 1 1 0;
+         padding: 0 15px;
+      }
+
+      .addInfoLeft {
+         flex: 2 1 0;
+         padding: 0 15px;
+      }
+
+      .addInfoLeft div.title {
          font-weight: bold;
          font-size: 1.4em;
          color: #757575;
       }
 
       .text {
-         display: flex;
-         flex-direction: column;
-         margin: 15px 0;
-      }
-
-      .mainImg {
-         width: 100%;
-         border-radius: 10px;
-      }
-
-      .smallText {
-         flex: 3;
+         margin: 6px 0 25px;
          direction: rtl;
-         padding: 10px 10px 0 0;
-         font-size: 15px;
-         text-align: center;
+         font-size: 17px;
       }
 
-      .textBlock {
-         display: flex;
-      }
-
-      .smallLogoImg {
-         width: 50%;
-         text-align: center;
-      }
-
-      .smallLogoImg>img {
-         width: 50%;
-      }
-
-      .codeImg {
-         height: 300px;
-         text-align: CENTER;
-      }
-
-      .barQodeTitle {
-         margin: 1em;
-         text-align: center;
-      }
-
-      .footerData {
-         width: 65%;
-      }
-
-      .footerContact {
+      .logoContactInfo img {
+         margin: 0 auto;
          width: 30%;
       }
 
-      .hr {
-         width: 100%;
-         height: 0.1em;
-         background: gray;
+      .contactRow {
+         display: flex;
+         margin: 20px 0;
+         font-size: 20px;
+         color: #757575;
       }
 
-      .contactDataChild table {
-         text-align: left;
+      .icon {
+         margin: 5px;
       }
 
-      .giftCardImg {
-         width: 85%;
-         border-radius: 10px;
+      .info {
+         margin: 5px;
+      }
+
+      a {
+         color: #757575;
+      }
+
+      .saveInfoTitle {
+         margin-top: 5px;
+      }
+
+      @keyframes bounce {
+         50% {
+            transform: translateY(-15px);
+         }
+      }
+
+
+      .infoSaveBlock {
+         display: flex;
+         justify-content: flex-start;
+         margin: 1em 0;
+      }
+
+      .infoSaveBlock>div {
+         margin: 0 15px;
+         font-size: 15px;
+         text-align: center;
+         font-family: sans-serif
+      }
+
+      .infoSaveBlock i {
+         font-size: 2em;
+         color: #757575;
+      }
+
+      .saveInfoTitle {}
+
+      .saveInfoIcon {}
+
+      .saveInfoBy {}
+
+      .giftCardPic {
+         position: relative;
+      }
+
+      .sum {
+         position: absolute;
+         top: 10px;
+         right: 10px;
+         background: rgba(255, 255, 255, 0.8);
+         padding: 12px 15px;
+         font-size: 1.3em;
+         border-radius: 9px;
+         color: #757575;
+         font-weight: 600;
       }
 
       @media screen and (max-width: 1024px) {
-         .wrapMail {
-            max-width: 520px;
+         .additionalInformation {
+            flex-direction: column;
+         }
+
+         .barCodeWrap {
+            margin: 0 5%;
+         }
+
+         .centerInfo {
+            margin: 3% 3% 10%;
+            flex-direction: column-reverse;
+            background: unset;
+         }
+
+         .topPart {
+            height: auto;
+         }
+
+         .leftSide {
+            margin-top: 15px;
+            border-radius: 10px;
+         }
+
+         .rightSide {
+            border-radius: 10px;
          }
       }
    </style>
 </head>
 
 <body>
-   <div class="wrapMail" style="background-image: url('http://tempdomain-test-3.mltp.co.il/assets/img/confetti.jpg');">
-      <table class="mailContent" dir="rtl">
-         <!-- <table dir='rtl' class="table"> -->
-         <tr>
-            <td class="textBlock">
-               <div>
-                  <div class="title"> {[towho]} נראה שחושבים עליך, קיבלת מתנה מ{[fromhow]} </div>
-                  <div class="text">
-                     <span>
-                        <!--גם המרחק לא יעצור אותי מלהפטיע אותך, ככה סתם כי בא לי :)
-                                        <br>
-                                        שיהיה יום מקסים מלא בחיוכים-->
-                        {[blessing]}
-                     </span>
+   <div class="wrapWholePage">
+      <div class="topPart">
+         <div class="centerInfo">
+            <div class="leftSide">
+               <div class="giftCardPic">
+                  <!-- <img
+                     src="https://tempdomain-test-3.mltp.co.il//assets/images/GiftCardPic//%d7%aa%d7%9e%d7%95%d7%a0%d7%941.png"> -->
+                  <asp:Image runat="server" ID="imgItemPic" class="mainImg" />
+                  <div class="sum">
+                     <!-- 500 -->
+                     <asp:Label runat="server" ID="lblTotal"></asp:Label>&#8362;
                   </div>
                </div>
-            </td>
-            <td>
-               <img src="{[ItemPic]}" class="mainImg">
-            </td>
-         </tr>
-         <tr>
-            <td>
-               <img src="https://buyme.co.il/files/moneyVoucherImage339033.jpg?" class="giftCardImg">
-
-            </td>
-            <td>
-               <table>
-                  <tr>
-                     <td class="smallLogoImg">
-                        <img src="{[logo]}">
-                     </td>
-                     <td>
-                        <div class="smallText">גיפט קארד ל{[TenantDescription]} בסך {[Total]} &#8362;</div>
-                     </td>
-                  </tr>
-               </table>
-            </td>
-         </tr>
-         <!-- </table> -->
-         <tr class="hr">
-            <td colspan="2"></td>
-         </tr>
-         <!-- <table class="table"> -->
-         <tr>
-            <th colspan="2">
-               <div class="barQodeTitle title">
-                  יש להציג את הברקוד או קוד מולטיפאס בקופה
+               <div class="flexLogoText">
+                  <div class="logoSmall">
+                     <!-- <img src="https://soltam.co.il/wp-content/uploads/2021/10/logo.png"> -->
+                     <asp:Image runat="server" ID="imgLogo" />
+                  </div>
+                  <div class="textSmall">
+                     <!-- גיפט קארד לסולתם- כלי בישול בסך ₪ 1 -->
+                     <asp:Label runat="server" ID="lblTenantDescription"></asp:Label>
+                     בסך
+                     <asp:Label runat="server" ID="lblTotal"></asp:Label>
+                     &#8362;
+                  </div>
                </div>
-            </th>
-         </tr>
-         <tr>
-            <td colspan="2">
-               <div class="codeImg">
-                  <img src="{[Barcode]}">
-                  <br />
-                  <img src="{[Qrcode]}" width="180">
-                  <br />
-                  <h1>{[code]}</h1>
+            </div>
+         </div>
+         <div class="rightSide">
+            <div class="titleRS">
+               <!-- ברק, זה היום שלך! קיבלת הרגע מתנה מבארי -->
+               <asp:Label runat="server" ID="lblTowho"></asp:Label>,
+               זה היום שלך! קיבלת הרגע מתנה מ
+               <asp:Label runat="server" ID="lblFromWho"></asp:Label>
+            </div>
+            <div class="BlessingRS">
+               <!-- גם המרחק לא יעצור אותי מלהפטיע אותך, ככה סתם כי בא לי :) -->
+               <asp:Label runat="server" ID="lblBlessing"></asp:Label>
+            </div>
+            <div class="imgbuttonBlessingWrap">
+               <div class="imgBlessing">
+                  <img src="https://tempdomain-test-3.mltp.co.il/assets/images/email/blue-box-container-gift.jpg">
                </div>
-            </td>
-         </tr>
-         <!-- </table> -->
-      </table>
-      <div class="wrapMailFooter">
-         <table dir="rtl" class="footerData">
-            <tr>
-               <td>
-                  <div class="title">גיפט קארד ל{[TenantDescription]} - בסך {[Total]} &#8362</div>
-               </td>
-            </tr>
-            <tr>
-               <td>
-                  <div class="text">
-                     {[marketing]}
-                  </div>
-               </td>
-            </tr>
-            <tr>
-               <td>
-                  <div class="title">
-                     מידע נוסף:
-                  </div>
-               </td>
-            </tr>
-            <tr>
-               <td>
-                  <div class="text">
-                     למימוש בסניפי הרשת יש להציג את הקוד ה - Gift Card באמצעות SMS/מייל/דף מודפס.
-                  </div>
-               </td>
-            </tr>
-            <tr>
-               <td>
-                  <div class="title">
-                     אני רוצה לשמור את ה - Gift Card
-                  </div>
-               </td>
-            </tr>
-            <tr style="display: flex;">
-               <td>
-                  <div style="margin: 10px 0 0 20px;">
-                     <img src="https://tempdomain-test-3.mltp.co.il/assets/img/phone.png" width="25px"
-                        style="margin-bottom: 10px;">
-                     <br>
-                     <span>SMS</span>
-                  </div>
-               </td>
-               <td>
-               </td>
-               <td>
-                  <div style=" margin: 10px 20px;">
-                     <img src="https://tempdomain-test-3.mltp.co.il/assets/img/email.png" width="25px"
-                        style="margin-bottom: 10px;">
-                     <br>
-                     <span>מייל</span>
-                  </div>
-               </td>
-               <td>
-                  <div style=" margin: 10px 20px;">
-                     <img src="https://tempdomain-test-3.mltp.co.il/assets/img/printer.png" width="25px"
-                        style="margin-bottom: 10px;">
-                     <br>
-                     <span>להדפסה</span>
-                  </div>
-               </td>
-            </tr>
-
-            </tr>
-
-         </table>
-         <table dir="rtl" class="footerContact">
-            <tr>
-               <th>
-                  <img src="{[logo]}" class="smallLogoImg">
-               </th>
-            </tr>
-            <tr>
-               <td>
-                  <div class="contactDataChild">
-                     <table dir="ltr">
-                        <tr>
-                           <td>
-                              <a [href]="tel:{[phonenum]}">{[phonenum]}</a>
-                           </td>
-                           <td>
-                              <img src="https://tempdomain-test-3.mltp.co.il/assets/img/phone.png" width="25px">
-                           </td>
-                        </tr>
-                     </table>
-                  </div>
-               </td>
-            </tr>
-            <tr>
-               <td>
-                  <div class="contactDataChild">
-                     <table dir="ltr">
-                        <tr>
-                           <td>
-                              <a [href]="mailto:{[email]}">{[email]}</a>
-                           </td>
-                           <td>
-                              <img src="https://tempdomain-test-3.mltp.co.il/assets/img/email.png" width="25px">
-                           </td>
-                        </tr>
-                     </table>
-                  </div>
-               </td>
-            </tr>
-            <tr>
-               <td>
-                  <div class="contactDataChild">
-                     <table dir="ltr">
-                        <tr>
-                           <td>
-                              <a [href]="{[website]}" target="_blank">{[website]}</a>
-                           </td>
-                           <td>
-                              <img src="https://tempdomain-test-3.mltp.co.il/assets/img/internet.png" width="25px">
-                           </td>
-                        </tr>
-                     </table>
-                  </div>
-               </td>
-            </tr>
-         </table>
+               <!-- <div>
+                     <button></button>
+                  </div> -->
+            </div>
+         </div>
       </div>
+      <div class="bottomPart">
+         <div class="anotherDetailsButton">
+            <button onclick="moveDown()">
+               <div class="anotherDetailsText">פרטים נוספים</div>
+               <div class="arrowDown">
+                  <i class="fas fa-angle-double-down arrow-down"></i>
+               </div>
+            </button>
+         </div>
 
+         <div class="barCodeWrap">
+            <div class="barCodeTitle">
+               יש להציג את הברקוד או קוד מולטיפאס בקופה
+            </div>
+            <div class="barCodeImg">
+               <!-- <img src="https://tempdomain-test-3.mltp.co.il/assets/images/email/QRcode.png"> -->
+               <asp:Image runat="server" ID="imgQrcode" />
+            </div>
+            <div class="barCodeImg">
+               <!-- <img src="https://tempdomain-test-3.mltp.co.il/assets/images/email/barcode.png"> -->
+               <asp:Image runat="server" ID="imgBarcode" />
+            </div>
+            <!-- <div>קוד שובר: 9376-1151-3813-6901</div> -->
+            <div>קוד שובר: <asp:Label runat="server" ID="labelCode"></asp:Label>
+            </div>
+         </div>
+
+         <div class="additionalInformation">
+            <div class="addInfoLeft">
+               <!-- <div class="title">גיפט קארד לסולתם - כלי בישול בס"ך 1 &#8362</div> -->
+               <div class="title">
+                  גיפט קארד ל
+                  <asp:Label runat="server" ID="lblTenantDescription2"></asp:Label>
+                  - בסך
+                  <asp:Label runat="server" ID="lblTotal2"></asp:Label>
+                  &#8362
+               </div>
+               <div class="text">
+                  <!-- סולתם סמל סטטוס לאיכות ומקצוענות במטבח כבר 65 שנה, נוכחת כמעט בכל בית בישראל עם מגוון כלי מטבח
+                  ומייצגת
+                  את
+                  המטבח הישראלי של כולנו.
+                  סולתם סמל סטטוס לאיכות ומקצוענות במטבח כבר 65 שנה, נוכחת כמעט בכל בית בישראל עם מגוון כלי מטבח
+                  ומייצגת
+                  את
+                  המטבח הישראלי של כולנו. -->
+                  <asp:Label runat="server" ID="lblLongDescription"></asp:Label>
+               </div>
+               <div class="title">מידע נוסף:</div>
+               <div class="text">למימוש בסניפי הרשת יש להציג את הקוד ה - Gift Card באמצעות SMS/מייל/דף מודפס.</div>
+               <!-- <div class="title">אני רוצה לשמור את ה - Gift Card</div>
+                  <div class="infoSaveBlock">
+                     <div class="saveInfoBy">
+                        <div class="saveInfoIcon">
+                           <i class="far fa-comment-alt"></i>
+                        </div>
+                        <div class="saveInfoTitle">SMS</div>
+                     </div>
+                     <div class="saveInfoBy">
+                        <div class="saveInfoIcon">
+                           <i class="far fa-envelope"></i>
+                        </div>
+                        <div class="saveInfoTitle">מייל</div>
+                     </div>
+                     <div class="saveInfoBy">
+                        <div class="saveInfoIcon">
+                           <i class="fas fa-print"></i>
+                        </div>
+                        <div class="saveInfoTitle">להדפיס</div>
+                     </div>
+                  </div> -->
+            </div>
+            <div class="addInfoRight">
+               <div class="logoContactInfo">
+                  <!-- <img src="https://soltam.co.il/wp-content/uploads/2021/10/logo.png"> -->
+                  <asp:Image runat="server" ID="imgLogo" />
+               </div>
+               <div class="contactInfo">
+                  <div class="contactRow">
+                     <div class="icon">
+                        <i class="fas fa-phone"></i>
+                     </div>
+                     <div class="info">
+                        <!-- 0523385614 -->
+                        <a href="#" runat="server" id="phonenum"></a>
+                     </div>
+                  </div>
+                  <div class="contactRow">
+                     <div class="icon">
+                        <i class="far fa-envelope"></i>
+                     </div>
+                     <div class="info">
+                        <!-- marlen8088@gmail.com -->
+                        <a href="#" runat="server" id="email"></a>
+                     </div>
+                  </div>
+                  <div class="contactRow">
+                     <div class="icon">
+                        <i class="fab fa-internet-explorer"></i>
+                     </div>
+                     <div class="info">
+                        <!-- <a href="www.google.com">www.google.com</a> -->
+                        <a href="#" runat="server" id="website"></a>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
    </div>
+
 </body>
+<script type="text/javascript">
+   function moveDown() {
+      window.scrollTo({
+         top: window.screen.height,
+         left: 0,
+         behavior: 'smooth'
+      });
+   }
+
+</script>
 
 </html>

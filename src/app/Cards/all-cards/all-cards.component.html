@@ -187,16 +187,16 @@
                                     <!--[routerLink]="['/public/order',row['CoreOrderId'], row['OrderUser']]"-->
                                     <a (click)="goToOrder(row['CoreOrderId'], row['OrderUser'])">{{row[data]}}</a>
                                 </ng-container>
-                                <ng-container *ngIf="data == 'CompanyName'">
+                                <!-- <ng-container *ngIf="data == 'OrganizationName'">
 
-                                    <!--[routerLink]="['/public/customer',row['OrderUser']]"-->
+
                                     <a (click)="goToCustomer(row['OrderUser'])">{{row[data]}}</a>
-                                </ng-container>
+                                </ng-container> -->
                                 <ng-container *ngIf="data == 'CreationDate'">
                                     {{row[data] | formatDate}}
                                 </ng-container>
                                 <ng-container
-                                    *ngIf="data != 'CardId' && data != 'CompanyName' && data != 'OrderId' && data != 'CreationDate'">
+                                    *ngIf="data != 'CardId' && data != 'OrganizationName' && data != 'OrderId' && data != 'CreationDate'">
                                     {{row[data]}}
                                 </ng-container>
 

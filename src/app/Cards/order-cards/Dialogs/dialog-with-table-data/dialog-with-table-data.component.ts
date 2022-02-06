@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import {MatPaginator} from '@angular/material/paginator';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 
 
@@ -26,7 +26,7 @@ export class DialogWithTableDataComponent implements OnInit {
   dataSource = new MatTableDataSource([]);
 
   ngAfterViewInit() {
-    debugger
+
     this.dataSource.paginator = this.paginator;
   }
 

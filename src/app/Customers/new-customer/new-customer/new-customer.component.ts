@@ -1,6 +1,6 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { Router } from '@angular/router';
@@ -55,7 +55,7 @@ export class NewCustomerComponent implements OnInit {
   MsgList = MsgList;
 
   newCustomerForm = this.fb.group({
-    OrganizationName: ['', Validators.required], //Validators.required
+    OrganizationName: ['', [Validators.required, this.noWhitespaceValidator]], //Validators.required
     FName: (''),
     LName: (''),
     Email: ['', [Validators.required, Validators.email]], //Validators.required,
@@ -76,7 +76,8 @@ export class NewCustomerComponent implements OnInit {
     Notes: (''),
     BusinessFile: ('/test.txt') //must to be required Validators.required
   },
-    { updateOn: "blur" });
+    { updateOn: "blur" }
+  );
 
   rolesList = ['מנהל באק אופיס', 'מפעיל באק אופיס'];
 
@@ -136,11 +137,11 @@ export class NewCustomerComponent implements OnInit {
       }
 
       Object.keys(this.newCustomerForm.controls).forEach(control => {
-        if (this.newCustomerForm.get(control).value != '' && control != 'StatusId') {
-          objToApi[control] = this.newCustomerForm.get(control).value
+        if (this.newCustomerForm.get(control).value != '' && control != 'StatusId' && control != 'HouseNumber') {
+          objToApi[control] = this.newCustomerForm.get(control).value.trim();
         }
         else if (control == 'HouseNumber') {
-          objToApi['Address'] = this.newCustomerForm.get(control).value;
+          objToApi['Address'] = this.newCustomerForm.get(control).value.trim();
         }
         else if (control == 'StatusId') {
 
@@ -148,9 +149,10 @@ export class NewCustomerComponent implements OnInit {
         }
       });
 
+
       debugger
       this.dataService.InsertUpdateUser(objToApi).subscribe(result => {
-        debugger
+
         this.saveFormSpinner = false;
         if (result['Token'] != undefined || result['Token'] != null) {
 
@@ -170,9 +172,9 @@ export class NewCustomerComponent implements OnInit {
                 createdCustomer: result.obj[0]
               }
 
-              debugger
+
               this.sharedService.newCustomerData.next(JSON.stringify(objForShare));
-              debugger
+
             }
             this.msgActionButtons = 'לקוח חדש נשמר בהצלחה';
 
@@ -221,8 +223,15 @@ export class NewCustomerComponent implements OnInit {
     // let eneteredParam = $event.currentTarget.value;
     // let formControlName = $event.currentTarget.getAttribute('formControlName');
 
-    // debugger
+    //  
     // this.newCustomerForm.get(formControlName).setValidators(Validators.pattern('[[0][0-9]{8,9}]*'));
 
+  }
+
+  public noWhitespaceValidator(control: FormControl) {
+    debugger
+    const isWhitespace = (control.value || '').trim().length === 0;
+    const isValid = !isWhitespace;
+    return isValid ? null : { 'whitespace': true };
   }
 }

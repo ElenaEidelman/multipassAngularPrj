@@ -55,7 +55,11 @@ export class MainMenuComponent implements OnInit {
             if (result.err != -1) {
               if (result.obj != null) {
 
+
                 this.permissionMenuList = this.distinctMenu(result.obj[1]);
+                this.permissionMenuList.sort((menua, menub) => {
+                  return menua['Sequence'] - menub['Sequence']
+                })
 
                 // this.permissionMenuList = this.distinctMenu(this.mockMenu);
 
@@ -85,6 +89,7 @@ export class MainMenuComponent implements OnInit {
 
   distinctMenu(menu) {
     let menuSet = [];
+
 
     menu.forEach(element => {
       if (element['In_Use'] === 1) {

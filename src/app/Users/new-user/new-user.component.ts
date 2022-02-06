@@ -1,6 +1,6 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -65,8 +65,8 @@ export class NewUserComponent implements OnInit {
   statusList = [];
 
   userDataForm = this.fb.group({
-    FName: ['', Validators.required], // new  V ---------FName
-    LName: ['', Validators.required], // new  V ---------LName
+    FName: ['', [Validators.required, this.noWhitespaceValidator]], // new  V ---------FName
+    LName: ['', [Validators.required, this.noWhitespaceValidator]], // new  V ---------LName
     Email: ['', { validators: [Validators.required, Validators.email], updateOn: "blur" }],// -----------Email
     StatusId: (''), // -------------StatusDescription
     // Tz: (''),//מספר משתמש של המערכת -------------Tz
@@ -100,15 +100,14 @@ export class NewUserComponent implements OnInit {
 
       Object.keys(this.userDataForm.controls).forEach(control => {
         if (this.userDataForm.get(control).value != '') {
-          objToApi[control] = this.userDataForm.get(control).value;
+          objToApi[control] = this.userDataForm.get(control).value.toString().trim();
         }
       });
       objToApi['OrganizationName'] = '';
       objToApi['BusinessFile'] = '';
 
-      debugger
       this.dataService.InsertUpdateBackOfficeUsers(objToApi).subscribe(result => {
-        debugger
+
         this.saveFormSpinner = false;
         if (result['Token'] != undefined || result['Token'] != null) {
 
@@ -124,7 +123,7 @@ export class NewUserComponent implements OnInit {
 
             setTimeout(() => {
               this.msgActionButtons = '';
-              debugger
+
               this.goToUser(result.obj[0]['id']);
               // this.router.navigate(['/public/user/', result.obj[0]['id']]);
             }, 2000)
@@ -242,6 +241,12 @@ export class NewUserComponent implements OnInit {
     }
     this.urlSharingService.changeMessage(JSON.stringify(User));
     this.router.navigate(['/public/user']);
+  }
+
+  public noWhitespaceValidator(control: FormControl) {
+    const isWhitespace = (control.value || '').trim().length === 0;
+    const isValid = !isWhitespace;
+    return isValid ? null : { 'whitespace': true };
   }
 
 }

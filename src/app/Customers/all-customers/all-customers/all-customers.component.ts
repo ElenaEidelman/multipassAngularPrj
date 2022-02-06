@@ -161,7 +161,7 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
     }
 
     this.dataService.GetAllCustomers(objToApi).subscribe(result => {
-      debugger
+
 
       this.filterSpinner = false;
       if (result['Token'] != undefined || result['Token'] != null) {

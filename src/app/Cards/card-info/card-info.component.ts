@@ -177,6 +177,7 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
 
           let historyData = result.obj[7]['lstHistoryTranInfoField'];
           this.historyDataSource.data = historyData;
+          debugger
 
 
           this.createDisplayedColumns('historyLabelForTable', this.historyTableTemplate);
@@ -283,6 +284,10 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
 
           if (result.errdesc == 'OK') {
             this.CardInfo.IsActive = !this.CardInfo.IsActive;
+            debugger
+            // this.historyDataSource.data = [];
+            this.historyLabelForTable = [];
+            this.getTablesData();
           }
           else {
             this.dialog.open(DialogComponent, {
@@ -319,6 +324,9 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
 
           if (result.errdesc == 'OK') {
             this.CardInfo.IsActive = !this.CardInfo.IsActive;
+            // this.historyDataSource.data = [];
+            this.historyLabelForTable = [];
+            this.getTablesData();
           }
           else {
             this.dialog.open(DialogComponent, {
@@ -381,9 +389,9 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
         }
 
 
-        debugger
+
         this.dataService.UpdateExpirationDateOfCards(objToApi).subscribe(result => {
-          debugger
+
 
           if (result['Token'] != undefined || result['Token'] != null) {
 
@@ -455,9 +463,9 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
         }
 
 
-        debugger
+
         this.dataService.UpdatePinCodeOfCards(objToApi).subscribe(result => {
-          debugger
+
 
           if (result['Token'] != undefined || result['Token'] != null) {
 

@@ -130,23 +130,25 @@
                             <th mat-header-cell *matHeaderCellDef mat-sort-header> {{column['viewValue']}} </th>
                             <td mat-cell *matCellDef="let row">
                                 <span *ngIf="column['value'] != 'CardId' 
-                                            && column['value'] != 'IsActive'
+                                            && column['value'] != 'active'
                                             && column['value'] != 'DSendLastSent'">
                                     {{row[column['value']]}}
                                 </span>
 
                                 <!--[routerLink]="['/public/cardInfo',row['CardId'], userId]"-->
                                 <a *ngIf="column['value'] == 'CardId' 
-                                          && column['value'] != 'IsActive' && column['value'] != 'DSendLastSent'"
+                                          && column['value'] != 'active' 
+                                          && column['value'] != 'DSendLastSent'"
                                     (click)="goToCardInfo(row['CardId'],userId)">
                                     {{row[column['value']]}}
                                 </a>
-                                <span
-                                    *ngIf="column['value'] == 'IsActive' && column['value'] != 'DSendLastSent'">{{row[column['value']]
-                                    == true ? 'פעיל':
-                                    'חסום'}}</span>
-                                <span
-                                    *ngIf="column['value'] == 'DSendLastSent' && column['value'] != 'CardId' && column['value'] != 'IsActive'">
+                                <span *ngIf="column['value'] == 'active' 
+                                    && column['value'] != 'DSendLastSent'
+                                    && column['value'] != 'CardId'">{{row[column['value']] == '1' ?
+                                    'פעיל':'חסום'}}</span>
+                                <span *ngIf="column['value'] == 'DSendLastSent' 
+                                    && column['value'] != 'CardId' 
+                                    && column['value'] != 'active'">
                                     {{row[column['value']] | formatDate}}</span>
                             </td>
                         </ng-container>

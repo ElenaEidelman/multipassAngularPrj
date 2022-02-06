@@ -81,7 +81,8 @@
                                             {{MsgList.lettersValidationErr}}
                                             <mat-icon>error</mat-icon>
                                         </mat-error>
-                                        <mat-error *ngIf="userDataForm.get('FName').errors?.required">
+                                        <mat-error
+                                            *ngIf="userDataForm.get('FName').errors?.required || userDataForm.get('FName').errors?.whitespace">
                                             {{MsgList.requiredField}}
                                             <mat-icon>error</mat-icon>
                                         </mat-error>
@@ -113,7 +114,8 @@
                                             {{MsgList.lettersValidationErr}}
                                             <mat-icon>error</mat-icon>
                                         </mat-error>
-                                        <mat-error *ngIf="userDataForm.get('LName').errors?.required">
+                                        <mat-error
+                                            *ngIf="userDataForm.get('LName').errors?.required || userDataForm.get('LName').errors?.whitespace">
                                             {{MsgList.requiredField}}
                                             <mat-icon>error</mat-icon>
                                         </mat-error>

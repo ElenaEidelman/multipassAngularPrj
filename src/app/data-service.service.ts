@@ -399,7 +399,7 @@ $ git merge new-branch
   }
 
   SendSMSByOrderId(objToApi) {
-    return this.http.post(`${localStorage.getItem('baseUrl')}/api/SMSController/SendSMSByOrderId
+    return this.http.post(`${localStorage.getItem('baseUrl')}/api/SMS/SendSMSByOrderId
 
 
     `, objToApi).pipe(

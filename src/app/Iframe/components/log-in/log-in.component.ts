@@ -177,11 +177,30 @@ export class LogInIframeComponent implements OnInit {
       if (result.obj != undefined && result.obj != null && Object.keys(result.obj).length > 0) {
         this.sharingIframeService.companyInfoService.next(JSON.stringify(result));
         this.infoData = result.obj[0];
+
         debugger
+        this.infoData.forEach(element => {
+          debugger
+
+        });
+
+        debugger
+
         this.spareData = JSON.parse(JSON.stringify(this.infoData))
 
       }
     })
+  }
+
+
+  //remove double back slash //
+  checkPath(path) {
+    let checkedPath = '';
+    let getHttpValue = Object.values(path.split('//')).splice(0, 1);
+    let getPathWithoutHttp = Object.values(path.split('//')).splice(1).join('/');
+
+    checkedPath = getHttpValue + '//' + getPathWithoutHttp;
+    return checkedPath;
   }
 
 

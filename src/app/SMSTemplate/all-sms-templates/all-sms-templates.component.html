@@ -30,15 +30,19 @@
                                 <div class="wrapFielsTitle">
                                     <mat-form-field>
                                         <input matInput value="" placeholder="שם תבנית" formControlName="TemplateName">
-                                        <mat-error *ngIf="newTemplateForm.get('TemplateName').hasError('required')">
-                                            {{MsgList.requiredField}}</mat-error>
+                                        <mat-error>
+                                            <mat-icon>error</mat-icon>
+                                            {{MsgList.requiredField}}
+                                        </mat-error>
                                     </mat-form-field>
                                 </div>
                                 <div class="wrapFielsTitle">
                                     <mat-form-field>
                                         <input matInput value="" placeholder="שם שולח" formControlName="SenderName">
-                                        <mat-error *ngIf="newTemplateForm.get('SenderName').hasError('required')">
-                                            {{MsgList.requiredField}}</mat-error>
+                                        <mat-error>
+                                            <mat-icon>error</mat-icon>
+                                            {{MsgList.requiredField}}
+                                        </mat-error>
                                     </mat-form-field>
                                 </div>
                             </mat-card-title>
@@ -48,8 +52,10 @@
                             <mat-form-field class="smsTA">
                                 <textarea matInput #newTemplate placeholder="SMS תבנית" class="templateTextArea"
                                     formControlName="TemplateFormat"></textarea>
-                                <mat-error *ngIf="newTemplateForm.get('TemplateFormat').hasError('required')">
-                                    {{MsgList.requiredField}}</mat-error>
+                                <mat-error>
+                                    <mat-icon>error</mat-icon>
+                                    {{MsgList.requiredField}}
+                                </mat-error>
                             </mat-form-field>
                         </mat-card-content>
 
@@ -164,14 +170,20 @@
                                         <mat-form-field>
                                             <input matInput value="{{temp.TemplateName}}" placeholder="שם תבנית"
                                                 formControlName="TemplateName{{temp.Id}}">
-                                            <mat-error>{{MsgList.requiredField}}</mat-error>
+                                            <mat-error>
+                                                <mat-icon>error</mat-icon>
+                                                {{MsgList.requiredField}}
+                                            </mat-error>
                                         </mat-form-field>
                                     </div>
                                     <div class="wrapFielsTitle">
                                         <mat-form-field>
                                             <input matInput value="{{temp.TemplateName}}" placeholder="שם שולח"
                                                 formControlName="SenderName{{temp.Id}}">
-                                            <mat-error>{{MsgList.requiredField}}</mat-error>
+                                            <mat-error>
+                                                <mat-icon>error</mat-icon>
+                                                {{MsgList.requiredField}}
+                                            </mat-error>
                                         </mat-form-field>
                                     </div>
                                 </mat-card-title>
@@ -182,7 +194,10 @@
                                     <textarea matInput #txtArea [id]="'textareas' + temp.Id"
                                         formControlName="TemplateFormat{{temp.Id}}" placeholder="SMS תבנית"
                                         class="templateTextArea"></textarea>
-                                    <mat-error>{{MsgList.requiredField}}</mat-error>
+                                    <mat-error>
+                                        <mat-icon>error</mat-icon>
+                                        {{MsgList.requiredField}}
+                                    </mat-error>
                                 </mat-form-field>
                             </mat-card-content>
 

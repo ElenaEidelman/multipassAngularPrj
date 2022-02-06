@@ -154,8 +154,10 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy, OnC
       Token: this.userToken
     }
 
+
     this.dataService.GetOrdersStatus(objToApi).subscribe(result => {
-      debugger
+
+
       if (result['Token'] != undefined || result['Token'] != null) {
 
         //set new token

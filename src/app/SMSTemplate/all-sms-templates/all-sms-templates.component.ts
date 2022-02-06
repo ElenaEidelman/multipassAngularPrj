@@ -59,9 +59,9 @@ export class AllSmsTemplatesComponent implements OnInit {
   templatesSMS = [];
 
   newTemplateForm = this.fb.group({
-    TemplateName: ['', Validators.required],
-    SenderName: ['', Validators.required],
-    TemplateFormat: ['', Validators.required]
+    TemplateName: ['', [Validators.required, this.noWhitespaceValidator]],
+    SenderName: ['', [Validators.required, this.noWhitespaceValidator]],
+    TemplateFormat: ['', [Validators.required, this.noWhitespaceValidator]]
   });
   SMSForm = this.fb.group({});
 
@@ -110,10 +110,10 @@ export class AllSmsTemplatesComponent implements OnInit {
 
         if (typeof result == 'object' && result['obj'] != null && result['obj'].length > 0) {
 
-          debugger
+
           this.templatesSMS = [];
           this.templatesSMS.push(...result.obj);
-          debugger
+
 
           this.createForm('SMSForm', this.templatesSMS, 'Id-');
         }
@@ -142,7 +142,7 @@ export class AllSmsTemplatesComponent implements OnInit {
 
   createForm(form, values, controlName) {
     this[form] = this.fb.group({});
-    const validators = [Validators.required];
+    const validators = [Validators.required, this.noWhitespaceValidator];
     values.forEach((value) => {
       let group = this.fb.group({});
       group.addControl('TemplateFormat' + value.Id, this.fb.control([value.TemplateFormat, validators]));
@@ -183,7 +183,7 @@ export class AllSmsTemplatesComponent implements OnInit {
 
 
           //check if template name exist in another template
-          debugger
+
           let tempName = this.SMSForm.get('Id-' + template.Id).get('TemplateName' + template.Id).value;
           if (this.templatesSMS.filter(tmp => tmp.TemplateName == tempName && tmp.Id != template.Id).length > 0) {
             document.getElementById('msgErrorBySms' + template.Id).innerHTML = MsgList.smsTemplateNameExist;
@@ -270,7 +270,7 @@ export class AllSmsTemplatesComponent implements OnInit {
       }
     }
     else {
-      debugger
+
       this.voucherValidityInsered = this.newTemplateForm.get('TemplateFormat').value.indexOf('<תוקף>') == -1 ? false : true;
       this.voucherNumberInsered = this.newTemplateForm.get('TemplateFormat').value.indexOf('<מספר שובר>') == -1 ? false : true;
 
@@ -512,7 +512,9 @@ Json:
               Phone: phone
             }
 
+
             this.dataService.SendSampleMessage(objToApi).subscribe(result => {
+
               this.spinnerById[0] = -1;
               this.newSMSSend = !this.newSMSSend;
               if (result['Token'] != undefined || result['Token'] != null) {
@@ -522,7 +524,7 @@ Json:
                 localStorage.setItem('user', JSON.stringify(tempObjUser));
                 this.userToken = result['Token'];
 
-                debugger
+
                 if (result.obj == 'OK') {
                   this.dialog.open(DialogComponent, {
                     data: { message: 'נשלח בהצלחה' }
@@ -549,6 +551,12 @@ Json:
     // else{
 
     // }
+  }
+
+  public noWhitespaceValidator(control: FormControl) {
+    const isWhitespace = (control.value || '').trim().length === 0;
+    const isValid = !isWhitespace;
+    return isValid ? null : { 'whitespace': true };
   }
 
 }
@@ -600,7 +608,7 @@ export class PhoneConfirmComponent implements OnInit {
     this.dialogRef.close();
   }
   yes() {
-    debugger
+
     if (this.phoneControl.valid) {
       this.dialogRef.close({ result: 'phone: ' + this.phoneControl.value });
     }

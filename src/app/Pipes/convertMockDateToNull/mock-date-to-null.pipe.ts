@@ -6,7 +6,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class MockCodeToNullPipe implements PipeTransform {
 
   transform(value: unknown, ...args: unknown[]): unknown {
-    debugger
+
     if (value != undefined || value != null) {
       let year = new Date(value.toString()).getFullYear().toString();
       if (new Date(value.toString()).getFullYear().toString() === '1753') {
