@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 import { DataServiceService } from 'src/app/data-service.service';
@@ -14,13 +14,14 @@ import { SharedService } from 'src/app/Services/SharedService/shared.service';
 export class PagePermissionGuardGuard implements CanActivate {
   userToken;
   permissionMenuList;
-  canActivatePath: boolean = false;
+  canActivatePath: boolean;
 
   constructor(
     private dataService: DataServiceService,
     private sharedService: SharedService,
     private dialog: MatDialog,
-    private http: HttpClient) {
+    private http: HttpClient,
+    private router: Router) {
 
   }
 
@@ -30,35 +31,60 @@ export class PagePermissionGuardGuard implements CanActivate {
   ) {
 
     try {
+
+      this.canActivatePath = false;
       await this.getPagePermission().then(result => {
-        if (result['Token'] != undefined || result['Token'] != null) {
 
-          //set new token
-          let tempObjUser = JSON.parse(localStorage.getItem('user'));
-          tempObjUser['Token'] = result['Token'];
-          localStorage.setItem('user', JSON.stringify(tempObjUser));
-          this.userToken = result['Token'];
+        if (typeof result == 'string') {
+          this.dialog.open(DialogComponent, {
+            data: { message: result }
+          })
 
-          if (result['err'] != -1) {
-            this.permissionMenuList = result['obj'][3];
+          this.sharedService.exitSystemEvent();
+          return false;
+        }
+
+        // if (result.err != -1) {
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
+        this.permissionMenuList = result['obj'][3];
 
 
-            this.permissionMenuList.forEach(element => {
-              if (element['PageName'] === route.routeConfig.path && element['In_Use'] === 1) {
 
-                this.canActivatePath = true;
-              }
-            });
+
+        /**
+         *  0--> no access
+            1--> access
+            2--> read only
+         */
+
+
+
+
+        this.permissionMenuList.forEach(element => {
+
+
+          if (element['PageName'] === route.routeConfig.path && (element['AccessLevel'] === 1 || element['AccessLevel'] === 2)) {
+
+
+            if (element['PageName'] == 'IFrame') {
+
+            }
+
+            this.sharedService.pagesAccessLevel.next(JSON.stringify({ PageName: element['PageName'], AccessLevel: element['AccessLevel'].toString() }));
+            this.canActivatePath = true;
           }
           else {
-            // this.dialog.open(DialogComponent, {
-            //   data: { message: result.errdesc }
-            // })
+
           }
-        }
-        else {
-          this.sharedService.exitSystemEvent();
-        }
+        });
+        // }
+        // else {
+        //   this.sharedService.exitSystemEvent();
+        // }
       });
     }
     catch (error) {
@@ -77,6 +103,8 @@ export class PagePermissionGuardGuard implements CanActivate {
         this.dialog.open(DialogComponent, {
           data: { message: 'לא ניתן לעבור לדף המבוקש' }
         })
+
+        // this.router.navigate(['/public/home']);
         return false;
       }
     }

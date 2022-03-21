@@ -15,6 +15,7 @@ import { DialogWithTableDataComponent } from './Dialogs/dialog-with-table-data/d
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { UrlSharingService } from 'src/app/Services/UrlSharingService/url-sharing.service';
 import { SharedService } from 'src/app/Services/SharedService/shared.service';
+import { MockData } from 'src/app/Classes/mockData';
 
 @Component({
   selector: 'app-order-cards',
@@ -47,6 +48,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
   @ViewChild('customersSelectManual') customersSelectManual: any;
 
   MsgList = MsgList;
+  MockData = MockData;
 
   tabGroups = [
     { index: 0, tabName: 'excelCardCreatingForm' },
@@ -55,6 +57,10 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
   ];
 
 
+  pagePermissionAccessLevel = {
+    AccessLevel: '',
+    PageName: ''
+  }
 
   userDataUnsubscribe;
   customerIDSelected;
@@ -66,6 +72,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
   selectedCustomer;
   faFileExcel = faFileExcel;
   customers = [];
+  customersSpare = [];
 
   cardsData = [];
   fileUploadButtonDisabled: boolean = true;
@@ -92,12 +99,14 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
     customer: ['', Validators.required],
     // fileDesc: (''),
     orderDescription: ['', [Validators.required, this.noWhitespaceValidator]],
-    file: ['', Validators.required]
+    file: ['', Validators.required],
+    searchCustomer: ['']
   });
 
   manualCardgroup = this.fb.group({
     customer: ['', Validators.required],
-    orderDescription: ['', [Validators.required, this.noWhitespaceValidator]]
+    orderDescription: ['', [Validators.required, this.noWhitespaceValidator]],
+    searchCustomer: ['']
   });
 
   loadingCardGroup = this.fb.group({
@@ -146,6 +155,13 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
 
     window.scroll(0, 0);
+    this.pagePermissionAccessLevel = this.sharedService.pagesAccessLevel.value.length > 0 ? JSON.parse(this.sharedService.pagesAccessLevel.value) : JSON.parse(JSON.stringify(this.pagePermissionAccessLevel));
+    this.sharedService.pagesAccessLevel.next('');
+    if (this.pagePermissionAccessLevel.AccessLevel == this.MockData.accessLevelReadOnly) {
+      this.manualCardgroup.disable();
+      this.excelCardCreatingForm.disable();
+    }
+
 
     this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
     this.getAllCustomers();
@@ -170,49 +186,54 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
     }
 
     this.dataService.GetAllCustomers(objToApi).subscribe(result => {
-
+      debugger
       if (typeof result == 'string') {
-        // this.errorMsg = result;
-        setTimeout(() => {
-          // this.errorMsg = '';
-        }, 5000)
-      }
-      else if (result.Token == null) {
-        // this.dialog.open(DialogComponent, {
-        //   data: {message: MsgList.exitSystemAlert}
-        // })
+        this.dialog.open(DialogComponent, {
+          data: { message: result }
+        })
+
         this.sharedService.exitSystemEvent();
+        return false;
+      }
+
+      // if (typeof result == 'string') {
+      //   // this.errorMsg = result;
+      //   setTimeout(() => {
+      //     // this.errorMsg = '';
+      //   }, 5000)
+      // }
+      // else if (result.Token == null) {
+      //   // this.dialog.open(DialogComponent, {
+      //   //   data: {message: MsgList.exitSystemAlert}
+      //   // })
+      //   this.sharedService.exitSystemEvent();
+      // }
+      // else {
+      // if (typeof result == 'object' && result['obj'] != null && result['obj'].length > 0) {
+      this.customers = result['obj'].sort(function (a, b) {
+        if (a.organizationName < b.organizationName) { return -1; }
+        if (a.organizationName > b.organizationName) { return 1; }
+        return 0;
+      });
+
+      this.customers = this.customers.filter(customer => customer.StatusId != 3);
+      this.customersSpare = this.customers.filter(customer => customer.StatusId != 3);
+
+
+      if (this.userId != undefined && this.indexId != undefined) {
+        this[this.tabGroups.filter(tab => tab.index == this.indexId)[0]['tabName']].get('customer').setValue(this.fillteringUserData(this.userId));
       }
       else {
-        if (typeof result == 'object' && result['obj'] != null && result['obj'].length > 0) {
-          this.customers = result['obj'].sort(function (a, b) {
-            if (a.organizationName < b.organizationName) { return -1; }
-            if (a.organizationName > b.organizationName) { return 1; }
-            return 0;
-          });
-
-          this.customers = this.customers.filter(customer => customer.StatusId != 3);
-
-          if (this.userId != undefined && this.indexId != undefined) {
-
-
-            this[this.tabGroups.filter(tab => tab.index == this.indexId)[0]['tabName']].get('customer').setValue(this.fillteringUserData(this.userId));
-
-            // this.excelCardCreatingForm.controls['customer'].setValue(this.fillteringUserData(this.userId));
-            // this.manualCardgroup.controls['customer'].setValue(this.fillteringUserData(this.userId));
-            // this.loadingCardGroup.controls['customer'].setValue(this.fillteringUserData(this.userId));
-          }
-          else {
-            this.indexId = 0;
-          }
-        }
-        if (typeof result == 'object' && result['obj'] == null) {
-          // this.errorMsg = 'No Data Found';
-          setTimeout(() => {
-            // this.errorMsg = '';
-          }, 3000);
-        }
+        this.indexId = 0;
       }
+      // }
+      // if (typeof result == 'object' && result['obj'] == null) {
+      //   // this.errorMsg = 'No Data Found';
+      //   setTimeout(() => {
+      //     // this.errorMsg = '';
+      //   }, 3000);
+      // }
+      // }
     });
   }
 
@@ -462,29 +483,10 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
     }
   }
 
-  // resetFileUploaded() {
-  //   alert();
-  // }
-
   openAddCustomerDialog(formName, controllerName) {
-    // let customer = JSON.parse('{"id":4000,"FName":"eeee","LName":"eeeeee","Email":"ee989899@ddde.com","organizationName":"tet444te","Password":null,"Phone":"0523385694","Phone1":null,"role":"מנהל באק אופיס","fileName":"/test.txt","businessValidDate":"1753-01-01T00:00:00","Address":"","Streetno":null,"ApartmentNo":null,"entrance":null,"floor":null,"CityId":0,"CityName":null,"AreaId":0,"ZIP":null,"Address2":null,"CityId2":0,"CityName2":null,"ZIP2":null,"AreaId2":0,"UserType":6,"Tz":"332232","contactof":0,"NameInSite":null,"Fax":null,"StatusId":2,"ClubType":0,"AcceptNewsLetter":0,"ExternalId":0,"Logo":null,"image":null,"DealerItemPriceListId":0,"DealerCredit":0,"DealerContactInYbitanb2b":0,"DealerPaymentCondition":"0","DealerDiscountPercent":0,"Website":null,"Latitude":0,"Longitude":0,"Priority":0,"ShowInSite":0,"SEO_H1Title":null,"SEO_KeyWords":null,"SEO_Description":null,"PosNo":0,"LastPassUpdated":"2020-12-22T14:54:57.62","CreationDate":"2021-12-22T14:54:57.62","Tenant":1006,"MltpId":0,"OrdersCount":null,"LastOrderDate":null,"LastOrderTotal":null,"LastOrderId":null,"StatusDescription":"פעיל"}')
-    // 
-    // this.customers.push(customer);
-    // // this[formName].get(controllerName).setValue(customer);
-
-    // setTimeout(() => {
-    //   this.excelCardCreatingForm.controls['customer'].setValue(customer);
-
-
-    //   this.excelCardCreatingForm.updateValueAndValidity();
-    //   this.customersSelectExcel.close();
-    // }, 0);
-
     this.dialog.open(AddCustomerDialogComponent, {
       data: { data: 'test', form: formName, controller: controllerName }
     }).afterClosed().subscribe(result => {
-      // 
-      // this.ngOnInit();
       this.getAllCustomers();
     });
   }
@@ -498,6 +500,29 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
     const isWhitespace = (control.value || '').trim().length === 0;
     const isValid = !isWhitespace;
     return isValid ? null : { 'whitespace': true };
+  }
+
+
+  searchChange(event) {
+    this.customersSpare = JSON.parse(JSON.stringify(this.customers));
+
+    this.customersSpare = this.customers.filter(customer => {
+      if (customer.organizationName.toLowerCase().includes(event.toLowerCase())) {
+        return customer;
+      }
+    });
+  }
+
+
+  selectedTabChange(event) {
+    if (event.tab.position == 0) {
+      this.excelCardCreatingForm.get('searchCustomer').setValue('');
+    }
+    else if (event.tab.position == 1) {
+      this.manualCardgroup.get('searchCustomer').setValue('');
+    }
+
+    this.customersSpare = JSON.parse(JSON.stringify(this.customers));
   }
 }
 

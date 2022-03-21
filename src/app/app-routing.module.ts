@@ -40,7 +40,7 @@ const routes: Routes = [
 
   {
     path: 'public', component: PublicComponent, canActivate: [LoginGuardGuard], children: [
-      { path: 'home', component: HomeComponent, canActivate: [PagePermissionGuardGuard] },
+      { path: 'home', component: HomeComponent },
       { path: 'order', component: ExecOrderComponent, canActivate: [PagePermissionGuardGuard] },
       { path: 'newOrder', component: ExecOrderComponent, canActivate: [PagePermissionGuardGuard] },
       { path: 'allOrders', component: AllOrdersComponent, canActivate: [PagePermissionGuardGuard] },
@@ -78,7 +78,7 @@ const routes: Routes = [
               { path: 'thankyou', component: ThanksPageComponent }
             ]
           }
-        ]
+        ], canActivate: [PagePermissionGuardGuard]
       },
       { path: 'test', component: TestComponent }
     ]

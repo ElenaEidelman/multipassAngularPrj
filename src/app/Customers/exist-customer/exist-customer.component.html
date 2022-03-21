@@ -1,8 +1,12 @@
 <div class="pageTitle main2-title sticky top100">
     <div *ngIf="customerData" class="headerData">
-        <div class="data"> {{customerData.OrganizationName != undefined ? customerData.OrganizationName :
-            customerData.organizationName}} </div>
+        <div class="data"> {{customerData.OrganizationName}} </div>
         <div> :לקוח</div>
+    </div>
+    <div class="readOnliNotifivation"
+        *ngIf="pagePermissionAccessLevel.AccessLevel == this.MockData.accessLevelReadOnly">
+        {{MsgList.readOnly}}
+        <mat-icon>info</mat-icon>
     </div>
 </div>
 <div class="page-wrap" *ngIf="customerData">
@@ -260,9 +264,9 @@
                                         </mat-form-field>
 
                                         <mat-form-field>
-                                            <mat-label>ח.פ./עוסק מורש</mat-label>
-                                            <input matInput placeholder="ח.פ./עוסק מורש" formControlName="Tz"
-                                                tabindex="8" numbersOnly [attr.maxlength]="9" numbersOnly>
+                                            <mat-label>מספר לקוח / ח.פ*</mat-label>
+                                            <input matInput placeholder="מספר לקוח / ח.פ*" formControlName="Tz"
+                                                tabindex="8" numbersOnly numbersOnly>
 
                                             <button class="clearButton" *ngIf="CustomerForm.get('Tz').value != ''"
                                                 mat-button matPrefix mat-icon-button aria-label="Clear"

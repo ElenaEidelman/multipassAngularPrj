@@ -53,15 +53,18 @@ export class HeaderComponent implements OnInit {
 
 
   exitSystem() {
-    localStorage.removeItem('baseUrl');
+    debugger
 
-    this.http.get('../../assets/Files/HostFile.json').subscribe(result => {
-      localStorage.setItem('baseUrl', result['baseUrl']);
-    })
-    // localStorage.removeItem('user');
-    this.sharedService.userData.next('');
+    //multitav local storages
+    localStorage.removeItem('user');
     localStorage.removeItem('excelFileData');
+
+
+    //iframe local storages
     localStorage.removeItem('companyId');
+    localStorage.removeItem('picSizeInMega');
+    localStorage.removeItem('baseUrlIframe');
+    localStorage.removeItem('companyInfo');
 
     this.route.navigate(['/logIn']);
     this.dialog.open(DialogComponent, {
@@ -78,18 +81,18 @@ export class HeaderComponent implements OnInit {
 
     this.userLogo = userData.obj.Image;
   }
-  adminLogIn() {
-    // const dialogRef = this.dialog.open(AdminLogInComponent, {
-    //   data: ''
-    // });
+  // adminLogIn() {
+  //   // const dialogRef = this.dialog.open(AdminLogInComponent, {
+  //   //   data: ''
+  //   // });
 
-    // dialogRef.afterClosed().subscribe(result => {
-    //   console.log(`Dialog result: ${result}`);
-    // });
+  //   // dialogRef.afterClosed().subscribe(result => {
+  //   //   console.log(`Dialog result: ${result}`);
+  //   // });
 
 
-    this.route.navigate(['public/admin'])
-  }
+  //   this.route.navigate(['public/admin'])
+  // }
 
   ngOnDestroy() {
     this.clickEventSubscription.unsubscribe();

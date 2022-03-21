@@ -4,6 +4,7 @@ import { map, catchError } from 'rxjs/operators';
 import { BehaviorSubject, Observable, of, Subject, throwError } from 'rxjs';
 // import * as urlData from 'src/assets/Files/HostFile.json';
 
+
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 }
@@ -13,46 +14,18 @@ const httpOptions = {
 })
 export class IframeSeviceService {
 
-  // public companyInfoService = new BehaviorSubject('');
-
-  // baseUrl = `https://tempdomain-test-3.mltp.co.il/api`;
-  // baseUrl =  `http://localhost:45036/api`;
-  // baseUrl = localStorage.getItem('baseUrlIframe');
-  picSizeInMega = localStorage.getItem('picSizeInMega');
-  minAmount = new EventEmitter();
-
-  constructor(private http: HttpClient) {
-    this.getHost().subscribe(result => {
-
-      localStorage.setItem('baseUrlIframe', result['baseUrl'] + '/api');
-      localStorage.setItem('picSizeInMega', result['picSizeInMega']);
-      this.minAmount.emit(+result['minAmount']);
-    });
-  }
+  constructor(private http: HttpClient) { }
 
   ngOnInit() {
 
   }
 
   getHost() {
-    return this.http.get('../assets/Files/HostFileIframe.json').pipe(map(res => res));
+    return this.http.get('../HostFileIframe.json').pipe(map(res => res));
   }
 
-
-
-  // GetIFrameCompanyInfo(objToApi) {
-
-  //   return this.http.post(`${localStorage.getItem('baseUrlIframe')}/api/B2CIFrame/GetIFrameCompanyInfo`, objToApi).pipe(
-  //     map(result => {
-  //       return result;
-  //     }),
-  //     catchError(err => {
-  //       return of(err);
-  //     })
-  //   );
-  // }
   InsertUpdateB2COrder(objToApi) {
-    return this.http.post(`${localStorage.getItem('baseUrlIframe')}/B2CIFrame/InsertUpdateB2COrder`, objToApi, httpOptions).pipe(
+    return this.http.post(`${localStorage.getItem('baseUrlIframe')}/api/B2CIFrame/InsertUpdateB2COrder`, objToApi, httpOptions).pipe(
       map(result => {
         return result;
       }),
@@ -63,7 +36,7 @@ export class IframeSeviceService {
   }
 
   GetPaymentToken(objToApi) {
-    return this.http.post(`${localStorage.getItem('baseUrlIframe')}/B2CIFrame/GetPaymentToken`, objToApi, httpOptions).pipe(
+    return this.http.post(`${localStorage.getItem('baseUrlIframe')}/api/B2CIFrame/GetPaymentToken`, objToApi, httpOptions).pipe(
       map(result => {
         return result;
       }),
@@ -74,7 +47,7 @@ export class IframeSeviceService {
   }
 
   SavePicForGreeting(objToApi) {
-    return this.http.post(`${localStorage.getItem('baseUrlIframe')}/B2CIFrame/SavePicForGreeting`, objToApi).pipe(
+    return this.http.post(`${localStorage.getItem('baseUrlIframe')}/api/B2CIFrame/SavePicForGreeting`, objToApi).pipe(
       map(result => {
         return result;
       }),
@@ -85,7 +58,7 @@ export class IframeSeviceService {
   }
 
   GetResume(objToApi) {
-    return this.http.post(`${localStorage.getItem('baseUrlIframe')}/B2CIFrame/GetResume`, objToApi, httpOptions).pipe(
+    return this.http.post(`${localStorage.getItem('baseUrlIframe')}/api/B2CIFrame/GetResume`, objToApi, httpOptions).pipe(
       map(result => {
         return result;
       }),
@@ -97,7 +70,8 @@ export class IframeSeviceService {
 
   GetBlessings(objToApi) {
     //api/B2CIFrame/GetBlessings
-    return this.http.post(`${localStorage.getItem('baseUrlIframe')}/B2CIFrame/GetBlessings`, objToApi, httpOptions).pipe(
+
+    return this.http.post(`${localStorage.getItem('baseUrlIframe')}/api/B2CIFrame/GetBlessings`, objToApi, httpOptions).pipe(
       map(result => {
         return result;
       }),
@@ -107,4 +81,48 @@ export class IframeSeviceService {
     );
   }
 
+
+  //moved from dataService
+  GetIFrameCompanyInfo(objToApi) {
+
+    return this.http.post(`${localStorage.getItem('baseUrlIframe')}/api/B2CIFrame/GetIFrameCompanyInfo`, objToApi).pipe(
+      map(result => {
+        //
+
+        return result;
+      }),
+      catchError(error => {
+        //
+        return of(error.message);
+      })
+    );
+  }
+  GetIFrameB2CLink(objToApi) {
+
+    return this.http.post(`${localStorage.getItem('baseUrlIframe')}/api/B2CIFrame/GetIFrameB2CLink`, objToApi).pipe(
+      map(result => {
+        //
+        return result;
+      }),
+      catchError(error => {
+        //
+        return of(error.message);
+      })
+    );
+  }
+
+  InsertUpdateIFrame(objToApi) {
+    return this.http.post(`${localStorage.getItem('baseUrlIframe')}/api/B2CIFrame/InsertUpdateIFrame`, objToApi).pipe(
+      map(result => {
+        //
+        return result;
+      }),
+      catchError(error => {
+        //
+        return of(error.message);
+      })
+    );
+  }
+
+  ////////////////////////////////////////
 }

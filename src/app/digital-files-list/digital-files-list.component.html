@@ -1,5 +1,10 @@
 <div class="pageTitle main2-title sticky top100">
     <div>רשימת קבצי אקסל אשר נטענו להזמנות דיגיטליות</div>
+    <div class="readOnliNotifivation"
+        *ngIf="pagePermissionAccessLevel.AccessLevel == this.MockData.accessLevelReadOnly">
+        {{MsgList.readOnly}}
+        <mat-icon>info</mat-icon>
+    </div>
 </div>
 
 <div class="page-wrap">
@@ -14,6 +19,7 @@
                         <span *ngIf="obj == 'FilePath' || obj == 'BatchNum'">
                             <!-- <a href="/ExcelFiles/{{element[obj]}}" download="true" class="getForExampleExcelFile">{{element[obj]}}</a> -->
                             <a href="/ExcelFiles/{{element['FilePath']}}" download
+                                [class.isDisabled]="pagePermissionAccessLevel.AccessLevel == this.MockData.accessLevelReadOnly"
                                 class="getForExampleExcelFile">{{element[obj]}}</a>
                         </span>
                         <span *ngIf="obj == 'DateInsert'">{{element[obj] | formatDate}}</span>

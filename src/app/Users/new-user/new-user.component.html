@@ -12,6 +12,11 @@
             </button>
         </a>
     </div>
+    <div class="readOnliNotifivation"
+        *ngIf="pagePermissionAccessLevel.AccessLevel == this.MockData.accessLevelReadOnly">
+        {{MsgList.readOnly}}
+        <mat-icon>info</mat-icon>
+    </div>
 </div>
 <div class="page-wrap">
     <div class="page-element width-block-auto">

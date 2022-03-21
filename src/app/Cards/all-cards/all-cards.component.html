@@ -23,9 +23,9 @@
                                 <input matInput placeholder="מספר שובר" formControlName="CardId">
                                 <!-- <a [routerLink]="['/public/cardInfo',row['CardId'], userId]"
                                 *ngIf="column['value'] == 'CardId'">{{row[column['value']]}}</a> -->
-                                <button class="clearButton" *ngIf="this.cardsForm.get('CardId').value != ''"
-                                    routerLink="/public/cardInfo/CardId" mat-button matPrefix mat-icon-button
-                                    aria-label="Clear" (click)="this.cardsForm.get('CardId').setValue('')">
+                                <button class="clearButton" *ngIf="this.cardsForm.get('CardId').value != ''" mat-button
+                                    matPrefix mat-icon-button aria-label="Clear"
+                                    (click)="cardsForm.get('CardId').setValue('')">
                                     <mat-icon>close</mat-icon>
                                 </button>
                             </mat-form-field>
@@ -82,7 +82,7 @@
                                 class="datePicker datePickerPadding marginTop-1 marginTop0">
                                 <mat-label>מתאריך</mat-label>
                                 <input matInput [matDatepicker]="picker2" formControlName="FromDate" readonly
-                                    [max]="minFromDate" (dateChange)="dateFromChanged($event, 'FromDate')">
+                                    [max]="maxFromDate" (dateChange)="dateFromChanged($event, 'FromDate')">
                                 <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
                                 <mat-datepicker #picker2></mat-datepicker>
                             </mat-form-field>
@@ -92,7 +92,8 @@
                                 class="datePicker datePickerPadding marginTop-1 marginTop0">
                                 <mat-label>עד תאריך</mat-label>
                                 <input matInput [matDatepicker]="picker" formControlName="ToDate" readonly
-                                    [min]="minToDate" (dateChange)="dateFromChanged($event, 'ToDate')">
+                                    [max]="maxToDate" [min]="minToDate"
+                                    (dateChange)="dateFromChanged($event, 'ToDate')">
                                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                                 <mat-datepicker #picker></mat-datepicker>
                             </mat-form-field>
@@ -220,49 +221,5 @@
 
             </div>
         </div>
-
-        <!-- send sms -->
-        <!-- <div class="page-element width-block-auto">
-            <div class="element-page-title">שליחת SMS</div> -->
-
-
-        <!-- send sms view block -->
-        <!-- additionalOptionsSMS -->
-        <!-- <div  class="additionalOptionsSMS padding0">
-                <form [formGroup]="sendSms">
-                    <div class="smsFormWrap">
-                        <div class="selectWrap">
-                            <mat-form-field>
-                                <mat-label>בחר תבנית מסרון</mat-label>
-                                <mat-select formControlName="smsTemplates" (selectionChange)="smsTempleteSelect($event)">
-                                    <mat-option *ngFor="let template of smsTemplatesData" [value]="template.Id">
-                                        {{template.TemplateName}}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </div>
-                            <div class="textAreaWrap">
-                            <mat-form-field class="textAreaWrap" appearance="outline">
-                                <textarea matInput formControlName="previewSmsTemplate"
-                                    cdkTextareaAutosize
-                                    #autosize="cdkTextareaAutosize"
-                                    cdkAutosizeMinRows="5"
-                                    cdkAutosizeMaxRows="10"
-                                    >
-                                    </textarea>
-                            </mat-form-field>
-                        </div>
-                    </div>
-                    <div class="buttonSendSms">
-                            <button mat-button class="sendButton" (click)="sendSMS()" [disabled]="sendButtonSms">שלח הודעה
-                                לכולם
-                            </button>
-                            <div class="errorSendSms error" *ngIf="errorSendSms != ''">
-                                {{errorSendSms}}
-                            </div>
-                        </div>
-                </form>
-            </div> -->
-
-        <!-- </div> -->
     </div>
 </div>

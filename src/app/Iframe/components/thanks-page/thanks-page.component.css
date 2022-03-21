@@ -192,6 +192,9 @@ button.prevButton {
     .wrapPage{
         padding: 0px;
     }
+    .thankYouTitle{
+        font-size: 2em;
+    }
     .thankYouSubTitle > div{
         margin: 0 15%;
     }
@@ -200,5 +203,15 @@ button.prevButton {
     }
     .iconTitle > img{
         width: 5em;
+    }
+    .wrapContent{
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    .mainText{
+        margin: 1em !important;
+    }
+    .tabLabel{
+        font-size: 0.7em !important;
     }
 }

@@ -35,52 +35,68 @@ export class MainMenuComponent implements OnInit {
   }
   GetMenuPages() {
 
+
     this.dataService.getHost().subscribe(result => {
       // this.sharedService.pagesPermission.next(result['pagesPermission']);
+
 
       if (result['pagesPermission'] == 'true') {
         let objToApi = {
           Token: this.userToken
         }
+
+
         this.dataService.GetMenuPages(objToApi).subscribe(result => {
-
-          if (result['Token'] != undefined || result['Token'] != null) {
-
-            //set new token
-            let tempObjUser = JSON.parse(localStorage.getItem('user'));
-            tempObjUser['Token'] = result['Token'];
-            localStorage.setItem('user', JSON.stringify(tempObjUser));
-            this.userToken = result['Token'];
-
-            if (result.err != -1) {
-              if (result.obj != null) {
-
-
-                this.permissionMenuList = this.distinctMenu(result.obj[1]);
-                this.permissionMenuList.sort((menua, menub) => {
-                  return menua['Sequence'] - menub['Sequence']
-                })
-
-                // this.permissionMenuList = this.distinctMenu(this.mockMenu);
-
-              }
-              else {
-                this.permissionMenuList = this.mockMenu;
-              }
-            }
-            else {
-              this.dialog.open(DialogComponent, {
-                data: { message: result.errdesc }
-              })
-            }
-          }
-          else {
+          if (typeof result == 'string') {
+            this.dialog.open(DialogComponent, {
+              data: { message: result }
+            })
 
             this.sharedService.exitSystemEvent();
+            return false;
           }
+
+
+          // if (result['Token'] != undefined || result['Token'] != null) {
+
+          //set new token
+          let tempObjUser = JSON.parse(localStorage.getItem('user'));
+          tempObjUser['Token'] = result['Token'];
+          localStorage.setItem('user', JSON.stringify(tempObjUser));
+          this.userToken = result['Token'];
+
+          // if (result.err != -1) {
+          if (result.obj != null) {
+
+
+            this.permissionMenuList = this.distinctMenu(result.obj[1]);
+            debugger
+
+            this.permissionMenuList.sort((menua, menub) => {
+              return menua['Sequence'] - menub['Sequence']
+            })
+
+            // this.permissionMenuList = this.distinctMenu(this.mockMenu);
+
+          }
+          else {
+            this.permissionMenuList = this.mockMenu;
+          }
+          // }
+          // else {
+          //   this.dialog.open(DialogComponent, {
+          //     data: { message: result.errdesc }
+          //   })
+          // }
+          // }
+          // else {
+
+          //   this.sharedService.exitSystemEvent();
+          // }
         })
       }
       else {
+
         this.permissionMenuList = this.mockMenu;
       }
     });

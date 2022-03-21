@@ -8,12 +8,18 @@
     <div>
         <div class="pageTitle main2-title sticky top100">
             <div>הזמנת שוברים</div>
+            <div class="readOnliNotifivation"
+                *ngIf="pagePermissionAccessLevel.AccessLevel == this.MockData.accessLevelReadOnly">
+                {{MsgList.readOnly}}
+                <mat-icon>info</mat-icon>
+            </div>
 
         </div>
         <div class="page-element width-block-auto">
             <div class="element-page-title">הזמנת שוברים</div>
 
-            <mat-tab-group mat-align-tabs="start" [selectedIndex]="indexId">
+            <mat-tab-group mat-align-tabs="start" [selectedIndex]="indexId"
+                (selectedTabChange)="selectedTabChange($event)">
 
                 <!-- excel card creating -->
                 <mat-tab>
@@ -31,16 +37,27 @@
                                     <div class="formRow">
                                         <div class="formRowChild">
                                             <mat-form-field>
-                                                <mat-label>בחר או הוסף לקוח</mat-label>
+                                                <mat-label>בחר או הוסף לקוח </mat-label>
                                                 <mat-select formControlName="customer" #customersSelectExcel>
-                                                    <mat-option>
-                                                        <button mat-button class="sendButton addOptionFromDropDown"
-                                                            (click)="openAddCustomerDialog('excelCardCreatingForm','customer')">
-                                                            <span>הוסף לקוח</span>
-                                                            <mat-icon>person_add_alt_1</mat-icon>
-                                                        </button>
-                                                    </mat-option>
-                                                    <ng-container *ngFor="let customer of customers; let i = index">
+                                                    <div class="wrapDropDownOption">
+                                                        <div class="dropDownOption buttonFlexMarginAuto">
+                                                            <button mat-button class="sendButton addOptionFromDropDown"
+                                                                (click)="openAddCustomerDialog('excelCardCreatingForm','customer')">
+                                                                <span>הוסף לקוח</span>
+                                                                <mat-icon>person_add_alt_1</mat-icon>
+                                                            </button>
+                                                        </div>
+                                                        <div class="dropDownOption">
+                                                            <mat-form-field appearance="outline">
+                                                                <input matInput placeholder="חיפוש"
+                                                                    formControlName="searchCustomer"
+                                                                    (ngModelChange)="searchChange($event)">
+                                                                <mat-icon matPrefix class="matPrefSuf">search</mat-icon>
+                                                            </mat-form-field>
+                                                        </div>
+                                                    </div>
+                                                    <ng-container
+                                                        *ngFor="let customer of customersSpare; let i = index">
                                                         <mat-option [value]="customer">
                                                             {{customer.organizationName}}
                                                             <!-- {{customer}} -->
@@ -144,12 +161,26 @@
                                             <mat-form-field>
                                                 <mat-label>בחר או הוסף לקוח</mat-label>
                                                 <mat-select formControlName="customer" #customersSelectManual>
-                                                    <button mat-button class="sendButton addOptionFromDropDown"
-                                                        (click)="openAddCustomerDialog('manualCardgroup','customer')">
-                                                        <span>הוסף לקוח</span>
-                                                        <mat-icon>person_add_alt_1</mat-icon>
-                                                    </button>
-                                                    <ng-container *ngFor="let customer of customers; let i = index">
+                                                    <div class="wrapDropDownOption">
+                                                        <div class="dropDownOption buttonFlexMarginAuto">
+                                                            <button mat-button class="sendButton addOptionFromDropDown"
+                                                                (click)="openAddCustomerDialog('manualCardgroup','customer')">
+                                                                <span>הוסף לקוח</span>
+                                                                <mat-icon>person_add_alt_1</mat-icon>
+                                                            </button>
+                                                        </div>
+                                                        <div class="dropDownOption">
+                                                            <mat-form-field appearance="outline">
+                                                                <input matInput formControlName="searchCustomer"
+                                                                    placeholder="חיפוש"
+                                                                    (ngModelChange)="searchChange($event)">
+                                                                <mat-icon matPrefix class="matPrefSuf">search</mat-icon>
+                                                            </mat-form-field>
+                                                        </div>
+
+                                                    </div>
+                                                    <ng-container
+                                                        *ngFor="let customer of customersSpare; let i = index">
                                                         <mat-option [value]="customer">
                                                             {{customer.organizationName }}
                                                             <!-- {{customer}} -->

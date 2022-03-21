@@ -171,9 +171,6 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
   ngOnInit() {
 
     window.scroll(0, 0);
-    //http://localhost:4200/thankyou?orderid=DkUs8NIluuQ5Mqd5Byh78w2
-    //http://localhost:4200/giftCard/login?companyid=bC1uVdEINfm7oJNltQd3PA2
-
     this.activateRoute.queryParams.subscribe(result => {
 
       if (Object.keys(result).indexOf('orderid') != -1) {
@@ -227,7 +224,7 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
       CompanyIdEnc: this.companyId
     }
 
-    this.getDataService.GetIFrameCompanyInfo(objToApi).subscribe(result => {
+    this.dataService.GetIFrameCompanyInfo(objToApi).subscribe(result => {
       if (result.obj != undefined && result.obj != null && result.err != -1) {
         // this.sharingIframeService.companyInfoService.next(JSON.stringify(result));
         this.giftCardImgSpare = result.obj[0]['GiftCardPic'];
@@ -563,6 +560,7 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
       this.selectedIndex = stepper.selectedIndex;
 
       this.colorMatStepHorizontalLine(stepper.selectedIndex + 1);
+
       //to who send gift card stepper
       if (this.selectedIndex == 0) {
         if (this.FormsArray.get(this.FormSelected).valid) {
@@ -677,10 +675,12 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
       Phone: this.FormsArray.get('SecondFormGroup').get('phoneSender').value,
       B2C_DateTimeToSend: month + '/' + day + '/' + year + ' ' + hour + ':' + minute,
       Media: this.FormsArray.get('FirstFormGroup').get('imgsSrc').value != '' ? '/assets/images/B2COrderImage/' + this.FormsArray.get('FirstFormGroup').get('imgsSrc').value : '',
-      Mail: this.FormsArray.get('SecondFormGroup').get('mailSender').value
+      Email: this.FormsArray.get('SecondFormGroup').get('mailSender').value
     }
 
 
+
+    debugger
     this.dataService.InsertUpdateB2COrder(objToApi).subscribe(result => {
       if (result.obj != undefined && result.obj != null) {
         this.GetPaymentToken(result.obj[0]['orderid']);
@@ -692,54 +692,14 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
 
   }
   GetPaymentToken(orderId) {
-    // this.domain.queryParamMap.subscribe(param => {
-    //   //if company id get by url parameters
-    //   if (Object.keys(param['params']).length != 0) {
-    //     this.companyid = param['params']['companyid'];
-    //     localStorage.setItem('companyId', param['params']['companyid']);
-    //     localStorage.setItem('companyInfo', document.location.href);
-
-    //     this.getIframeCompanyInfo();
-    //   }
-
-
-    //   else {
-    //     let objToApi = {
-    //       Token: JSON.parse(localStorage.getItem('user'))['Token']
-    //     }
-    //     this.dataService.GetIFrameB2CLink(objToApi).subscribe(result => {
-    //       if (typeof result == 'object') {
-    //         if (result.err != -1) {
-    //           this.companyid = result.obj.split('companyid=')[1];
-    //           this.getIframeCompanyInfo();
-    //         }
-    //         else {
-    //           this.dialog.open(DialogComponent, {
-    //             data: { message: result.errdesc }
-    //           })
-    //         }
-    //       }
-    //       else {
-    //         this.dialog.open(DialogComponent, {
-    //           data: { message: result.errdesc }
-    //         })
-    //       }
-    //     });
-
-    //     // this.companyid = this.companyId != undefined ? this.companyId : localStorage.getItem('companyId');
-    //   }
-
-
-
-
-
     let objToApi = {
       OrderId: orderId,
       CompanyIdEnc: this.companyId
     }
 
+    debugger
     this.dataService.GetPaymentToken(objToApi).subscribe(result => {
-
+      debugger
       /**
        *       
       if (this.companyIdByParams) {

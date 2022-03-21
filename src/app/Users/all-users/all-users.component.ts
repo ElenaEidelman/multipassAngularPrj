@@ -7,6 +7,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table/';
 import { Router } from '@angular/router';
 import { CustomerData } from 'src/app/Classes/customerData';
+import { MockData } from 'src/app/Classes/mockData';
 import { MsgList } from 'src/app/Classes/msgsList';
 import { DataServiceService } from 'src/app/data-service.service';
 import { DialogConfirmComponent } from 'src/app/PopUps/dialog-confirm/dialog-confirm.component';
@@ -21,6 +22,14 @@ import { UrlSharingService } from 'src/app/Services/UrlSharingService/url-sharin
   styleUrls: ['./all-users.component.css']
 })
 export class AllUsersComponent implements OnInit {
+
+  pagePermissionAccessLevel = {
+    AccessLevel: '',
+    PageName: ''
+  }
+
+  MsgList = MsgList;
+  MockData = MockData;
 
   displayedColumns: string[] = [];
   dataSource: MatTableDataSource<any> = new MatTableDataSource();
@@ -76,6 +85,9 @@ export class AllUsersComponent implements OnInit {
   ngOnInit(): void {
     window.scroll(0, 0);
     this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
+    this.pagePermissionAccessLevel = this.sharedService.pagesAccessLevel.value.length > 0 ? JSON.parse(this.sharedService.pagesAccessLevel.value) : JSON.parse(JSON.stringify(this.pagePermissionAccessLevel));
+
+    this.sharedService.pagesAccessLevel.next('');
     this.createDisplayedColumns(this.userLabelForTable);
     // this.createDataSourceForTable();
 
@@ -92,21 +104,29 @@ export class AllUsersComponent implements OnInit {
     }
     this.dataService.GetAllUsers(objToApi).subscribe(result => {
 
-      if (result['Token'] != undefined || result['Token'] != null) {
-        //set new token
-        let tempObjUser = JSON.parse(localStorage.getItem('user'));
-        tempObjUser['Token'] = result['Token'];
-        localStorage.setItem('user', JSON.stringify(tempObjUser));
-        this.userToken = result['Token'];
+      if (typeof result == 'string') {
+        this.dialog.open(DialogComponent, {
+          data: { message: result }
+        })
 
-        this.dataSource.data = result.obj;
-      }
-      else {
-        // this.dialog.open(DialogComponent, {
-        //   data: {message: MsgList.exitSystemAlert}
-        // })
         this.sharedService.exitSystemEvent();
+        return false;
       }
+      // if (result['Token'] != undefined || result['Token'] != null) {
+      //set new token
+      let tempObjUser = JSON.parse(localStorage.getItem('user'));
+      tempObjUser['Token'] = result['Token'];
+      localStorage.setItem('user', JSON.stringify(tempObjUser));
+      this.userToken = result['Token'];
+
+      this.dataSource.data = result.obj;
+      // }
+      // else {
+      //   // this.dialog.open(DialogComponent, {
+      //   //   data: {message: MsgList.exitSystemAlert}
+      //   // })
+      //   this.sharedService.exitSystemEvent();
+      // }
     });
   }
 
@@ -119,16 +139,16 @@ export class AllUsersComponent implements OnInit {
     // this.displayedColumns.unshift('delUser');
     // this.displayedColumns.unshift('goToUser');
   }
-  createDataSourceForTable() {
-    this.dataSource = new MatTableDataSource([
-      { id: '2523', fullName: 'fName lName 1', empNumber: '1578569', permisLvl: 'lvl1', email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: '' },
-      { id: '2524', fullName: 'fName lName 2', empNumber: '1578569', permisLvl: 'lvl1', email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: '' },
-      { id: '2525', fullName: 'fName lName 3', empNumber: '1578569', permisLvl: 'lvl1', email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: '' },
-      { id: '2526', fullName: 'fName lName 4', empNumber: '1578569', permisLvl: 'lvl1', email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: '' },
-      { id: '2527', fullName: 'fName lName 5', empNumber: '1578569', permisLvl: 'lvl1', email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: '' },
-      { id: '2528', fullName: 'fName lName 6', empNumber: '1578569', permisLvl: 'lvl1', email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: '' }
-    ]);
-  }
+  // createDataSourceForTable() {
+  //   this.dataSource = new MatTableDataSource([
+  //     { id: '2523', fullName: 'fName lName 1', empNumber: '1578569', permisLvl: 'lvl1', email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: '' },
+  //     { id: '2524', fullName: 'fName lName 2', empNumber: '1578569', permisLvl: 'lvl1', email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: '' },
+  //     { id: '2525', fullName: 'fName lName 3', empNumber: '1578569', permisLvl: 'lvl1', email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: '' },
+  //     { id: '2526', fullName: 'fName lName 4', empNumber: '1578569', permisLvl: 'lvl1', email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: '' },
+  //     { id: '2527', fullName: 'fName lName 5', empNumber: '1578569', permisLvl: 'lvl1', email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: '' },
+  //     { id: '2528', fullName: 'fName lName 6', empNumber: '1578569', permisLvl: 'lvl1', email: 'test@gmail.com', phone: '052-3438921', status: 'פעיל', delUser: '' }
+  //   ]);
+  // }
 
 
   returnHebTranslation(obj, value) {
@@ -150,20 +170,28 @@ export class AllUsersComponent implements OnInit {
   }
 
   deleteUser(user) {
-    this.dialog.open(DialogConfirmComponent, {
-      data: { message: 'האם לחסום ' + user.FName + ' ' + user.LName + '?', eventButton: 'לחסום' }
-    }).afterClosed().subscribe(response => {
-      if (response.result == 'yes') {
+    if (this.pagePermissionAccessLevel.AccessLevel != this.MockData.accessLevelReadOnly) {
+      this.dialog.open(DialogConfirmComponent, {
+        data: { message: 'האם לחסום ' + user.FName + ' ' + user.LName + '?', eventButton: 'לחסום' }
+      }).afterClosed().subscribe(response => {
+        if (response.result == 'yes') {
 
-        let objToApi = {
-          Token: this.userToken,
-          BackUserId: user.id.toString()
-        }
+          let objToApi = {
+            Token: this.userToken,
+            BackUserId: user.id.toString()
+          }
 
-        this.dataService.DeleteSuspendBackOfficeUsers(objToApi).subscribe(result => {
+          this.dataService.DeleteSuspendBackOfficeUsers(objToApi).subscribe(result => {
+            if (typeof result == 'string') {
+              this.dialog.open(DialogComponent, {
+                data: { message: result }
+              })
 
+              this.sharedService.exitSystemEvent();
+              return false;
+            }
 
-          if (result['Token'] != undefined || result['Token'] != null) {
+            // if (result['Token'] != undefined || result['Token'] != null) {
 
             //set new token
             let tempObjUser = JSON.parse(localStorage.getItem('user'));
@@ -171,27 +199,33 @@ export class AllUsersComponent implements OnInit {
             localStorage.setItem('user', JSON.stringify(tempObjUser));
             this.userToken = result['Token'];
 
-            if (result.errdesc.includes('User Deleted Successfully')) {
-              this.getAllUsers();
-              this.dialog.open(DialogComponent, {
-                data: { message: 'משתמש נמחק בהצלחה' }
-              });
-            }
-            else {
-              this.dialog.open(DialogComponent, {
-                data: { message: result.errdesc }
-              });
-            }
-          }
-          else {
-            // this.dialog.open(DialogComponent, {
-            //   data: {message: MsgList.exitSystemAlert}
-            // })
-            this.sharedService.exitSystemEvent();
-          }
-        });
-      }
-    });
+            // if (result.errdesc.includes('User Deleted Successfully')) {
+            this.getAllUsers();
+            this.dialog.open(DialogComponent, {
+              data: { message: 'משתמש נמחק בהצלחה' }
+            });
+            // }
+            // else {
+            //   this.dialog.open(DialogComponent, {
+            //     data: { message: result.errdesc }
+            //   });
+            // }
+            // }
+            // else {
+            //   // this.dialog.open(DialogComponent, {
+            //   //   data: {message: MsgList.exitSystemAlert}
+            //   // })
+            //   this.sharedService.exitSystemEvent();
+            // }
+          });
+        }
+      });
+    }
+    else {
+      this.dialog.open(DialogComponent, {
+        data: { message: MsgList.readOnly }
+      })
+    }
   }
 
   goToUser(userId: number) {

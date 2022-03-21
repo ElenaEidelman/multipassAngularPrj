@@ -8,6 +8,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MsgList } from '../Classes/msgsList';
 import { SharedService } from '../Services/SharedService/shared.service';
+import { MockData } from '../Classes/mockData';
 
 @Component({
   selector: 'app-digital-files-list',
@@ -28,6 +29,14 @@ export class DigitalFilesListComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = [];
   newArr: string[] = [];
 
+  MockData = MockData;
+  MsgList = MsgList;
+
+  pagePermissionAccessLevel = {
+    AccessLevel: '',
+    PageName: ''
+  }
+
 
   excelFilesLabelForTable = [
     { value: 'BatchNum', viewValue: 'מספר טעינה' },
@@ -45,7 +54,9 @@ export class DigitalFilesListComponent implements OnInit, AfterViewInit {
     this.spinner = true;
     this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
 
+    this.pagePermissionAccessLevel = this.sharedService.pagesAccessLevel.value.length > 0 ? JSON.parse(this.sharedService.pagesAccessLevel.value) : JSON.parse(JSON.stringify(this.pagePermissionAccessLevel));
 
+    this.sharedService.pagesAccessLevel.next('');
 
     this.createDisplayedColumns(this.excelFilesLabelForTable);
 
@@ -71,41 +82,31 @@ export class DigitalFilesListComponent implements OnInit, AfterViewInit {
     this.dataService.GetDigitalFilesList(objToApi).subscribe(result => {
 
       this.spinner = false;
-      if (result['Token'] != undefined || result['Token'] != null) {
-        //set new token
-        let tempObjUser = JSON.parse(localStorage.getItem('user'));
-        tempObjUser['Token'] = result['Token'];
-        localStorage.setItem('user', JSON.stringify(tempObjUser));
-        this.userToken = result['Token']
-
-        if (typeof result == 'object' && result.obj != null && result.obj.length > 0) {
-          this.digitalFiles = result['obj'];
-
-          this.newArr = this.digitalFiles.map(o => {
-            return {
-              FilePath: o.FilePath.replace(/^.*[\\\/]/, ''),
-              BatchNum: o.BatchNum,
-              Description: o.Description,
-              DateInsert: o.DateInsert,
-            }
-          });
-
-          if (typeof result == 'object' && result.obj != null) {
-            this.dataSource.data = this.newArr
-          }
-        }
-      }
-      else if (typeof result == 'string') {
+      if (typeof result == 'string') {
         this.dialog.open(DialogComponent, {
           data: { message: result }
-        });
-      }
-      else {
-        // this.dialog.open(DialogComponent, {
-        //   data: {message: MsgList.exitSystemAlert}
-        // })
+        })
+
         this.sharedService.exitSystemEvent();
+        return false;
       }
+
+      //set new token
+      let tempObjUser = JSON.parse(localStorage.getItem('user'));
+      tempObjUser['Token'] = result['Token'];
+      localStorage.setItem('user', JSON.stringify(tempObjUser));
+      this.userToken = result['Token']
+      this.digitalFiles = result['obj'];
+
+      this.newArr = this.digitalFiles.map(o => {
+        return {
+          FilePath: o.FilePath.replace(/^.*[\\\/]/, ''),
+          BatchNum: o.BatchNum,
+          Description: o.Description,
+          DateInsert: o.DateInsert,
+        }
+      });
+      this.dataSource.data = this.newArr
     });
   }
 

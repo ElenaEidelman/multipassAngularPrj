@@ -8,8 +8,8 @@
     <div class="wrap-main-menu bgColorMainMenu">
         <div *ngFor="let menu of permissionMenuList">
             <div>
-                <a mat-button [routerLink]="['/public/', menu.MenuEngName]"
-                    routerLinkActive="routActive">{{menu.MenuName}}</a>
+                <a mat-button [routerLink]="['/public/', menu.MenuEngName]" routerLinkActive="routActive"
+                    [class.isDisabled]="menu.MenuName == 'IFrame'">{{menu.MenuName}}</a>
             </div>
             <!-- <div *ngIf="menu.MenuEngName == 'IFrame'">
                 <a mat-button [routerLink]="['/public/iframe']" routerLinkActive="routActive">{{menu.MenuName}}</a>

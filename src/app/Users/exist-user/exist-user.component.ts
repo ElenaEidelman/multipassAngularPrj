@@ -3,6 +3,7 @@ import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MockData } from 'src/app/Classes/mockData';
 import { MsgList } from 'src/app/Classes/msgsList';
 import { DataServiceService } from 'src/app/data-service.service';
 import { DialogConfirmComponent } from 'src/app/PopUps/dialog-confirm/dialog-confirm.component';
@@ -19,6 +20,10 @@ import { UrlSharingService } from 'src/app/Services/UrlSharingService/url-sharin
 export class ExistUserComponent implements OnInit {
 
   @ViewChild(MatAccordion) accordion: MatAccordion;
+  pagePermissionAccessLevel = {
+    AccessLevel: '',
+    PageName: ''
+  }
 
   userData;
   idUnsubscribe;
@@ -34,6 +39,7 @@ export class ExistUserComponent implements OnInit {
   deleteUserSpinner: boolean = false;
 
   MsgList = MsgList;
+  MockData = MockData;
 
   statusList = [];
   roleList = [];
@@ -50,7 +56,7 @@ export class ExistUserComponent implements OnInit {
     Phone1: ['', [Validators.pattern('[[0][0-9]{8,9}]*')]],// ------------Phone1
     Streetno: (''),// ---------Streetno
     ZIP: (''),// --------ZIP
-    Permission: [{ value: '', disabled: false }, Validators.required], // ---------------Permission
+    Permission: [{ value: '' }, Validators.required], // ---------------Permission
     ApartmentNo: ('')// ---------ApartmentNo
   },
     { updateOn: "blur" });
@@ -70,19 +76,28 @@ export class ExistUserComponent implements OnInit {
 
     // this.idUnsubscribe = this.activeRoute.params.subscribe( param => {
     let urlParams = this.urlSharingService.messageSource.getValue();
+    this.pagePermissionAccessLevel = this.sharedService.pagesAccessLevel.value.length > 0 ? JSON.parse(this.sharedService.pagesAccessLevel.value) : JSON.parse(JSON.stringify(this.pagePermissionAccessLevel));
 
+    this.sharedService.pagesAccessLevel.next('');
+    if (this.pagePermissionAccessLevel.AccessLevel == this.MockData.accessLevelReadOnly) {
+      this.userDataForm.disable();
+
+    }
     if (urlParams == '') {
       this.router.navigate(['/public/allUsers']);
     }
     else {
 
+
       this.urlSharingService.changeMessage('');
       this.id = JSON.parse(urlParams)['userId'];
       this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
+
       this.getUserStatus();
-      this.getUserDataById(this.id);
-      this.GetUserToRole(this.id);
       this.GetRoles();
+      this.getUserDataById(this.id);
+      // this.GetUserToRole(this.id);
+
 
     }
     // })
@@ -98,30 +113,39 @@ export class ExistUserComponent implements OnInit {
 
     this.dataService.GetUsersByFilter(objToApi).subscribe(result => {
 
-      if (result['Token'] != undefined || result['Token'] != null) {
+      if (typeof result == 'string') {
+        this.dialog.open(DialogComponent, {
+          data: { message: result }
+        })
 
-        //set new token
-        let tempObjUser = JSON.parse(localStorage.getItem('user'));
-        tempObjUser['Token'] = result['Token'];
-        localStorage.setItem('user', JSON.stringify(tempObjUser));
-        this.userToken = result['Token'];
-
-        if (result.obj != null && result.obj != undefined && Object.keys(result.obj[0]).length > 0) {
-          this.userData = result.obj[0];
-          this.fillFormOfUserData(this.userData);
-        }
-        else {
-          this.dialog.open(DialogComponent, {
-            data: { message: result.errdesc }
-          });
-        }
-      }
-      else {
-        // this.dialog.open(DialogComponent, {
-        //   data: {message: MsgList.exitSystemAlert}
-        // })
         this.sharedService.exitSystemEvent();
+        return false;
       }
+      // if (result['Token'] != undefined || result['Token'] != null) {
+
+      //set new token
+      let tempObjUser = JSON.parse(localStorage.getItem('user'));
+      tempObjUser['Token'] = result['Token'];
+      localStorage.setItem('user', JSON.stringify(tempObjUser));
+      this.userToken = result['Token'];
+
+      // if (result.obj != null && result.obj != undefined && Object.keys(result.obj[0]).length > 0) {
+      this.userData = result.obj[0];
+
+      setTimeout(() => this.fillFormOfUserData(this.userData))
+      // }
+      // else {
+      //   this.dialog.open(DialogComponent, {
+      //     data: { message: result.errdesc }
+      //   });
+      // }
+      // }
+      // else {
+      //   // this.dialog.open(DialogComponent, {
+      //   //   data: {message: MsgList.exitSystemAlert}
+      //   // })
+      //   this.sharedService.exitSystemEvent();
+      // }
     });
   }
 
@@ -129,111 +153,133 @@ export class ExistUserComponent implements OnInit {
     let objToApi = {
       Token: this.userToken
     }
+
     this.dataService.GetUserStatus(objToApi).subscribe(result => {
 
-      if (result['Token'] != undefined || result['Token'] != null) {
-        //set new token
-        let tempObjUser = JSON.parse(localStorage.getItem('user'));
-        tempObjUser['Token'] = result['Token'];
-        localStorage.setItem('user', JSON.stringify(tempObjUser));
-        this.userToken = result['Token'];
+      if (typeof result == 'string') {
+        this.dialog.open(DialogComponent, {
+          data: { message: result }
+        })
 
-        if (result.obj != null && result.obj != undefined && Object.keys(result.obj).length > 0) {
-
-          this.statusList = [...result.obj];
-
-
-          /**
-           * Description: "ממתין לאישור"
-            StatusId: 1
-            StatusType: "PendingApproval"
-           */
-        }
-      }
-      else {
-        // this.dialog.open(DialogComponent, {
-        //   data: {message: MsgList.exitSystemAlert}
-        // })
         this.sharedService.exitSystemEvent();
+        return false;
       }
+
+      // if (result['Token'] != undefined || result['Token'] != null) {
+      //set new token
+      let tempObjUser = JSON.parse(localStorage.getItem('user'));
+      tempObjUser['Token'] = result['Token'];
+      localStorage.setItem('user', JSON.stringify(tempObjUser));
+      this.userToken = result['Token'];
+
+      // if (result.obj != null && result.obj != undefined && Object.keys(result.obj).length > 0) {
+
+      this.statusList = [...result.obj];
+
+
+
+      /**
+       * Description: "ממתין לאישור"
+        StatusId: 1
+        StatusType: "PendingApproval"
+       */
+      // }
+      // }
+      // else {
+      //   // this.dialog.open(DialogComponent, {
+      //   //   data: {message: MsgList.exitSystemAlert}
+      //   // })
+      //   this.sharedService.exitSystemEvent();
+      // }
     })
   }
 
-  GetUserToRole(id) {
+  // GetUserToRole(id) {
 
-    let objToApi = {
-      Token: this.userToken,
-      UserId: id + ''
-    }
+  //   let objToApi = {
+  //     Token: this.userToken,
+  //     UserId: id + ''
+  //   }
+
+  //   this.dataService.GetUserToRole(objToApi).subscribe(result => {
+
+  //     // if (result['Token'] != undefined || result['Token'] != null) {
+
+  //     //set new token
+  //     let tempObjUser = JSON.parse(localStorage.getItem('user'));
+  //     tempObjUser['Token'] = result['Token'];
+  //     localStorage.setItem('user', JSON.stringify(tempObjUser));
+  //     this.userToken = result['Token'];
+
+  //     // if (result.err != -1) {
+  //     //   if (Object.keys(result.obj).length > 0) {
+  //     //     // this.userDataForm.get('Permission').setValue(result.obj[0]['CredentialId']);
+
+  //     //     //disable select dropdown if user not admin
+  //     //     // 
+  //     //     // if (result.obj[0]['CredentialId'] != 1) {
+  //     //     //   this.userDataForm.get('Permission').disable();
+  //     //     // }
+  //     //   }
+  //     //   else {
+  //     //     // this.userDataForm.get('Permission').setValue(3);
+  //     //     // this.userDataForm.get('Permission').disable();
+  //     //   }
+  //     // }
+  //     // else {
+  //     //   this.dialog.open(DialogComponent, {
+  //     //     data: { message: result.errdesc }
+  //     //   })
+  //     // }
+  //     // }
+  //     // else {
+
+  //     //   this.sharedService.exitSystemEvent();
+  //     // }
+  //   })
 
 
-    this.dataService.GetUserToRole(objToApi).subscribe(result => {
-      if (result['Token'] != undefined || result['Token'] != null) {
-
-        //set new token
-        let tempObjUser = JSON.parse(localStorage.getItem('user'));
-        tempObjUser['Token'] = result['Token'];
-        localStorage.setItem('user', JSON.stringify(tempObjUser));
-        this.userToken = result['Token'];
-
-        if (result.err != -1) {
-          if (Object.keys(result.obj).length > 0) {
-            this.userDataForm.get('Permission').setValue(result.obj[0]['CredentialId']);
-
-            //disable select dropdown if user not admin
-            if (result.obj[0]['CredentialId'] != 1) {
-              this.userDataForm.get('Permission').disable();
-            }
-          }
-          else {
-            this.userDataForm.get('Permission').setValue(3);
-            this.userDataForm.get('Permission').disable();
-          }
-        }
-        else {
-          this.dialog.open(DialogComponent, {
-            data: { message: result.errdesc }
-          })
-        }
-      }
-      else {
-
-        this.sharedService.exitSystemEvent();
-      }
-    })
-
-
-  }
+  // }
   GetRoles() {
 
     let objToApi = {
       Token: this.userToken
     }
 
+
     this.dataService.GetRoles(objToApi).subscribe(result => {
 
-      if (result['Token'] != undefined || result['Token'] != null) {
-
-        //set new token
-        let tempObjUser = JSON.parse(localStorage.getItem('user'));
-        tempObjUser['Token'] = result['Token'];
-        localStorage.setItem('user', JSON.stringify(tempObjUser));
-        this.userToken = result['Token'];
-
-        if (result.err != -1) {
-
-          this.roleList = result.obj;
-        }
-        else {
-          this.dialog.open(DialogComponent, {
-            data: { message: result.errdesc }
-          })
-        }
-      }
-      else {
+      if (typeof result == 'string') {
+        this.dialog.open(DialogComponent, {
+          data: { message: result }
+        })
 
         this.sharedService.exitSystemEvent();
+        return false;
       }
+      // if (result['Token'] != undefined || result['Token'] != null) {
+
+      //set new token
+      let tempObjUser = JSON.parse(localStorage.getItem('user'));
+      tempObjUser['Token'] = result['Token'];
+      localStorage.setItem('user', JSON.stringify(tempObjUser));
+      this.userToken = result['Token'];
+
+      // if (result.err != -1) {
+
+      this.roleList = result.obj;
+
+      // }
+      // else {
+      //   this.dialog.open(DialogComponent, {
+      //     data: { message: result.errdesc }
+      //   })
+      // }
+      // }
+      // else {
+
+      //   this.sharedService.exitSystemEvent();
+      // }
     })
     // this.roleList = [
     //   { RoleId: '1', Description: 'admin' },
@@ -245,15 +291,29 @@ export class ExistUserComponent implements OnInit {
   }
 
   fillFormOfUserData(user) {
+    debugger
     Object.keys(this.userDataForm.controls).forEach(control => {
+      debugger
       if (control == 'StatusId') {
         let statusDesc = this.statusList.filter(status => status.StatusId == user.StatusId);
+
+        let t = statusDesc[0]['StatusId'];
         this.userDataForm.get(control).setValue(statusDesc[0]['StatusId']);
       }
-      if (control != 'Permission' && control != 'StatusId') {
+      if (control == 'Permission') {
+
+        let t = this.roleList;
+
+        this.userDataForm.get(control).setValue(this.roleList.filter(role => role.Id == user.Permission)[0]['Id']);
+      }
+      else {
+        debugger
         this.userDataForm.get(control).setValue(user[control]);
       }
     });
+
+    let t = this.userDataForm.value;
+
   }
 
   saveData() {
@@ -276,50 +336,62 @@ export class ExistUserComponent implements OnInit {
         }
       });
 
-      objToApi['OrganizationName'] = '';
+      objToApi['OrganizationName'] = this.userDataForm.get('FName').value + ' ' + this.userDataForm.get('LName').value;
       objToApi['BusinessFile'] = '';
       objToApi['BackOfficeUserId'] = this.id;
+
 
 
       this.dataService.InsertUpdateBackOfficeUsers(objToApi).subscribe(result => {
 
         this.saveFormSpinner = false;
-        if (result['Token'] != undefined || result['Token'] != null) {
 
-          //set new token
-          let tempObjUser = JSON.parse(localStorage.getItem('user'));
-          tempObjUser['Token'] = result['Token'];
-          localStorage.setItem('user', JSON.stringify(tempObjUser));
-          this.userToken = result['Token'];
+        if (typeof result == 'string') {
+          this.dialog.open(DialogComponent, {
+            data: { message: result }
+          })
 
-          if (result.obj != null && result.obj != undefined && Object.keys(result.obj[0]).length > 0) {
-            this.userData = result.obj[0];
-
-            debugger
-            Object.keys(this.userDataForm.controls).forEach(control => {
-              this.userDataForm.get(control).setValue(this.userData[control])
-            })
-
-            this.msgActionButtons = 'נשמר בהצלחה';
-            setTimeout(() => {
-              this.msgActionButtons = '';
-            }, 2000);
-
-            // this.fillFormOfUserData(this.userData);
-          }
-          else {
-            this.errorActionButtons = result.errdesc;
-            setTimeout(() => {
-              this.errorActionButtons = '';
-            }, 2000);
-          }
-        }
-        else {
-          // this.dialog.open(DialogComponent, {
-          //   data: {message: MsgList.exitSystemAlert}
-          // })
           this.sharedService.exitSystemEvent();
+          return false;
         }
+        // if (result['Token'] != undefined || result['Token'] != null) {
+
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
+
+        // if (result.obj != null && result.obj != undefined && Object.keys(result.obj[0]).length > 0) {
+        this.userData = result.obj[0];
+
+
+        Object.keys(this.userDataForm.controls).forEach(control => {
+          this.userDataForm.get(control).setValue(this.userData[control])
+        })
+
+        this.userDataForm.get('Permission').setValue(this.userData['role'])
+
+        this.msgActionButtons = 'נשמר בהצלחה';
+        setTimeout(() => {
+          this.msgActionButtons = '';
+        }, 2000);
+
+        // this.fillFormOfUserData(this.userData);
+        // }
+        // else {
+        //   this.errorActionButtons = result.errdesc;
+        //   setTimeout(() => {
+        //     this.errorActionButtons = '';
+        //   }, 2000);
+        // }
+        // }
+        // else {
+        //   // this.dialog.open(DialogComponent, {
+        //   //   data: {message: MsgList.exitSystemAlert}
+        //   // })
+        //   this.sharedService.exitSystemEvent();
+        // }
       });
     }
     else {
@@ -343,33 +415,41 @@ export class ExistUserComponent implements OnInit {
 
         this.dataService.DeleteSuspendBackOfficeUsers(objToApi).subscribe(result => {
 
-          if (result['Token'] != undefined || result['Token'] != null) {
+          if (typeof result == 'string') {
+            this.dialog.open(DialogComponent, {
+              data: { message: result }
+            })
 
-            //set new token
-            let tempObjUser = JSON.parse(localStorage.getItem('user'));
-            tempObjUser['Token'] = result['Token'];
-            localStorage.setItem('user', JSON.stringify(tempObjUser));
-            this.userToken = result['Token'];
-
-            if (result.errdesc.includes('User Deleted Successfully')) {
-
-              this.dialog.open(DialogComponent, {
-                data: { message: 'משתמש נמחק בהצלחה' }
-              });
-              this.router.navigate(['/public/allUsers']);
-            }
-            else {
-              this.dialog.open(DialogComponent, {
-                data: { message: result.errdesc }
-              });
-            }
-          }
-          else {
-            // this.dialog.open(DialogComponent, {
-            //   data: {message: MsgList.exitSystemAlert}
-            // })
             this.sharedService.exitSystemEvent();
+            return false;
           }
+          // if (result['Token'] != undefined || result['Token'] != null) {
+
+          //set new token
+          let tempObjUser = JSON.parse(localStorage.getItem('user'));
+          tempObjUser['Token'] = result['Token'];
+          localStorage.setItem('user', JSON.stringify(tempObjUser));
+          this.userToken = result['Token'];
+
+          // if (result.errdesc.includes('User Deleted Successfully')) {
+
+          this.dialog.open(DialogComponent, {
+            data: { message: 'משתמש נמחק בהצלחה' }
+          });
+          this.router.navigate(['/public/allUsers']);
+          // }
+          // else {
+          //   this.dialog.open(DialogComponent, {
+          //     data: { message: result.errdesc }
+          //   });
+          // }
+          // }
+          // else {
+          //   // this.dialog.open(DialogComponent, {
+          //   //   data: {message: MsgList.exitSystemAlert}
+          //   // })
+          //   this.sharedService.exitSystemEvent();
+          // }
         });
       }
     });

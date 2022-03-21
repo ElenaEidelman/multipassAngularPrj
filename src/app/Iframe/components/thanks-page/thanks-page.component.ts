@@ -20,8 +20,11 @@ export class ThanksPageComponent implements OnInit {
   thankyouResponse;
   @Input() orderId = '';
   ngOnInit() {
-    this.activatedRoute.queryParams.subscribe(params => {
+    debugger
+    localStorage.removeItem('picSizeInMega');
 
+    this.activatedRoute.queryParams.subscribe(params => {
+      debugger
       if (Object.keys(params).length > 0) {
         let orderid = params['orderid'];
         this.GetResume(orderid);
@@ -42,6 +45,7 @@ export class ThanksPageComponent implements OnInit {
       OrderIdEnc: orderid
     }
     this.dataService.GetResume(objToApi).subscribe(result => {
+      debugger
       this.thankyouResponse = result.obj[0]["OrderHeader"][0];
       console.log(result.obj[0]);
     })
@@ -49,20 +53,10 @@ export class ThanksPageComponent implements OnInit {
 
   resendGiftCard() {
     let companyInfo = localStorage.getItem('companyInfo');
-    localStorage.removeItem('companyInfo');
+    debugger
 
-    // let rout = this.router.url;
-    // 
-    // let test = this.activatedRoute.params.subscribe(result => {
-    //   
-    // })
 
-    // let test = document.location.host + '/login?companyid=' + companyInfo;
-
-    // let k = "localhost:4200/login?companyid=bC1uVdEINfm7oJNltQd3PA2";
-    // 
-
-    window.location.href = companyInfo;
+    window.location.href = localStorage.getItem('companyInfo');
   }
 
   addHyphenToPhoneNumber(phoneNumber) {

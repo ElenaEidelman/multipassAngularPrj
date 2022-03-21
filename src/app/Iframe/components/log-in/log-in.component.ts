@@ -36,6 +36,8 @@ export class LogInIframeComponent implements OnInit {
    * 03/22
    * 500
    */
+
+  //http://localhost:45036/clearance/PaymetCC?param=
   //login page: http://localhost:4200/giftCard/login?companyid=bC1uVdEINfm7oJNltQd3PA2
   //iframe page: http://localhost:4200/gift-card?companyid=bC1uVdEINfm7oJNltQd3PA2
   //thankyou page:  http://localhost:4200/gift-card?orderid=DkUs8NIluuQ5Mqd5Byh78w2
@@ -74,28 +76,26 @@ export class LogInIframeComponent implements OnInit {
 
   ngOnInit() {
 
+    //get iframe domain
 
-    if (localStorage.getItem('baseUrl') == '') {
-      this.dataService.getHost().subscribe(result => {
-        this.sharedService.pagesPermission.next(result['pagesPermission']);
+    this.dataServiceIframe.getHost().subscribe(result => {
+      localStorage.setItem('baseUrlIframe', result['baseUrl']);
+      localStorage.setItem('picSizeInMega', result['picSizeInMega']);
 
-        localStorage.setItem('baseUrl', result['baseUrl']);
-      })
-    }
 
-    this.GetIFrameCompanyId();
+      this.GetIFrameCompanyId();
+      this.minAmount = +result['minAmount'];
+      this.sumForm.get('cardSumControl').setValidators([Validators.required, Validators.min(this.minAmount)]);
 
-    //get minimum price for iframe
-    this.dataServiceIframe.minAmount.subscribe(minAmount => {
-      this.minAmount = minAmount;
-      this.sumForm.get('cardSumControl').setValidators([Validators.required, Validators.min(this.minAmount)])
-    })
+    });
+
 
     //change iframe data for preview
     this.sharingIframeService.iframePreviewInfo.subscribe(result => {
 
       if (this.infoData != undefined) {
         Object.keys(result).forEach(key => {
+          // 
 
           // if ((key == 'GiftCardPic' || key == 'Logo' || key == 'BackGround') && result[key] == '') {
           //   this.infoData[key] = this.spareData[key];
@@ -118,16 +118,24 @@ export class LogInIframeComponent implements OnInit {
   GetIFrameCompanyId() {
     this.domain.queryParamMap.subscribe(param => {
 
+
+
       //if company id get by url parameters
+
+
       if (Object.keys(param['params']).length != 0) {
         this.companyid = param['params']['companyid'];
         this.sharingIframeService.companyId.next(param['params']['companyid']);
         this.companyIdByParams = true;
         this.sharingIframeService.iframeCalledFromMultitav.next(!this.companyIdByParams + '');
-        // localStorage.setItem('companyId', param['params']['companyid']);
-        // localStorage.setItem('companyInfo', document.location.href);
 
-        this.getIframeCompanyInfo();
+        //comapyInfo localStorage, it needs for thankyou page, navigation to create another gift
+        localStorage.setItem('companyInfo', document.location.href);
+
+
+
+
+        this.getIframeCompanyInfo(this.companyid);
       }
 
 
@@ -137,16 +145,23 @@ export class LogInIframeComponent implements OnInit {
           Token: JSON.parse(localStorage.getItem('user'))['Token']
         }
 
-        this.dataService.GetIFrameB2CLink(objToApi).subscribe(result => {
+
+
+
+
+        this.dataServiceIframe.GetIFrameB2CLink(objToApi).subscribe(result => {
+
 
           if (typeof result == 'object') {
             if (result.err != -1) {
               this.companyid = result.obj.split('companyid=')[1];
+              localStorage.setItem('companyInfo', result.obj);
+
 
               this.sharingIframeService.companyId.next(result.obj.split('companyid=')[1])
 
 
-              this.getIframeCompanyInfo();
+              this.getIframeCompanyInfo(result.obj.split('companyid=')[1]);
             }
             else {
               this.dialog.open(DialogComponent, {
@@ -157,7 +172,7 @@ export class LogInIframeComponent implements OnInit {
           }
           else {
             this.dialog.open(DialogComponent, {
-              data: { message: result.errdesc }
+              data: { message: result }
             })
           }
         });
@@ -168,24 +183,19 @@ export class LogInIframeComponent implements OnInit {
   }
 
 
-  getIframeCompanyInfo() {
+  getIframeCompanyInfo(tenant) {
+
     let objToApi = {
-      CompanyIdEnc: this.companyid
+      CompanyIdEnc: tenant
     }
 
-    this.dataService.GetIFrameCompanyInfo(objToApi).subscribe(result => {
+
+
+    this.dataServiceIframe.GetIFrameCompanyInfo(objToApi).subscribe(result => {
+
       if (result.obj != undefined && result.obj != null && Object.keys(result.obj).length > 0) {
         this.sharingIframeService.companyInfoService.next(JSON.stringify(result));
         this.infoData = result.obj[0];
-
-        debugger
-        this.infoData.forEach(element => {
-          debugger
-
-        });
-
-        debugger
-
         this.spareData = JSON.parse(JSON.stringify(this.infoData))
 
       }
@@ -195,6 +205,10 @@ export class LogInIframeComponent implements OnInit {
 
   //remove double back slash //
   checkPath(path) {
+
+    if (path.includes('data:')) {
+      return path;
+    }
     let checkedPath = '';
     let getHttpValue = Object.values(path.split('//')).splice(0, 1);
     let getPathWithoutHttp = Object.values(path.split('//')).splice(1).join('/');
@@ -234,8 +248,12 @@ export class LogInIframeComponent implements OnInit {
 
 
   addHyphenToPhoneNumber(phoneNumber) {
+    // 
     let phoneIncludeHyphen = '';
     if (phoneNumber.includes('-')) {
+      return phoneNumber;
+    }
+    else if (phoneNumber.includes('*')) {
       return phoneNumber;
     }
     if (phoneNumber.length >= 10) {

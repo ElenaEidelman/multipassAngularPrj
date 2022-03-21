@@ -2,10 +2,13 @@ import { Component, ElementRef, OnChanges, OnInit, SimpleChanges, ViewChild } fr
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { MockData } from 'src/app/Classes/mockData';
 import { MsgList } from 'src/app/Classes/msgsList';
 import { DataServiceService } from 'src/app/data-service.service';
 import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
+import { IframeSeviceService } from 'src/app/Services/IframeService/iframe-sevice.service';
 import { IframeSharingServiceService } from 'src/app/Services/IframeService/iframe-sharing-service.service';
+import { SharedService } from 'src/app/Services/SharedService/shared.service';
 
 @Component({
   selector: 'app-iframe',
@@ -16,21 +19,30 @@ export class IframeComponent implements OnInit, OnChanges {
 
   //iframe values
   @ViewChild('infoTitle') infoTitle: ElementRef;
+  // @ViewChild('Logo') Logo: ElementRef;
+
+  pagePermissionAccessLevel = {
+    AccessLevel: '',
+    PageName: ''
+  }
   companyId;
 
   // IframeSrc;
   iframeChange: boolean = true;
   iframeObj;
   MsgList = MsgList;
+  MockData = MockData;
   setupSpinner: boolean = false;
 
 
   constructor(
+    private dataServiceIframe: IframeSeviceService,
     private dataService: DataServiceService,
     private fb: FormBuilder,
     private iframeSharingServiceService: IframeSharingServiceService,
     private dialog: MatDialog,
-    private router: Router) { }
+    private router: Router,
+    private sharedService: SharedService) { }
 
   previewForm = this.fb.group({
     ExternalLink: [''],
@@ -38,7 +50,7 @@ export class IframeComponent implements OnInit, OnChanges {
     GiftCardPic: [''],
     BackGround: [''],
     Logo: [''],
-    Phone: ['', Validators.pattern('[0]{1}[0-9]{1,2}[0-9]{7}')],
+    Phone: ['', Validators.pattern('[0]{1}[0-9]{1,2}[0-9]{7}|[*]{1}[0-9]{3,5}')],
     Mail: ['', Validators.email],
     // Website: [''],
     LinktoBranches: [''],
@@ -53,10 +65,17 @@ export class IframeComponent implements OnInit, OnChanges {
 
   GiftCardPicSrc: string = '';
   BackGroundSrc: string = '';
-  LogoSrc: string = '';
+  // LogoSrc: string = '';
   ngOnInit(): void {
+
     this.iframePicsFormData = new FormData();
 
+    this.pagePermissionAccessLevel = this.sharedService.pagesAccessLevel.value.length > 0 ? JSON.parse(this.sharedService.pagesAccessLevel.value) : JSON.parse(JSON.stringify(this.pagePermissionAccessLevel));
+    this.sharedService.pagesAccessLevel.next('');
+
+    if (this.pagePermissionAccessLevel.AccessLevel == this.MockData.accessLevelReadOnly) {
+      this.previewForm.disable();
+    }
 
     //formData contain images
     this.iframePicsFormData.append('BackGround', '');
@@ -81,12 +100,14 @@ export class IframeComponent implements OnInit, OnChanges {
     let objToApi = {
       CompanyIdEnc: this.companyId
     }
-    this.dataService.GetIFrameCompanyInfo(objToApi).subscribe(result => {
 
+    this.dataServiceIframe.GetIFrameCompanyInfo(objToApi).subscribe(result => {
+      debugger
       this.setupSpinner = false;
       if (typeof result == 'object') {
         if (result.err != -1) {
           let IframeSetupObj = result.obj[0];
+
           this.iframeDataSpare = JSON.parse(JSON.stringify(result.obj[0]));
           Object.keys(this.previewForm.controls).forEach(control => {
             if (this.iframePicsFormData.has(control)) {
@@ -139,6 +160,7 @@ export class IframeComponent implements OnInit, OnChanges {
             imageSrc = reader.result as string;
             this[controlName + 'Src'] = imageSrc;
             this.previewForm.get(controlName).setValue(imageSrc);
+
           };
         }
       }
@@ -159,6 +181,9 @@ export class IframeComponent implements OnInit, OnChanges {
 
   //remove double back slash //
   checkPath(path) {
+    if (path.includes('data:')) {
+      return path;
+    }
     let checkedPath = '';
     let getHttpValue = Object.values(path.split('//')).splice(0, 1);
     let getPathWithoutHttp = Object.values(path.split('//')).splice(1).join('/');
@@ -183,7 +208,9 @@ export class IframeComponent implements OnInit, OnChanges {
 
       let t = this.iframePicsFormData.getAll('CompanyIdEnc');
 
-      this.dataService.InsertUpdateIFrame(this.iframePicsFormData).subscribe(result => {
+
+      this.dataServiceIframe.InsertUpdateIFrame(this.iframePicsFormData).subscribe(result => {
+
 
         this.setupSpinner = false;
         if (typeof result == 'object') {
@@ -214,6 +241,7 @@ export class IframeComponent implements OnInit, OnChanges {
   }
 
   returnDataToIframe(control) {
+
     this.previewForm.get(control).setValue(this.iframeDataSpare[control]);
     this.iframePicsFormData.set(control, this.iframeDataSpare[control])
     this.iframeSharingServiceService.setPreviwIframeInfo(this.previewForm.value)

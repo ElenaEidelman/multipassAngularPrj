@@ -18,6 +18,7 @@ import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
 import { MsgList } from 'src/app/Classes/msgsList';
 import { UrlSharingService } from 'src/app/Services/UrlSharingService/url-sharing.service';
 import { SharedService } from 'src/app/Services/SharedService/shared.service';
+import { MockData } from 'src/app/Classes/mockData';
 
 
 
@@ -31,6 +32,11 @@ export class ExistCustomerComponent implements OnInit {
   @ViewChild(MatAccordion) accordion: MatAccordion;
   faFileExcel = faFileExcel;
 
+  pagePermissionAccessLevel = {
+    AccessLevel: '',
+    PageName: ''
+  }
+
   // data chart
   public recOrdersChartData: ChartDataSets[];
   public recOrdersChartLabels: Label[];
@@ -42,6 +48,7 @@ export class ExistCustomerComponent implements OnInit {
   customerData;
   customerOrders;
   MsgList = MsgList;
+  MockData = MockData;
 
   saveFormSpinner: boolean = false;
   statusList = [];
@@ -94,6 +101,14 @@ export class ExistCustomerComponent implements OnInit {
     this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
     this.getUserStatus();
 
+    this.pagePermissionAccessLevel = this.sharedService.pagesAccessLevel.value.length > 0 ? JSON.parse(this.sharedService.pagesAccessLevel.value) : JSON.parse(JSON.stringify(this.pagePermissionAccessLevel));
+
+    this.sharedService.pagesAccessLevel.next('');
+    if (this.pagePermissionAccessLevel.AccessLevel == this.MockData.accessLevelReadOnly) {
+      this.CustomerForm.disable();
+    }
+
+
     // this.idUnsubscribe = this.activeRoute.params.subscribe(param => {
 
     let urlParams = this.urlSharingService.messageSource.getValue();
@@ -114,45 +129,53 @@ export class ExistCustomerComponent implements OnInit {
 
     this.dataService.GetCustomersByFilter(objToApi).subscribe(result => {
 
-      if (result['Token'] != undefined || result['Token'] != null) {
+      // if (result['Token'] != undefined || result['Token'] != null) {
+      if (typeof result == 'string') {
+        this.dialog.open(DialogComponent, {
+          data: { message: result }
+        })
 
-        if (typeof result == 'object' && result.obj != null) {
-          this.customerData = result.obj[0];
-
-          Object.keys(result.obj[0]).forEach(el => {
-            if (this.CustomerForm.get(el) != null && el != 'SEO_Description') {
-              this.CustomerForm.get(el).setValue(result.obj[0][el]);
-            }
-
-            if (el == 'SEO_Description') {
-              this.CustomerForm.get('Notes').setValue(result.obj[0][el]);
-            }
-
-            if (el == 'StatusId') {
-
-              let list = this.statusList.filter(status => status.StatusId == this.CustomerForm.get(el).value);
-
-              this.CustomerForm.get(el).setValue(list[0]['StatusId']);
-            }
-            else if (el == 'Address') {
-              this.CustomerForm.get('HouseNumber').setValue(result.obj[0]['Address']);
-            }
-          });
-          this.getChartData();
-        }
-        if (result.obj == null && result.errdesc != '') {
-          this.dialog.open(DialogComponent, {
-            data: { message: result.errdesc }
-          })
-          this.router.navigate(['/public/home']);
-        }
-      }
-      else {
-        // this.dialog.open(DialogComponent, {
-        //   data: {message: MsgList.exitSystemAlert}
-        // })
         this.sharedService.exitSystemEvent();
+        return false;
       }
+
+      if (typeof result == 'object' && result.obj != null) {
+        this.customerData = result.obj[0];
+
+        Object.keys(result.obj[0]).forEach(el => {
+          if (this.CustomerForm.get(el) != null && el != 'SEO_Description') {
+            this.CustomerForm.get(el).setValue(result.obj[0][el]);
+          }
+
+          if (el == 'SEO_Description') {
+            this.CustomerForm.get('Notes').setValue(result.obj[0][el]);
+          }
+
+          if (el == 'StatusId') {
+
+            let list = this.statusList.filter(status => status.StatusId == this.CustomerForm.get(el).value);
+
+            this.CustomerForm.get(el).setValue(list[0]['StatusId']);
+          }
+          else if (el == 'Address') {
+            this.CustomerForm.get('HouseNumber').setValue(result.obj[0]['Address']);
+          }
+        });
+        this.getChartData();
+      }
+      if (result.obj == null && result.errdesc != '') {
+        this.dialog.open(DialogComponent, {
+          data: { message: result.errdesc }
+        })
+        this.router.navigate(['/public/home']);
+      }
+      // }
+      // else {
+      //   // this.dialog.open(DialogComponent, {
+      //   //   data: {message: MsgList.exitSystemAlert}
+      //   // })
+      //   this.sharedService.exitSystemEvent();
+      // }
     });
     // })
 
@@ -232,26 +255,35 @@ export class ExistCustomerComponent implements OnInit {
 
     this.dataService.GetUserStatus(objToApi).subscribe(result => {
 
-      if (result['Token'] != undefined || result['Token'] != null) {
-        //set new token
-        let tempObjUser = JSON.parse(localStorage.getItem('user'));
-        tempObjUser['Token'] = result['Token'];
-        localStorage.setItem('user', JSON.stringify(tempObjUser));
-        this.userToken = result['Token'];
+      if (typeof result == 'string') {
+        this.dialog.open(DialogComponent, {
+          data: { message: result }
+        })
 
-        if (result.obj != null && result.obj != undefined && Object.keys(result.obj).length > 0) {
-
-
-          this.statusList = [...result.obj];
-
-        }
-      }
-      else {
-        // this.dialog.open(DialogComponent,{
-        //   data: {message: MsgList.exitSystemAlert}
-        // });
         this.sharedService.exitSystemEvent();
+        return false;
       }
+
+      // if (result['Token'] != undefined || result['Token'] != null) {
+      //set new token
+      let tempObjUser = JSON.parse(localStorage.getItem('user'));
+      tempObjUser['Token'] = result['Token'];
+      localStorage.setItem('user', JSON.stringify(tempObjUser));
+      this.userToken = result['Token'];
+
+      // if (result.obj != null && result.obj != undefined && Object.keys(result.obj).length > 0) {
+
+
+      this.statusList = [...result.obj];
+
+      // }
+      // }
+      // else {
+      //   // this.dialog.open(DialogComponent,{
+      //   //   data: {message: MsgList.exitSystemAlert}
+      //   // });
+      //   this.sharedService.exitSystemEvent();
+      // }
     })
   }
 
@@ -274,7 +306,10 @@ export class ExistCustomerComponent implements OnInit {
         else if (key == 'HouseNumber') {
           objToApi['Address'] = this.CustomerForm.get(key).value;
         }
-        else if (data[key] != '' && data[key] != null && key != 'HouseNumber' && key != 'StatusId') {
+        else if (key == 'BusinessFile') {
+          objToApi['BusinessFile'] = this.CustomerForm.get(key).value == '' ? '/test.txt' : this.CustomerForm.get(key).value;
+        }
+        else if (data[key] != '' && data[key] != null && key != 'HouseNumber' && key != 'StatusId' && key != 'BusinessFile') {
 
           objToApi[key] = data[key].trim();
         }
@@ -284,51 +319,61 @@ export class ExistCustomerComponent implements OnInit {
       // objToApi['Tz'] = +objToApi['Tz'];
 
 
+
       this.dataService.InsertUpdateUser(objToApi).subscribe(result => {
 
         this.saveFormSpinner = false;
+        if (typeof result == 'string') {
+          this.dialog.open(DialogComponent, {
+            data: { message: result }
+          })
 
-        if (result['Token'] != undefined || result['Token'] != null) {
-
-          //set new token
-          let tempObjUser = JSON.parse(localStorage.getItem('user'));
-          tempObjUser['Token'] = result['Token'];
-          localStorage.setItem('user', JSON.stringify(tempObjUser));
-          this.userToken = result['Token'];
-
-          if (typeof result == 'object' && result.obj != null) {
-
-            this.msgActionButtons = 'נשמר בהצלחה';
-            setTimeout(() => {
-              this.msgActionButtons = '';
-            }, 3000);
-
-            this.customerData = result.obj[0];
-            this.customerData.ValidateDate = result.obj[0]['businessValidDate'];
-
-            Object.keys(result.obj[0]).forEach(el => {
-
-
-              //in response we get organizationName but need OrganizationName !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-              //if organizationName will not be change, need add to statemant bellow part that add value into OrganizationName controll
-              if (this.CustomerForm.get(el) != null) {
-                this.CustomerForm.get(el).setValue(result.obj[0][el]);
-              }
-            });
-
-          }
-        }
-
-        else if (typeof result == 'string') {
-          this.errorActionButtons = result;
-
-          setTimeout(() => {
-            this.errorActionButtons = '';
-          }, 3000);
-        }
-        else {
           this.sharedService.exitSystemEvent();
+          return false;
         }
+
+        // if (result['Token'] != undefined || result['Token'] != null) {
+
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
+
+        // if (typeof result == 'object' && result.obj != null) {
+
+        this.msgActionButtons = 'נשמר בהצלחה';
+        setTimeout(() => {
+          this.msgActionButtons = '';
+        }, 3000);
+
+        this.customerData = result.obj[0];
+
+        this.customerData.ValidateDate = result.obj[0]['businessValidDate'];
+
+        Object.keys(result.obj[0]).forEach(el => {
+
+
+          //in response we get organizationName but need OrganizationName !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+          //if organizationName will not be change, need add to statemant bellow part that add value into OrganizationName controll
+          if (this.CustomerForm.get(el) != null) {
+            this.CustomerForm.get(el).setValue(result.obj[0][el]);
+          }
+        });
+
+        // }
+        // }
+
+        // else if (typeof result == 'string') {
+        //   this.errorActionButtons = result;
+
+        //   setTimeout(() => {
+        //     this.errorActionButtons = '';
+        //   }, 3000);
+        // }
+        // else {
+        //   this.sharedService.exitSystemEvent();
+        // }
       });
     }
     else {
@@ -357,29 +402,37 @@ export class ExistCustomerComponent implements OnInit {
 
         this.dataService.DeleteSuspendUsers(objToApi).subscribe(result => {
 
-          if (result['Token'] != undefined || result['Token'] != null) {
+          if (typeof result == 'string') {
+            this.dialog.open(DialogComponent, {
+              data: { message: result }
+            })
 
-            //set new token
-            let tempObjUser = JSON.parse(localStorage.getItem('user'));
-            tempObjUser['Token'] = result['Token'];
-            localStorage.setItem('user', JSON.stringify(tempObjUser));
-            this.userToken = result['Token'];
-
-            if (result.errdesc.includes('Successfully')) {
-              this.router.navigate(['/public/allCustomers']);
-              this.dialog.open(DialogComponent, {
-                data: { message: 'לקוח נחסם בהצלחה' }
-              });
-            }
-            else {
-              this.dialog.open(DialogComponent, {
-                data: { message: result.errdesc }
-              });
-            }
-          }
-          else {
             this.sharedService.exitSystemEvent();
+            return false;
           }
+          // if (result['Token'] != undefined || result['Token'] != null) {
+
+          //set new token
+          let tempObjUser = JSON.parse(localStorage.getItem('user'));
+          tempObjUser['Token'] = result['Token'];
+          localStorage.setItem('user', JSON.stringify(tempObjUser));
+          this.userToken = result['Token'];
+
+          // if (result.errdesc.includes('Successfully')) {
+          this.router.navigate(['/public/allCustomers']);
+          this.dialog.open(DialogComponent, {
+            data: { message: result.errdesc }
+          });
+          // }
+          // else {
+          //   this.dialog.open(DialogComponent, {
+          //     data: { message: result.errdesc }
+          //   });
+          // }
+          // }
+          // else {
+          //   this.sharedService.exitSystemEvent();
+          // }
         });
       }
     });

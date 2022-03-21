@@ -12,8 +12,9 @@
                         <input [hidden]="true" name="Logo" #Logo (change)="fileOptionChange($event, 'Logo')"
                             type="file">
                         <input [hidden]="true" matInput readonly [value]="Logo.value" formControlName="Logo">
-                        <img [src]="checkPath(LogoSrc != '' ? LogoSrc :  previewForm.get('Logo').value)"
-                            class="smallPrevImg">
+
+                        <!--checkPath(LogoSrc != '' ? LogoSrc :  previewForm.get('Logo').value)-->
+                        <img [src]="checkPath(previewForm.get('Logo').value)" class="smallPrevImg">
                         <mat-icon (click)="Logo.click()" matPrefix *ngIf="previewForm.get('Logo').value == ''">
                             attach_file</mat-icon>
                         <mat-icon matPrefix *ngIf="previewForm.get('Logo').value != ''"
@@ -86,7 +87,7 @@
                 <div class="formRow">
                     <mat-form-field>
                         <mat-label>טלפון</mat-label>
-                        <input matInput formControlName="Phone" [maxLength]="10" numbersOnly>
+                        <input matInput formControlName="Phone" [maxLength]="10" numbersOnly2>
 
                         <mat-icon matPrefix *ngIf="previewForm.get('Phone').value == ''">phone</mat-icon>
                         <mat-icon matPrefix *ngIf="previewForm.get('Phone').value != ''"
@@ -137,8 +138,10 @@
                             (change)="fileOptionChange($event, 'GiftCardPic')" type="file">
                         <input [hidden]="true" matInput formControlName="GiftCardPic" readonly
                             [value]="GiftCardPic.value">
-                        <img [src]="checkPath(GiftCardPicSrc != '' ? GiftCardPicSrc :  previewForm.get('GiftCardPic').value)"
-                            class="smallPrevImg">
+
+
+                        <!--checkPath(GiftCardPicSrc != '' ? GiftCardPicSrc :  previewForm.get('GiftCardPic').value)-->
+                        <img [src]="checkPath(previewForm.get('GiftCardPic').value)" class="smallPrevImg">
                         <mat-icon (click)="GiftCardPic.click()" matPrefix
                             *ngIf="previewForm.get('GiftCardPic').value == ''">attach_file</mat-icon>
                         <mat-icon matPrefix *ngIf="previewForm.get('GiftCardPic').value != ''"
@@ -160,8 +163,9 @@
                             (change)="fileOptionChange($event, 'BackGround')" type="file">
                         <input [hidden]="true" matInput readonly [value]="BackGround.value"
                             formControlName="BackGround">
-                        <img [src]="checkPath(BackGroundSrc != '' ? BackGroundSrc :  previewForm.get('BackGround').value)"
-                            class="smallPrevImg">
+
+                        <!--checkPath(BackGroundSrc != '' ? BackGroundSrc :  previewForm.get('BackGround').value)-->
+                        <img [src]="checkPath(previewForm.get('BackGround').value)" class="smallPrevImg">
                         <mat-icon (click)="BackGround.click()" matPrefix
                             *ngIf="previewForm.get('BackGround').value == ''">attach_file</mat-icon>
                         <mat-icon matPrefix *ngIf="previewForm.get('BackGround').value != ''"

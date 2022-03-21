@@ -1,5 +1,5 @@
 {
-    "baseUrl": "https://tempdomain-test-3.mltp.co.il",
+    "baseUrl": "http://localhost:45036",
     "DevMode": "true",
     "minAmount": "100",
     "picSizeInMega": "1",

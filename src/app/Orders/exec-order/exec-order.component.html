@@ -10,6 +10,11 @@
                 descriptionStatusInjected : orderStatus.description}}</span>
         </div>
     </div>
+    <div class="readOnliNotifivation"
+        *ngIf="pagePermissionAccessLevel.AccessLevel == this.MockData.accessLevelReadOnly">
+        {{MsgList.readOnly}}
+        <mat-icon>info</mat-icon>
+    </div>
 </div>
 <span *ngIf="dataByPage == null">
     <mat-spinner></mat-spinner>
@@ -161,7 +166,9 @@
                         <mat-form-field>
                             <textarea matInput placeholder="...תאור של הזמנה" formControlName="Comments"
                                 cdkTextareaAutosize #autosize="cdkTextareaAutosize"></textarea>
-                            <mat-error>{{MsgList.requiredField}}</mat-error>
+                            <mat-error>{{MsgList.requiredField}}
+                                <mat-icon>error</mat-icon>
+                            </mat-error>
                         </mat-form-field>
                     </form>
                 </div>
@@ -360,7 +367,7 @@
 
                 </table>
                 <div class="noInfo saveMessage"
-                    [@openClose]="dataByPage.DigitalBatch != undefined && (dataByPage.DigitalBatch > 0 || dataByPage.DigitalBatch != 0)">
+                    *ngIf="dataByPage.DigitalBatch != undefined && (dataByPage.DigitalBatch > 0 || dataByPage.DigitalBatch != 0)">
                     לא ניתן להוסיף שורות להזמנה שנוצרה מקובץ
                 </div>
             </div>
@@ -371,7 +378,8 @@
                 <div class="refBlock">
                     <mat-form-field>
                         <mat-label dir="rtl">מספר אסמכתא</mat-label>
-                        <input matInput [formControl]="RefControl">
+                        <input matInput [formControl]="RefControl" numbersOnly>
+                        <mat-error>{{MsgList.requiredField}}</mat-error>
                     </mat-form-field>
                 </div>
             </div>

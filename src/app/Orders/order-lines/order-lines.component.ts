@@ -18,6 +18,8 @@ import { MsgList } from 'src/app/Classes/msgsList';
 import { UrlSharingService } from 'src/app/Services/UrlSharingService/url-sharing.service';
 import { SharedService } from 'src/app/Services/SharedService/shared.service';
 import { animate, state, style, transition, trigger } from '@angular/animations';
+import { debug } from 'console';
+import { MockData } from 'src/app/Classes/mockData';
 
 
 @Component({
@@ -45,7 +47,15 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild('autosize') autosize: CdkTextareaAutosize;
 
+  pagePermissionAccessLevel = {
+    AccessLevel: '',
+    PageName: ''
+  }
+
+
   faFileExcel = faFileExcel;
+  MsgList = MsgList;
+  MockData = MockData;
 
   urlParamDestroy;
   userToken: string;
@@ -114,6 +124,14 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
     this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
     // this.urlParamDestroy = this.activeRoute.params.subscribe(param => {
 
+    this.pagePermissionAccessLevel = this.sharedService.pagesAccessLevel.value.length > 0 ? JSON.parse(this.sharedService.pagesAccessLevel.value) : JSON.parse(JSON.stringify(this.pagePermissionAccessLevel));
+    this.sharedService.pagesAccessLevel.next('');
+    if (this.pagePermissionAccessLevel.AccessLevel == this.MockData.accessLevelReadOnly) {
+      this.smsTemplates.disable();
+      this.previewSmsTemplate.disable();
+
+    }
+
     let urlParams = this.urlSharingService.messageSource.getValue();
     if (urlParams == '') {
       this.router.navigate(['/public/home']);
@@ -166,14 +184,18 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
       userId: this.userId
     }
 
-    // this.dataTable = new MatTableDataSource([
-    //   {Row:'1',CardId: '2',DSendName: '3', DSendPhone: '4', LoadSum: '5', ValidationDate: '6', KindOfLoadSumDesc: '7', DSendLastSent: '8'}
-    // ]);
 
-    debugger
     this.dataService.GetCardsByOrderId(objToAPI).subscribe(result => {
-      debugger
+
       this.tableSpinner = false;
+      if (typeof result == 'string') {
+        this.dialog.open(DialogComponent, {
+          data: { message: result }
+        })
+
+        this.sharedService.exitSystemEvent();
+        return false;
+      }
 
       //check if order have created cards
       result['obj'][0].every(element => {
@@ -187,40 +209,40 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       });
 
-      if (result['Token'] != undefined || result['Token'] != null) {
+      // if (result['Token'] != undefined || result['Token'] != null) {
 
-        //set new token
-        let tempObjUser = JSON.parse(localStorage.getItem('user'));
-        tempObjUser['Token'] = result['Token'];
-        localStorage.setItem('user', JSON.stringify(tempObjUser));
-        this.userToken = result['Token'];
+      //set new token
+      let tempObjUser = JSON.parse(localStorage.getItem('user'));
+      tempObjUser['Token'] = result['Token'];
+      localStorage.setItem('user', JSON.stringify(tempObjUser));
+      this.userToken = result['Token'];
 
-        if (typeof result == 'object') {
+      // if (typeof result == 'object') {
 
 
-          //order id to preview
-          this.orderIdToPreview = result['obj'][2];
+      //order id to preview
+      this.orderIdToPreview = result['obj'][2];
 
-          this.dataTable.data = result['obj'][0];
-          debugger
+      this.dataTable.data = result['obj'][0];
 
-          //DigitalBatch number, only if order created from excel
-          this.OrderCreatedFromExcel = result['obj'][1] != '' ? true : false;
-          this.DigitalBatch = result['obj'][1];
 
-        }
-        else {
-          this.dialog.open(DialogComponent, {
-            data: { message: result }
-          })
-        }
-      }
-      else {
-        // this.dialog.open(DialogComponent, {
-        //   data: {message: MsgList.exitSystemAlert}
-        // })
-        this.sharedService.exitSystemEvent();
-      }
+      //DigitalBatch number, only if order created from excel
+      this.OrderCreatedFromExcel = result['obj'][1] != '' ? true : false;
+      this.DigitalBatch = result['obj'][1];
+
+      // }
+      // else {
+      //   this.dialog.open(DialogComponent, {
+      //     data: { message: result }
+      //   })
+      // }
+      // }
+      // else {
+      //   // this.dialog.open(DialogComponent, {
+      //   //   data: {message: MsgList.exitSystemAlert}
+      //   // })
+      //   this.sharedService.exitSystemEvent();
+      // }
     });
   }
 
@@ -295,26 +317,38 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   sendSMS() {
-    let selectedRows = this.selection.selected;
-    if (selectedRows.length > 0) {
-      let selectedCards = [];
-      let senderName = '';
-      selectedRows.forEach(card => {
-        selectedCards.push(card.Id)
-      });
 
-      let objToApi = {
-        Token: this.userToken,
-        TemplateId: this.smsTemplates.value,
-        UserId: this.userId,
-        OrderLineIds: selectedCards,
-        CoreOrderId: this.orderId,
-        From: this.smsTemplatesData.filter(el => el.Id == this.smsTemplates.value)[0]['SenderName']
-      }
+    if (this.pagePermissionAccessLevel.AccessLevel != this.MockData.accessLevelReadOnly) {
 
-      this.dataService.SendSMSByOrderLine(objToApi).subscribe(result => {
 
-        if (result['Token'] != undefined || result['Token'] != null) {
+      let selectedRows = this.selection.selected;
+      if (selectedRows.length > 0) {
+        let selectedCards = [];
+        let senderName = '';
+        selectedRows.forEach(card => {
+          selectedCards.push(card.Id)
+        });
+
+        let objToApi = {
+          Token: this.userToken,
+          TemplateId: this.smsTemplates.value,
+          UserId: this.userId,
+          OrderLineIds: selectedCards,
+          CoreOrderId: this.orderId,
+          From: this.smsTemplatesData.filter(el => el.Id == this.smsTemplates.value)[0]['SenderName']
+        }
+
+
+        this.dataService.SendSMSByOrderLine(objToApi).subscribe(result => {
+          if (typeof result == 'string') {
+            this.dialog.open(DialogComponent, {
+              data: { message: result }
+            })
+
+            this.sharedService.exitSystemEvent();
+            return false;
+          }
+          // if (result['Token'] != undefined || result['Token'] != null) {
 
           //set new token
           let tempObjUser = JSON.parse(localStorage.getItem('user'));
@@ -322,54 +356,70 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
           localStorage.setItem('user', JSON.stringify(tempObjUser));
           this.userToken = result['Token'];
 
-          if (result.errdesc == 'OK') {
+          // if (result.errdesc == 'OK') {
 
-            this.dialog.open(DialogComponent, {
-              data: { title: 'ההודעות נשלחות ברקע', message: this.previewSmsTemplate.value, subTitle: ' ההודעה נשלחה ל ' + selectedRows.length + ' נמענים ' }
-            })
-          }
-          else {
-            this.dialog.open(DialogComponent, {
-              data: { message: result.errdesc }
-            });
-          }
-        }
-        else {
-          // this.dialog.open(DialogComponent, {
-          //   data: {message: MsgList.exitSystemAlert}
-          // })
-          this.sharedService.exitSystemEvent();
-        }
-      });
+          this.dialog.open(DialogComponent, {
+            data: { title: 'ההודעות נשלחות ברקע', message: this.previewSmsTemplate.value, subTitle: ' ההודעה נשלחה ל ' + selectedRows.length + ' נמענים ' }
+          })
+          // }
+          // else {
+          //   this.dialog.open(DialogComponent, {
+          //     data: { message: result.errdesc }
+          //   });
+          // }
+          // }
+          // else {
+          //   // this.dialog.open(DialogComponent, {
+          //   //   data: {message: MsgList.exitSystemAlert}
+          //   // })
+          //   this.sharedService.exitSystemEvent();
+          // }
+        });
 
-    } else {
-      this.errorSendSms = 'נא לבחור כרטיס';
-      setTimeout(() => {
-        this.errorSendSms = '';
-      }, 2000)
+      } else {
+        this.errorSendSms = 'נא לבחור כרטיס';
+        setTimeout(() => {
+          this.errorSendSms = '';
+        }, 2000)
+      }
+    }
+    else {
+      this.dialog.open(DialogComponent, {
+        data: { message: this.MsgList.readOnly }
+      })
     }
   }
   voidCards() {
-    let selectedRows = this.selection.selected;
-    if (selectedRows.length > 0) {
-      this.voidCardSpinner = true;
-      let selectedCards = [];
-      selectedRows.forEach(card => {
-        selectedCards.push(card.CardId)
-      });
 
-      let objToApi = {
-        Token: this.userToken,
-        OrderId: this.orderId,
-        UserId: this.userId,
-        CardLst: selectedCards,
-      }
+    if (this.pagePermissionAccessLevel.AccessLevel != this.MockData.accessLevelReadOnly) {
+      let selectedRows = this.selection.selected;
+      if (selectedRows.length > 0) {
+        this.voidCardSpinner = true;
+        let selectedCards = [];
+        selectedRows.forEach(card => {
+          selectedCards.push(card.CardId)
+        });
+
+        let objToApi = {
+          Token: this.userToken,
+          OrderId: this.orderId,
+          UserId: this.userId,
+          CardLst: selectedCards,
+        }
 
 
-      this.dataService.VoidCards(objToApi).subscribe(result => {
+        this.dataService.VoidCards(objToApi).subscribe(result => {
 
-        this.voidCardSpinner = false;
-        if (result['Token'] != undefined || result['Token'] != null) {
+          this.voidCardSpinner = false;
+          if (typeof result == 'string') {
+            this.dialog.open(DialogComponent, {
+              data: { message: result }
+            })
+
+            this.sharedService.exitSystemEvent();
+            return false;
+          }
+          // if (result['Token'] != undefined || result['Token'] != null) {
 
           //set new token
           let tempObjUser = JSON.parse(localStorage.getItem('user'));
@@ -377,41 +427,47 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
           localStorage.setItem('user', JSON.stringify(tempObjUser));
           this.userToken = result['Token'];
 
-          if (result.obj == true && result.errdesc == 'OK') {
-            this.GetCards();
-            this.cardsDeletedMsg = 'נחסם בהצלחה';
-            this.selection.clear();
+          // if (result.obj == true && result.errdesc == 'OK') {
+          this.GetCards();
+          this.cardsDeletedMsg = 'נחסם בהצלחה';
+          this.selection.clear();
 
-            setTimeout(() => {
-              this.cardsDeletedMsg = '';
-            }, 2000);
+          setTimeout(() => {
+            this.cardsDeletedMsg = '';
+          }, 2000);
 
-          }
-          if (result.errdesc != 'OK') {
-            this.cardsDeletedMsg = result.errdesc;
-            setTimeout(() => {
-              this.cardsDeletedMsg = '';
-            }, 2000)
-          }
-        }
-        else if (typeof result == 'string') {
-          this.dialog.open(DialogComponent, {
-            data: { message: result }
-          });
-        }
-        else {
-          // this.dialog.open(DialogComponent, {
-          //   data: {message: MsgList.exitSystemAlert}
-          // })
-          this.sharedService.exitSystemEvent();
-        }
-      });
+          // }
+          // if (result.errdesc != 'OK') {
+          //   this.cardsDeletedMsg = result.errdesc;
+          //   setTimeout(() => {
+          //     this.cardsDeletedMsg = '';
+          //   }, 2000)
+          // }
+          // }
+          // else if (typeof result == 'string') {
+          //   this.dialog.open(DialogComponent, {
+          //     data: { message: result }
+          //   });
+          // }
+          // else {
+          //   // this.dialog.open(DialogComponent, {
+          //   //   data: {message: MsgList.exitSystemAlert}
+          //   // })
+          //   this.sharedService.exitSystemEvent();
+          // }
+        });
 
-    } else {
-      this.cardsDeletedError = 'נא לבחור כרטיס';
-      setTimeout(() => {
-        this.cardsDeletedError = '';
-      }, 2000)
+      } else {
+        this.cardsDeletedError = 'נא לבחור כרטיס';
+        setTimeout(() => {
+          this.cardsDeletedError = '';
+        }, 2000)
+      }
+    }
+    else {
+      this.dialog.open(DialogComponent, {
+        data: { message: this.MsgList.readOnly }
+      })
     }
   }
 
@@ -422,67 +478,75 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     this.dataService.GetSMSFormats(objToApi).subscribe(result => {
+      if (typeof result == 'string') {
+        this.dialog.open(DialogComponent, {
+          data: { message: result }
+        })
 
-
-      if (result['Token'] != undefined || result['Token'] != null) {
-
-        //set new token
-        let tempObjUser = JSON.parse(localStorage.getItem('user'));
-        tempObjUser['Token'] = result['Token'];
-        localStorage.setItem('user', JSON.stringify(tempObjUser));
-        this.userToken = result['Token'];
-        if (typeof result == 'object' && result.obj != null && result.obj.length > 0) {
-          this.smsTemplatesData = [...result.obj];
-        }
-      }
-      else {
-        // this.dialog.open(DialogComponent, {
-        //   data: {message: MsgList.exitSystemAlert}
-        // })
         this.sharedService.exitSystemEvent();
+        return false;
       }
+
+      // if (result['Token'] != undefined || result['Token'] != null) {
+
+      //set new token
+      let tempObjUser = JSON.parse(localStorage.getItem('user'));
+      tempObjUser['Token'] = result['Token'];
+      localStorage.setItem('user', JSON.stringify(tempObjUser));
+      this.userToken = result['Token'];
+      // if (typeof result == 'object' && result.obj != null && result.obj.length > 0) {
+      this.smsTemplatesData = [...result.obj];
+      // }
+      // }
+      // else {
+      //   // this.dialog.open(DialogComponent, {
+      //   //   data: {message: MsgList.exitSystemAlert}
+      //   // })
+      //   this.sharedService.exitSystemEvent();
+      // }
     });
   }
 
   excelFileExport() {
-    let tableLabels = this.tabelLabels;
+
+    if (this.pagePermissionAccessLevel.AccessLevel != this.MockData.accessLevelReadOnly) {
+      let tableLabels = this.tabelLabels;
 
 
-    //add another column to file if order created from excel file
-    if (this.DigitalBatch != '' && this.DigitalBatch != undefined) {
-      tableLabels.push({ value: 'ValidationField', viewValue: 'שדה אימות' })
-    }
+      //add another column to file if order created from excel file
+      if (this.DigitalBatch != '' && this.DigitalBatch != undefined) {
+        tableLabels.push({ value: 'ValidationField', viewValue: 'שדה אימות' })
+      }
+      let tableData = JSON.parse(JSON.stringify(this.dataTable.data));
 
-    debugger
-    let tableData = JSON.parse(JSON.stringify(this.dataTable.data));
+      let workbook = new Workbook();
+      let worksheet = workbook.addWorksheet('ProductSheet');
 
-    let workbook = new Workbook();
-    let worksheet = workbook.addWorksheet('ProductSheet');
+      var worksheetArr = [];
+      tableLabels.forEach(label => {
+        worksheetArr.push({ header: label.viewValue, key: label.value, width: 20 });
+      });
 
-    var worksheetArr = [];
-    tableLabels.forEach(label => {
-      worksheetArr.push({ header: label.viewValue, key: label.value, width: 20 });
-    });
+      worksheet.columns = worksheetArr;
 
-    worksheet.columns = worksheetArr;
-
-    for (let data of Object.values(tableData)) {
-      for (let element of Object.keys(data)) {
-        if (element == 'CardId') {
-          let oldData = data[element];
-          data[element] = oldData + '' + data['PinCode']
+      for (let data of Object.values(tableData)) {
+        for (let element of Object.keys(data)) {
+          if (element == 'CardId') {
+            let oldData = data[element];
+            data[element] = oldData + '' + data['PinCode']
+          }
         }
       }
+      worksheet.addRows(tableData, "n")
+
+      // let userData = JSON.parse(localStorage.getItem('user')).obj;
+      let userData = this.customerData;
+
+      workbook.xlsx.writeBuffer().then((data) => {
+        let blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        fs.saveAs(blob, userData['FName'] + '_' + userData['LName'] + '_' + this.orderId + '.xlsx');
+      })
     }
-    worksheet.addRows(tableData, "n")
-
-    // let userData = JSON.parse(localStorage.getItem('user')).obj;
-    let userData = this.customerData;
-
-    workbook.xlsx.writeBuffer().then((data) => {
-      let blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      fs.saveAs(blob, userData['FName'] + '_' + userData['LName'] + '_' + this.orderId + '.xlsx');
-    })
   }
 
   GetCustomerById() {
@@ -492,23 +556,33 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
       CustomerId: this.userId
     }
     this.dataService.GetCustomersByFilter(objToApi).subscribe(result => {
-      if (result['Token'] != undefined || result['Token'] != null) {
+      // if (result['Token'] != undefined || result['Token'] != null) {
 
-        if (typeof result == 'object' && result.obj != null) {
-          this.customerData = result.obj[0];
-        }
-        if (result.obj == null && result.errdesc != '') {
-          this.dialog.open(DialogComponent, {
-            data: { message: result.errdesc }
-          })
-        }
-      }
-      else {
-        // this.dialog.open(DialogComponent, {
-        //   data: {message: MsgList.exitSystemAlert}
-        // })
+      // if (typeof result == 'object' && result.obj != null) {
+      if (typeof result == 'string') {
+        this.dialog.open(DialogComponent, {
+          data: { message: result }
+        })
+
         this.sharedService.exitSystemEvent();
+        return false;
       }
+
+
+      this.customerData = result.obj[0];
+      // }
+      // if (result.obj == null && result.errdesc != '') {
+      //   this.dialog.open(DialogComponent, {
+      //     data: { message: result.errdesc }
+      //   })
+      // }
+      // }
+      // else {
+      //   // this.dialog.open(DialogComponent, {
+      //   //   data: {message: MsgList.exitSystemAlert}
+      //   // })
+      //   this.sharedService.exitSystemEvent();
+      // }
     });
 
   }

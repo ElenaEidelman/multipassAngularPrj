@@ -6,6 +6,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MockData } from 'src/app/Classes/mockData';
 import { MsgList } from 'src/app/Classes/msgsList';
 import { DataServiceService } from 'src/app/data-service.service';
 import { DialogConfirmComponent } from 'src/app/PopUps/dialog-confirm/dialog-confirm.component';
@@ -54,6 +55,11 @@ export class CustomerData {
 })
 export class AllCustomersComponent implements OnInit, AfterViewInit {
 
+  pagePermissionAccessLevel = {
+    AccessLevel: '',
+    PageName: ''
+  }
+
   displayedColumns: string[] = [];
   dataSource = new MatTableDataSource([]);
 
@@ -80,6 +86,7 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
 
   idUnsubscribe;
   MsgList = MsgList;
+  MockData = MockData;
 
   filterCustomerForm = this.fb.group({
     customerTz: (''),
@@ -95,7 +102,7 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
   customerLabelForTable = [
     { value: 'organizationName', viewValue: 'שם לקוח' },
     { value: 'Tz', viewValue: 'תז/ח.פ.' },
-    { value: 'OrderCount', viewValue: 'סה"כ הזמנות' },
+    { value: 'OrdersCount', viewValue: 'סה"כ הזמנות' },
     { value: 'StatusDescription', viewValue: 'סטטוס' },
     { value: 'Email', viewValue: 'מייל' }
   ];
@@ -105,6 +112,11 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
     window.scroll(0, 0);
 
     this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
+
+    this.pagePermissionAccessLevel = this.sharedService.pagesAccessLevel.value.length > 0 ? JSON.parse(this.sharedService.pagesAccessLevel.value) : JSON.parse(JSON.stringify(this.pagePermissionAccessLevel));
+
+    this.sharedService.pagesAccessLevel.next('');
+
 
     this.idUnsubscribe = this.activeRoute.params.subscribe(param => {
       if (param['id'] != undefined) {
@@ -127,28 +139,36 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
     }
 
     this.dataService.GetUserStatus(objToApi).subscribe(result => {
-      if (result['Token'] != undefined || result['Token'] != null) {
+      if (typeof result == 'string') {
+        this.dialog.open(DialogComponent, {
+          data: { message: result }
+        })
 
-        //set new token
-        let tempObjUser = JSON.parse(localStorage.getItem('user'));
-        tempObjUser['Token'] = result['Token'];
-        localStorage.setItem('user', JSON.stringify(tempObjUser));
-        this.userToken = result['Token'];
-
-        if (typeof result == 'object' && result.obj != null && result.obj.length > 0) {
-          this.statusList = [...result.obj].sort(function (a, b) {
-            if (a.Description < b.Description) { return -1; }
-            if (a.Description > b.Description) { return 1; }
-            return 0;
-          });;
-        }
-      }
-      else {
-        // this.dialog.open(DialogComponent, {
-        //   data: {message: MsgList.exitSystemAlert}
-        // })
         this.sharedService.exitSystemEvent();
+        return false;
       }
+      // if (result['Token'] != undefined || result['Token'] != null) {
+
+      //set new token
+      let tempObjUser = JSON.parse(localStorage.getItem('user'));
+      tempObjUser['Token'] = result['Token'];
+      localStorage.setItem('user', JSON.stringify(tempObjUser));
+      this.userToken = result['Token'];
+
+      // if (typeof result == 'object' && result.obj != null && result.obj.length > 0) {
+      this.statusList = [...result.obj].sort(function (a, b) {
+        if (a.Description < b.Description) { return -1; }
+        if (a.Description > b.Description) { return 1; }
+        return 0;
+      });;
+      // }
+      // }
+      // else {
+      //   // this.dialog.open(DialogComponent, {
+      //   //   data: {message: MsgList.exitSystemAlert}
+      //   // })
+      //   this.sharedService.exitSystemEvent();
+      // }
     });
   }
 
@@ -161,44 +181,52 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
     }
 
     this.dataService.GetAllCustomers(objToApi).subscribe(result => {
-
+      debugger
 
       this.filterSpinner = false;
-      if (result['Token'] != undefined || result['Token'] != null) {
-
-        //set new token
-        let tempObjUser = JSON.parse(localStorage.getItem('user'));
-        tempObjUser['Token'] = result['Token'];
-        localStorage.setItem('user', JSON.stringify(tempObjUser));
-        this.userToken = result['Token'];
-
-        if (typeof result == 'object' && result['obj'] != null && result['obj'].length > 0) {
-          this.allCustomersDataSpare = result['obj'];
-          this.dataSource.data = result['obj'].sort(function (a, b) {
-            if (a.organizationName < b.organizationName) { return -1; }
-            if (a.organizationName > b.organizationName) { return 1; }
-            return 0;
-          });
-
-        }
-        // if(typeof result == 'object' &&  result['obj'] == null){
-        //   // this.errorMsg = 'No Data Found';
-        //   setTimeout(()=>{
-        //     this.errorMsg = '';
-        //   },3000);
-        // }
-      }
-      else if (typeof result == 'string') {
+      if (typeof result == 'string') {
         this.dialog.open(DialogComponent, {
           data: { message: result }
         })
-      }
-      else {
-        // this.dialog.open(DialogComponent, {
-        //   data: {message: MsgList.exitSystemAlert}
-        // })
+
         this.sharedService.exitSystemEvent();
+        return false;
       }
+      // if (result['Token'] != undefined || result['Token'] != null) {
+
+      //set new token
+      let tempObjUser = JSON.parse(localStorage.getItem('user'));
+      tempObjUser['Token'] = result['Token'];
+      localStorage.setItem('user', JSON.stringify(tempObjUser));
+      this.userToken = result['Token'];
+
+      // if (typeof result == 'object' && result['obj'] != null && result['obj'].length > 0) {
+      this.allCustomersDataSpare = result['obj'];
+      this.dataSource.data = result['obj'].sort(function (a, b) {
+        if (a.organizationName < b.organizationName) { return -1; }
+        if (a.organizationName > b.organizationName) { return 1; }
+        return 0;
+      });
+
+      // }
+      // if(typeof result == 'object' &&  result['obj'] == null){
+      //   // this.errorMsg = 'No Data Found';
+      //   setTimeout(()=>{
+      //     this.errorMsg = '';
+      //   },3000);
+      // }
+      // }
+      // else if (typeof result == 'string') {
+      //   this.dialog.open(DialogComponent, {
+      //     data: { message: result }
+      //   })
+      // }
+      // else {
+      //   // this.dialog.open(DialogComponent, {
+      //   //   data: {message: MsgList.exitSystemAlert}
+      //   // })
+      //   this.sharedService.exitSystemEvent();
+      // }
     });
   }
 
@@ -251,38 +279,46 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
       this.dataService.GetCustomersByFilter(objToApi).subscribe(result => {
         this.filterSpinner = false;
 
-        if (result['Token'] != undefined || result['Token'] != null) {
-
-          //set new token
-          let tempObjUser = JSON.parse(localStorage.getItem('user'));
-          tempObjUser['Token'] = result['Token'];
-          localStorage.setItem('user', JSON.stringify(tempObjUser));
-          this.userToken = result['Token'];
-
-
-          if (typeof result == 'object' && result['obj'] != null && result['obj'].length > 0) {
-            this.dataSource = new MatTableDataSource(result['obj']);
-
-            setTimeout(() => {
-              this.dataSource.paginator = this.paginator;
-              this.dataSource.sort = this.sort;
-            }, 0);
-
-          }
-          if (typeof result == 'object' && result['obj'] == null) {
-            this.dataSource.data = [];
-            // this.errorMsg = 'No Data Found';
-            setTimeout(() => {
-              this.errorMsg = '';
-            }, 3000);
-          }
-
-        }
         if (typeof result == 'string') {
           this.dialog.open(DialogComponent, {
             data: { message: result }
-          });
+          })
+
+          this.sharedService.exitSystemEvent();
+          return false;
         }
+        // if (result['Token'] != undefined || result['Token'] != null) {
+
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
+
+
+        // if (typeof result == 'object' && result['obj'] != null && result['obj'].length > 0) {
+        this.dataSource = new MatTableDataSource(result['obj']);
+
+        setTimeout(() => {
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+        }, 0);
+
+        // }
+        // if (typeof result == 'object' && result['obj'] == null) {
+        //   this.dataSource.data = [];
+        //   // this.errorMsg = 'No Data Found';
+        //   setTimeout(() => {
+        //     this.errorMsg = '';
+        //   }, 3000);
+        // }
+
+        // }
+        // if (typeof result == 'string') {
+        //   this.dialog.open(DialogComponent, {
+        //     data: { message: result }
+        //   });
+        // }
       });
     }
     else {
@@ -328,48 +364,68 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
 
   deleteCustomer(element) {
 
-    let oName = element.organizationName != undefined ? element.organizationName : element.OrganizationName;
-    const dialogRef = this.dialog.open(DialogConfirmComponent, {
-      data: { message: 'האם לחסום לקוח  ' + oName + '?', eventButton: 'לחסום' }
-    }).afterClosed().subscribe(response => {
-      if (response.result == 'yes') {
+    if (this.pagePermissionAccessLevel.AccessLevel != this.MockData.accessLevelReadOnly) {
+      let oName = element.organizationName != undefined ? element.organizationName : element.OrganizationName;
+      const dialogRef = this.dialog.open(DialogConfirmComponent, {
+        data: { message: 'האם לחסום לקוח  ' + oName + '?', eventButton: 'לחסום' }
+      }).afterClosed().subscribe(response => {
+        if (response.result == 'yes') {
 
-        let objToApi = {
-          Token: this.userToken,
-          UserId: element.id.toString()
-        }
+          let objToApi = {
+            Token: this.userToken,
+            UserId: element.id.toString()
+          }
 
-        this.dataService.DeleteSuspendUsers(objToApi).subscribe(result => {
+          this.dataService.DeleteSuspendUsers(objToApi).subscribe(result => {
+            debugger
 
-          if (result['Token'] != undefined || result['Token'] != null) {
+            if (typeof result == 'string') {
+              this.dialog.open(DialogComponent, {
+                data: { message: result }
+              })
+
+              this.sharedService.exitSystemEvent();
+              return false;
+            }
+            // if (result['Token'] != undefined || result['Token'] != null) {
 
             //set new token
             let tempObjUser = JSON.parse(localStorage.getItem('user'));
             tempObjUser['Token'] = result['Token'];
             localStorage.setItem('user', JSON.stringify(tempObjUser));
             this.userToken = result['Token'];
+            this.dialog.open(DialogComponent, {
+              data: { message: result.errdesc }
+            });
 
-            if (result.errdesc.includes('Successfully')) {
-              this.getAllCustomers();
-              this.dialog.open(DialogComponent, {
-                data: { message: 'הלקוח נחסם בהצלחה' }
-              });
-            }
-            else {
-              this.dialog.open(DialogComponent, {
-                data: { message: result.errdesc }
-              });
-            }
-          }
-          else {
+            // if (result.errdesc.includes('Successfully')) {
+            this.getAllCustomers();
             // this.dialog.open(DialogComponent, {
-            //   data: {message: MsgList.exitSystemAlert}
-            // })
-            this.sharedService.exitSystemEvent();
-          }
-        });
-      }
-    });
+            //   data: { message: 'הלקוח נחסם בהצלחה' }
+            // });
+            // }
+            // else {
+            //   this.dialog.open(DialogComponent, {
+            //     data: { message: result.errdesc }
+            //   });
+            // }
+            // }
+            // else {
+            //   // this.dialog.open(DialogComponent, {
+            //   //   data: {message: MsgList.exitSystemAlert}
+            //   // })
+            //   this.sharedService.exitSystemEvent();
+            // }
+          });
+        }
+      });
+    }
+    else {
+      this.dialog.open(DialogComponent, {
+        data: { message: MsgList.readOnly }
+      })
+    }
+
   }
 
   goToCustomer(customerId: number) {

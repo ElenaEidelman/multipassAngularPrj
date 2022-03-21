@@ -62,7 +62,9 @@ export class AllCardsComponent implements OnInit, AfterViewInit, OnChanges {
 
   MsgList = MsgList;
   minFromDate;
+  maxFromDate;
   minToDate;
+  maxToDate;
 
 
   constructor(
@@ -106,6 +108,9 @@ export class AllCardsComponent implements OnInit, AfterViewInit, OnChanges {
   ];
   ngOnInit(): void {
     window.scroll(0, 0);
+    this.maxFromDate = new Date();
+    this.maxToDate = new Date();
+    debugger
 
 
     this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
@@ -118,13 +123,11 @@ export class AllCardsComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   getFilteredCards() {
-
-    // this.cardsDataSource = new MatTableDataSource([]);
     this.cardsDataSource.data = [];
     this.displayedColumns = [];
     this.viewTable = false;
 
-    // let token = JSON.parse(localStorage.getItem('user'))['Token'];
+
     let formSearchFiled = false;
     let objToApi = {
       Token: this.userToken
@@ -145,45 +148,32 @@ export class AllCardsComponent implements OnInit, AfterViewInit, OnChanges {
 
     if (formSearchFiled) {
       this.spinner = true;
-
-
-
-      debugger
       this.dataService.GetAllCards(objToApi).subscribe(result => {
         debugger
-
         this.spinner = false;
 
-        if (result['Token'] != undefined || result['Token'] != null) {
+        if (typeof result == 'string') {
+          this.dialog.open(DialogComponent, {
+            data: { message: result }
+          })
 
-          //set new token
-          let tempObjUser = JSON.parse(localStorage.getItem('user'));
-          tempObjUser['Token'] = result['Token'];
-          localStorage.setItem('user', JSON.stringify(tempObjUser));
-          this.userToken = result['Token'];
-
-          if (typeof result == 'object' && result.obj != null && result.obj.length > 0) {
-            this.createTableData(result['obj']);
-          }
-          else if (result.obj == null && result.errdesc.includes('No Data Found')) {
-            this.formErrorMsg = result.errdesc;
-            setTimeout(() => {
-              this.formErrorMsg = '';
-            }, 10000);
-          }
-        }
-        else if (typeof result == 'string') {
-          this.formErrorMsg = result;
-          setTimeout(() => {
-            this.formErrorMsg = '';
-          }, 10000);
-        }
-        else {
-          // this.dialog.open(DialogComponent, {
-          //   data: {message: MsgList.exitSystemAlert}
-          // })
           this.sharedService.exitSystemEvent();
+          return false;
         }
+
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
+
+        if (result.obj[0] == null) {
+          this.dialog.open(DialogComponent, {
+            data: { message: 'אין נתונים' }
+          });
+          return false;
+        }
+        this.createTableData(result['obj']);
       })
     }
 
@@ -198,23 +188,23 @@ export class AllCardsComponent implements OnInit, AfterViewInit, OnChanges {
 
   dateFromChanged(event, controller) {
 
-
     if (controller == 'FromDate') {
       this.minToDate = new Date(event.value);
     }
     else if (controller == 'ToDate') {
-      this.minFromDate = new Date(event.value);
+      this.maxFromDate = new Date(event.value);
     }
     // return this.filterTableGroup.get('ToDate').value != '' ? new Date(this.filterTableGroup.get('ToDate').value) : '';
   }
 
 
   createTableData(obj) {
+
     this.cardsDataSource.data = [];
     this.createDisplayedColumns(this.cardsLabelForTable);
     this.viewTable = true;
     this.cardsDataSource.data = obj;
-    debugger
+
     setTimeout(() => {
       this.cardsDataSource.paginator = this.paginator;
       this.cardsDataSource.sort = this.sort;
@@ -263,26 +253,34 @@ export class AllCardsComponent implements OnInit, AfterViewInit, OnChanges {
     }
 
     this.dataService.GetOrdersStatus(objToApi).subscribe(result => {
+      debugger
+      if (typeof result == 'string') {
+        this.dialog.open(DialogComponent, {
+          data: { message: result }
+        })
 
-      if (result['Token'] != undefined || result['Token'] != null) {
-
-        //set new token
-        let tempObjUser = JSON.parse(localStorage.getItem('user'));
-        tempObjUser['Token'] = result['Token'];
-        localStorage.setItem('user', JSON.stringify(tempObjUser));
-        this.userToken = result['Token'];
-
-
-        if (typeof result == 'object' && result.obj != null) {
-          this.statusListArr = [...result.obj];
-        }
-      }
-      else {
-        // this.dialog.open(DialogComponent, {
-        //   data: {message: MsgList.exitSystemAlert}
-        // })
         this.sharedService.exitSystemEvent();
+        return false;
       }
+      // if (result['Token'] != undefined || result['Token'] != null) {
+
+      //set new token
+      let tempObjUser = JSON.parse(localStorage.getItem('user'));
+      tempObjUser['Token'] = result['Token'];
+      localStorage.setItem('user', JSON.stringify(tempObjUser));
+      this.userToken = result['Token'];
+
+
+      // if (typeof result == 'object' && result.obj != null) {
+      this.statusListArr = [...result.obj];
+      // }
+      // }
+      // else {
+      //   // this.dialog.open(DialogComponent, {
+      //   //   data: {message: MsgList.exitSystemAlert}
+      //   // })
+      //   this.sharedService.exitSystemEvent();
+      // }
     });
 
 
@@ -294,8 +292,6 @@ export class AllCardsComponent implements OnInit, AfterViewInit, OnChanges {
 
       // this.smsTemplatesData;
       this.sendSms.get('previewSmsTemplate').setValue(this.smsTemplatesData.filter(el => el.Id == event.value)[0]['TemplateFormat']);
-      //enable send sms button
-      // this.sendButtonSms = false;
     }
   }
 
@@ -306,96 +302,34 @@ export class AllCardsComponent implements OnInit, AfterViewInit, OnChanges {
     }
 
     this.dataService.GetSMSFormats(objToApi).subscribe(result => {
+      if (typeof result == 'string') {
+        this.dialog.open(DialogComponent, {
+          data: { message: result }
+        })
 
-
-      if (result['Token'] != undefined || result['Token'] != null) {
-
-        //set new token
-        let tempObjUser = JSON.parse(localStorage.getItem('user'));
-        tempObjUser['Token'] = result['Token'];
-        localStorage.setItem('user', JSON.stringify(tempObjUser));
-        this.userToken = result['Token'];
-
-        if (typeof result == 'object' && result.obj != null && result.obj.length > 0) {
-          this.smsTemplatesData = [...result.obj];
-        }
-      }
-      else {
-        // this.dialog.open(DialogComponent, {
-        //   data: {message: MsgList.exitSystemAlert}
-        // })
         this.sharedService.exitSystemEvent();
+        return false;
       }
+
+      // if (result['Token'] != undefined || result['Token'] != null) {
+
+      //set new token
+      let tempObjUser = JSON.parse(localStorage.getItem('user'));
+      tempObjUser['Token'] = result['Token'];
+      localStorage.setItem('user', JSON.stringify(tempObjUser));
+      this.userToken = result['Token'];
+
+      // if (typeof result == 'object' && result.obj != null && result.obj.length > 0) {
+      this.smsTemplatesData = [...result.obj];
+      // }
+      // }
+      // else {
+      //   // this.dialog.open(DialogComponent, {
+      //   //   data: {message: MsgList.exitSystemAlert}
+      //   // })
+      //   this.sharedService.exitSystemEvent();
+      // }
     });
-  }
-
-  sendSMS() {
-
-
-    if (this.sendSms.valid) {
-      this.dialog.open(DialogConfirmComponent, {
-        data: { message: 'האם לשלוח SMS?', eventButton: 'שלח' }
-      }).afterClosed().subscribe(result => {
-        if (result.result == 'yes') {
-          let test = this.cardsDataSource;
-
-          // if(this.orderCardsData.length > 0){
-          //   let selectedCards = [];
-          //   this.orderCardsData.forEach(card => {
-          //     selectedCards.push(card.Id)
-          //   });
-
-          // let objToApi = {
-          //   Token: this.userToken,
-          //   TemplateId: this.sendSms.get('smsTemplates').value,
-          //   UserId: this.userId,
-          //   OrderLineIds: selectedCards,
-          //   CoreOrderId: '',
-          //   From: this.smsTemplatesData.filter(el => el.Id == this.sendSms.get('smsTemplates').value)[0]['SenderName']
-          // }
-
-          // this.dataService.SendSMSByOrderLine(objToApi).subscribe(result => {
-          //   if (result['Token'] != undefined || result['Token'] != null) {
-
-          //     //set new token
-          //     let tempObjUser = JSON.parse(localStorage.getItem('user'));
-          //     tempObjUser['Token'] = result['Token'];
-          //     localStorage.setItem('user', JSON.stringify(tempObjUser));
-          //     this.userToken = result['Token'];
-
-          //     if (result.errdesc == 'OK') {
-
-          //       this.dialog.open(DialogComponent, {
-          //         data: {title: '', message: 'ההודעות נשלחות ברקע' ,subTitle: ' ההודעה נשלחה ל ' + this.orderCardsData.length  + ' נמענים '  }
-          //       })
-
-          //       this.sendSmsGroup.reset();
-          //       this.openSendSmsBlock();
-          //     }
-          //     else{
-          //       this.dialog.open(DialogComponent, {
-          //         data: {message: result.errdesc}
-          //       });
-          //     }
-          //   }
-          //   else {
-          //     // this.dialog.open(DialogComponent, {
-          //     //   data: {message: MsgList.exitSystemAlert}
-          //     // })
-          //     this.sharedService.exitSystemEvent();
-          //   }
-          // });
-
-          // }
-        }
-      })
-    }
-    else {
-      // this.errorSendSms = 'נא לבחור תבנית ההודעה';
-      // setTimeout(()=>{
-      //   this.errorSendSms = '';
-      // }, 2000)
-    }
   }
 
   goToCardInfo(cardId: number, userId: number) {

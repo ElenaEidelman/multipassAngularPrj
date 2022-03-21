@@ -4,7 +4,7 @@ import { MatPaginatorIntl } from '@angular/material/paginator';
 @Injectable()
 export class MatPaginatorIntlCro extends MatPaginatorIntl {
   itemsPerPageLabel = 'פריטים פר עמוד';
-  nextPageLabel     = 'עמוד הבאה ';
+  nextPageLabel = 'עמוד  הבא ';
   previousPageLabel = 'עמוד קודם';
 
   getRangeLabel = function (page, pageSize, length) {
@@ -17,7 +17,7 @@ export class MatPaginatorIntlCro extends MatPaginatorIntl {
     const endIndex = startIndex < length ?
       Math.min(startIndex + pageSize, length) :
       startIndex + pageSize;
-    return  startIndex + 1 + ' - ' + endIndex + ' סה"כ ' + length;
+    return startIndex + 1 + ' - ' + endIndex + ' סה"כ ' + length;
   };
 
 }

@@ -26,7 +26,9 @@ import { UrlSharingService } from '../Services/UrlSharingService/url-sharing.ser
 export class HomeComponent implements OnInit, AfterViewInit {
 
   userToken;
+  homeSpinner: boolean = true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
+
   @ViewChild(MatSort) sort: MatSort;
 
   constructor(
@@ -39,6 +41,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
   // data table
   // public newOrderLabelForTable;
   public newOrderDataSource: MatTableDataSource<CustomerData>;
+  public lastCustomersDataSource: MatTableDataSource<any>;
+
 
   private labelTemp = [
     { value: 'UserName', viewValue: 'שם לקוח' },
@@ -54,7 +58,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     { value: 'CreationDate', viewValue: 'תאריך הצתרפות' },
     { value: 'StatusName', viewValue: 'סטטוס' }
   ];
-  public lastCustomersDataSource: MatTableDataSource<any>;
+
 
 
 
@@ -75,10 +79,21 @@ export class HomeComponent implements OnInit, AfterViewInit {
   public activeCustomersChartLabels: Label[];
 
 
+  ngAfterViewInit() {
+
+    if (this.newOrderDataSource != undefined && this.lastCustomersDataSource != undefined) {
+
+      // this.newOrderDataSource.sort = this.sort;
+      // this.lastCustomersDataSource.sort = this.sort;
+      // this.newOrderDataSource.paginator = this.paginator;
+      // this.lastCustomersDataSource.paginator = this.paginatorCustomer;
+    }
+  }
 
 
 
   ngOnInit(): void {
+
     window.scroll(0, 0);
     this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
 
@@ -93,79 +108,105 @@ export class HomeComponent implements OnInit, AfterViewInit {
     let objToApi = {
       Token: this.userToken
     }
+
     this.dataService.GetHomeData(objToApi).subscribe(result => {
-      // console.log(result);
 
-      if (result.err != -1) {
-        if (result['Token'] != undefined || result['Token'] != null) {
-          //set new token
-          let tempObjUser = JSON.parse(localStorage.getItem('user'));
-          tempObjUser['Token'] = result['Token'];
-          localStorage.setItem('user', JSON.stringify(tempObjUser));
-          this.userToken = result['Token'];
+      this.homeSpinner = false;
 
-          if (typeof result == 'object' && result.obj != null && result.obj.length > 0) {
-            //create tables
-            this.createDisplayedColumns('newOrderLabelForTable', this.labelTemp);
-            this.createDisplayedColumns('lastCustomersLabelForTable', this.lastCustomersLabelTemp);
-            this.newOrderDataSource = new MatTableDataSource(result.obj[1]);
-            this.lastCustomersDataSource = new MatTableDataSource(result.obj[5]);
+      if (typeof result == 'string') {
+        this.dialog.open(DialogComponent, {
+          data: { message: result }
+        })
 
+        this.sharedService.exitSystemEvent();
+        return false;
+      }
+      if (typeof result == 'object') {
+        if (result['Token'] != null && result['Token'] != '') {
+          if (+result['err'] < 0) {
+            this.dialog.open(DialogComponent, {
+              data: { message: result['errdesc'] != null ? result['errdesc'] : 'err: ' + result['err'] }
+            })
+          }
+          else {
 
-            this.newOrderDataSource.sort = this.sort;
-            this.lastCustomersDataSource.sort = this.sort;
+            //if company active
+            if (result.obj[11].IsActive == '') {
 
+              //set new token
+              let tempObjUser = JSON.parse(localStorage.getItem('user'));
+              tempObjUser['Token'] = result['Token'];
+              localStorage.setItem('user', JSON.stringify(tempObjUser));
+              this.userToken = result['Token'];
 
-            //create graphs
+              //create tables
+              this.createDisplayedColumns('newOrderLabelForTable', this.labelTemp);
+              this.createDisplayedColumns('lastCustomersLabelForTable', this.lastCustomersLabelTemp);
+              this.newOrderDataSource = new MatTableDataSource(result.obj[1]);
+              this.lastCustomersDataSource = new MatTableDataSource(result.obj[5]);
 
-            //new users
-            let usersData = result.obj[5].map(o => o.TotalOrders);
-            let usersLabels = result.obj[5].map(o => o.UserName);
-            this.newUsersChartData = [
-              { data: usersData, label: 'סיכום הזמנות ללקוח' }
-            ];
-            this.newUsersChartLabel = usersLabels;
-
-
-            //new orders
-            let ordersData = result.obj[1].map(o => o.Total);
-            let ordersLabels = result.obj[1].map(o => o.OrganizationName);
-            this.newOrdersChartData = [
-              { data: ordersData, label: 'הזמנות חדשות' }
-            ];
-            this.newOrdersChartLabels = ordersLabels;
-
-
-            //hot orders
-            let hotOrdersData = result.obj[7].map(o => o.Total);
-            let hotOrdersLabels = result.obj[7].map(o => o.OrganizationName);
-            this.hotOrdersChartData = [
-              { data: hotOrdersData, label: 'הזמנות חמות' }
-            ];
-            this.hotOrdersChartLabels = hotOrdersLabels;
+              setTimeout(() => {
+                this.newOrderDataSource.sort = this.sort;
+                this.lastCustomersDataSource.sort = this.sort;
+                this.newOrderDataSource.paginator = this.paginator;
+                this.lastCustomersDataSource.paginator = this.paginator;
+              }, 1000);
 
 
-            //active users
-            let activeUsersData = result.obj[9].map(o => o.Total);
-            let activeUsersLabels = result.obj[9].map(o => o.OrganizationName);
-            this.activeCustomersChartData = [
-              { data: activeUsersData, label: 'לקוחות פעילים' }
-            ];
-            this.activeCustomersChartLabels = activeUsersLabels;
+
+              //create graphs
+
+              //new users
+              let usersData = result.obj[5].map(o => o.TotalOrders);
+              let usersLabels = result.obj[5].map(o => o.UserName);
+              this.newUsersChartData = [
+                { data: usersData, label: 'סיכום הזמנות ללקוח' }
+              ];
+              this.newUsersChartLabel = usersLabels;
+
+
+              //new orders
+              let ordersData = result.obj[1].map(o => o.Total);
+              let ordersLabels = result.obj[1].map(o => o.OrganizationName);
+              this.newOrdersChartData = [
+                { data: ordersData, label: 'הזמנות חדשות' }
+              ];
+              this.newOrdersChartLabels = ordersLabels;
+
+
+              //hot orders
+              let hotOrdersData = result.obj[7].map(o => o.Total);
+              let hotOrdersLabels = result.obj[7].map(o => o.OrganizationName);
+              this.hotOrdersChartData = [
+                { data: hotOrdersData, label: 'הזמנות חמות' }
+              ];
+              this.hotOrdersChartLabels = hotOrdersLabels;
+
+
+              //active users
+              let activeUsersData = result.obj[9].map(o => o.Total);
+              let activeUsersLabels = result.obj[9].map(o => o.OrganizationName);
+              this.activeCustomersChartData = [
+                { data: activeUsersData, label: 'לקוחות פעילים' }
+              ];
+              this.activeCustomersChartLabels = activeUsersLabels;
+
+
+            }
+            else {
+              this.dialog.open(DialogComponent, {
+                data: { message: 'This company is blocked' }
+              });
+              this.sharedService.exitSystemEvent();
+            }
           }
         }
         else {
-          // this.dialog.open(DialogComponent, {
-          //   data: {message: MsgList.exitSystemAlert}
-          // })
+          this.dialog.open(DialogComponent, {
+            data: { message: result['errdesc'] }
+          })
           this.sharedService.exitSystemEvent();
         }
-      }
-      else {
-        this.dialog.open(DialogComponent, {
-          data: { message: result.errdesc }
-        })
-        this.sharedService.exitSystemEvent();
       }
 
     })
@@ -177,16 +218,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
     });
   }
 
-
-
-
-  ngAfterViewInit() {
-    if (this.newOrderDataSource != undefined && this.lastCustomersDataSource != undefined) {
-      // this.newOrderDataSource.paginator = this.paginator;
-      this.newOrderDataSource.sort = this.sort;
-      this.lastCustomersDataSource.sort = this.sort;
-    }
-  }
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.newOrderDataSource.filter = filterValue.trim().toLowerCase();

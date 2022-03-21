@@ -1,15 +1,20 @@
 <div class="pageTitle main2-title sticky top100">
     <div>נתוני שובר</div>
+    <div class="readOnliNotifivation"
+        *ngIf="pagePermissionAccessLevel.AccessLevel == this.MockData.accessLevelReadOnly">
+        {{MsgList.readOnly}}
+        <mat-icon>info</mat-icon>
+    </div>
 </div>
-<mat-spinner *ngIf="CardInfo == undefined" class="noDataSpinner"></mat-spinner>
-<div class="page-wrap" *ngIf="CardInfo">
+<mat-spinner *ngIf=" mainSpinner" class="noDataSpinner"></mat-spinner>
+<div class="page-wrap">
     <!--filter table-->
     <div class="page-element width-block-auto wrapCardsFilter">
 
         <!-- נתוני שובר -->
         <div class="page-element innerElement">
             <div class="element-page-title element-page-title2">נתוני שובר</div>
-            <div class="wrapInnerEl">
+            <div class="wrapInnerEl" *ngIf="CardInfo">
                 <div class="firstChild datePicker">
                     <div class="wrapExpData">
                         <div class="changeDate" (click)="changeDate(CardInfo.ExpirationDate)">
@@ -147,8 +152,8 @@
                     </tr>
                 </table>
 
-                <mat-paginator [length]="historyDataSource.data.length" [pageSizeOptions]="[7, 25, 100]"
-                    aria-label="Select page of users"></mat-paginator>
+                <mat-paginator [length]="historyDataSource.data.length" [pageSize]="7"
+                    [pageSizeOptions]="[ 7,25,50, 100]" aria-label="Select page of users"></mat-paginator>
             </div>
         </div>
 
@@ -164,7 +169,7 @@
                             <mat-form-field>
                                 <mat-label>בחר תבנית מסרון</mat-label>
 
-                                <mat-select formControlName="smsTemplates"
+                                <mat-select formControlName="smsTemplates" [disabled]="OrderDetails == null"
                                     (selectionChange)="smsTempleteSelect($event)">
                                     <mat-option *ngFor="let template of smsTemplatesData" [value]="template.Id">
                                         {{template.TemplateName}}</mat-option>
@@ -184,7 +189,7 @@
 
                     </div>
                     <div class="buttonSendSms">
-                        <button mat-button class="sendButton" (click)="sendSMS()" [disabled]="sendButtonSms">שלח
+                        <button mat-button class="sendButton" (click)="sendSMS()" [disabled]="OrderDetails == null">שלח
                             הודעה</button>
                         <div class="errorSendSms error" [@openClose]="errorSendSms != ''">
                             {{errorSendSms}}
@@ -210,6 +215,7 @@
                                 <mat-form-field>
                                     <mat-label>שם מלא</mat-label>
                                     <input matInput placeholder="שם מלא של מחזיק השובר" formControlName="FullName">
+                                    <mat-error>{{MsgList.requiredField}}</mat-error>
                                 </mat-form-field>
                             </div>
                             <div>

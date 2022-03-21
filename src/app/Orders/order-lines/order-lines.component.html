@@ -1,6 +1,13 @@
-<div class="pageTitle main2-title sticky top100">
-    <div>רשימת כרטיסים </div>
-    <div>מספר הזמנה: {{orderIdToPreview}}</div>
+<div class="pageTitle main2-title  sticky top100">
+    <div>
+        <div>רשימת כרטיסים </div>
+        <div>מספר הזמנה: {{orderIdToPreview}}</div>
+    </div>
+    <div class="readOnliNotifivation"
+        *ngIf="pagePermissionAccessLevel.AccessLevel == this.MockData.accessLevelReadOnly">
+        {{MsgList.readOnly}}
+        <mat-icon>info</mat-icon>
+    </div>
 </div>
 
 <div class="page-wrap">

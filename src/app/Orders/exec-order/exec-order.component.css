@@ -111,7 +111,7 @@ tr.example-element-row:not(.example-expanded-row):hover {
   }
   .noInfo{
       position: absolute;
-      bottom: 15px;
+      bottom: 3px;
       width: 100%;
       text-align: center;
   }

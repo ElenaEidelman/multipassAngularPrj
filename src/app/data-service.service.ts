@@ -5,7 +5,10 @@ import { Observable, of, Subject, throwError } from 'rxjs';
 
 import { environment } from '../../src/environments/environment';
 import { SharedService } from './Services/SharedService/shared.service';
-// import * as urlData from 'src/assets/Files/HostFile.json';
+import { DialogComponent } from './PopUps/dialog/dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+// import host from "../HostFile.json";
+
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -25,11 +28,7 @@ export class DataServiceService implements OnInit {
   // baseUrl = 'http://tempdomain-test-3.mltp.co.il';
   // baseUrl = 'http://localhost:45036';
   // baseUrl = 'http://multitav.co.il';
-  // baseUrl = '';
   // baseUrl = localStorage.getItem('baseUrl');
-
-
-  // baseUrl = environment.apiUrl;
 
   //test beforeMerge
   /**
@@ -47,37 +46,37 @@ $ git merge new-branch
    */
 
 
-  constructor(private http: HttpClient, private sharedService: SharedService) {
 
+
+  constructor(private http: HttpClient, private sharedService: SharedService, private dialog: MatDialog) {
+    this.setBaseUrl();
+  }
+
+
+  ngOnInit() {
+
+  }
+
+  setBaseUrl() {
     this.getHost().subscribe(result => {
-      this.sharedService.pagesPermission.next(result['pagesPermission']);
-
-
       localStorage.setItem('baseUrl', result['baseUrl']);
 
     });
   }
 
-
-
-  ngOnInit() {
-  }
-
   getHost() {
-
-    // localStorage.setItem('baseUrl', "");
-    return this.http.get('../assets/Files/HostFile.json');
-  }
-  async getHostPromiss() {
-
-    // localStorage.setItem('baseUrl', "");
-    return this.http.get('../assets/Files/HostFile.json').toPromise();
+    return this.http.get('../HostFile.json').pipe(
+      map(result => {
+        return result;
+      })
+    )
   }
 
   SendOtp(obj) {
 
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/Users/SendOtp`, obj).pipe(
       map(result => {
+
         return result;
       }),
       catchError(err => {
@@ -90,22 +89,50 @@ $ git merge new-branch
   ValidateOtp(objToOtp) {
     //
 
-
-
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/Users/ValidateOtp`, objToOtp).pipe(
+
       map(result => {
+
         return result;
       })
     );
   }
 
-  GetHomeData(objToApi) {
+  checkResult(result) {
+    if (typeof result == 'object') {
+      if (result['Token'] != null && result['Token'] != '') {
+        if (+result['err'] < 0) {
+          this.dialog.open(DialogComponent, {
+            data: { message: result['errdesc'] != null ? result['errdesc'] : 'err: ' + result['err'] }
+          })
+        }
+        else {
+          return result;
+        }
+      }
+      else {
+        this.dialog.open(DialogComponent, {
+          data: { message: result['errdesc'] }
+        })
+        this.sharedService.exitSystemEvent();
+      }
+    }
+    else if (typeof result == 'string') {
+      this.dialog.open(DialogComponent, {
+        data: { message: result }
+      })
+      this.sharedService.exitSystemEvent();
+    }
+  }
 
+
+  GetHomeData(objToApi) {
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/DashBoard/GetHomeData`, objToApi, httpOptions).pipe(
       map(result => {
-        return result;
+        return this.checkResult(result);
       }),
       catchError(err => {
+
         return of(err.message);
       })
     );
@@ -115,18 +142,21 @@ $ git merge new-branch
   getAllOrders(objToApi) {
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/Orders/GetOrders`, objToApi, httpOptions).pipe(
       map(result => {
-        return result;
+        debugger
+        return this.checkResult(result);
       }),
       catchError(err => {
+        debugger
         return of(err.message);
       })
     );
   }
 
   GetOrderDetails(orderData) {
+
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/Orders/GetOrderDetailsById`, orderData, httpOptions).pipe(
       map(result => {
-        return result;
+        return this.checkResult(result);
       }),
       catchError(err => {
         return of(err.message);
@@ -139,7 +169,7 @@ $ git merge new-branch
     //
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/InsertUpdateOrder/ApproveOrder`, objToApi).pipe(
       map(result => {
-        return result;
+        return this.checkResult(result);
       }),
       catchError(err => {
         return of(err.message);
@@ -148,10 +178,12 @@ $ git merge new-branch
   }
   GetAllCards(objToApi) {
     //
+
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/AllCards/GetAllCards`, objToApi).pipe(
       map(result => {
         //
-        return result;
+        debugger
+        return this.checkResult(result);
       }),
       catchError(err => {
         return of(err.message);
@@ -159,9 +191,10 @@ $ git merge new-branch
     );
   }
   GetCardsByOrderId(objToApi) {
+
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/InsertUpdateOrder/GetCardsByOrderId`, objToApi).pipe(
       map(result => {
-        return result;
+        return this.checkResult(result);
       }),
       catchError(err => {
         return of(err.message);
@@ -173,7 +206,7 @@ $ git merge new-branch
   GetCardInfoById(objToApi) {
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/AllCards/GetCardInfoById`, objToApi).pipe(
       map(result => {
-        return result;
+        return this.checkResult(result);
       }),
       catchError(err => {
         return of(err.message);
@@ -189,7 +222,7 @@ $ git merge new-branch
     // 
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/InsertUpdateOrder/InsertUpdateOrder`, objToApi).pipe(
       map(result => {
-        return result;
+        return this.checkResult(result);
       }),
       catchError(error => {
         return of(error.message);
@@ -201,7 +234,7 @@ $ git merge new-branch
 
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/InsertUpdateOrder/InsertUpdateLines`, objToApi).pipe(
       map(result => {
-        return result;
+        return this.checkResult(result);
       }),
       catchError(error => {
         return of(error.message);
@@ -213,6 +246,7 @@ $ git merge new-branch
   GetOrdersByFilter(objToApi) {
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/Orders/GetOrdersByFilter`, objToApi).pipe(
       map(result => {
+        debugger
         return result;
       }),
       catchError(error => {
@@ -224,7 +258,7 @@ $ git merge new-branch
   DeleteVoidOrder(objToApi) {
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/InsertUpdateOrder/DeleteVoidOrder`, objToApi).pipe(
       map(result => {
-        return result;
+        return this.checkResult(result);
       }),
       catchError(error => {
         return of(error.message);
@@ -235,10 +269,11 @@ $ git merge new-branch
 
   GetAllCustomers(objToApi) {
 
+
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/AllCustomers/GetAllCustomers`, objToApi).pipe(
       map(result => {
         //
-        return result;
+        return this.checkResult(result);
       }),
       catchError(error => {
         //
@@ -250,7 +285,7 @@ $ git merge new-branch
   GetCustomersByFilter(objToApi) {
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/AllCustomers/GetCustomersByFilter`, objToApi).pipe(
       map(result => {
-        return result;
+        return this.checkResult(result);
       }),
       catchError(err => {
         return of(err.message);
@@ -264,7 +299,7 @@ $ git merge new-branch
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/AllUsers/GetAllUsers`, objToApi).pipe(
       map(result => {
         // 
-        return result;
+        return this.checkResult(result);
       }),
       catchError(error => {
         // 
@@ -276,7 +311,7 @@ $ git merge new-branch
   GetUsersByFilter(objToApi) {
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/AllUsers/GetUsersByFilter	`, objToApi).pipe(
       map(result => {
-        return result;
+        return this.checkResult(result);
       }),
       catchError(err => {
         return of(err.message);
@@ -287,7 +322,7 @@ $ git merge new-branch
   InsertUpdateUser(objToApi) {
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/InsertUpdateUser/InsertUpdateUsers`, objToApi).pipe(
       map(result => {
-        return result;
+        return this.checkResult(result);
       }),
       catchError(error => {
         return of(error.message);
@@ -298,7 +333,7 @@ $ git merge new-branch
 
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/AllUsers/InsertUpdateBackOfficeUsers`, objToApi).pipe(
       map(result => {
-        return result;
+        return this.checkResult(result);
       }),
       catchError(error => {
         return of(error.message);
@@ -310,7 +345,7 @@ $ git merge new-branch
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/AllUsers/GetUserStatus	
     `, objToApi).pipe(
       map(result => {
-        return result;
+        return this.checkResult(result);
       }),
       catchError(error => {
         return of(error.message);
@@ -318,11 +353,9 @@ $ git merge new-branch
     );
   }
   GetOrdersStatus(objToApi) {
-    let t = localStorage.getItem('baseUrl');
-
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/Orders/GetOrdersStatus`, objToApi).pipe(
       map(result => {
-        return result;
+        return this.checkResult(result);
       }),
       catchError(error => {
         return of(error.message);
@@ -333,7 +366,7 @@ $ git merge new-branch
   DeleteSuspendUsers(objToApi) {
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/InsertUpdateUser/DeleteSuspendUsers`, objToApi).pipe(
       map(result => {
-        return result;
+        return this.checkResult(result);
       }),
       catchError(error => {
         return of(error.message);
@@ -344,7 +377,7 @@ $ git merge new-branch
   DeleteSuspendBackOfficeUsers(objToApi) {
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/AllUsers/DeleteSuspendBackOfficeUsers`, objToApi).pipe(
       map(result => {
-        return result;
+        return this.checkResult(result);
       }),
       catchError(error => {
         return of(error.message);
@@ -357,7 +390,7 @@ $ git merge new-branch
   GetSMSFormats(objToApi) {
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/SMS/GetSMSFormats`, objToApi).pipe(
       map(result => {
-        return result;
+        return this.checkResult(result);
       }),
       catchError(error => {
         return of(error.message);
@@ -368,7 +401,7 @@ $ git merge new-branch
   CreateOrUpdateSMSTemplate(objToApi) {
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/SMS/CreateOrUpdateSMSTemplate`, objToApi).pipe(
       map(result => {
-        return result;
+        return this.checkResult(result);
       }),
       catchError(error => {
         return of(error.message);
@@ -379,7 +412,7 @@ $ git merge new-branch
   DeleteSMSTemplate(objToApi) {
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/SMS/DeleteSMSTemplate`, objToApi).pipe(
       map(result => {
-        return result;
+        return this.checkResult(result);
       }),
       catchError(error => {
         return of(error.message);
@@ -390,7 +423,7 @@ $ git merge new-branch
   SendSampleMessage(objToApi) {
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/SMS/SendSampleMessage`, objToApi).pipe(
       map(result => {
-        return result;
+        return this.checkResult(result);
       }),
       catchError(error => {
         return of(error.message);
@@ -398,25 +431,25 @@ $ git merge new-branch
     );
   }
 
-  SendSMSByOrderId(objToApi) {
-    return this.http.post(`${localStorage.getItem('baseUrl')}/api/SMS/SendSMSByOrderId
+  // SendSMSByOrderId(objToApi) {
+  //   return this.http.post(`${localStorage.getItem('baseUrl')}/api/SMS/SendSMSByOrderId
 
 
-    `, objToApi).pipe(
-      map(result => {
-        return result;
-      }),
-      catchError(error => {
-        return of(error.message);
-      })
-    );
-  }
+  //   `, objToApi).pipe(
+  //     map(result => {
+  //       return result;
+  //     }),
+  //     catchError(error => {
+  //       return of(error.message);
+  //     })
+  //   );
+  // }
 
 
   SendSMSByOrderLine(objToApi) {
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/SMS/SendSMSByOrderLine`, objToApi).pipe(
       map(result => {
-        return result;
+        return this.checkResult(result);
       }),
       catchError(error => {
         return of(error.message);
@@ -428,7 +461,7 @@ $ git merge new-branch
     //
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/InsertUpdateOrder/InsertUpdateOrderByExcel`, objToApi).pipe(
       map(result => {
-        //
+        //check result happening in component
         return result;
       }),
       catchError(error => {
@@ -443,7 +476,7 @@ $ git merge new-branch
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/AllCards/ActivateCards`, objToApi).pipe(
       map(result => {
         //
-        return result;
+        return this.checkResult(result);
       }),
       catchError(error => {
         //
@@ -456,7 +489,7 @@ $ git merge new-branch
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/AllCards/VoidCards`, objToApi).pipe(
       map(result => {
         //
-        return result;
+        return this.checkResult(result);
       }),
       catchError(error => {
         //
@@ -468,7 +501,7 @@ $ git merge new-branch
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/AllReports/CreateRealizationReports`, objToApi).pipe(
       map(result => {
         //
-        return result;
+        return this.checkResult(result);
       }),
       catchError(error => {
         //
@@ -481,7 +514,7 @@ $ git merge new-branch
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/AllCards/UpdateCards`, objToApi).pipe(
       map(result => {
         //
-        return result;
+        return this.checkResult(result);
       }),
       catchError(error => {
         //
@@ -495,7 +528,7 @@ $ git merge new-branch
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/AllCards/UpdateExpirationDateOfCards`, objToApi).pipe(
       map(result => {
         //
-        return result;
+        return this.checkResult(result);
       }),
       catchError(error => {
         //
@@ -508,8 +541,7 @@ $ git merge new-branch
     //
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/DigitalFilesList/GetDigitalFilesList`, objToApi).pipe(
       map(result => {
-        //
-        return result;
+        return this.checkResult(result);
       }),
       catchError(error => {
         //
@@ -524,47 +556,7 @@ $ git merge new-branch
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/AllCards/UpdatePinCodeOfCards`, objToApi).pipe(
       map(result => {
         //
-        return result;
-      }),
-      catchError(error => {
-        //
-        return of(error.message);
-      })
-    );
-  }
-
-  GetIFrameCompanyInfo(objToApi) {
-    return this.http.post(`${localStorage.getItem('baseUrl')}/api/B2CIFrame/GetIFrameCompanyInfo`, objToApi).pipe(
-      map(result => {
-        //
-
-        return result;
-      }),
-      catchError(error => {
-        //
-        return of(error.message);
-      })
-    );
-  }
-
-  InsertUpdateIFrame(objToApi) {
-    return this.http.post(`${localStorage.getItem('baseUrl')}/api/B2CIFrame/InsertUpdateIFrame`, objToApi).pipe(
-      map(result => {
-        //
-        return result;
-      }),
-      catchError(error => {
-        //
-        return of(error.message);
-      })
-    );
-  }
-
-  GetIFrameB2CLink(objToApi) {
-    return this.http.post(`${localStorage.getItem('baseUrl')}/api/B2CIFrame/GetIFrameB2CLink`, objToApi).pipe(
-      map(result => {
-        //
-        return result;
+        return this.checkResult(result);
       }),
       catchError(error => {
         //
@@ -573,12 +565,12 @@ $ git merge new-branch
     );
   }
   GetMenuPages(objToApi) {
-
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/Credential/GetMenuPages`, objToApi).pipe(
       map(result => {
         //
 
-        return result;
+
+        return this.checkResult(result);
       }),
       catchError(error => {
         //
@@ -592,7 +584,7 @@ $ git merge new-branch
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/Credential/GetRoles`, objToApi).pipe(
       map(result => {
         //
-        return result;
+        return this.checkResult(result);
       }),
       catchError(error => {
         //
@@ -601,16 +593,16 @@ $ git merge new-branch
     );
   }
 
-  GetUserToRole(objToApi) {
-    return this.http.post(`${localStorage.getItem('baseUrl')}/api/Credential/GetUserToRole`, objToApi).pipe(
-      map(result => {
-        //
-        return result;
-      }),
-      catchError(error => {
-        //
-        return of(error.message);
-      })
-    );
-  }
+  // GetUserToRole(objToApi) {
+  //   return this.http.post(`${localStorage.getItem('baseUrl')}/api/Credential/GetUserToRole`, objToApi).pipe(
+  //     map(result => {
+  //       //
+  //       return this.checkResult(result);
+  //     }),
+  //     catchError(error => {
+  //       //
+  //       return of(error.message);
+  //     })
+  //   );
+  // }
 }

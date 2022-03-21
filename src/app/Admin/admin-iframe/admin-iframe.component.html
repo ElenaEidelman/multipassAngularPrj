@@ -7,6 +7,10 @@
       <mat-icon *ngIf="drawer.opened" (click)="drawer.close()" matTooltip="close side nav">close</mat-icon>
     </div> -->
   </div>
+  <div class="readOnliNotifivation" *ngIf="pagePermissionAccessLevel.AccessLevel == this.MockData.accessLevelReadOnly">
+    {{MsgList.readOnly}}
+    <mat-icon>info</mat-icon>
+  </div>
 </div>
 <mat-drawer-container class="example-container" autosize>
   <!-- side menu -->

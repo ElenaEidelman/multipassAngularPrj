@@ -12,46 +12,50 @@ export class BarChartComponent implements OnInit {
 
   @Input() chartTitle: string;
   @Input() chartColor: string;
-  @Input() chartData: ChartDataSets[]; 
+  @Input() chartData: ChartDataSets[];
   @Input() chartLabels: Label[];
 
 
   public barChartOptions: ChartOptions = {
     responsive: true,
     maintainAspectRatio: true,
-    scales: { 
-              xAxes: [{
-                        // barPercentage: 0.2,
-                        gridLines: {
-                          display: false
-                        },
-                        ticks: {
-                          autoSkip: false,
-                          maxRotation: 90,
-                          minRotation: 0,
-                          // padding: 5
-                      }
-                      }], 
-              yAxes: [{
-                        ticks: {
-                          beginAtZero: true,
-                          
-                          },
-                }] 
-              },
+    scales: {
+      xAxes: [{
+        // barPercentage: 0.2,
+        gridLines: {
+          display: false
+        },
+        ticks: {
+          autoSkip: false,
+          maxRotation: 90,
+          minRotation: 0,
+          // padding: 5
+        }
+      }],
+      yAxes: [{
+        ticks: {
+          beginAtZero: true,
+
+        },
+      }]
+    },
     plugins: {
       datalabels: {
         anchor: 'start',
         align: 'end',
         color: 'black'
       }
-      
-    }
-    
+
+    },
+    animation: {
+
+    },
+
+
   };
 
   barChartColors: Color[];
-  
+
   public barChartLabels: Label[];
   public barChartData: ChartDataSets[];
   public barChartType: ChartType = 'bar';
@@ -60,22 +64,22 @@ export class BarChartComponent implements OnInit {
 
 
   constructor() { }
-  
+
 
   ngOnInit(): void {
-    if(this.chartData != undefined && this.chartLabels != undefined){
+    if (this.chartData != undefined && this.chartLabels != undefined) {
       this.barChartData = this.chartData;
       this.barChartLabels = this.chartLabels;
       this.setColorForChart();
     }
   }
 
-  setColorForChart(){
-    this.barChartColors  = [
-        {
-          backgroundColor: this.chartColor == undefined ? 'rgba(64,59,59, 0.6)' : this.chartColor,
-        },
-      ];
+  setColorForChart() {
+    this.barChartColors = [
+      {
+        backgroundColor: this.chartColor == undefined ? 'rgba(64,59,59, 0.6)' : this.chartColor,
+      },
+    ];
   }
   public chartClicked({ event, active }: { event: MouseEvent, active: {}[] }): void {
     console.log(event, active);

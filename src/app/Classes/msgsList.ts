@@ -11,5 +11,9 @@ export const MsgList = {
     savedSuccessfully: 'נשמר בהצלחה',
     smsTemplateNameExist: 'נא לבחור שם אחר לתבנית',
     wrongDate: 'נא לבחור תאריך אחר',
-    fillRequiredFields: 'נא למלא לפחות אחד מהשדות'
+    fillRequiredFields: 'נא למלא לפחות אחד מהשדות',
+    englishOrNumbersOnly: 'רק אותיות באנגלית, או מספרים',
+    readOnly: 'לקריא בלבד',
+    noData: 'אין נתונים',
+    referenceRequired: 'נא להזין מספר אסמכתא'
 }

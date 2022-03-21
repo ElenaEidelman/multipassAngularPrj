@@ -5,6 +5,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { MatAccordion } from '@angular/material/expansion';
 import { Router } from '@angular/router';
 import { resourceUsage } from 'process';
+import { MockData } from 'src/app/Classes/mockData';
 import { MsgList } from 'src/app/Classes/msgsList';
 import { DataServiceService } from 'src/app/data-service.service';
 import { DialogConfirmComponent } from 'src/app/PopUps/dialog-confirm/dialog-confirm.component';
@@ -33,6 +34,11 @@ import { SharedService } from 'src/app/Services/SharedService/shared.service';
 })
 export class AllSmsTemplatesComponent implements OnInit {
 
+  pagePermissionAccessLevel = {
+    AccessLevel: '',
+    PageName: ''
+  }
+
   @ViewChildren("txtArea") textAreas: QueryList<ElementRef>;
 
   @ViewChild(MatAccordion) accordion: MatAccordion;
@@ -55,12 +61,13 @@ export class AllSmsTemplatesComponent implements OnInit {
   spinnerNewTemp: boolean = false;
   newTemplateSendError: string = '';
   MsgList = MsgList;
+  MockData = MockData;
 
   templatesSMS = [];
 
   newTemplateForm = this.fb.group({
     TemplateName: ['', [Validators.required, this.noWhitespaceValidator]],
-    SenderName: ['', [Validators.required, this.noWhitespaceValidator]],
+    SenderName: ['', [Validators.required, this.noWhitespaceValidator, Validators.pattern('[a-zA-z0-9]*')]],
     TemplateFormat: ['', [Validators.required, this.noWhitespaceValidator]]
   });
   SMSForm = this.fb.group({});
@@ -86,6 +93,12 @@ export class AllSmsTemplatesComponent implements OnInit {
     window.scroll(0, 0);
 
     this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
+    this.pagePermissionAccessLevel = this.sharedService.pagesAccessLevel.value.length > 0 ? JSON.parse(this.sharedService.pagesAccessLevel.value) : JSON.parse(JSON.stringify(this.pagePermissionAccessLevel));
+
+    this.sharedService.pagesAccessLevel.next('');
+    if (this.pagePermissionAccessLevel.AccessLevel == this.MockData.accessLevelReadOnly) {
+      this.newTemplateForm.disable();
+    }
 
     this.GetSMSFormats();
 
@@ -100,41 +113,49 @@ export class AllSmsTemplatesComponent implements OnInit {
     }
 
     this.dataService.GetSMSFormats(objToApi).subscribe(result => {
-      if (result['Token'] != undefined || result['Token'] != null) {
+      if (typeof result == 'string') {
+        this.dialog.open(DialogComponent, {
+          data: { message: result }
+        })
 
-        //set new token
-        let tempObjUser = JSON.parse(localStorage.getItem('user'));
-        tempObjUser['Token'] = result['Token'];
-        localStorage.setItem('user', JSON.stringify(tempObjUser));
-        this.userToken = result['Token'];
-
-        if (typeof result == 'object' && result['obj'] != null && result['obj'].length > 0) {
-
-
-          this.templatesSMS = [];
-          this.templatesSMS.push(...result.obj);
-
-
-          this.createForm('SMSForm', this.templatesSMS, 'Id-');
-        }
-        if (typeof result == 'string') {
-          // this.errorMsg = result;
-          setTimeout(() => {
-            // this.errorMsg = '';
-          }, 5000)
-        }
-        if (result.errdesc != '' && result.errdesc != null) {
-          this.dialog.open(DialogComponent, {
-            data: { message: result.errdesc }
-          })
-        }
-      }
-      else {
-        // this.dialog.open(DialogComponent, {
-        //   data: {message: MsgList.exitSystemAlert}
-        // })
         this.sharedService.exitSystemEvent();
+        return false;
       }
+      // if (result['Token'] != undefined || result['Token'] != null) {
+
+      //set new token
+      let tempObjUser = JSON.parse(localStorage.getItem('user'));
+      tempObjUser['Token'] = result['Token'];
+      localStorage.setItem('user', JSON.stringify(tempObjUser));
+      this.userToken = result['Token'];
+
+      // if (typeof result == 'object' && result['obj'] != null && result['obj'].length > 0) {
+
+
+      this.templatesSMS = [];
+      this.templatesSMS.push(...result.obj);
+
+
+      this.createForm('SMSForm', this.templatesSMS, 'Id-');
+      // }
+      // if (typeof result == 'string') {
+      //   // this.errorMsg = result;
+      //   setTimeout(() => {
+      //     // this.errorMsg = '';
+      //   }, 5000)
+      // }
+      // if (result.errdesc != '' && result.errdesc != null) {
+      //   this.dialog.open(DialogComponent, {
+      //     data: { message: result.errdesc }
+      //   })
+      // }
+      // }
+      // else {
+      //   // this.dialog.open(DialogComponent, {
+      //   //   data: {message: MsgList.exitSystemAlert}
+      //   // })
+      //   this.sharedService.exitSystemEvent();
+      // }
 
     });
   }
@@ -146,7 +167,7 @@ export class AllSmsTemplatesComponent implements OnInit {
     values.forEach((value) => {
       let group = this.fb.group({});
       group.addControl('TemplateFormat' + value.Id, this.fb.control([value.TemplateFormat, validators]));
-      group.addControl('SenderName' + value.Id, this.fb.control([value.SenderName, validators]));
+      group.addControl('SenderName' + value.Id, this.fb.control([value.SenderName, [...validators, Validators.pattern('[a-zA-z0-9]*')]]));
       group.addControl('TemplateName' + value.Id, this.fb.control([value.TemplateName, validators]));
 
       this[form].addControl(controlName + value.Id, this.fb.group(group.value));
@@ -200,56 +221,64 @@ export class AllSmsTemplatesComponent implements OnInit {
 
             let objToApi = {
               Token: this.userToken,
-              TemplateName: this.SMSForm.get('Id-' + template.Id).get('TemplateName' + template.Id).value,
-              SenderName: this.SMSForm.get('Id-' + template.Id).get('SenderName' + template.Id).value,
+              TemplateName: this.SMSForm.get('Id-' + template.Id).get('TemplateName' + template.Id).value.trim(),
+              SenderName: this.SMSForm.get('Id-' + template.Id).get('SenderName' + template.Id).value.trim(),
               TemplateFormat: this.SMSForm.get('Id-' + template.Id).get('TemplateFormat' + template.Id).value,
               TemplateId: template.Id
             }
             this.dataService.CreateOrUpdateSMSTemplate(objToApi).subscribe(result => {
-              if (result['Token'] != undefined || result['Token'] != null) {
+              if (typeof result == 'string') {
+                this.dialog.open(DialogComponent, {
+                  data: { message: result }
+                })
 
-                //set new token
-                let tempObjUser = JSON.parse(localStorage.getItem('user'));
-                tempObjUser['Token'] = result['Token'];
-                localStorage.setItem('user', JSON.stringify(tempObjUser));
-                this.userToken = result['Token'];
-
-                if (typeof result == 'object' && result['obj'] != null && result['obj'].length > 0) {
-
-                  document.getElementById('msgBySms' + template.Id).innerHTML = 'נשמר בהצלחה';
-                  setTimeout(() => {
-                    document.getElementById('msgBySms' + template.Id).innerHTML = '';
-                    this.edit = !this.edit;
-                    this.editingTempId = -1;
-                  }, 2000);
-                  setTimeout(() => {
-                    this.GetSMSFormats();
-                  }, 3000);
-
-                  this.SMSForm.get('Id-' + template.Id).get('TemplateFormat' + template.Id).disable();
-                  this.SMSForm.get('Id-' + template.Id).get('SenderName' + template.Id).disable();
-                  this.SMSForm.get('Id-' + template.Id).get('TemplateName' + template.Id).disable();
-                }
-                if (typeof result == 'string') {
-                  this.errorMessagenewSms = result;
-
-                  setTimeout(() => {
-                    this.errorMessagenewSms = '';
-                  }, 5000)
-                }
-                if (result.obj == null && result.errdesc != '' && result.errdesc != null) {
-                  this.dialog.open(DialogComponent, {
-                    data: { message: result.errdesc }
-                  })
-                }
-
-              }
-              else {
-                // this.dialog.open(DialogComponent, {
-                //   data: {message: MsgList.exitSystemAlert}
-                // })
                 this.sharedService.exitSystemEvent();
+                return false;
               }
+              // if (result['Token'] != undefined || result['Token'] != null) {
+
+              //set new token
+              let tempObjUser = JSON.parse(localStorage.getItem('user'));
+              tempObjUser['Token'] = result['Token'];
+              localStorage.setItem('user', JSON.stringify(tempObjUser));
+              this.userToken = result['Token'];
+
+              // if (typeof result == 'object' && result['obj'] != null && result['obj'].length > 0) {
+
+              document.getElementById('msgBySms' + template.Id).innerHTML = 'נשמר בהצלחה';
+              setTimeout(() => {
+                document.getElementById('msgBySms' + template.Id).innerHTML = '';
+                this.edit = !this.edit;
+                this.editingTempId = -1;
+              }, 2000);
+              setTimeout(() => {
+                this.GetSMSFormats();
+              }, 3000);
+
+              this.SMSForm.get('Id-' + template.Id).get('TemplateFormat' + template.Id).disable();
+              this.SMSForm.get('Id-' + template.Id).get('SenderName' + template.Id).disable();
+              this.SMSForm.get('Id-' + template.Id).get('TemplateName' + template.Id).disable();
+              // }
+              // if (typeof result == 'string') {
+              //   this.errorMessagenewSms = result;
+
+              //   setTimeout(() => {
+              //     this.errorMessagenewSms = '';
+              //   }, 5000)
+              // }
+              // if (result.obj == null && result.errdesc != '' && result.errdesc != null) {
+              //   this.dialog.open(DialogComponent, {
+              //     data: { message: result.errdesc }
+              //   })
+              // }
+
+              // }
+              // else {
+              //   // this.dialog.open(DialogComponent, {
+              //   //   data: {message: MsgList.exitSystemAlert}
+              //   // })
+              //   this.sharedService.exitSystemEvent();
+              // }
             });
           }
         }
@@ -293,56 +322,65 @@ export class AllSmsTemplatesComponent implements OnInit {
           this.spinnerNewTemp = true;
           let objToApi = {
             Token: this.userToken,
-            TemplateName: this.newTemplateForm.get('TemplateName').value,
-            SenderName: this.newTemplateForm.get('SenderName').value,
+            TemplateName: this.newTemplateForm.get('TemplateName').value.trim(),
+            SenderName: this.newTemplateForm.get('SenderName').value.trim(),
             TemplateFormat: this.newTemplateForm.get('TemplateFormat').value,
           }
 
           this.dataService.CreateOrUpdateSMSTemplate(objToApi).subscribe(result => {
             this.spinnerNewTemp = false;
-            if (result['Token'] != undefined || result['Token'] != null) {
+            if (typeof result == 'string') {
+              this.dialog.open(DialogComponent, {
+                data: { message: result }
+              })
 
-              //set new token
-              let tempObjUser = JSON.parse(localStorage.getItem('user'));
-              tempObjUser['Token'] = result['Token'];
-              localStorage.setItem('user', JSON.stringify(tempObjUser));
-              this.userToken = result['Token'];
-
-              if (typeof result == 'object' && result['obj'] != null && result['obj'].length > 0 && result.errdesc == 'Template Created Successfully') {
-                this.templatesSMS.unshift(...result.obj);
-
-                this.saveMessage = 'נשמר בהצלחה';
-
-                this.resetNewTemplate();
-                this.voucherNumberInsered = true;
-                this.voucherValidityInsered = true;
-
-                setTimeout(() => {
-                  this.saveMessage = '';
-                  this.openNewTemplate = false;
-                }, 2000);
-                this.createForm('SMSForm', this.templatesSMS, 'Id-');
-
-              }
-              if (typeof result == 'string') {
-                this.errorMessagenewSms = result;
-
-                setTimeout(() => {
-                  this.errorMessagenewSms = '';
-                }, 5000)
-              }
-              if (result.obj == null && result.errdesc != '' && result.errdesc != null) {
-                this.dialog.open(DialogComponent, {
-                  data: { message: result.errdesc }
-                })
-              }
-            }
-            else {
-              // this.dialog.open(DialogComponent, {
-              //   data: {message: MsgList.exitSystemAlert}
-              // })
               this.sharedService.exitSystemEvent();
+              return false;
             }
+            // if (result['Token'] != undefined || result['Token'] != null) {
+
+            //set new token
+            let tempObjUser = JSON.parse(localStorage.getItem('user'));
+            tempObjUser['Token'] = result['Token'];
+            localStorage.setItem('user', JSON.stringify(tempObjUser));
+            this.userToken = result['Token'];
+
+            // if (typeof result == 'object' && result['obj'] != null && result['obj'].length > 0 && result.errdesc == 'Template Created Successfully') {
+            this.templatesSMS.unshift(...result.obj);
+
+            this.saveMessage = 'נשמר בהצלחה';
+            setTimeout(() => {
+              this.saveMessage = '';
+              this.openNewTemplate = false;
+            }, 2000);
+
+            this.resetNewTemplate();
+            this.voucherNumberInsered = true;
+            this.voucherValidityInsered = true;
+
+
+            this.createForm('SMSForm', this.templatesSMS, 'Id-');
+
+            // }
+            // if (typeof result == 'string') {
+            //   this.errorMessagenewSms = result;
+
+            //   setTimeout(() => {
+            //     this.errorMessagenewSms = '';
+            //   }, 5000)
+            // }
+            // if (result.obj == null && result.errdesc != '' && result.errdesc != null) {
+            //   this.dialog.open(DialogComponent, {
+            //     data: { message: result.errdesc }
+            //   })
+            // }
+            // }
+            // else {
+            //   // this.dialog.open(DialogComponent, {
+            //   //   data: {message: MsgList.exitSystemAlert}
+            //   // })
+            //   this.sharedService.exitSystemEvent();
+            // }
           });
         }
         else {
@@ -376,20 +414,23 @@ export class AllSmsTemplatesComponent implements OnInit {
     }, 100);
   }
   editTemplate(template, index) {
-
     //close another template if it been opened
     if (this.editingTempId != undefined && this.editingTempId != -1) {
       this.closeTemplate({ Id: this.editingTempId });
     }
     this.edit = !this.edit;
     this.editingTempId = template.Id;
-    this.SMSForm.get('Id-' + template.Id).get('TemplateFormat' + template.Id).enable();
-    this.SMSForm.get('Id-' + template.Id).get('SenderName' + template.Id).enable();
-    this.SMSForm.get('Id-' + template.Id).get('TemplateName' + template.Id).enable();
 
-    this.textAreas.find((item, idx) => {
-      return (idx) === index;
-    }).nativeElement.focus();
+
+    if (this.pagePermissionAccessLevel.AccessLevel != this.MockData.accessLevelReadOnly) {
+      this.SMSForm.get('Id-' + template.Id).get('TemplateFormat' + template.Id).enable();
+      this.SMSForm.get('Id-' + template.Id).get('SenderName' + template.Id).enable();
+      this.SMSForm.get('Id-' + template.Id).get('TemplateName' + template.Id).enable();
+
+      this.textAreas.find((item, idx) => {
+        return (idx) === index;
+      }).nativeElement.focus();
+    }
   }
 
 
@@ -429,18 +470,27 @@ Json:
     "TemplateId":6
 }
      */
-    this.dialog.open(DialogConfirmComponent, {
-      data: { message: 'האם למחוק ' + template.TemplateName + ' ?', closeNameButton: 'בעצם לא' }
-    }).afterClosed().subscribe(result => {
-      if (result.result == 'yes') {
+    if (this.pagePermissionAccessLevel.AccessLevel != this.MockData.accessLevelReadOnly) {
+      this.dialog.open(DialogConfirmComponent, {
+        data: { message: 'האם למחוק ' + template.TemplateName + ' ?', closeNameButton: 'בעצם לא' }
+      }).afterClosed().subscribe(result => {
+        if (result.result == 'yes') {
 
-        let objToApi = {
-          Token: this.userToken,
-          TemplateId: template.Id
-        }
+          let objToApi = {
+            Token: this.userToken,
+            TemplateId: template.Id
+          }
 
-        this.dataService.DeleteSMSTemplate(objToApi).subscribe(result => {
-          if (result['Token'] != undefined || result['Token'] != null) {
+          this.dataService.DeleteSMSTemplate(objToApi).subscribe(result => {
+            if (typeof result == 'string') {
+              this.dialog.open(DialogComponent, {
+                data: { message: result }
+              })
+
+              this.sharedService.exitSystemEvent();
+              return false;
+            }
+            // if (result['Token'] != undefined || result['Token'] != null) {
 
             //set new token
             let tempObjUser = JSON.parse(localStorage.getItem('user'));
@@ -448,29 +498,35 @@ Json:
             localStorage.setItem('user', JSON.stringify(tempObjUser));
             this.userToken = result['Token'];
 
-            if (result.errdesc.includes('Template is Deleted Successfully')) {
-              this.dialog.open(DialogComponent, {
-                data: { message: 'נמחק בהצלחה' }
-              })
+            // if (result.errdesc.includes('Template is Deleted Successfully')) {
+            this.dialog.open(DialogComponent, {
+              data: { message: 'נמחק בהצלחה' }
+            })
 
-              this.templatesSMS = this.templatesSMS.filter(temp => temp.Id != template.Id);
-            }
-            if (typeof result == 'string') {
-              // this.errorMsg = result;
-              setTimeout(() => {
-                // this.errorMsg = '';
-              }, 5000)
-            }
-          }
-          else {
-            // this.dialog.open(DialogComponent, {
-            //   data: {message: MsgList.exitSystemAlert}
-            // })
-            this.sharedService.exitSystemEvent();
-          }
-        });
-      }
-    });
+            this.templatesSMS = this.templatesSMS.filter(temp => temp.Id != template.Id);
+            // }
+            // if (typeof result == 'string') {
+            //   // this.errorMsg = result;
+            //   setTimeout(() => {
+            //     // this.errorMsg = '';
+            //   }, 5000)
+            // }
+            // }
+            // else {
+            //   // this.dialog.open(DialogComponent, {
+            //   //   data: {message: MsgList.exitSystemAlert}
+            //   // })
+            //   this.sharedService.exitSystemEvent();
+            // }
+          });
+        }
+      });
+    }
+    else {
+      this.dialog.open(DialogComponent, {
+        data: { message: this.MsgList.readOnly }
+      })
+    }
 
   }
   closeTemplate(template) {
@@ -506,38 +562,51 @@ Json:
             this.spinnerById[0] = template['Id'];
             let phone = result.result.split('phone: ')[1];
 
+
             let objToApi = {
               Token: this.userToken,
               TemplateFormat: template.TemplateFormat,
-              Phone: phone
+              Phone: phone,
+              SenderName: template.SenderName
             }
+
 
 
             this.dataService.SendSampleMessage(objToApi).subscribe(result => {
 
+
+
               this.spinnerById[0] = -1;
-              this.newSMSSend = !this.newSMSSend;
-              if (result['Token'] != undefined || result['Token'] != null) {
-                //set new token
-                let tempObjUser = JSON.parse(localStorage.getItem('user'));
-                tempObjUser['Token'] = result['Token'];
-                localStorage.setItem('user', JSON.stringify(tempObjUser));
-                this.userToken = result['Token'];
+              if (typeof result == 'string') {
+                this.dialog.open(DialogComponent, {
+                  data: { message: result }
+                })
 
-
-                if (result.obj == 'OK') {
-                  this.dialog.open(DialogComponent, {
-                    data: { message: 'נשלח בהצלחה' }
-                  });
-                }
-
-              }
-              else {
-                // this.dialog.open(DialogComponent, {
-                //   data: {message: MsgList.exitSystemAlert}
-                // })
                 this.sharedService.exitSystemEvent();
+                return false;
               }
+              this.newSMSSend = !this.newSMSSend;
+              // if (result['Token'] != undefined || result['Token'] != null) {
+              //set new token
+              let tempObjUser = JSON.parse(localStorage.getItem('user'));
+              tempObjUser['Token'] = result['Token'];
+              localStorage.setItem('user', JSON.stringify(tempObjUser));
+              this.userToken = result['Token'];
+
+
+              // if (result.obj == 'OK') {
+              this.dialog.open(DialogComponent, {
+                data: { message: 'נשלח בהצלחה' }
+              });
+              // }
+
+              // }
+              // else {
+              //   // this.dialog.open(DialogComponent, {
+              //   //   data: {message: MsgList.exitSystemAlert}
+              //   // })
+              //   this.sharedService.exitSystemEvent();
+              // }
             });
           }
         }
@@ -546,11 +615,6 @@ Json:
         }
       })
     }
-
-    // }
-    // else{
-
-    // }
   }
 
   public noWhitespaceValidator(control: FormControl) {

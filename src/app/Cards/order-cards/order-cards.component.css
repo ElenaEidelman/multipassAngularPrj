@@ -121,6 +121,8 @@ mat-hint{
     background: #88C43E !important;
     color: #fff !important;
 } */
+
+
 @media screen and (max-width: 1024px){
     .textA .mat-form-field-infix{
         padding-top: 0px;

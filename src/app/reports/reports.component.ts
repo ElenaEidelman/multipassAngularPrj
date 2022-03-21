@@ -8,6 +8,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { MsgList } from '../Classes/msgsList';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { SharedService } from '../Services/SharedService/shared.service';
+import { MockData } from '../Classes/mockData';
+
+
+
+
 @Component({
   selector: 'app-reports',
   templateUrl: './reports.component.html',
@@ -30,6 +35,11 @@ import { SharedService } from '../Services/SharedService/shared.service';
 })
 export class ReportsComponent implements OnInit, AfterViewInit {
 
+  pagePermissionAccessLevel = {
+    AccessLevel: '',
+    PageName: ''
+  }
+
   elementTitle: string = 'דוחות';
   formErrorMsg: string = '';
   userToken;
@@ -37,6 +47,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
   unsubscribeId;
   errorMsg = '';
   customers;
+  customersSpare;
   indexId;
   ScheduleDate;
   fDate;
@@ -44,6 +55,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
   report1;
   checkBoxValue: boolean = false;
   MsgList = MsgList;
+  MockData = MockData;
   Report1FormView: boolean = true;
   Report2FormView: boolean = true;
   Report3FormView: boolean = true;
@@ -68,7 +80,9 @@ export class ReportsComponent implements OnInit, AfterViewInit {
     customer: [{ value: '', disabled: false }, Validators.required],
     UserId: [{ value: '', disabled: false }],
     CanceledCheckB: (''),
-    reportData: ('prevMonth')
+    reportData: ('prevMonth'),
+    searchCustomer: ['']
+
   });
 
   Report2Form = this.fb.group({
@@ -77,11 +91,12 @@ export class ReportsComponent implements OnInit, AfterViewInit {
     FDate: [{ value: '', disabled: false }],
     TDate: [{ value: '', disabled: false }],
     CustomerEmail: [{ value: '', disabled: false }, [Validators.required, Validators.email]],
-    ScheduleDate: [{ value: '', disabled: false }, Validators.required],
+    ScheduleDate: [{ value: '', disabled: false }],
     Checkedsend: [{ value: '', disabled: false }],
     customer: [{ value: '', disabled: false }, Validators.required],
     UserId: [{ value: '', disabled: false }],
     CanceledCheckB: [{ value: '', disabled: true }],
+    searchCustomer: ['']
   });
 
   Report3Form = this.fb.group({
@@ -95,7 +110,8 @@ export class ReportsComponent implements OnInit, AfterViewInit {
     customer: [{ organizationName: 'כל הלקוחות', id: '0' }, Validators.required],
     UserId: [{ value: '', disabled: false }],
     CanceledCheckB: [{ value: '', disabled: false }],
-    reportData: ('prevMonth')
+    reportData: ('prevMonth'),
+    searchCustomer: ['']
   });
 
   reportDataList = [
@@ -125,6 +141,16 @@ export class ReportsComponent implements OnInit, AfterViewInit {
     this.spinner = true;
     this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
 
+    this.pagePermissionAccessLevel = this.sharedService.pagesAccessLevel.value.length > 0 ? JSON.parse(this.sharedService.pagesAccessLevel.value) : JSON.parse(JSON.stringify(this.pagePermissionAccessLevel));
+
+    this.sharedService.pagesAccessLevel.next('');
+    if (this.pagePermissionAccessLevel.AccessLevel == this.MockData.accessLevelReadOnly) {
+      this.Report1Form.disable();
+      this.Report2Form.disable();
+      this.Report3Form.disable();
+
+    }
+
     this.unsubscribeId = this.activateRoute.params.subscribe(param => {
       this.indexId = param['indexId'];
       this.getAllCustomers();
@@ -151,7 +177,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
 
   }
 
-  loadingReport(reportName) {
+  sendReport(reportName) {
     if (this[reportName].valid) {
 
       if (new Date(this[reportName].get('TDate').value).getHours() == 0) {
@@ -178,43 +204,52 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         customeremail: this[reportName].get('CustomerEmail').value
       }
 
+
       this.dataService.CreateRealizationReports(objToApi).subscribe(result => {
-        if (result['Token'] != undefined || result['Token'] != null) {
-          //set new token
-          let tempObjUser = JSON.parse(localStorage.getItem('user'));
-          tempObjUser['Token'] = result['Token'];
-          localStorage.setItem('user', JSON.stringify(tempObjUser));
-          this.userToken = result['Token'];
-
-          if (result.errdesc == 'OK') {
-            this.dialog.open(DialogComponent, {
-              data: { message: 'דוח נשלח בהצלחה' }
-            });
-            this.resetForm('Report1Form');
-          }
-          if (result.errdesc != 'OK') {
-            this.dialog.open(DialogComponent, {
-              data: { message: result.errdesc }
-            })
-          }
-        }
-
-        else if (typeof result == 'string') {
+        if (typeof result == 'string') {
           this.dialog.open(DialogComponent, {
             data: { message: result }
           })
-        }
-        else {
-          // this.dialog.open(DialogComponent, {
-          //   data: {message: MsgList.exitSystemAlert}
-          // })
+
           this.sharedService.exitSystemEvent();
+          return false;
         }
+
+        // if (result['Token'] != undefined || result['Token'] != null) {
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
+
+        if (result.errdesc == 'OK') {
+          this.dialog.open(DialogComponent, {
+            data: { message: 'דוח נשלח בהצלחה' }
+          });
+        }
+        // if (result.errdesc != 'OK') {
+        //   this.dialog.open(DialogComponent, {
+        //     data: { message: result.errdesc }
+        //   })
+        // }
+        // }
+
+        // else if (typeof result == 'string') {
+        //   this.dialog.open(DialogComponent, {
+        //     data: { message: result }
+        //   })
+        // }
+        // else {
+        //   // this.dialog.open(DialogComponent, {
+        //   //   data: {message: MsgList.exitSystemAlert}
+        //   // })
+        //   this.sharedService.exitSystemEvent();
+        // }
       })
     }
   }
 
-  balanceReport() {
+  sendBalanceReport() {
 
     if (this.Report2Form.valid) {
 
@@ -231,39 +266,49 @@ export class ReportsComponent implements OnInit, AfterViewInit {
       })
       objToApi['CanceledCheckB'] = false;
 
+
       this.dataService.CreateRealizationReports(objToApi).subscribe(result => {
-
-        if (result['Token'] != undefined || result['Token'] != null) {
-
-          //set new token
-          let tempObjUser = JSON.parse(localStorage.getItem('user'));
-          tempObjUser['Token'] = result['Token'];
-          localStorage.setItem('user', JSON.stringify(tempObjUser));
-          this.userToken = result['Token'];
-
-          if (result.errdesc == 'OK') {
-            this.dialog.open(DialogComponent, {
-              data: { message: 'דוח נשלח בהצלחה' }
-            });
-            this.resetForm('Report2Form');
-          }
-          if (result.errdesc != 'OK') {
-            this.dialog.open(DialogComponent, {
-              data: { message: result.errdesc }
-            })
-          }
-        }
-        else if (typeof result == 'string') {
+        if (typeof result == 'string') {
           this.dialog.open(DialogComponent, {
             data: { message: result }
           })
-        }
-        else {
-          // this.dialog.open(DialogComponent, {
-          //   data: {message: MsgList.exitSystemAlert}
-          // })
+
           this.sharedService.exitSystemEvent();
+          return false;
         }
+
+
+        // if (result['Token'] != undefined || result['Token'] != null) {
+
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
+
+        if (result.errdesc == 'OK') {
+          this.dialog.open(DialogComponent, {
+            data: { message: 'דוח נשלח בהצלחה' }
+          });
+
+        }
+        // if (result.errdesc != 'OK') {
+        //   this.dialog.open(DialogComponent, {
+        //     data: { message: result.errdesc }
+        //   })
+        // }
+        // }
+        // else if (typeof result == 'string') {
+        //   this.dialog.open(DialogComponent, {
+        //     data: { message: result }
+        //   })
+        // }
+        // else {
+        //   // this.dialog.open(DialogComponent, {
+        //   //   data: {message: MsgList.exitSystemAlert}
+        //   // })
+        //   this.sharedService.exitSystemEvent();
+        // }
 
         // if (typeof result == 'object' && result['obj'] == null) {
         //   this.formErrorMsg = 'No Data Found';
@@ -275,73 +320,6 @@ export class ReportsComponent implements OnInit, AfterViewInit {
     }
   }
 
-  // realizationReport() {
-
-  //   if (this.Report3Form.valid) {
-
-  //     let cancelCheckValue = this.Report3Form.get('CanceledCheckB').value?.toLocaleString();
-
-  //     let objToApi = {
-  //       Token: this.userToken,
-  //       UserId: this.userId,
-  //       CanceledCheckB: cancelCheckValue == '' ? 'false' : cancelCheckValue.toString()
-  //     }
-
-  //     Object.keys(this.Report3Form.value).forEach(val => {
-  //       if (this.Report3Form.get(val).value != '') {
-  //         objToApi[val] = this.Report3Form.get(val).value;
-  //       }
-  //     });
-
-  //     this.dataService.CreateRealizationReports(objToApi).subscribe(result => {
-  //       if (result['Token'] != undefined || result['Token'] != null) {
-  //         //set new token
-  //         let tempObjUser = JSON.parse(localStorage.getItem('user'));
-  //         tempObjUser['Token'] = result['Token'];
-  //         localStorage.setItem('user', JSON.stringify(tempObjUser));
-  //         this.userToken = result['Token'];
-
-  //         if (result.errdesc == 'OK') {
-  //           this.dialog.open(DialogComponent, {
-  //             data: { message: 'דוח נשלח בהצלחה' }
-  //           });
-
-  //           this.resetForm('Report3Form');
-  //         }
-  //         if (result.errdesc != 'OK') {
-  //           this.dialog.open(DialogComponent, {
-  //             data: { message: result.errdesc }
-  //           })
-  //         }
-  //       }
-  //       else if (typeof result == 'string') {
-  //         this.dialog.open(DialogComponent, {
-  //           data: { message: result }
-  //         })
-  //       }
-  //       else {
-  //         // this.dialog.open(DialogComponent, {
-  //         //   data: {message: MsgList.exitSystemAlert}
-  //         // })
-  //          
-  //         this.sharedService.exitSystemEvent();
-  //       }
-  //     })
-  //   }
-  // }
-
-  resetForm(form) {
-    //  
-    // this[form].reset();
-    // this[form + 'View'] = false;
-
-    // setTimeout(() => {
-    //   if (form == 'Report3Form' || form == 'Report1Form') {
-    //     this[form].get('reportData').setValue('prevMonth')
-    //   }
-    //   this[form + 'View'] = true;
-    // }, 0);
-  }
 
   getAllCustomers() {
 
@@ -350,52 +328,62 @@ export class ReportsComponent implements OnInit, AfterViewInit {
     }
     this.dataService.GetAllCustomers(objToApi).subscribe(result => {
       this.spinner = false;
-
-      if (result['Token'] != undefined || result['Token'] != null) {
-        //set new token
-        let tempObjUser = JSON.parse(localStorage.getItem('user'));
-        tempObjUser['Token'] = result['Token'];
-        localStorage.setItem('user', JSON.stringify(tempObjUser));
-        this.userToken = result['Token'];
-
-        if (typeof result == 'object' && result.obj != null && result.obj.length > 0) {
-          this.customers = result['obj'].sort(function (a, b) {
-            if (a.organizationName < b.organizationName) { return -1; }
-            if (a.organizationName > b.organizationName) { return 1; }
-            return 0;
-          });;
-          this.Report1Form.get('customer').setValue({ organizationName: 'כל הלקוחות', id: '0' });
-          this.Report3Form.get('customer').setValue({ organizationName: 'כל הלקוחות', id: '0' });
-          this.customers.unshift({ organizationName: 'כל הלקוחות', id: '0' })
-
-
-          if (this.userId != undefined && this.indexId != undefined) {
-            this.Report1Form.controls['customer'].setValue(this.fillteringUserData(this.userId));
-            this.Report2Form.controls['customer'].setValue(this.fillteringUserData(this.userId));
-            this.Report3Form.controls['customer'].setValue(this.fillteringUserData(this.userId));
-          }
-          else {
-            this.indexId = 0;
-          }
-        }
-        else if (typeof result == 'object' && result['obj'] == null) {
-          this.errorMsg = 'No Data Found';
-          setTimeout(() => {
-            this.errorMsg = '';
-          }, 3000);
-        }
-      }
-      else if (typeof result == 'string') {
+      if (typeof result == 'string') {
         this.dialog.open(DialogComponent, {
           data: { message: result }
-        });
+        })
+
+        this.sharedService.exitSystemEvent();
+        return false;
+      }
+
+      // if (result['Token'] != undefined || result['Token'] != null) {
+      //set new token
+      let tempObjUser = JSON.parse(localStorage.getItem('user'));
+      tempObjUser['Token'] = result['Token'];
+      localStorage.setItem('user', JSON.stringify(tempObjUser));
+      this.userToken = result['Token'];
+
+      // if (typeof result == 'object' && result.obj != null && result.obj.length > 0) {
+      this.customers = result['obj'].sort(function (a, b) {
+        if (a.organizationName < b.organizationName) { return -1; }
+        if (a.organizationName > b.organizationName) { return 1; }
+        return 0;
+      });
+      this.Report1Form.get('customer').setValue({ organizationName: 'כל הלקוחות', id: '0' });
+      this.Report2Form.get('customer').setValue({ organizationName: 'כל הלקוחות', id: '0' });
+      this.Report3Form.get('customer').setValue({ organizationName: 'כל הלקוחות', id: '0' });
+      this.customers.unshift({ organizationName: 'כל הלקוחות', id: '0' })
+      this.customersSpare = JSON.parse(JSON.stringify(this.customers));
+
+
+      if (this.userId != undefined && this.indexId != undefined) {
+        this.Report1Form.controls['customer'].setValue(this.fillteringUserData(this.userId));
+        this.Report2Form.controls['customer'].setValue(this.fillteringUserData(this.userId));
+        this.Report3Form.controls['customer'].setValue(this.fillteringUserData(this.userId));
       }
       else {
-        // this.dialog.open(DialogComponent, {
-        //   data: {message: MsgList.exitSystemAlert}
-        // })
-        this.sharedService.exitSystemEvent();
+        this.indexId = 0;
       }
+      // }
+      // else if (typeof result == 'object' && result['obj'] == null) {
+      //   this.errorMsg = 'No Data Found';
+      //   setTimeout(() => {
+      //     this.errorMsg = '';
+      //   }, 3000);
+      // }
+      // }
+      // else if (typeof result == 'string') {
+      //   this.dialog.open(DialogComponent, {
+      //     data: { message: result }
+      //   });
+      // }
+      // else {
+      //   // this.dialog.open(DialogComponent, {
+      //   //   data: {message: MsgList.exitSystemAlert}
+      //   // })
+      //   this.sharedService.exitSystemEvent();
+      // }
 
     });
   }
@@ -495,6 +483,29 @@ export class ReportsComponent implements OnInit, AfterViewInit {
   //set default option (all customers) to mat-select
   compareFunction(o1: any, o2: any) {
     return (o1.name == o2.name && o1.id == o2.id);
+  }
+
+  searchChange(event) {
+    this.customersSpare = JSON.parse(JSON.stringify(this.customers));
+    this.customersSpare = this.customers.filter(customer => {
+      if (customer.organizationName.toLowerCase().includes(event.toLowerCase())) {
+        return customer;
+      }
+    });
+  }
+
+  selectedTabChange(event) {
+    if (event.tab.position == 0) {
+      this.Report1Form.get('searchCustomer').setValue('');
+    }
+    else if (event.tab.position == 1) {
+      this.Report2Form.get('searchCustomer').setValue('');
+    }
+    else if (event.tab.position == 2) {
+      this.Report3Form.get('searchCustomer').setValue('');
+    }
+
+    this.customersSpare = JSON.parse(JSON.stringify(this.customers));
   }
 
   ngAfterViewInit() {

@@ -6,7 +6,7 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
   providedIn: 'root'
 })
 export class IframeSharingServiceService {
-  public companyInfo = new BehaviorSubject('');
+  // public companyInfo = new BehaviorSubject('');
   public companyId = new BehaviorSubject('');
   public iframeInfo = new BehaviorSubject('');
   public iframePreviewInfo = this.iframeInfo.asObservable();

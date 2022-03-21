@@ -629,7 +629,6 @@ dialog-content-example-dialog div.innerElement{
 
 button.addOptionFromDropDown{
   width: 100%;
-  border-radius: 0;
 }
 
 
@@ -891,6 +890,7 @@ mat-card-actions.actionWrapB mat-spinner >  svg, mat-card-actions.newSMSActionBu
   margin: auto;
   top: 0;
   bottom: 0;
+  z-index: 99999;
 }
 .mat-progress-spinner circle, .mat-spinner circle {
   stroke: #8AC443;
@@ -1154,6 +1154,49 @@ th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:
 .important-button-margin span.mat-button-wrapper{
   padding: 0!important;
 }
+
+.dropDownOption mat-form-field div.mat-form-field-wrapper{
+  padding: 0;
+}
+
+.wrapDropDownOption{
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  flex-direction: row-reverse;
+  position: sticky;
+  top: 0;
+  z-index: 9999999;
+  background: #fff;
+  padding: 5px;
+}
+
+.buttonFlexMarginAuto{
+  display: flex;
+  margin: auto 5px;
+}
+.dropDownOption{
+  flex: 1 1 0px
+}
+.dropDownOption mat-icon{
+  /* color: #686866 !important; */
+  padding: 0 5px;
+}
+.matPrefSuf{
+  color: #BCBBBC !important;
+}
+
+.dropDownOption div.mat-form-field-infix{
+  padding: 0em 0 0.7em 0;
+}
+.dropDownOption div.mat-form-field-prefix{
+  margin: auto;
+  margin-left: -10px;
+}
+
+
+
+
 /* mobile */
 
 @media screen and (max-width: 1024px){
@@ -1358,6 +1401,10 @@ th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:
   position: absolute !important;
 }
 
+.titleDisplayFlex{
+  display: flex;
+  justify-content: space-between;
+}
 
 /* filter table and table */
 .formElement{
@@ -1453,9 +1500,22 @@ fa-icon > svg{
   direction: rtl;
 }
 
+.isDisabled{
+  color: currentColor;
+  opacity: 0.5;
+  text-decoration: none;
+  pointer-events: none;
+}
+
 
 mat-form-field.marginTop0 > div.mat-form-field-wrapper > div.mat-form-field-flex > div.mat-form-field-infix > span.mat-form-field-label-wrapper > label.mat-form-field-label{
   margin-top: 0 !important;
+}
+
+.readOnliNotifivation{
+  color: #f4a293;
+  margin-right: auto !important;
+  display: flex;
 }
 
 
@@ -1490,6 +1550,11 @@ mat-form-field.marginTop0 > div.mat-form-field-wrapper > div.mat-form-field-flex
     /* width: unset;  order/id mobile problem*/ 
 }
 }
+
+
+
+
+
 
 
 

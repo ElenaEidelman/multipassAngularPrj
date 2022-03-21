@@ -6,7 +6,7 @@
         </button>
     </div> -->
 </div>
-<mat-spinner *ngIf="newOrderDataSource == undefined" class="noDataSpinner"></mat-spinner>
+<mat-spinner *ngIf="homeSpinner" class="noDataSpinner"></mat-spinner>
 
 <div class="page-wrap" *ngIf="newOrderDataSource != undefined">
 
@@ -56,7 +56,8 @@
                                     {{returnHebTranslation(labelTemp,data)}}</th>
                                 <td mat-cell *matCellDef="let row">
                                     <!--[routerLink]="['/public/customer', row['UserId']]"-->
-                                    <a (click)="goToCustomer(row['UserId'])" *ngIf="data == 'UserName'" >{{row[data]}}</a>
+                                    <a (click)="goToCustomer(row['UserId'])"
+                                        *ngIf="data == 'UserName'">{{row[data]}}</a>
                                     <!-- <span *ngIf="data == 'UserName'">
                                     <a [routerLink]="['/public/customer', row['UserId']]">{{row[data]}}</a>
                                 </span> -->
@@ -73,11 +74,11 @@
                             <!-- <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td> -->
                             <div *ngIf="newOrderDataSource.filteredData.length === 0" class="tableEmptyMsg">אין נתונים
                             </div>
-                            <!-- <mat-paginator  [pageSizeOptions]="[25, 55, 85, 100]" class="mat-paginator-sticky"></mat-paginator> -->
                         </tr>
                     </table>
 
-                    <!-- <mat-paginator [length]="newOrderDataSource.data.length" [pageSizeOptions]="[7, 25, 100]" aria-label="Select page of users"></mat-paginator> -->
+                    <mat-paginator #MatPaginator [length]="newOrderDataSource.data.length"
+                        [pageSizeOptions]="[5, 25, 100]" aria-label="Select page of users"></mat-paginator>
                 </div>
 
             </div>
@@ -116,7 +117,8 @@
                         </tr>
                     </table>
 
-                    <!-- <mat-paginator [length]="lastCustomersDataSource.data.length" [pageSizeOptions]="[7, 25, 100]" aria-label="Select page of users"></mat-paginator> -->
+                    <mat-paginator [length]="lastCustomersDataSource.data.length" [pageSize]="2"
+                        [pageSizeOptions]="[5, 25, 100]" aria-label="Select page of users"></mat-paginator>
                 </div>
             </div>
         </div>

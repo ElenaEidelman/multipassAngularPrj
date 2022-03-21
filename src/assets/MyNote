@@ -1,4 +1,1 @@
-
-
-3. otp issue
-
+1. check page-permission-guar.guard.ts row 64, check page permission

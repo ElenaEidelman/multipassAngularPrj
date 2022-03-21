@@ -104,7 +104,7 @@
 
                                 <div>
                                     <div class="formFieldTitle mobileTitle">
-                                        <span> צלמו או הוסיפו תמונות וסרטון </span>
+                                        <span> תמונה אישית לברכה</span>
                                         <span class="lighterText"> (עד MB {{picSizeInMega}}) </span>
                                     </div>
 
@@ -224,7 +224,7 @@
                         <div>
                             <form [formGroup]="FormsArray.get('SecondFormGroup')" (ngSubmit)="nextStep(stepper)">
                                 <div>
-                                    <div class="formFieldTitle titleFlex">
+                                    <!-- <div class="formFieldTitle titleFlex">
                                         <div>מתי לשלוח את המתנה?</div>
                                     </div>
                                     <div class="OptionsWrap">
@@ -232,8 +232,8 @@
                                             formControlName="dateOptionOfSend" (change)="sendDateChange($event)">
                                             <mat-radio-button value="1">עכשיו</mat-radio-button>
                                             <mat-radio-button value="2">במועד מאוחר יותר</mat-radio-button>
-                                        </mat-radio-group>
-                                    </div>
+                                    </mat-radio-group>
+                                </div> -->
 
                                     <div [@openClose]="openCloseTimeDateSendGift ? true : false"
                                         formGroupName="dateTimeData">
@@ -324,7 +324,8 @@
                                                 <div class="prevItemsWrap secondForm">
                                                     <div class="closeIcon" [@openClose]="emailOption">
                                                         <mat-icon type="button"
-                                                            (click)="openSendingOption('emailOption')">close</mat-icon>
+                                                            (click)="openSendingOption('emailOption')">close
+                                                        </mat-icon>
                                                     </div>
                                                     <div>
                                                         <button type="button" mat-icon-button
@@ -432,7 +433,8 @@
                                 <mat-error *ngIf="formError != ''">{{formError}}</mat-error>
                                 <div class="wrapNextPrevButton">
                                     <button type="button" (click)="prevStep(stepper)" mat-button
-                                        class="prevButton">לחזור </button>
+                                        class="prevButton">לחזור
+                                    </button>
                                     <button mat-button class="primaryButton" id="goToPaymentButton">המשך לתשלום</button>
                                     <!-- <mat-spinner *ngIf="navigateToPayment"></mat-spinner> -->
                                 </div>

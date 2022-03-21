@@ -4,6 +4,7 @@ import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MockData } from 'src/app/Classes/mockData';
 import { MsgList } from 'src/app/Classes/msgsList';
 import { DataServiceService } from 'src/app/data-service.service';
 import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
@@ -33,6 +34,10 @@ import { resourceLimits } from 'worker_threads';
 })
 export class NewUserComponent implements OnInit {
 
+  pagePermissionAccessLevel = {
+    AccessLevel: '',
+    PageName: ''
+  }
 
 
   @ViewChild(MatAccordion) accordion: MatAccordion;
@@ -61,6 +66,7 @@ export class NewUserComponent implements OnInit {
 
   saveFormSpinner: boolean = false;
   MsgList = MsgList;
+  MockData = MockData;
 
   statusList = [];
 
@@ -75,7 +81,7 @@ export class NewUserComponent implements OnInit {
     CityName: (''),// -----------CityName
     Phone1: ['', { validators: [Validators.pattern('[[0][0-9]{8,9}]*')], updateOn: "blur" }],// ------------Phone1
     Streetno: (''),// ---------Streetno
-    Permission: [{ value: 3, disabled: false }, Validators.required],
+    Permission: [{ value: 3 }, Validators.required],
     ZIP: (''),// --------ZIP
     ApartmentNo: ('')// ---------ApartmentNo
   },
@@ -86,6 +92,13 @@ export class NewUserComponent implements OnInit {
   ngOnInit(): void {
     window.scroll(0, 0);
     this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
+    this.pagePermissionAccessLevel = this.sharedService.pagesAccessLevel.value.length > 0 ? JSON.parse(this.sharedService.pagesAccessLevel.value) : JSON.parse(JSON.stringify(this.pagePermissionAccessLevel));
+
+    this.sharedService.pagesAccessLevel.next('');
+    if (this.pagePermissionAccessLevel.AccessLevel == this.MockData.accessLevelReadOnly) {
+      this.userDataForm.disable();
+    }
+
     this.getUserStatus();
     this.GetRoles();
   }
@@ -109,41 +122,49 @@ export class NewUserComponent implements OnInit {
       this.dataService.InsertUpdateBackOfficeUsers(objToApi).subscribe(result => {
 
         this.saveFormSpinner = false;
-        if (result['Token'] != undefined || result['Token'] != null) {
+        if (typeof result == 'string') {
+          this.dialog.open(DialogComponent, {
+            data: { message: result }
+          })
 
-          //set new token
-          let tempObjUser = JSON.parse(localStorage.getItem('user'));
-          tempObjUser['Token'] = result['Token'];
-          localStorage.setItem('user', JSON.stringify(tempObjUser));
-          this.userToken = result['Token'];
-
-          if (result.obj != undefined && result.obj != null && Object.keys(result.obj).length > 0) {
-
-            this.msgActionButtons = 'נשמר בהצלחה';
-
-            setTimeout(() => {
-              this.msgActionButtons = '';
-
-              this.goToUser(result.obj[0]['id']);
-              // this.router.navigate(['/public/user/', result.obj[0]['id']]);
-            }, 2000)
-          }
-          else {
-            this.errorActionButtons = result.errdesc;
-            setTimeout(() => {
-              this.errorActionButtons = '';
-            }, 2000)
-          }
-
-          //for user must to set id not description
-
-        }
-        else {
-          // this.dialog.open(DialogComponent, {
-          //   data: {message: MsgList.exitSystemAlert}
-          // })
           this.sharedService.exitSystemEvent();
+          return false;
         }
+        // if (result['Token'] != undefined || result['Token'] != null) {
+
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
+
+        // if (result.obj != undefined && result.obj != null && Object.keys(result.obj).length > 0) {
+
+        this.msgActionButtons = 'נשמר בהצלחה';
+
+        setTimeout(() => {
+          this.msgActionButtons = '';
+
+          this.goToUser(result.obj[0]['id']);
+          // this.router.navigate(['/public/user/', result.obj[0]['id']]);
+        }, 2000)
+        // }
+        // else {
+        //   this.errorActionButtons = result.errdesc;
+        //   setTimeout(() => {
+        //     this.errorActionButtons = '';
+        //   }, 2000)
+        // }
+
+        //for user must to set id not description
+
+        // }
+        // else {
+        //   // this.dialog.open(DialogComponent, {
+        //   //   data: {message: MsgList.exitSystemAlert}
+        //   // })
+        //   this.sharedService.exitSystemEvent();
+        // }
       });
 
     }
@@ -161,34 +182,43 @@ export class NewUserComponent implements OnInit {
     }
 
     this.dataService.GetUserStatus(objToApi).subscribe(result => {
-      if (result['Token'] != undefined || result['Token'] != null) {
-        //set new token
-        let tempObjUser = JSON.parse(localStorage.getItem('user'));
-        tempObjUser['Token'] = result['Token'];
-        localStorage.setItem('user', JSON.stringify(tempObjUser));
-        this.userToken = result['Token'];
+      // if (result['Token'] != undefined || result['Token'] != null) {
+      //set new token
+      if (typeof result == 'string') {
+        this.dialog.open(DialogComponent, {
+          data: { message: result }
+        })
 
-        if (result.obj != null && result.obj != undefined && Object.keys(result.obj).length > 0) {
-
-          this.statusList = [...result.obj].sort(function (a, b) {
-            if (a.Description < b.Description) { return -1; }
-            if (a.Description > b.Description) { return 1; }
-            return 0;
-          });;
-          this.userDataForm.get('StatusId').setValue(2);
-          /**
-           * Description: "ממתין לאישור"
-            StatusId: 1
-            StatusType: "PendingApproval"
-           */
-        }
-      }
-      else {
-        // this.dialog.open(DialogComponent, {
-        //   data: {message: MsgList.exitSystemAlert}
-        // })
         this.sharedService.exitSystemEvent();
+        return false;
       }
+
+      let tempObjUser = JSON.parse(localStorage.getItem('user'));
+      tempObjUser['Token'] = result['Token'];
+      localStorage.setItem('user', JSON.stringify(tempObjUser));
+      this.userToken = result['Token'];
+
+      // if (result.obj != null && result.obj != undefined && Object.keys(result.obj).length > 0) {
+
+      this.statusList = [...result.obj].sort(function (a, b) {
+        if (a.Description < b.Description) { return -1; }
+        if (a.Description > b.Description) { return 1; }
+        return 0;
+      });;
+      this.userDataForm.get('StatusId').setValue(2);
+      /**
+       * Description: "ממתין לאישור"
+        StatusId: 1
+        StatusType: "PendingApproval"
+       */
+      // }
+      // }
+      // else {
+      //   // this.dialog.open(DialogComponent, {
+      //   //   data: {message: MsgList.exitSystemAlert}
+      //   // })
+      //   this.sharedService.exitSystemEvent();
+      // }
     })
   }
   GetRoles() {
@@ -199,36 +229,44 @@ export class NewUserComponent implements OnInit {
 
     this.dataService.GetRoles(objToApi).subscribe(result => {
 
-      if (result['Token'] != undefined || result['Token'] != null) {
-
-        //set new token
-        let tempObjUser = JSON.parse(localStorage.getItem('user'));
-        tempObjUser['Token'] = result['Token'];
-        localStorage.setItem('user', JSON.stringify(tempObjUser));
-        this.userToken = result['Token'];
-
-        if (result.err != -1) {
-
-          this.roleList = result.obj.sort(function (a, b) {
-            if (a.RoleDesc < b.RoleDesc) { return -1; }
-            if (a.RoleDesc > b.RoleDesc) { return 1; }
-            return 0;
-          });;
-        }
-        else {
-          this.dialog.open(DialogComponent, {
-            data: { message: result.errdesc }
-          })
-        }
-      }
-      else {
+      if (typeof result == 'string') {
+        this.dialog.open(DialogComponent, {
+          data: { message: result }
+        })
 
         this.sharedService.exitSystemEvent();
+        return false;
       }
+      // if (result['Token'] != undefined || result['Token'] != null) {
+
+      //set new token
+      let tempObjUser = JSON.parse(localStorage.getItem('user'));
+      tempObjUser['Token'] = result['Token'];
+      localStorage.setItem('user', JSON.stringify(tempObjUser));
+      this.userToken = result['Token'];
+
+      // if (result.err != -1) {
+
+      this.roleList = result.obj.sort(function (a, b) {
+        if (a.RoleDesc < b.RoleDesc) { return -1; }
+        if (a.RoleDesc > b.RoleDesc) { return 1; }
+        return 0;
+      });
+      // }
+      // else {
+      //   this.dialog.open(DialogComponent, {
+      //     data: { message: result.errdesc }
+      //   })
+      // }
+      // }
+      // else {
+
+      //   this.sharedService.exitSystemEvent();
+      // }
     })
     // this.roleList = [
     //   { RoleId: '1', Description: 'admin' },
-    //   { RoleId: '2', Description: 'admin' },
+    //   { RoleIdthis.MockData.accessLevelReadOnly, Description: 'admin' },
     //   { RoleId: '3', Description: 'admin' },
     //   { RoleId: '4', Description: 'admin' },
     //   { RoleId: '5', Description: 'admin' }

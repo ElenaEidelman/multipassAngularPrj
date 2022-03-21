@@ -14,7 +14,7 @@
     position: relative;
 }
 .main2-title{
-    flex-direction: column;
+    flex-direction: row-reverse;;
 }
 .smsLabel{
     position: absolute;

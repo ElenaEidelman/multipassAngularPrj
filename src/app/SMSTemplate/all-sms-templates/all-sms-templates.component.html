@@ -5,6 +5,11 @@
             <mat-icon>sms</mat-icon>
         </button>
     </div>
+    <div class="readOnliNotifivation"
+        *ngIf="pagePermissionAccessLevel.AccessLevel == this.MockData.accessLevelReadOnly">
+        {{MsgList.readOnly}}
+        <mat-icon>info</mat-icon>
+    </div>
 </div>
 
 <div class="page-wrap">
@@ -38,10 +43,15 @@
                                 </div>
                                 <div class="wrapFielsTitle">
                                     <mat-form-field>
-                                        <input matInput value="" placeholder="שם שולח" formControlName="SenderName">
+                                        <input matInput value="" placeholder="שם שולח" formControlName="SenderName"
+                                            maxLength="11">
                                         <mat-error>
                                             <mat-icon>error</mat-icon>
                                             {{MsgList.requiredField}}
+                                        </mat-error>
+                                        <mat-error [@openClose]="newTemplateForm.get('SenderName').hasError('pattern')">
+                                            <mat-icon>error</mat-icon>
+                                            {{MsgList.englishOrNumbersOnly}}
                                         </mat-error>
                                     </mat-form-field>
                                 </div>
@@ -69,6 +79,10 @@
                                 </button>
                                 <mat-error [@openClose]="newTemplateSendError != ''">{{newTemplateSendError}}
                                 </mat-error>
+                                <!-- <mat-error *ngIf="SMSForm.get('SenderName').hasError('pattern')">
+                                    <mat-icon>error</mat-icon>
+                                    {{MsgList.englishOrNumbersOnly}}
+                                </mat-error> -->
                                 <!-- <mat-hint [@openClose]="newTemplateSendSuccessfully" class="saveMessage">{{MsgList.sendSuccessfully}}</mat-hint> -->
                             </div>
                             <div class="spinnerBWrap">
@@ -76,7 +90,7 @@
                                     <span>שמור</span>
                                     <mat-icon>save</mat-icon>
                                 </button>
-                                <mat-spinner class="spinner" *ngIf="spinnerNewTemp"></mat-spinner>
+                                <!-- <mat-spinner class="spinner" *ngIf="spinnerNewTemp"></mat-spinner> -->
                                 <div class="saveMessage">{{saveMessage}}</div>
                                 <mat-error [@openClose]="errorMessagenewSms != ''">{{errorMessagenewSms}}</mat-error>
                             </div>
@@ -104,7 +118,7 @@
                             </button>
                             <button mat-button class="linkButton" (click)="editButtonClicked('','שם חברה')">
                                 <span>
-                                    <שם חברה>
+                                    <שם הלקוח העיסקי>
                                 </span>
                             </button>
                             <button mat-button class="linkButton" (click)="editButtonClicked('','סכום טעינה')">
@@ -179,11 +193,17 @@
                                     <div class="wrapFielsTitle">
                                         <mat-form-field>
                                             <input matInput value="{{temp.TemplateName}}" placeholder="שם שולח"
-                                                formControlName="SenderName{{temp.Id}}">
+                                                formControlName="SenderName{{temp.Id}}" maxLength="11">
                                             <mat-error>
                                                 <mat-icon>error</mat-icon>
                                                 {{MsgList.requiredField}}
                                             </mat-error>
+                                            <mat-error
+                                                *ngIf="this.SMSForm.get('Id-' + temp.Id).get('SenderName' + temp.Id).hasError('pattern')">
+                                                <mat-icon>error</mat-icon>
+                                                {{MsgList.englishOrNumbersOnly}}
+                                            </mat-error>
+
                                         </mat-form-field>
                                     </div>
                                 </mat-card-title>
@@ -242,7 +262,7 @@
                                     </button>
                                     <button mat-button class="linkButton" (click)="editButtonClicked(temp,'שם חברה')">
                                         <span>
-                                            <שם חברה>
+                                            <שם הלקוח העיסקי>
                                         </span>
                                     </button>
                                     <button mat-button class="linkButton"

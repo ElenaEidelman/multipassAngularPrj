@@ -21,7 +21,8 @@
             "assets": [
               "src/assets/img/M.png",
               "src/assets",
-              "src/assets/Files/HostFile.json"
+              "src/HostFile.json",
+              "src/HostFileIframe.json"
             ],
             "allowedCommonJsDependencies": [
               "lodash"

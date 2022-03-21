@@ -8,8 +8,9 @@ import { AsyncSubject, BehaviorSubject, Observable, Subject } from 'rxjs';
 export class SharedService {
 
   private subject = new Subject<any>();
-  public userData = new BehaviorSubject('');
+
   public pagesPermission = new BehaviorSubject('');
+  public pagesAccessLevel = new BehaviorSubject('');
 
 
   //orderCards 

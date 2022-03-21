@@ -4,6 +4,7 @@ import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { Router } from '@angular/router';
+import { MockData } from 'src/app/Classes/mockData';
 import { MsgList } from 'src/app/Classes/msgsList';
 import { DataServiceService } from 'src/app/data-service.service';
 import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
@@ -45,6 +46,11 @@ export class NewCustomerComponent implements OnInit {
   @Input() formNewCustomer = '';
   @Input() controllerNewCustomer = '';
 
+  pagePermissionAccessLevel = {
+    AccessLevel: '',
+    PageName: ''
+  }
+
   userToken: string;
   errorActionButtons: string = '';
   msgActionButtons: string = '';
@@ -53,6 +59,7 @@ export class NewCustomerComponent implements OnInit {
   statusList = [];
 
   MsgList = MsgList;
+  MockData = MockData;
 
   newCustomerForm = this.fb.group({
     OrganizationName: ['', [Validators.required, this.noWhitespaceValidator]], //Validators.required
@@ -85,6 +92,13 @@ export class NewCustomerComponent implements OnInit {
 
   ngOnInit(): void {
     window.scroll(0, 0);
+    this.pagePermissionAccessLevel = this.sharedService.pagesAccessLevel.value.length > 0 ? JSON.parse(this.sharedService.pagesAccessLevel.value) : JSON.parse(JSON.stringify(this.pagePermissionAccessLevel));
+
+    this.sharedService.pagesAccessLevel.next('');
+    if (this.pagePermissionAccessLevel.AccessLevel == this.MockData.accessLevelReadOnly) {
+      this.newCustomerForm.disable()
+    }
+    debugger
     this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
     this.getUserStatus();
   }
@@ -95,35 +109,42 @@ export class NewCustomerComponent implements OnInit {
     }
 
     this.dataService.GetUserStatus(objToApi).subscribe(result => {
-      if (result['Token'] != undefined || result['Token'] != null) {
-        //set new token
-        let tempObjUser = JSON.parse(localStorage.getItem('user'));
-        tempObjUser['Token'] = result['Token'];
-        localStorage.setItem('user', JSON.stringify(tempObjUser));
-        this.userToken = result['Token'];
+      if (typeof result == 'string') {
+        this.dialog.open(DialogComponent, {
+          data: { message: result }
+        })
 
-        if (result.obj != null && result.obj != undefined && Object.keys(result.obj).length > 0) {
-
-          this.statusList = [...result.obj].sort(function (a, b) {
-            if (a.Description < b.Description) { return -1; }
-            if (a.Description > b.Description) { return 1; }
-            return 0;
-          });;
-
-
-          let statusSet = this.statusList.filter(status => {
-            return status.StatusId == 2;
-          });
-
-          this.newCustomerForm.get('StatusId').setValue(statusSet[0]['StatusId']);
-        }
-      }
-      else {
-        // this.dialog.open(DialogComponent, {
-        //   data: {message: MsgList.exitSystemAlert}
-        // })
         this.sharedService.exitSystemEvent();
+        return false;
       }
+      // if (result['Token'] != undefined || result['Token'] != null) {
+      //set new token
+      let tempObjUser = JSON.parse(localStorage.getItem('user'));
+      tempObjUser['Token'] = result['Token'];
+      localStorage.setItem('user', JSON.stringify(tempObjUser));
+      this.userToken = result['Token'];
+
+      // if (result.obj != null && result.obj != undefined && Object.keys(result.obj).length > 0) {
+
+      this.statusList = [...result.obj].sort(function (a, b) {
+        if (a.Description < b.Description) { return -1; }
+        if (a.Description > b.Description) { return 1; }
+        return 0;
+      });
+
+      let statusSet = this.statusList.filter(status => {
+        return status.StatusId == 2;
+      });
+
+      this.newCustomerForm.get('StatusId').setValue(statusSet[0]['StatusId']);
+      // }
+      // }
+      // else {
+      //   // this.dialog.open(DialogComponent, {
+      //   //   data: {message: MsgList.exitSystemAlert}
+      //   // })
+      //   this.sharedService.exitSystemEvent();
+      // }
     })
   }
 
@@ -150,64 +171,72 @@ export class NewCustomerComponent implements OnInit {
       });
 
 
-      debugger
+
       this.dataService.InsertUpdateUser(objToApi).subscribe(result => {
 
         this.saveFormSpinner = false;
-        if (result['Token'] != undefined || result['Token'] != null) {
+        if (typeof result == 'string') {
+          this.dialog.open(DialogComponent, {
+            data: { message: result }
+          })
 
-          //set new token
-          let tempObjUser = JSON.parse(localStorage.getItem('user'));
-          tempObjUser['Token'] = result['Token'];
-          localStorage.setItem('user', JSON.stringify(tempObjUser));
-          this.userToken = result['Token'];
+          this.sharedService.exitSystemEvent();
+          return false;
+        }
+        // if (result['Token'] != undefined || result['Token'] != null) {
 
-          if (result.err != -1) {
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
 
-            //if have created new customer from dropdown menu from orderCards page
-            if (this.formNewCustomer != '' && this.controllerNewCustomer != '') {
-              let objForShare = {
-                form: this.formNewCustomer,
-                controller: this.controllerNewCustomer,
-                createdCustomer: result.obj[0]
-              }
+        // if (result.err != -1) {
+
+        //if have created new customer from dropdown menu from orderCards page
+        if (this.formNewCustomer != '' && this.controllerNewCustomer != '') {
+          let objForShare = {
+            form: this.formNewCustomer,
+            controller: this.controllerNewCustomer,
+            createdCustomer: result.obj[0]
+          }
 
 
-              this.sharedService.newCustomerData.next(JSON.stringify(objForShare));
+          this.sharedService.newCustomerData.next(JSON.stringify(objForShare));
 
-            }
-            this.msgActionButtons = 'לקוח חדש נשמר בהצלחה';
+        }
+        this.msgActionButtons = 'לקוח חדש נשמר בהצלחה';
 
-            setTimeout(() => {
-              this.msgActionButtons = '';
+        setTimeout(() => {
+          this.msgActionButtons = '';
 
-              if (this.IfComponentDialog) {
-                this.dialog.closeAll();
-              }
-              else {
-                // this.router.navigate(['/public/customer/', result.obj[0].id]);
-                let Customer = {
-                  customerId: result.obj[0].id
-                }
-                this.urlSharingService.changeMessage(JSON.stringify(Customer));
-                this.router.navigate(['/public/customer']);
-              }
-            }, 2000);
+          if (this.IfComponentDialog) {
+            this.dialog.closeAll();
           }
           else {
-            this.errorActionButtons = result.errdesc;
-
-            setTimeout(() => {
-              this.errorActionButtons = '';
-            }, 3000);
+            // this.router.navigate(['/public/customer/', result.obj[0].id]);
+            let Customer = {
+              customerId: result.obj[0].id
+            }
+            this.urlSharingService.changeMessage(JSON.stringify(Customer));
+            this.router.navigate(['/public/customer']);
           }
-        }
-        else {
-          // this.dialog.open(DialogComponent, {
-          //   data: {message: MsgList.exitSystemAlert}
-          // })
-          this.sharedService.exitSystemEvent();
-        }
+        }, 2000);
+        // }
+        // else {
+        //   this.errorActionButtons = result.errdesc;
+
+        //   setTimeout(() => {
+        //     this.errorActionButtons = '';
+        //   }, 3000);
+        // }
+        // }
+        // else {
+        //   // this.dialog.open(DialogComponent, {
+        //   //   data: {message: MsgList.exitSystemAlert}
+        //   // })
+        //   this.sharedService.exitSystemEvent();
+        // }
       });
     }
     else {
@@ -219,17 +248,8 @@ export class NewCustomerComponent implements OnInit {
     }
   }
 
-  validatePhone($event) {
-    // let eneteredParam = $event.currentTarget.value;
-    // let formControlName = $event.currentTarget.getAttribute('formControlName');
-
-    //  
-    // this.newCustomerForm.get(formControlName).setValidators(Validators.pattern('[[0][0-9]{8,9}]*'));
-
-  }
 
   public noWhitespaceValidator(control: FormControl) {
-    debugger
     const isWhitespace = (control.value || '').trim().length === 0;
     const isValid = !isWhitespace;
     return isValid ? null : { 'whitespace': true };

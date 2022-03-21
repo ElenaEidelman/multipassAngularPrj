@@ -7,6 +7,11 @@
             </button>
         </a>
     </div>
+    <div class="readOnliNotifivation"
+        *ngIf="pagePermissionAccessLevel.AccessLevel == this.MockData.accessLevelReadOnly">
+        {{MsgList.readOnly}}
+        <mat-icon>info</mat-icon>
+    </div>
 </div>
 
 <!-- <div class="mainSpinner" *ngIf="mainSpinner">
@@ -98,7 +103,7 @@
                             <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
                                 <mat-label>מתאריך</mat-label>
                                 <input matInput [matDatepicker]="picker" formControlName="FromDate" readonly
-                                    (dateChange)="dateFromChanged($event, 'FromDate')" [max]="minFromDate">
+                                    (dateChange)="dateFromChanged($event, 'FromDate')" [max]="maxFromDate">
                                 <button class="clearButton" *ngIf="this.filterTableGroup.get('FromDate').value != ''"
                                     mat-button matPrefix mat-icon-button aria-label="Clear"
                                     (click)="this.filterTableGroup.get('FromDate').setValue('')">
@@ -113,7 +118,8 @@
                             <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
                                 <mat-label>עד תאריך</mat-label>
                                 <input matInput [matDatepicker]="picker2" formControlName="ToDate" readonly
-                                    [min]="minToDate" (dateChange)="dateFromChanged($event, 'ToDate')">
+                                    [min]="minToDate" [max]="maxToDate"
+                                    (dateChange)="dateFromChanged($event, 'ToDate')">
                                 <button class="clearButton" *ngIf="this.filterTableGroup.get('ToDate').value != ''"
                                     mat-button matPrefix mat-icon-button aria-label="Clear"
                                     (click)="this.filterTableGroup.get('ToDate').setValue('')">
@@ -140,7 +146,19 @@
 
     <!--table-->
     <div class="page-element width-block-auto">
-        <div class="element-page-title">רשימת הזמנות</div>
+        <div class="element-page-title titleDisplayFlex">רשימת הזמנות
+            <button mat-button (click)="excelFileExport()" matTooltip="יצאו לאקסל">
+                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
+                    role="img" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"
+                    class="icon-svg">
+                    <path class="icon-svg"
+                        d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6m1.8 18H14l-2-3.4l-2 3.4H8.2l2.9-4.5L8.2 11H10l2 3.4l2-3.4h1.8l-2.9 4.5l2.9 4.5M13 9V3.5L18.5 9H13z" />
+                </svg>
+                <!-- </mat-icon> -->
+                יצאו לאקסל
+            </button>
+        </div>
+
         <div class="mat-elevation-z8">
             <table mat-table [dataSource]="dataSource" class="tableView" dir="rtl" matSort>
                 <ng-container *ngFor="let obj of displayedColumns; let i = index;">

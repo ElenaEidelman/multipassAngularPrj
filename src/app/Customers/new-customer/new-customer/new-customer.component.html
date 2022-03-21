@@ -1,5 +1,10 @@
 <div class="pageTitle main2-title" [class.sticky]='!IfComponentDialog' [class.top100]='!IfComponentDialog'>
     <div>לקוח חדש</div>
+    <div class="readOnliNotifivation"
+        *ngIf="pagePermissionAccessLevel.AccessLevel == this.MockData.accessLevelReadOnly">
+        {{MsgList.readOnly}}
+        <mat-icon>info</mat-icon>
+    </div>
 </div>
 <div class="page-wrap">
     <div class="page-element width-block-auto">
@@ -21,7 +26,8 @@
                             </a>
                         </div>
                         <div class="wrapAB">
-                            <button mat-button class="addButton" type="submit">
+                            <button mat-button class="addButton" type="submit"
+                                [disabled]="pagePermissionAccessLevel.AccessLevel == '2'">
                                 <span>שמור</span>
                                 <mat-icon>save</mat-icon>
                             </button>
@@ -192,9 +198,9 @@
                                             </button>
                                         </mat-form-field> -->
                                         <mat-form-field>
-                                            <mat-label>ח.פ./עוסק מורש*</mat-label>
-                                            <input matInput placeholder="ח.פ./עוסק מורש*" formControlName="Tz"
-                                                tabindex="8" numbersOnly [attr.maxlength]="9">
+                                            <mat-label>מספר לקוח / ח.פ*</mat-label>
+                                            <input matInput placeholder="מספר לקוח / ח.פ*" formControlName="Tz"
+                                                tabindex="8" numbersOnly>
 
                                             <button class="clearButton"
                                                 *ngIf="this.newCustomerForm.get('Tz').value != ''" mat-button matPrefix

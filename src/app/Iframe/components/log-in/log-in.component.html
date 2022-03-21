@@ -9,7 +9,8 @@
 
             <!-- main title -->
             <div class="InfoTitle hr" id="InfoTitle">
-                גיפט קארד
+                <!-- גיפט קארד -->
+                {{infoData.CompanyName}}
             </div>
 
             <!-- texts -->
@@ -50,7 +51,8 @@
             <div class="contactDataWrap">
                 <div class="contactDataChild" *ngIf="infoData.LinktoBranches != '' && infoData.LinktoBranches != null">
                     <div>
-                        <a [href]="'https://' + infoData.LinktoBranches" target="_blank">קישור לרשימת הסניפים</a>
+                        <!--'https://' + -->
+                        <a [href]="infoData.LinktoBranches" target="_blank">קישור לרשימת הסניפים</a>
                     </div>
                     <mat-icon>list_alt</mat-icon>
                 </div>

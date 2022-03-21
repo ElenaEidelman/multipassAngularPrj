@@ -58,6 +58,7 @@ export class LogInComponent implements OnInit {
             this.validKind = 'ValidateOtp';
 
             this.dataService.getHost().subscribe(hostResult => {
+              debugger
               if (hostResult['DevMode'] == 'true') {
                 this.loginForm.get('OtpKey').setValue(result['Token']);
                 this.loginForm.get('OtpKey').setValidators(Validators.required);
@@ -110,9 +111,8 @@ export class LogInComponent implements OnInit {
         OtpKey: this.loginForm.get('OtpKey').value
       }
 
-      debugger
       this.dataService.ValidateOtp(objToApi).subscribe(result => {
-        debugger
+
         if (result['Token'] != '' && result['obj'] != null) {
           let userObj = {
             Token: result['Token'],
@@ -123,6 +123,8 @@ export class LogInComponent implements OnInit {
             }
           }
           localStorage.setItem('user', JSON.stringify(userObj));
+
+
 
           this.route.navigate(['/public/home']);
           this.validKind = 'SendOtp';

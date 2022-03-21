@@ -18,6 +18,9 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { faFileExcel } from '@fortawesome/free-solid-svg-icons';
 import { UrlSharingService } from 'src/app/Services/UrlSharingService/url-sharing.service';
 import { SharedService } from 'src/app/Services/SharedService/shared.service';
+import * as fs from 'file-saver';
+import { Workbook } from 'exceljs';
+import { MockData } from 'src/app/Classes/mockData';
 
 
 
@@ -63,6 +66,11 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy, OnC
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
+  pagePermissionAccessLevel = {
+    AccessLevel: '',
+    PageName: ''
+  }
+
   //allOrders;
   displayedColumns: string[] = [];
 
@@ -75,9 +83,12 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy, OnC
   userId;
   statusListArr = [];
   MsgList = MsgList;
+  MockData = MockData;
 
   minToDate;
   minFromDate;
+  maxFromDate;
+  maxToDate;
 
 
 
@@ -112,10 +123,18 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy, OnC
 
   ngOnInit() {
     window.scroll(0, 0);
+    this.pagePermissionAccessLevel = this.sharedService.pagesAccessLevel.value.length > 0 ? JSON.parse(this.sharedService.pagesAccessLevel.value) : JSON.parse(JSON.stringify(this.pagePermissionAccessLevel));
+
+    this.sharedService.pagesAccessLevel.next('');
+
+
     this.filterActionButtonSpinner = true;
     this.userToken = JSON.parse(localStorage.getItem('user')).Token
     this.getStatusList();
     this.createDisplayedColumns(this.orderLabelForTable);
+
+    this.maxFromDate = new Date();
+    this.maxToDate = new Date();
 
     // this.activeRouteUnsubscribe = this.acivatedRoute.params.subscribe(param => {
 
@@ -141,102 +160,67 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy, OnC
       this.minToDate = new Date(event.value);
     }
     else if (controller == 'ToDate') {
-      this.minFromDate = new Date(event.value);
+      this.maxFromDate = new Date(event.value);
     }
     // return this.filterTableGroup.get('ToDate').value != '' ? new Date(this.filterTableGroup.get('ToDate').value) : '';
   }
 
   getStatusList() {
-    //api/Orders/GetOrdersStatus
-    //Token
-
     let objToApi = {
       Token: this.userToken
     }
-
-
     this.dataService.GetOrdersStatus(objToApi).subscribe(result => {
+      if (typeof result == 'string') {
+        this.dialog.open(DialogComponent, {
+          data: { message: result }
+        })
 
-
-      if (result['Token'] != undefined || result['Token'] != null) {
-
-        //set new token
-        let tempObjUser = JSON.parse(localStorage.getItem('user'));
-        tempObjUser['Token'] = result['Token'];
-        localStorage.setItem('user', JSON.stringify(tempObjUser));
-        this.userToken = result['Token'];
-
-
-        if (typeof result == 'object' && result.obj != null) {
-          this.statusListArr = [...result.obj].sort(function (a, b) {
-            if (a.DescriptionWL < b.DescriptionWL) { return -1; }
-            if (a.DescriptionWL > b.DescriptionWL) { return 1; }
-            return 0;
-          });
-        }
-      }
-      else {
-        // this.dialog.open(DialogComponent, {
-        //   data: {message: MsgList.exitSystemAlert}
-        // })
         this.sharedService.exitSystemEvent();
+        return false;
       }
+      //set new token
+      let tempObjUser = JSON.parse(localStorage.getItem('user'));
+      tempObjUser['Token'] = result['Token'];
+      localStorage.setItem('user', JSON.stringify(tempObjUser));
+      this.userToken = result['Token'];
+
+      this.statusListArr = [...result.obj].sort(function (a, b) {
+        if (a.DescriptionWL < b.DescriptionWL) { return -1; }
+        if (a.DescriptionWL > b.DescriptionWL) { return 1; }
+        return 0;
+      });
     });
 
 
   }
   getOrdersList() {
-    //
-
-
     this.filterActionButtonSpinner = true;
     let objToApi = {
       Token: this.userToken
     }
 
     this.filterActionButtonSpinner = true;
-    //GetOrdersByFilter
-
-
-
-
     this.dataService.getAllOrders(objToApi).subscribe(result => {
-
-
+      debugger
       this.filterActionButtonSpinner = false;
 
-      if (result['Token'] != undefined || result['Token'] != null) {
+      if (typeof result == 'string') {
+        this.dialog.open(DialogComponent, {
+          data: { message: result }
+        })
 
-        //set new token
-        let tempObjUser = JSON.parse(localStorage.getItem('user'));
-        tempObjUser['Token'] = result['Token'];
-        localStorage.setItem('user', JSON.stringify(tempObjUser));
-        this.userToken = result['Token'];
-
-        // JSON.parse(localStorage.getItem('user'))
-        if (typeof result == 'object' && result.obj != null) {
-          this.dataSourceSpare.data = result['obj'];
-          this.dataSource.data = result['obj'];
-        }
-        // if(result.errdesc == 'No Data Found'){
-        //   this.noTableData = true;
-        // }
-        if (result.errdesc != null && result.errdesc != '') {
-          this.dialog.open(DialogComponent, {
-            data: { message: result.errdesc }
-          });
-        }
-
-      }
-      else if (typeof result == 'string') {
-
-      }
-      else {
-        // this.dialog.open(DialogComponent, {
-        //   data: {message: MsgList.exitSystemAlert}
-        // })
         this.sharedService.exitSystemEvent();
+        return false;
       }
+
+      //set new token
+      let tempObjUser = JSON.parse(localStorage.getItem('user'));
+      tempObjUser['Token'] = result['Token'];
+      localStorage.setItem('user', JSON.stringify(tempObjUser));
+      this.userToken = result['Token'];
+
+      this.dataSourceSpare.data = result['obj'];
+      this.dataSource.data = result['obj'];
     })
   }
 
@@ -250,119 +234,52 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy, OnC
     //
   }
 
-  deleteOrder(order) {
-
-    this.dialog.open(DialogConfirmComponent, {
-      data: { message: 'האם למחוק הזמנה מספר ' + ' ' + order.idex + ' ?' }
-    }).afterClosed().subscribe(response => {
-
-      if (response.result == 'yes') {
-
-        ///api/InsertUpdateOrder/DeleteVoidOrder
-        let objToApi = {
-          Token: this.userToken,
-          OrderId: order.id,
-          UserID: order.UserId,
-          OpCode: "delete"
-        }
-
-
-        this.dataService.DeleteVoidOrder(objToApi).subscribe(result => {
-
-          if (result['Token'] != undefined) {
-
-            //set new token
-            let tempObjUser = JSON.parse(localStorage.getItem('user'));
-            tempObjUser['Token'] = result['Token'];
-            localStorage.setItem('user', JSON.stringify(tempObjUser));
-            this.userToken = result['Token'];
-
-
-            if (typeof result == 'object' && result.obj != null && Object.values(result.obj[0]).includes('Order is deleted Successfully')) {
-
-              this.dialog.open(DialogComponent, {
-                data: { message: 'ההזמנה נמחקה בהצלחה' }
-              });
-
-              this.dataSource.data = [];
-              this.getOrdersList();
-            }
-
-            if (result.obj == null && result.errdesc != '') {
-
-              this.dialog.open(DialogComponent, {
-                data: { message: result.errdesc }
-              });
-            }
-          }
-          else {
-            // this.dialog.open(DialogComponent, {
-            //   data: {message: MsgList.exitSystemAlert}
-            // })
-            this.sharedService.exitSystemEvent();
-          }
-        });
-      }
-    })
-  }
 
   blockOrder(order) {
+    if (this.pagePermissionAccessLevel.AccessLevel != this.MockData.accessLevelReadOnly) {
+      this.dialog.open(DialogConfirmComponent, {
+        data: { message: 'האם לחסום הזמנה מספר ' + ' ' + order.idex + ' ?', eventButton: 'לחסום' }
+      }).afterClosed().subscribe(response => {
 
-    this.dialog.open(DialogConfirmComponent, {
-      data: { message: 'האם לחסום הזמנה מספר ' + ' ' + order.idex + ' ?', eventButton: 'לחסום' }
-    }).afterClosed().subscribe(response => {
+        if (response.result == 'yes') {
+          ///api/InsertUpdateOrder/DeleteVoidOrder
+          let objToApi = {
+            Token: this.userToken,
+            OrderId: order.id,
+            UserID: order.UserId,
+            OpCode: "delete"
+          }
+          this.dataService.DeleteVoidOrder(objToApi).subscribe(result => {
 
-      if (response.result == 'yes') {
-        ///api/InsertUpdateOrder/DeleteVoidOrder
-        let objToApi = {
-          Token: this.userToken,
-          OrderId: order.id,
-          UserID: order.UserId,
-          OpCode: "delete"
-        }
+            if (typeof result == 'string') {
+              this.dialog.open(DialogComponent, {
+                data: { message: result }
+              })
 
-
-        this.dataService.DeleteVoidOrder(objToApi).subscribe(result => {
-
-          if (result['Token'] != undefined) {
-
+              this.sharedService.exitSystemEvent();
+              return false;
+            }
             //set new token
             let tempObjUser = JSON.parse(localStorage.getItem('user'));
             tempObjUser['Token'] = result['Token'];
             localStorage.setItem('user', JSON.stringify(tempObjUser));
             this.userToken = result['Token'];
 
-
-            if (typeof result == 'object' && result.obj != null && result.errdesc.includes('Successfully')) {
-
-              this.dialog.open(DialogComponent, {
-                data: { message: 'ההזמנה נחסמה בהצלחה' }
-              });
-
-              this.dataSource.data = [];
-              this.getOrdersList();
-            }
-
-            if (result.obj == null && result.errdesc != '') {
-              this.dialog.open(DialogComponent, {
-                data: { message: result.errdesc }
-              });
-            }
-          }
-          else if (typeof result == 'string') {
             this.dialog.open(DialogComponent, {
-              data: { message: result }
-            })
-          }
-          else {
-            // this.dialog.open(DialogComponent, {
-            //   data: {message: MsgList.exitSystemAlert}
-            // })
-            this.sharedService.exitSystemEvent();
-          }
-        });
-      }
-    })
+              data: { message: 'ההזמנה נחסמה בהצלחה' }
+            });
+
+            this.dataSource.data = [];
+            this.getOrdersList();
+          });
+        }
+      })
+    }
+    else {
+      this.dialog.open(DialogComponent, {
+        data: { message: MsgList.readOnly }
+      })
+    }
   }
 
   returnHebTranslation(obj, value) {
@@ -405,7 +322,13 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy, OnC
     Object.keys(this.filterTableGroup.controls).forEach(control => {
       if (this.filterTableGroup.get(control).value != null && this.filterTableGroup.get(control).value.toString() != '') {
         inputSelected = true;
-        objToApi[control] = this.filterTableGroup.get(control).value;
+        if (control == 'ToDate') {
+          let toDate = this.filterTableGroup.get(control).value;
+          objToApi[control] = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate(), 23, 59, 59);
+        }
+        else {
+          objToApi[control] = this.filterTableGroup.get(control).value;
+        }
 
       }
     });
@@ -420,17 +343,23 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy, OnC
     else {
 
       this.filterActionButtonSpinner = true;
+      debugger
       this.dataService.GetOrdersByFilter(objToApi).subscribe(result => {
+        debugger
         this.filterActionButtonSpinner = false;
 
         if (result['Token'] != undefined || result['Token'] != null && Object.keys(result.obj).length > 0) {
           if (typeof result == 'object' && result.obj != null) {
             this.dataSource.data = [...result['obj']];
           }
+          debugger
 
-          if (result.errdesc == 'No Data Found') {
+          if (result.err < 0) {
             this.noTableData = true;
             this.dataSource.data = [];
+            this.dialog.open(DialogComponent, {
+              data: { message: result.errdesc }
+            })
           }
         }
         else if (typeof result == 'string') {
@@ -466,6 +395,51 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy, OnC
     this.urlSharingService.changeMessage(JSON.stringify(Order));
     this.router.navigate(['/public/order']);
   }
+
+  excelFileExport() {
+    if (this.pagePermissionAccessLevel.AccessLevel != this.MockData.accessLevelReadOnly) {
+      let tableLabels = this.orderLabelForTable;
+
+      let workbook = new Workbook();
+      let worksheet = workbook.addWorksheet('הזמנות');
+
+      var worksheetArr = [];
+      tableLabels.forEach(label => {
+        worksheetArr.push({ header: label.viewValue, key: label.value, width: 20 });
+      });
+
+      worksheet.columns = worksheetArr;
+
+      for (let data of Object.values(this.dataSource.data)) {
+        for (let element of Object.keys(data)) {
+          if (element == 'MDate' || element == 'ApproveDate') {//element == 'MDate' ||
+            data[element] = this.formatDate(data[element]);
+          }
+        }
+      }
+
+      worksheet.addRows(this.dataSource.data, "n");
+      let userData = JSON.parse(localStorage.getItem('user')).obj;
+      workbook.xlsx.writeBuffer().then((data) => {
+        let blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        fs.saveAs(blob, userData['Fname'] + '_' + userData['Lname'] + '_' + 'כל_ההזמנות' + '.xlsx');
+      })
+    }
+    else {
+      this.dialog.open(DialogComponent, {
+        data: { message: this.MsgList.readOnly }
+      })
+    }
+  }
+
+  formatDate(value) {
+    let date = new Date(value.toString());
+    let day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
+    let month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
+    let year = date.getFullYear();
+    return day + '/' + month + '/' + year;
+  }
+
   ngAfterViewInit() {
     if (this.dataSource != undefined) {
       this.dataSource.paginator = this.paginator;
