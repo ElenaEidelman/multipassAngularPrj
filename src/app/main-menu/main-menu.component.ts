@@ -16,9 +16,10 @@ export class MainMenuComponent implements OnInit {
     private dataService: DataServiceService,
     private sharedService: SharedService,
     private dialog: MatDialog) { }
-  userToken;
+  userToken: string;
   MsgList = MsgList;
   permissionMenuList;
+  workWithIframe;
   mockMenu = [
     { MenuEngName: 'allOrders', MenuName: 'הזמנות' },
     { MenuEngName: 'allCards', MenuName: 'שוברים' },
@@ -47,12 +48,13 @@ export class MainMenuComponent implements OnInit {
 
 
         this.dataService.GetMenuPages(objToApi).subscribe(result => {
-          if (typeof result == 'string') {
-            this.dialog.open(DialogComponent, {
-              data: { message: result }
-            })
 
-            this.sharedService.exitSystemEvent();
+          if (typeof result == 'string') {
+            // this.dialog.open(DialogComponent, {
+            //   data: { message: result }
+            // })
+
+            this.sharedService.exitSystemEvent(result);
             return false;
           }
 
@@ -69,7 +71,9 @@ export class MainMenuComponent implements OnInit {
           if (result.obj != null) {
 
 
+            debugger
             this.permissionMenuList = this.distinctMenu(result.obj[1]);
+            this.workWithIframe = result.obj[5]['WorkWithIframe'];
             debugger
 
             this.permissionMenuList.sort((menua, menub) => {
@@ -128,6 +132,10 @@ export class MainMenuComponent implements OnInit {
     //   }
     // });
     return menuSet;
+  }
+
+  dialogOpen() {
+    alert();
   }
 
 }

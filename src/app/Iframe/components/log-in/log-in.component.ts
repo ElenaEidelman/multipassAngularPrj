@@ -39,6 +39,7 @@ export class LogInIframeComponent implements OnInit {
 
   //http://localhost:45036/clearance/PaymetCC?param=
   //login page: http://localhost:4200/giftCard/login?companyid=bC1uVdEINfm7oJNltQd3PA2
+  //login page: https://tempdomain-test-3.mltp.co.il/giftCard/login?companyid=bC1uVdEINfm7oJNltQd3PA2
   //iframe page: http://localhost:4200/gift-card?companyid=bC1uVdEINfm7oJNltQd3PA2
   //thankyou page:  http://localhost:4200/gift-card?orderid=DkUs8NIluuQ5Mqd5Byh78w2
 

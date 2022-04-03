@@ -1,5 +1,5 @@
 <div>
-    <div class="close-icon-wrap" (click)="dialogClose()" >
+    <div class="close-icon-wrap" (click)="dialogClose()">
         <mat-icon matTooltip="סגור" matTooltipPosition="right">cancel</mat-icon>
     </div>
 
@@ -9,8 +9,8 @@
             <div class="title">
                 {{data.title}}
             </div>
-          <div class="dialogMessage" *ngIf="data.message != ''" [innerHTML]="data.message"></div>
-            <div *ngIf="data.subTitle != ''">
+            <div class="dialogMessage" *ngIf="data.message != ''" [innerHTML]="data.message"></div>
+            <div *ngIf="data.subTitle != ''" class="subTitle">
                 {{data.subTitle}}
             </div>
             <div class="wrapSendButton">
@@ -19,5 +19,5 @@
                 </div>
             </div>
         </div>
-      </div>
+    </div>
 </div>

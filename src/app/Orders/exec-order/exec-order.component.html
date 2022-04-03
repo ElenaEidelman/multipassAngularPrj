@@ -280,8 +280,8 @@
                                         <ng-container *ngIf="obj == 'LoadSum'">
                                             <mat-form-field>
                                                 <mat-label>סכום טעינה</mat-label>
-                                                <input matInput formControlName="chargeAmount" placeholder="1000 - 1.00"
-                                                    #chargeAmount numbersOnly [attr.maxlength]="4">
+                                                <input matInput formControlName="chargeAmount" #chargeAmount numbersOnly
+                                                    [attr.maxlength]="4">
                                                 <!-- <span matPrefix>00.</span> -->
                                                 <mat-error
                                                     [@openClose]="addToExecOrderForm.get('chargeAmount').hasError('min')">

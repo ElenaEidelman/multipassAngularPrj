@@ -33,7 +33,8 @@ export class HeaderComponent implements OnInit {
     private dialog: MatDialog,
     private http: HttpClient) {
     this.clickEventSubscription = this.sharedService.getExitSystemEvent().subscribe((el) => {
-      this.exitSystem();
+      debugger
+      this.exitSystem(el);
     })
   }
 
@@ -52,8 +53,17 @@ export class HeaderComponent implements OnInit {
   }
 
 
-  exitSystem() {
-    debugger
+  exitSystem(addText?: string) {
+
+
+    // if (this.dialog.openDialogs.length == 0) {
+    //   let dialogRef = this.dialog.open(DialogComponent, {
+    //     // disableClose: true  
+    //   });
+    // }
+
+    // let dialogConfig = { hasBackdrop: false, skipHide: true, panelClass: 'cssthemeInfo', width: '300px', height: '400px' };
+
 
     //multitav local storages
     localStorage.removeItem('user');
@@ -68,7 +78,7 @@ export class HeaderComponent implements OnInit {
 
     this.route.navigate(['/logIn']);
     this.dialog.open(DialogComponent, {
-      data: { message: MsgList.exitSystemAlert }
+      data: { title: 'התנתקת מהמערכת', message: `${MsgList.exitSystemAlert}`, subTitle: addText }
     })
   }
 

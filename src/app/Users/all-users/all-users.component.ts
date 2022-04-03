@@ -105,11 +105,11 @@ export class AllUsersComponent implements OnInit {
     this.dataService.GetAllUsers(objToApi).subscribe(result => {
 
       if (typeof result == 'string') {
-        this.dialog.open(DialogComponent, {
-          data: { message: result }
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: { message: result }
+        // })
 
-        this.sharedService.exitSystemEvent();
+        this.sharedService.exitSystemEvent(result);
         return false;
       }
       // if (result['Token'] != undefined || result['Token'] != null) {
@@ -183,11 +183,11 @@ export class AllUsersComponent implements OnInit {
 
           this.dataService.DeleteSuspendBackOfficeUsers(objToApi).subscribe(result => {
             if (typeof result == 'string') {
-              this.dialog.open(DialogComponent, {
-                data: { message: result }
-              })
+              // this.dialog.open(DialogComponent, {
+              //   data: { message: result }
+              // })
 
-              this.sharedService.exitSystemEvent();
+              this.sharedService.exitSystemEvent(result);
               return false;
             }
 

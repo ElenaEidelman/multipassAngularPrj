@@ -207,11 +207,11 @@ export class ReportsComponent implements OnInit, AfterViewInit {
 
       this.dataService.CreateRealizationReports(objToApi).subscribe(result => {
         if (typeof result == 'string') {
-          this.dialog.open(DialogComponent, {
-            data: { message: result }
-          })
+          // this.dialog.open(DialogComponent, {
+          //   data: { message: result }
+          // })
 
-          this.sharedService.exitSystemEvent();
+          // this.sharedService.exitSystemEvent();
           return false;
         }
 
@@ -269,11 +269,11 @@ export class ReportsComponent implements OnInit, AfterViewInit {
 
       this.dataService.CreateRealizationReports(objToApi).subscribe(result => {
         if (typeof result == 'string') {
-          this.dialog.open(DialogComponent, {
-            data: { message: result }
-          })
+          // this.dialog.open(DialogComponent, {
+          //   data: { message: result }
+          // })
 
-          this.sharedService.exitSystemEvent();
+          this.sharedService.exitSystemEvent(result);
           return false;
         }
 
@@ -329,11 +329,11 @@ export class ReportsComponent implements OnInit, AfterViewInit {
     this.dataService.GetAllCustomers(objToApi).subscribe(result => {
       this.spinner = false;
       if (typeof result == 'string') {
-        this.dialog.open(DialogComponent, {
-          data: { message: result }
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: { message: result }
+        // })
 
-        this.sharedService.exitSystemEvent();
+        // this.sharedService.exitSystemEvent();
         return false;
       }
 

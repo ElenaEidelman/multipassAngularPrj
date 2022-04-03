@@ -140,11 +140,11 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
 
     this.dataService.GetUserStatus(objToApi).subscribe(result => {
       if (typeof result == 'string') {
-        this.dialog.open(DialogComponent, {
-          data: { message: result }
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: { message: result }
+        // })
 
-        this.sharedService.exitSystemEvent();
+        this.sharedService.exitSystemEvent(result);
         return false;
       }
       // if (result['Token'] != undefined || result['Token'] != null) {
@@ -185,11 +185,11 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
 
       this.filterSpinner = false;
       if (typeof result == 'string') {
-        this.dialog.open(DialogComponent, {
-          data: { message: result }
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: { message: result }
+        // })
 
-        this.sharedService.exitSystemEvent();
+        this.sharedService.exitSystemEvent(result);
         return false;
       }
       // if (result['Token'] != undefined || result['Token'] != null) {
@@ -280,11 +280,11 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
         this.filterSpinner = false;
 
         if (typeof result == 'string') {
-          this.dialog.open(DialogComponent, {
-            data: { message: result }
-          })
+          // this.dialog.open(DialogComponent, {
+          //   data: { message: result }
+          // })
 
-          this.sharedService.exitSystemEvent();
+          this.sharedService.exitSystemEvent(result);
           return false;
         }
         // if (result['Token'] != undefined || result['Token'] != null) {
@@ -380,11 +380,11 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
             debugger
 
             if (typeof result == 'string') {
-              this.dialog.open(DialogComponent, {
-                data: { message: result }
-              })
+              // this.dialog.open(DialogComponent, {
+              //   data: { message: result }
+              // })
 
-              this.sharedService.exitSystemEvent();
+              this.sharedService.exitSystemEvent(result);
               return false;
             }
             // if (result['Token'] != undefined || result['Token'] != null) {

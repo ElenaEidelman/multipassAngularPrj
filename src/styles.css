@@ -794,6 +794,7 @@ textarea.templateTextArea + span > label{
   padding: 10px;
   /* font-weight: bold; */
 }
+
 div.dialogMessage button{
   height: 1.5em !important;
 }

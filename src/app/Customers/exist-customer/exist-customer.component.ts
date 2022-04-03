@@ -131,11 +131,11 @@ export class ExistCustomerComponent implements OnInit {
 
       // if (result['Token'] != undefined || result['Token'] != null) {
       if (typeof result == 'string') {
-        this.dialog.open(DialogComponent, {
-          data: { message: result }
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: { message: result }
+        // })
 
-        this.sharedService.exitSystemEvent();
+        this.sharedService.exitSystemEvent(result);
         return false;
       }
 
@@ -256,11 +256,11 @@ export class ExistCustomerComponent implements OnInit {
     this.dataService.GetUserStatus(objToApi).subscribe(result => {
 
       if (typeof result == 'string') {
-        this.dialog.open(DialogComponent, {
-          data: { message: result }
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: { message: result }
+        // })
 
-        this.sharedService.exitSystemEvent();
+        this.sharedService.exitSystemEvent(result);
         return false;
       }
 
@@ -324,11 +324,11 @@ export class ExistCustomerComponent implements OnInit {
 
         this.saveFormSpinner = false;
         if (typeof result == 'string') {
-          this.dialog.open(DialogComponent, {
-            data: { message: result }
-          })
+          // this.dialog.open(DialogComponent, {
+          //   data: { message: result }
+          // })
 
-          this.sharedService.exitSystemEvent();
+          this.sharedService.exitSystemEvent(result);
           return false;
         }
 
@@ -403,11 +403,11 @@ export class ExistCustomerComponent implements OnInit {
         this.dataService.DeleteSuspendUsers(objToApi).subscribe(result => {
 
           if (typeof result == 'string') {
-            this.dialog.open(DialogComponent, {
-              data: { message: result }
-            })
+            // this.dialog.open(DialogComponent, {
+            //   data: { message: result }
+            // })
 
-            this.sharedService.exitSystemEvent();
+            this.sharedService.exitSystemEvent(result);
             return false;
           }
           // if (result['Token'] != undefined || result['Token'] != null) {

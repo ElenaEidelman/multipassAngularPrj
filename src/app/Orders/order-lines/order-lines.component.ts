@@ -189,11 +189,11 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
 
       this.tableSpinner = false;
       if (typeof result == 'string') {
-        this.dialog.open(DialogComponent, {
-          data: { message: result }
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: { message: result }
+        // })
 
-        this.sharedService.exitSystemEvent();
+        // this.sharedService.exitSystemEvent();
         return false;
       }
 
@@ -341,11 +341,11 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
 
         this.dataService.SendSMSByOrderLine(objToApi).subscribe(result => {
           if (typeof result == 'string') {
-            this.dialog.open(DialogComponent, {
-              data: { message: result }
-            })
+            // this.dialog.open(DialogComponent, {
+            //   data: { message: result }
+            // })
 
-            this.sharedService.exitSystemEvent();
+            // this.sharedService.exitSystemEvent();
             return false;
           }
           // if (result['Token'] != undefined || result['Token'] != null) {
@@ -412,11 +412,11 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
 
           this.voidCardSpinner = false;
           if (typeof result == 'string') {
-            this.dialog.open(DialogComponent, {
-              data: { message: result }
-            })
+            // this.dialog.open(DialogComponent, {
+            //   data: { message: result }
+            // })
 
-            this.sharedService.exitSystemEvent();
+            // this.sharedService.exitSystemEvent();
             return false;
           }
           // if (result['Token'] != undefined || result['Token'] != null) {
@@ -479,11 +479,11 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.dataService.GetSMSFormats(objToApi).subscribe(result => {
       if (typeof result == 'string') {
-        this.dialog.open(DialogComponent, {
-          data: { message: result }
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: { message: result }
+        // })
 
-        this.sharedService.exitSystemEvent();
+        // this.sharedService.exitSystemEvent();
         return false;
       }
 
@@ -560,11 +560,11 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
 
       // if (typeof result == 'object' && result.obj != null) {
       if (typeof result == 'string') {
-        this.dialog.open(DialogComponent, {
-          data: { message: result }
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: { message: result }
+        // })
 
-        this.sharedService.exitSystemEvent();
+        // this.sharedService.exitSystemEvent();
         return false;
       }
 

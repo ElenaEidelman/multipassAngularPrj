@@ -181,7 +181,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   //for additional empty row foraddToExecOrderForm
   addToExecOrderForm = this.fb.group({
     ticketCount: ['', [Validators.required, Validators.min(1)]],
-    chargeAmount: ['', [Validators.required, Validators.min(1), Validators.max(1000)]],
+    chargeAmount: ['', [Validators.required]],
     validity: [this.getLastDateOfCurrentMonthAnd5Years(), Validators.required],
     TotalForItem: [{ value: '', disabled: true }]
   });
@@ -262,11 +262,11 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         this.dataService.GetCustomersByFilter(objToApi).subscribe(result => {
 
           if (typeof result == 'string') {
-            this.dialog.open(DialogComponent, {
-              data: { message: result }
-            })
+            // this.dialog.open(DialogComponent, {
+            //   data: { message: result }
+            // })
 
-            this.sharedService.exitSystemEvent();
+            this.sharedService.exitSystemEvent(result);
             return false;
           }
 
@@ -346,11 +346,11 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     }
     this.dataService.GetOrderDetails(objToApi).subscribe(result => {
       if (typeof result == 'string') {
-        this.dialog.open(DialogComponent, {
-          data: { message: result }
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: { message: result }
+        // })
 
-        this.sharedService.exitSystemEvent();
+        this.sharedService.exitSystemEvent(result);
         return false;
       }
 
@@ -440,11 +440,11 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
     this.dataService.GetOrdersStatus(objToApi).subscribe(result => {
       if (typeof result == 'string') {
-        this.dialog.open(DialogComponent, {
-          data: { message: result }
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: { message: result }
+        // })
 
-        this.sharedService.exitSystemEvent();
+        this.sharedService.exitSystemEvent(result);
         return false;
       }
       // if (result['Token'] != undefined || result['Token'] != null) {
@@ -520,11 +520,11 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
       this.dataService.InsertUpdateLines(objToApi).subscribe(result => {
         if (typeof result == 'string') {
-          this.dialog.open(DialogComponent, {
-            data: { message: result }
-          })
+          // this.dialog.open(DialogComponent, {
+          //   data: { message: result }
+          // })
 
-          this.sharedService.exitSystemEvent();
+          this.sharedService.exitSystemEvent(result);
           return false;
         }
         // if (result['Token'] != undefined || result['Token'] != null) {
@@ -594,11 +594,11 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
           this.dataService.InsertUpdateLines(objToApi).subscribe(result => {
             if (typeof result == 'string') {
-              this.dialog.open(DialogComponent, {
-                data: { message: result }
-              })
+              // this.dialog.open(DialogComponent, {
+              //   data: { message: result }
+              // })
 
-              this.sharedService.exitSystemEvent();
+              this.sharedService.exitSystemEvent(result);
               return false;
             }
 
@@ -650,11 +650,11 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
           this.dataService.InsertUpdateOrder(objToApi).subscribe(result => {
             if (typeof result == 'string') {
-              this.dialog.open(DialogComponent, {
-                data: { message: result }
-              })
+              // this.dialog.open(DialogComponent, {
+              //   data: { message: result }
+              // })
 
-              this.sharedService.exitSystemEvent();
+              this.sharedService.exitSystemEvent(result);
               return false;
             }
 
@@ -761,11 +761,11 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       this.dataService.InsertUpdateOrder(objToApiChanges).subscribe(result => {
         this.createCardsSpinner = false;
         if (typeof result == 'string') {
-          this.dialog.open(DialogComponent, {
-            data: { message: result }
-          })
+          // this.dialog.open(DialogComponent, {
+          //   data: { message: result }
+          // })
 
-          this.sharedService.exitSystemEvent();
+          this.sharedService.exitSystemEvent(result);
           return false;
         }
         // if (result['Token'] != undefined || result['Token'] != null) {
@@ -803,11 +803,11 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
           this.infoMsg = '';
 
           if (typeof result == 'string') {
-            this.dialog.open(DialogComponent, {
-              data: { message: result }
-            })
+            // this.dialog.open(DialogComponent, {
+            //   data: { message: result }
+            // })
 
-            this.sharedService.exitSystemEvent();
+            this.sharedService.exitSystemEvent(result);
             return false;
           }
           // if (result['Token'] != undefined || result['Token'] != null) {
@@ -900,11 +900,11 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
             this.createCardsSpinner = false;
 
             if (typeof result == 'string') {
-              this.dialog.open(DialogComponent, {
-                data: { message: result }
-              })
+              // this.dialog.open(DialogComponent, {
+              //   data: { message: result }
+              // })
 
-              this.sharedService.exitSystemEvent();
+              this.sharedService.exitSystemEvent(result);
               return false;
             }
 
@@ -1012,11 +1012,11 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
           this.createCardsSpinner = false;
           if (typeof result == 'string') {
-            this.dialog.open(DialogComponent, {
-              data: { message: result }
-            })
+            // this.dialog.open(DialogComponent, {
+            //   data: { message: result }
+            // })
 
-            this.sharedService.exitSystemEvent();
+            this.sharedService.exitSystemEvent(result);
             return false;
           }
           // if (result['Token'] != undefined || result['Token'] != null) {
@@ -1098,11 +1098,11 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
         this.dataService.InsertUpdateLines(objToApi).subscribe(result => {
           if (typeof result == 'string') {
-            this.dialog.open(DialogComponent, {
-              data: { message: result }
-            })
+            // this.dialog.open(DialogComponent, {
+            //   data: { message: result }
+            // })
 
-            this.sharedService.exitSystemEvent();
+            // this.sharedService.exitSystemEvent();
             return false;
           }
           // if (result['Token'] != undefined || result['Token'] != null) {
@@ -1153,11 +1153,11 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
     this.dataService.GetSMSFormats(objToApi).subscribe(result => {
       if (typeof result == 'string') {
-        this.dialog.open(DialogComponent, {
-          data: { message: result }
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: { message: result }
+        // })
 
-        this.sharedService.exitSystemEvent();
+        // this.sharedService.exitSystemEvent();
         return false;
       }
 
@@ -1208,11 +1208,11 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
             this.dataService.SendSMSByOrderLine(objToApi).subscribe(result => {
               if (typeof result == 'string') {
-                this.dialog.open(DialogComponent, {
-                  data: { message: result }
-                })
+                // this.dialog.open(DialogComponent, {
+                //   data: { message: result }
+                // })
 
-                this.sharedService.exitSystemEvent();
+                // this.sharedService.exitSystemEvent();
                 return false;
               }
               // if (result['Token'] != undefined || result['Token'] != null) {
@@ -1283,11 +1283,11 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     this.dataService.GetCardsByOrderId(objToAPI).subscribe(result => {
 
       if (typeof result == 'string') {
-        this.dialog.open(DialogComponent, {
-          data: { message: result }
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: { message: result }
+        // })
 
-        this.sharedService.exitSystemEvent();
+        // this.sharedService.exitSystemEvent();
         return false;
       }
       // if (result['Token'] != undefined || result['Token'] != null) {

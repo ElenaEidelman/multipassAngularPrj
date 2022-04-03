@@ -448,7 +448,7 @@ textarea{
    margin: 6px 0px auto 5px;
 }
 
-.mat-dialog-container{
+.iframe .mat-dialog-container{
    overflow: unset !important;
    width: 700px !important;
 }

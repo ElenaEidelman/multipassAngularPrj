@@ -581,6 +581,7 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
         //check if phone number or email of addressee
         let phoneN = this.FormsArray.get('SecondFormGroup').get('phoneNumber').value;
         let email = this.FormsArray.get('SecondFormGroup').get('email').value;
+        debugger
 
         if (phoneN == '' && email == '') {
           this.ifSendOptionNotChoosed = true;

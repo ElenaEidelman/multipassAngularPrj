@@ -36,11 +36,11 @@ export class PagePermissionGuardGuard implements CanActivate {
       await this.getPagePermission().then(result => {
 
         if (typeof result == 'string') {
-          this.dialog.open(DialogComponent, {
-            data: { message: result }
-          })
+          // this.dialog.open(DialogComponent, {
+          //   data: { message: result }
+          // })
 
-          this.sharedService.exitSystemEvent();
+          this.sharedService.exitSystemEvent(result);
           return false;
         }
 
@@ -70,7 +70,13 @@ export class PagePermissionGuardGuard implements CanActivate {
           if (element['PageName'] === route.routeConfig.path && (element['AccessLevel'] === 1 || element['AccessLevel'] === 2)) {
 
 
+
             if (element['PageName'] == 'IFrame') {
+
+              if (result.obj[5].WorkWithIframe == '0') {
+                return false;
+              }
+
 
             }
 

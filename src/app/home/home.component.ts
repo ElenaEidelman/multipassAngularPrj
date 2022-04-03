@@ -114,11 +114,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
       this.homeSpinner = false;
 
       if (typeof result == 'string') {
-        this.dialog.open(DialogComponent, {
-          data: { message: result }
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: { message: result }
+        // })
 
-        this.sharedService.exitSystemEvent();
+        this.sharedService.exitSystemEvent(result);
         return false;
       }
       if (typeof result == 'object') {
@@ -130,8 +130,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
           }
           else {
 
+
             //if company active
-            if (result.obj[11].IsActive == '') {
+            if (result.obj[11].IsActive == '1') {
 
               //set new token
               let tempObjUser = JSON.parse(localStorage.getItem('user'));
@@ -194,18 +195,18 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
             }
             else {
-              this.dialog.open(DialogComponent, {
-                data: { message: 'This company is blocked' }
-              });
-              this.sharedService.exitSystemEvent();
+              // this.dialog.open(DialogComponent, {
+              //   data: { message: 'This company is blocked' }
+              // });
+              this.sharedService.exitSystemEvent('This company is blocked');
             }
           }
         }
         else {
-          this.dialog.open(DialogComponent, {
-            data: { message: result['errdesc'] }
-          })
-          this.sharedService.exitSystemEvent();
+          // this.dialog.open(DialogComponent, {
+          //   data: { message: result['errdesc'] }
+          // })
+          this.sharedService.exitSystemEvent(result['errdesc']);
         }
       }
 

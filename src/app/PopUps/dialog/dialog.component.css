@@ -51,6 +51,7 @@ mat-form-field{
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    max-width: 600px;
     /* margin-top:10vh; */
     }
     .wrap-button-login{
@@ -112,12 +113,14 @@ mat-form-field{
         flex-direction: row;
         justify-content: space-evenly;
         width: 100%;
-        margin: 1.2em 0;
+        margin: 10px 0;
     }
-
+    .subTitle{
+        padding: 10px;
+    }
     .dialogMessage{
         font-size: 2em;
-        margin: 1em;
+        margin: 10px;
         direction: rtl;
         text-align: center;
         overflow-wrap: anywhere;
@@ -125,7 +128,7 @@ mat-form-field{
     }
 
     .title{
-        padding: 10px;
+        padding: 10px 10px 0 10px;
         text-align: right;
         direction: rtl;
         font-size: 1.3em;

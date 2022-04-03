@@ -92,10 +92,10 @@ export class ExcelFileViewComponent implements OnInit, OnDestroy {
 
       }
       else {
-        this.dialog.open(DialogComponent, {
-          data: { message: MsgList.exitSystemAlert }
-        })
-        this.sharedService.exitSystemEvent();
+        // this.dialog.open(DialogComponent, {
+        //   data: { message: MsgList.exitSystemAlert }
+        // })
+        this.sharedService.exitSystemEvent(MsgList.exitSystemAlert);
       }
     });
   }

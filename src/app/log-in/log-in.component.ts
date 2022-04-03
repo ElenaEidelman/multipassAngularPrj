@@ -58,7 +58,7 @@ export class LogInComponent implements OnInit {
             this.validKind = 'ValidateOtp';
 
             this.dataService.getHost().subscribe(hostResult => {
-              debugger
+
               if (hostResult['DevMode'] == 'true') {
                 this.loginForm.get('OtpKey').setValue(result['Token']);
                 this.loginForm.get('OtpKey').setValidators(Validators.required);

@@ -150,11 +150,11 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
 
     this.dataService.GetSMSFormats(objToApi).subscribe(result => {
       if (typeof result == 'string') {
-        this.dialog.open(DialogComponent, {
-          data: { message: result }
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: { message: result }
+        // })
 
-        this.sharedService.exitSystemEvent();
+        this.sharedService.exitSystemEvent(result);
         return false;
       }
 
@@ -191,11 +191,11 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
     this.dataService.GetCardInfoById(objToApi).subscribe(result => {
       this.mainSpinner = false;
       if (typeof result == 'string') {
-        this.dialog.open(DialogComponent, {
-          data: { message: result }
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: { message: result }
+        // })
 
-        this.sharedService.exitSystemEvent();
+        this.sharedService.exitSystemEvent(result);
         return false;
       }
 
@@ -268,11 +268,11 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
 
           this.saveUserDataSpinner = false;
           if (typeof result == 'string') {
-            this.dialog.open(DialogComponent, {
-              data: { message: result }
-            })
+            // this.dialog.open(DialogComponent, {
+            //   data: { message: result }
+            // })
 
-            this.sharedService.exitSystemEvent();
+            this.sharedService.exitSystemEvent(result);
             return false;
           }
           // if (result['Token'] != undefined || result['Token'] != null) {
@@ -348,11 +348,11 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
 
           this.spinnerActiveVoidCard = false;
           if (typeof result == 'string') {
-            this.dialog.open(DialogComponent, {
-              data: { message: result }
-            })
+            // this.dialog.open(DialogComponent, {
+            //   data: { message: result }
+            // })
 
-            this.sharedService.exitSystemEvent();
+            this.sharedService.exitSystemEvent(result);
             return false;
           }
           // if (result['Token'] != undefined || result['Token'] != null) {
@@ -397,11 +397,11 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
         this.dataService.ActivateCards(objToApi).subscribe(result => {
           this.spinnerActiveVoidCard = false;
           if (typeof result == 'string') {
-            this.dialog.open(DialogComponent, {
-              data: { message: result }
-            })
+            // this.dialog.open(DialogComponent, {
+            //   data: { message: result }
+            // })
 
-            this.sharedService.exitSystemEvent();
+            this.sharedService.exitSystemEvent(result);
             return false;
           }
           // if (result['Token'] != undefined || result['Token'] != null) {
@@ -490,11 +490,11 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
 
           this.dataService.UpdateExpirationDateOfCards(objToApi).subscribe(result => {
             if (typeof result == 'string') {
-              this.dialog.open(DialogComponent, {
-                data: { message: result }
-              })
+              // this.dialog.open(DialogComponent, {
+              //   data: { message: result }
+              // })
 
-              this.sharedService.exitSystemEvent();
+              this.sharedService.exitSystemEvent(result);
               return false;
             }
 
@@ -583,11 +583,11 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
 
           this.dataService.UpdatePinCodeOfCards(objToApi).subscribe(result => {
             if (typeof result == 'string') {
-              this.dialog.open(DialogComponent, {
-                data: { message: result }
-              })
+              // this.dialog.open(DialogComponent, {
+              //   data: { message: result }
+              // })
 
-              this.sharedService.exitSystemEvent();
+              this.sharedService.exitSystemEvent(result);
               return false;
             }
 
@@ -665,11 +665,11 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
 
             this.dataService.SendSMSByOrderLine(objToApi).subscribe(result => {
               if (typeof result == 'string') {
-                this.dialog.open(DialogComponent, {
-                  data: { message: result }
-                })
+                // this.dialog.open(DialogComponent, {
+                //   data: { message: result }
+                // })
 
-                this.sharedService.exitSystemEvent();
+                this.sharedService.exitSystemEvent(result);
                 return false;
               }
 

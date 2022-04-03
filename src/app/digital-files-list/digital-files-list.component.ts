@@ -83,11 +83,11 @@ export class DigitalFilesListComponent implements OnInit, AfterViewInit {
 
       this.spinner = false;
       if (typeof result == 'string') {
-        this.dialog.open(DialogComponent, {
-          data: { message: result }
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: { message: result }
+        // })
 
-        this.sharedService.exitSystemEvent();
+        this.sharedService.exitSystemEvent(result);
         return false;
       }
 

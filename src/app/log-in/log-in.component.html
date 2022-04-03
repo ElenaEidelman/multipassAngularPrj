@@ -9,8 +9,8 @@
       <div class="wrap-form">
         <h2>כניסה למערכת</h2>
 
-        
-        <form [formGroup]="loginForm" *ngIf="validKind == 'SendOtp'" class="logInForm" (ngSubmit)="SendOtp()" >
+
+        <form [formGroup]="loginForm" *ngIf="validKind == 'SendOtp'" class="logInForm" (ngSubmit)="SendOtp()">
           <p>
             <mat-form-field>
               <mat-label>מספר טלפון</mat-label>
@@ -36,10 +36,10 @@
           <div class="wrap-button-login">
             <div *ngIf="msgAlert != ''" class="error msgAlert">{{msgAlert}}</div>
             <button mat-button type="submit" class="addButton width-block">כניסה</button>
-              <mat-spinner *ngIf="loginSpinner"></mat-spinner>
+            <mat-spinner *ngIf="loginSpinner"></mat-spinner>
           </div>
         </form>
-<!-- 
+        <!-- 
          -->
         <form [formGroup]="loginForm" *ngIf="validKind == 'ValidateOtp'" class="logInForm" (ngSubmit)="ValidateOtp()">
           <p>
@@ -47,8 +47,9 @@
               <mat-label>קוד אימות</mat-label>
               <input type="text" matInput placeholder="קוד אימות" formControlName="OtpKey">
               <mat-icon matPrefix>domain</mat-icon>
-              <mat-hint>  <span>: קוד אימות נשלח למספר טלפון </span></mat-hint>
-              <mat-hint>{{this.loginForm.get('PhoneNumber').value}}</mat-hint>
+              <mat-hint> <span>: קוד אימות נשלח למספר טלפון </span>
+                <span>{{this.loginForm.get('PhoneNumber').value}}</span>
+              </mat-hint>
               <mat-error *ngIf="loginForm.get('OtpKey').hasError('required')">
                 נא להזין קוד אימות
               </mat-error>
@@ -77,4 +78,3 @@
 
 
 </div>
-

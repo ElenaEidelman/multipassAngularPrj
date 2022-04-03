@@ -7,9 +7,11 @@
     </div>
     <div class="wrap-main-menu bgColorMainMenu">
         <div *ngFor="let menu of permissionMenuList">
-            <div>
+            <div
+                [matTooltip]="menu.MenuName == 'IFrame' && workWithIframe == '0' ? 'you have no authorization to use this feature' : null">
                 <a mat-button [routerLink]="['/public/', menu.MenuEngName]" routerLinkActive="routActive"
-                    [class.isDisabled]="menu.MenuName == 'IFrame'">{{menu.MenuName}}</a>
+                    [class.isDisabled]="menu.MenuName == 'IFrame' && workWithIframe == '0'">{{menu.MenuName}}</a>
+
             </div>
             <!-- <div *ngIf="menu.MenuEngName == 'IFrame'">
                 <a mat-button [routerLink]="['/public/iframe']" routerLinkActive="routActive">{{menu.MenuName}}</a>

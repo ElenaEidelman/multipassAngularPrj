@@ -153,11 +153,11 @@ export class AllCardsComponent implements OnInit, AfterViewInit, OnChanges {
         this.spinner = false;
 
         if (typeof result == 'string') {
-          this.dialog.open(DialogComponent, {
-            data: { message: result }
-          })
+          // this.dialog.open(DialogComponent, {
+          //   data: { message: result }
+          // })
 
-          this.sharedService.exitSystemEvent();
+          this.sharedService.exitSystemEvent(result);
           return false;
         }
 
@@ -255,11 +255,11 @@ export class AllCardsComponent implements OnInit, AfterViewInit, OnChanges {
     this.dataService.GetOrdersStatus(objToApi).subscribe(result => {
       debugger
       if (typeof result == 'string') {
-        this.dialog.open(DialogComponent, {
-          data: { message: result }
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: { message: result }
+        // })
 
-        this.sharedService.exitSystemEvent();
+        this.sharedService.exitSystemEvent(result);
         return false;
       }
       // if (result['Token'] != undefined || result['Token'] != null) {
@@ -303,11 +303,11 @@ export class AllCardsComponent implements OnInit, AfterViewInit, OnChanges {
 
     this.dataService.GetSMSFormats(objToApi).subscribe(result => {
       if (typeof result == 'string') {
-        this.dialog.open(DialogComponent, {
-          data: { message: result }
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: { message: result }
+        // })
 
-        this.sharedService.exitSystemEvent();
+        this.sharedService.exitSystemEvent(result);
         return false;
       }
 

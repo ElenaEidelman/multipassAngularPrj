@@ -114,11 +114,11 @@ export class AllSmsTemplatesComponent implements OnInit {
 
     this.dataService.GetSMSFormats(objToApi).subscribe(result => {
       if (typeof result == 'string') {
-        this.dialog.open(DialogComponent, {
-          data: { message: result }
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: { message: result }
+        // })
 
-        this.sharedService.exitSystemEvent();
+        // this.sharedService.exitSystemEvent();
         return false;
       }
       // if (result['Token'] != undefined || result['Token'] != null) {
@@ -228,11 +228,11 @@ export class AllSmsTemplatesComponent implements OnInit {
             }
             this.dataService.CreateOrUpdateSMSTemplate(objToApi).subscribe(result => {
               if (typeof result == 'string') {
-                this.dialog.open(DialogComponent, {
-                  data: { message: result }
-                })
+                // this.dialog.open(DialogComponent, {
+                //   data: { message: result }
+                // })
 
-                this.sharedService.exitSystemEvent();
+                // this.sharedService.exitSystemEvent();
                 return false;
               }
               // if (result['Token'] != undefined || result['Token'] != null) {
@@ -330,11 +330,11 @@ export class AllSmsTemplatesComponent implements OnInit {
           this.dataService.CreateOrUpdateSMSTemplate(objToApi).subscribe(result => {
             this.spinnerNewTemp = false;
             if (typeof result == 'string') {
-              this.dialog.open(DialogComponent, {
-                data: { message: result }
-              })
+              // this.dialog.open(DialogComponent, {
+              //   data: { message: result }
+              // })
 
-              this.sharedService.exitSystemEvent();
+              // this.sharedService.exitSystemEvent();
               return false;
             }
             // if (result['Token'] != undefined || result['Token'] != null) {
@@ -483,11 +483,11 @@ Json:
 
           this.dataService.DeleteSMSTemplate(objToApi).subscribe(result => {
             if (typeof result == 'string') {
-              this.dialog.open(DialogComponent, {
-                data: { message: result }
-              })
+              // this.dialog.open(DialogComponent, {
+              //   data: { message: result }
+              // })
 
-              this.sharedService.exitSystemEvent();
+              // this.sharedService.exitSystemEvent();
               return false;
             }
             // if (result['Token'] != undefined || result['Token'] != null) {
@@ -578,11 +578,11 @@ Json:
 
               this.spinnerById[0] = -1;
               if (typeof result == 'string') {
-                this.dialog.open(DialogComponent, {
-                  data: { message: result }
-                })
+                // this.dialog.open(DialogComponent, {
+                //   data: { message: result }
+                // })
 
-                this.sharedService.exitSystemEvent();
+                // this.sharedService.exitSystemEvent();
                 return false;
               }
               this.newSMSSend = !this.newSMSSend;

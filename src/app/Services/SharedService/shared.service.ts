@@ -26,8 +26,8 @@ export class SharedService {
   }
 
   //send massage example
-  exitSystemEvent() {
-    this.subject.next();
+  exitSystemEvent(addText?: string) {
+    this.subject.next(addText);
   }
 
   //get massage example

@@ -4,7 +4,7 @@ export const MsgList = {
     dateFormatValidationErr: 'נא להזין רק תאריך',
     emailFormatValidationErr: 'כתובת אימייל לא תקינה',
     requiredField: 'שדה חובה',
-    exitSystemAlert: 'התנתקת מהמערכת, נא להתחבר שוב',
+    exitSystemAlert: 'נא התחבר שוב',
     phonePatternErr: 'מספר טלפון שגוי',
     sendSuccessfully: 'נשלח בהצלחה',
     fillAllFieldsError: 'נא להזין שדות חובה',

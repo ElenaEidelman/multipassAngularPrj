@@ -311,7 +311,7 @@
                                                     <mat-form-field appearance="outline">
                                                         <input matInput placeholder="נייד מקבל/ת המתנה"
                                                             formControlName="phoneNumber" [attr.maxlength]="10"
-                                                            numbersOnly>
+                                                            numbersOnly autocomplete="disable">
 
                                                         <mat-error
                                                             *ngIf="FormsArray.get('SecondFormGroup').get('phoneNumber').hasError('pattern')">
@@ -340,7 +340,7 @@
                                                 <div class="inputCenter" [@openClose]="emailOption">
                                                     <mat-form-field appearance="outline">
                                                         <input matInput placeholder="מייל מקבל/ת המתנה"
-                                                            formControlName="email">
+                                                            formControlName="email" autocomplete="disable">
                                                         <mat-error
                                                             *ngIf="FormsArray.get('SecondFormGroup').get('email').hasError('email')">
                                                             כתובת אימייל לא תקינה</mat-error>

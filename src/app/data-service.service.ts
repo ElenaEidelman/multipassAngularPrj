@@ -100,8 +100,10 @@ $ git merge new-branch
 
   checkResult(result) {
     if (typeof result == 'object') {
+      debugger
       if (result['Token'] != null && result['Token'] != '') {
         if (+result['err'] < 0) {
+
           this.dialog.open(DialogComponent, {
             data: { message: result['errdesc'] != null ? result['errdesc'] : 'err: ' + result['err'] }
           })
@@ -111,17 +113,19 @@ $ git merge new-branch
         }
       }
       else {
-        this.dialog.open(DialogComponent, {
-          data: { message: result['errdesc'] }
-        })
-        this.sharedService.exitSystemEvent();
+
+        // this.dialog.open(DialogComponent, {
+        //   data: { message: result['errdesc'] }
+        // })
+        this.sharedService.exitSystemEvent(result['errdesc']);
       }
     }
     else if (typeof result == 'string') {
-      this.dialog.open(DialogComponent, {
-        data: { message: result }
-      })
-      this.sharedService.exitSystemEvent();
+
+      // this.dialog.open(DialogComponent, {
+      //   data: { message: result }
+      // })
+      this.sharedService.exitSystemEvent(result);
     }
   }
 
@@ -142,11 +146,11 @@ $ git merge new-branch
   getAllOrders(objToApi) {
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/Orders/GetOrders`, objToApi, httpOptions).pipe(
       map(result => {
-        debugger
+
         return this.checkResult(result);
       }),
       catchError(err => {
-        debugger
+
         return of(err.message);
       })
     );
@@ -182,7 +186,7 @@ $ git merge new-branch
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/AllCards/GetAllCards`, objToApi).pipe(
       map(result => {
         //
-        debugger
+
         return this.checkResult(result);
       }),
       catchError(err => {
@@ -246,7 +250,7 @@ $ git merge new-branch
   GetOrdersByFilter(objToApi) {
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/Orders/GetOrdersByFilter`, objToApi).pipe(
       map(result => {
-        debugger
+
         return result;
       }),
       catchError(error => {
@@ -567,9 +571,6 @@ $ git merge new-branch
   GetMenuPages(objToApi) {
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/Credential/GetMenuPages`, objToApi).pipe(
       map(result => {
-        //
-
-
         return this.checkResult(result);
       }),
       catchError(error => {

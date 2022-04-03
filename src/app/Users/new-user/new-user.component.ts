@@ -123,11 +123,11 @@ export class NewUserComponent implements OnInit {
 
         this.saveFormSpinner = false;
         if (typeof result == 'string') {
-          this.dialog.open(DialogComponent, {
-            data: { message: result }
-          })
+          // this.dialog.open(DialogComponent, {
+          //   data: { message: result }
+          // })
 
-          this.sharedService.exitSystemEvent();
+          // this.sharedService.exitSystemEvent();
           return false;
         }
         // if (result['Token'] != undefined || result['Token'] != null) {
@@ -185,11 +185,11 @@ export class NewUserComponent implements OnInit {
       // if (result['Token'] != undefined || result['Token'] != null) {
       //set new token
       if (typeof result == 'string') {
-        this.dialog.open(DialogComponent, {
-          data: { message: result }
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: { message: result }
+        // })
 
-        this.sharedService.exitSystemEvent();
+        // this.sharedService.exitSystemEvent();
         return false;
       }
 
@@ -230,11 +230,11 @@ export class NewUserComponent implements OnInit {
     this.dataService.GetRoles(objToApi).subscribe(result => {
 
       if (typeof result == 'string') {
-        this.dialog.open(DialogComponent, {
-          data: { message: result }
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: { message: result }
+        // })
 
-        this.sharedService.exitSystemEvent();
+        // this.sharedService.exitSystemEvent();
         return false;
       }
       // if (result['Token'] != undefined || result['Token'] != null) {

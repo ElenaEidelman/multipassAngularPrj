@@ -188,11 +188,11 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
     this.dataService.GetAllCustomers(objToApi).subscribe(result => {
       debugger
       if (typeof result == 'string') {
-        this.dialog.open(DialogComponent, {
-          data: { message: result }
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: { message: result }
+        // })
 
-        this.sharedService.exitSystemEvent();
+        this.sharedService.exitSystemEvent(result);
         return false;
       }
 
@@ -266,9 +266,11 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
 
 
   fileOptionChange(event) {
+    debugger
     if (this.excelCardCreatingForm.get('customer').valid && this.excelCardCreatingForm.get('orderDescription').valid) {
       if (event.target.files.length > 0) {
         const file = event.target.files[0];
+        debugger
         if (!file.type.includes('excel') && !file.type.includes('sheet')) {
           this.fileUplodadeValid = false;
           this.dialog.open(DialogComponent, {
@@ -292,8 +294,9 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
           formData.append('ExcelFile', file);
 
 
-
+          debugger
           this.dataService.InsertUpdateOrderByExcel(formData).subscribe(result => {
+            debugger
 
 
             this.fileUploading = false;
@@ -364,13 +367,6 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
             }
             else if (typeof result == 'string') {
 
-              this.dialog.open(DialogComponent, {
-                data: {
-                  title: '',
-                  subTitle: '',
-                  message: result
-                }
-              });
               // this.excelFileError = result;
             }
             else {

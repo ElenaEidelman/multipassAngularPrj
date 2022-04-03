@@ -171,11 +171,11 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy, OnC
     }
     this.dataService.GetOrdersStatus(objToApi).subscribe(result => {
       if (typeof result == 'string') {
-        this.dialog.open(DialogComponent, {
-          data: { message: result }
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: { message: result }
+        // })
 
-        this.sharedService.exitSystemEvent();
+        this.sharedService.exitSystemEvent(result);
         return false;
       }
       //set new token
@@ -201,15 +201,15 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy, OnC
 
     this.filterActionButtonSpinner = true;
     this.dataService.getAllOrders(objToApi).subscribe(result => {
-      debugger
+
       this.filterActionButtonSpinner = false;
 
       if (typeof result == 'string') {
-        this.dialog.open(DialogComponent, {
-          data: { message: result }
-        })
+        // this.dialog.open(DialogComponent, {
+        //   data: { message: result }
+        // })
 
-        this.sharedService.exitSystemEvent();
+        this.sharedService.exitSystemEvent(result);
         return false;
       }
 
@@ -252,11 +252,11 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy, OnC
           this.dataService.DeleteVoidOrder(objToApi).subscribe(result => {
 
             if (typeof result == 'string') {
-              this.dialog.open(DialogComponent, {
-                data: { message: result }
-              })
+              // this.dialog.open(DialogComponent, {
+              //   data: { message: result }
+              // })
 
-              this.sharedService.exitSystemEvent();
+              this.sharedService.exitSystemEvent(result);
               return false;
             }
             //set new token
@@ -343,16 +343,16 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy, OnC
     else {
 
       this.filterActionButtonSpinner = true;
-      debugger
+
       this.dataService.GetOrdersByFilter(objToApi).subscribe(result => {
-        debugger
+
         this.filterActionButtonSpinner = false;
 
         if (result['Token'] != undefined || result['Token'] != null && Object.keys(result.obj).length > 0) {
           if (typeof result == 'object' && result.obj != null) {
             this.dataSource.data = [...result['obj']];
           }
-          debugger
+
 
           if (result.err < 0) {
             this.noTableData = true;
