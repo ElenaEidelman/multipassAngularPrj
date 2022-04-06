@@ -347,8 +347,8 @@
                                                     </mat-form-field>
                                                 </div>
                                             </div>
-                                            <div>
-                                                <!-- 
+                                            <!--<div>
+                                                 
                                                 <div class="prevItemsWrap secondForm">
                                                     <div class="closeIcon" *ngIf="printOption">
                                                         <mat-icon type="button"
@@ -362,14 +362,14 @@
                                                         </button>
                                                     </div>
                                                 </div> -->
-                                                <!-- <div class="buttonTitle">הדפסה</div>
+                                            <!-- <div class="buttonTitle">הדפסה</div>
                                                 <div class="inputCenter infoBlock" [@openClose]="printOption">
                                                     <div class="centerIcon">
                                                         <mat-icon>info</mat-icon>
                                                     </div>
                                                     <div>לאחר התשלום תהיה אפשרות להדפסת המתנה</div>
-                                                </div> -->
-                                            </div>
+                                                </div> 
+                                            </div>-->
                                         </div>
 
 
@@ -464,7 +464,7 @@
             </mat-horizontal-stepper>
 
 
-            <div *ngIf="orderId == undefined">
+            <div *ngIf="orderId == undefined" class="imgBlockWrap">
                 <!-- img -->
                 <div class="imgWrap ">
                     <mat-card class="example-card">

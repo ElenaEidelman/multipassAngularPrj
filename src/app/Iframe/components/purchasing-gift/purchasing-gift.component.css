@@ -577,6 +577,14 @@ cursor: pointer;
 /* mobile */
 
 @media  screen and (max-width: 1024px) {
+  .sendOptionsWrap{
+    flex-direction: row !important;
+  }
+  .imgBlockWrap{
+    display: flex;
+    width: 100%;
+    justify-content: center;
+  }
   .sendOptionsWrap > div{
     width: unset;
   }
@@ -590,7 +598,7 @@ cursor: pointer;
     margin-bottom: 0 !important;
   }
   .addSrcWrap {
-    margin: 0.5em 0;
+    margin: 2.5em 0 0em 0;
     justify-content: center;
 
   }
@@ -616,7 +624,8 @@ cursor: pointer;
     flex-direction: column;
   }
   .secondForm > div.closeIcon{
-    right: 85px;
+    right: 40px;
+    top: -10px;
   }
   .wrapNextPrevButton button:first-child{
     margin-left: 0;

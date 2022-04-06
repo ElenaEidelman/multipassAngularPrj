@@ -509,11 +509,14 @@ textarea{
  /* mobile */
 
  @media screen and (max-width: 1024px) {
+   .stepsWrap > mat-horizontal-stepper > div.mat-horizontal-content-containe{
+      margin: 0;
+   }
    .mat-horizontal-content-container {
        padding: 0 !important;
    }
    .mat-horizontal-content-container{
-       width: 100% !important;
+       width: 95% !important;
    }
    div.imgWrap{
        width: auto !important;
@@ -521,6 +524,6 @@ textarea{
        margin: 15px;
    }
    .stepWrap > div{
-       margin: 0 15px !important;
+       margin: 0 !important;
    }
  }
