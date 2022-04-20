@@ -409,18 +409,20 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy, OnC
       });
 
       worksheet.columns = worksheetArr;
+      let dataForExcel = JSON.parse(JSON.stringify(this.dataSource.data));
 
-      for (let data of Object.values(this.dataSource.data)) {
+      for (let data of Object.values(dataForExcel)) {
         for (let element of Object.keys(data)) {
           if (element == 'MDate' || element == 'ApproveDate') {//element == 'MDate' ||
             data[element] = this.formatDate(data[element]);
           }
         }
       }
-
-      worksheet.addRows(this.dataSource.data, "n");
+      worksheet.addRows(dataForExcel, "n");
       let userData = JSON.parse(localStorage.getItem('user')).obj;
+
       workbook.xlsx.writeBuffer().then((data) => {
+
         let blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
         fs.saveAs(blob, userData['Fname'] + '_' + userData['Lname'] + '_' + 'כל_ההזמנות' + '.xlsx');
       })

@@ -100,7 +100,7 @@ $ git merge new-branch
 
   checkResult(result) {
     if (typeof result == 'object') {
-      debugger
+
       if (result['Token'] != null && result['Token'] != '') {
         if (+result['err'] < 0) {
 

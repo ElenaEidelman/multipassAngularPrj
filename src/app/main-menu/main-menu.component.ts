@@ -71,10 +71,10 @@ export class MainMenuComponent implements OnInit {
           if (result.obj != null) {
 
 
-            debugger
+
             this.permissionMenuList = this.distinctMenu(result.obj[1]);
             this.workWithIframe = result.obj[5]['WorkWithIframe'];
-            debugger
+
 
             this.permissionMenuList.sort((menua, menub) => {
               return menua['Sequence'] - menub['Sequence']
