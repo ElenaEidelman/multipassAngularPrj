@@ -72,6 +72,7 @@ export class MainMenuComponent implements OnInit {
 
 
 
+
             this.permissionMenuList = this.distinctMenu(result.obj[1]);
             this.workWithIframe = result.obj[5]['WorkWithIframe'];
 

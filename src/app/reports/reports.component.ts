@@ -50,6 +50,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
   customersSpare;
   indexId;
   ScheduleDate;
+  scheduleDateMin;
   fDate;
   tDate;
   report1;
@@ -59,6 +60,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
   Report1FormView: boolean = true;
   Report2FormView: boolean = true;
   Report3FormView: boolean = true;
+  scheduleDateDisable: boolean = true;
   radioCurrentDayPressed1Form: boolean = true;
   radioCurrentDayPressed3Form: boolean = true;
   rangeOfDatesDatePickerView1Form: boolean = false;
@@ -66,6 +68,10 @@ export class ReportsComponent implements OnInit, AfterViewInit {
 
   maxDateForReport;
   maxDateForReportSpare;
+  minDateForRaport;
+
+  maxDateForReportBalance;
+  minDateForReportBalance;
 
 
 
@@ -88,10 +94,10 @@ export class ReportsComponent implements OnInit, AfterViewInit {
   Report2Form = this.fb.group({
     // sendImmedCheckB:[{ value: '', disabled: false }],
     CurrentReport: "Balance",
-    FDate: [{ value: '', disabled: false }],
-    TDate: [{ value: '', disabled: false }],
+    FDate: [{ value: '', disabled: false }, Validators.required],
+    TDate: [{ value: '', disabled: false }, Validators.required],
     CustomerEmail: [{ value: '', disabled: false }, [Validators.required, Validators.email]],
-    ScheduleDate: [{ value: '', disabled: false }],
+    ScheduleDate: [{ value: '', disabled: false }, Validators.required],
     Checkedsend: [{ value: '', disabled: false }],
     customer: [{ value: '', disabled: false }, Validators.required],
     UserId: [{ value: '', disabled: false }],
@@ -171,10 +177,50 @@ export class ReportsComponent implements OnInit, AfterViewInit {
     this.Report3Form.get('TDate').setValue(new Date(date.getFullYear(), prevMonth, lastDayOfPrevMonth.getDate(), 23, 59, 59))
 
 
+    debugger
     let maxDateForRep = new Date(new Date().setDate(new Date().getDate() - 1));
     this.maxDateForReport = new Date(maxDateForRep.getFullYear(), maxDateForRep.getMonth(), maxDateForRep.getDate(), 23, 59, 59);
     this.maxDateForReportSpare = new Date(maxDateForRep.getFullYear(), maxDateForRep.getMonth(), maxDateForRep.getDate(), 23, 59, 59);
+    debugger
+    this.onReport2FormChanges();
+  }
+  onReport2FormChanges() {
 
+    //report 1
+    this.Report1Form.valueChanges.subscribe(val => {
+      if (val.FDate != null && val.FDate != '') {
+
+      }
+      if (val.TDate != null && val.TDate != '') {
+
+      }
+
+    })
+
+
+
+    //report 2
+    this.Report2Form.valueChanges.subscribe(val => {
+      if ((val.FDate != '' && val.FDate != null) && (val.TDate != '' && val.TDate != null)) {
+        this.scheduleDateDisable = false;
+        this.scheduleDateMin = new Date();
+      }
+      else {
+        this.scheduleDateDisable = true;
+      }
+    })
+
+    this.Report2Form.get('FDate').valueChanges.subscribe(val => {
+      debugger
+      this.minDateForReportBalance = '';
+      this.maxDateForReportBalance = '';
+    })
+    this.Report2Form.get('TDate').valueChanges.subscribe(val => {
+      this.minDateForReportBalance = '';
+      this.maxDateForReportBalance = '';
+    })
+
+    //report 3    
   }
 
   sendReport(reportName) {
@@ -250,12 +296,12 @@ export class ReportsComponent implements OnInit, AfterViewInit {
   }
 
   sendBalanceReport() {
-
+    debugger
     if (this.Report2Form.valid) {
-
+      debugger
       let objToApi = {
         Token: this.userToken,
-        UserId: this.userId,
+        UserId: this.Report2Form.get('customer').value.id,
         CanceledCheckB: false
       }
 
@@ -267,7 +313,9 @@ export class ReportsComponent implements OnInit, AfterViewInit {
       objToApi['CanceledCheckB'] = false;
 
 
+      debugger
       this.dataService.CreateRealizationReports(objToApi).subscribe(result => {
+        debugger
         if (typeof result == 'string') {
           // this.dialog.open(DialogComponent, {
           //   data: { message: result }
@@ -423,10 +471,13 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         this.rangeOfDatesDatePickerView1Form = false;
         this.maxDateForReport = this.maxDateForReportSpare;
 
+        debugger
         this[form].get('FDate').setValue(new Date(date.getFullYear(), date.getMonth(), 1, 0, 0, 0))
 
+        //if firs day of month
 
-        this[form].get('TDate').setValue(new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1, 23, 59, 59))
+
+        this[form].get('TDate').setValue(new Date(date.getFullYear(), date.getMonth(), (date.getDate() == 1 ? date.getDate() : date.getDate() - 1), 23, 59, 59))
 
       }
       else if (event.value == 'prevMonth') {
@@ -462,7 +513,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         this.maxDateForReport = this.maxDateForReportSpare;
 
         this[form].get('FDate').setValue(new Date(date.getFullYear(), date.getMonth(), 1, 0, 0, 0))
-        this[form].get('TDate').setValue(new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1, 23, 59, 59))
+        this[form].get('TDate').setValue(new Date(date.getFullYear(), date.getMonth(), (date.getDate() == 1 ? date.getDate() : date.getDate() - 1), 23, 59, 59))
       }
       else if (event.value == 'prevMonth') {
         this.radioCurrentDayPressed3Form = true;

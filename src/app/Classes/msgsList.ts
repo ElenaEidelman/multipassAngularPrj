@@ -15,5 +15,6 @@ export const MsgList = {
     englishOrNumbersOnly: 'רק אותיות באנגלית, או מספרים',
     readOnly: 'לקריא בלבד',
     noData: 'אין נתונים',
-    referenceRequired: 'נא להזין מספר אסמכתא'
+    referenceRequired: 'נא להזין מספר אסמכתא',
+    timeExpired: 'זמן שליחה עבר, נא לבחור זמן אחר '
 }

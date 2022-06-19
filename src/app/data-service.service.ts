@@ -143,6 +143,19 @@ $ git merge new-branch
   }
 
 
+  GetPoliciesByCompanyId(objToApi) {
+    return this.http.post(`${localStorage.getItem('baseUrl')}/api/Policy/GetPoliciesByCompanyId`, objToApi, httpOptions).pipe(
+      map(result => {
+        return this.checkResult(result);
+      }),
+      catchError(err => {
+
+        return of(err.message);
+      })
+    );
+  }
+
+
   getAllOrders(objToApi) {
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/Orders/GetOrders`, objToApi, httpOptions).pipe(
       map(result => {

@@ -574,14 +574,12 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
         }
       }
 
-      //how to send, stepper and navigate to payment
+      //second form
       if (this.selectedIndex == 1) {
         //check second form
 
-        //check if phone number or email of addressee
         let phoneN = this.FormsArray.get('SecondFormGroup').get('phoneNumber').value;
         let email = this.FormsArray.get('SecondFormGroup').get('email').value;
-        debugger
 
         if (phoneN == '' && email == '') {
           this.ifSendOptionNotChoosed = true;
@@ -643,21 +641,14 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
 
 
   InsertUpdateB2COrder() {
-    this.spinner = true;
     this.navigateToPayment = true;
-    this.document.getElementById('goToPaymentButton')['disabled'] = true;
+    // this.document.getElementById('goToPaymentButton')['disabled'] = true;
 
     let dateToSendGift = new Date(this.FormsArray.get('SecondFormGroup').get('dateTimeData').get('date').value);
     dateToSendGift.setHours(this.FormsArray.get('SecondFormGroup').get('dateTimeData').get('time').value.split(':')[0])
     dateToSendGift.setMinutes(this.FormsArray.get('SecondFormGroup').get('dateTimeData').get('time').value.split(':')[1])
 
-    //convert date to mm/dd/yyyy
-    let newDate = new Date(dateToSendGift);
-    let day = newDate.getDate() < 10 ? '0' + newDate.getDate() : newDate.getDate();
-    let month = (newDate.getMonth() + 1) < 10 ? '0' + (newDate.getMonth() + 1) : (newDate.getMonth() + 1);
-    let year = newDate.getFullYear();
-    let hour = newDate.getHours();
-    let minute = newDate.getMinutes();
+
 
 
     //this.FormsArray.get('FirstFormGroup').get('name').value
@@ -674,14 +665,40 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
       LoadAmount: this.presentSumControl.value,
       NotesInOrder: this.FormsArray.get('FirstFormGroup').get('blessingText').value,
       Phone: this.FormsArray.get('SecondFormGroup').get('phoneSender').value,
-      B2C_DateTimeToSend: month + '/' + day + '/' + year + ' ' + hour + ':' + minute,
       Media: this.FormsArray.get('FirstFormGroup').get('imgsSrc').value != '' ? '/assets/images/B2COrderImage/' + this.FormsArray.get('FirstFormGroup').get('imgsSrc').value : '',
       Email: this.FormsArray.get('SecondFormGroup').get('mailSender').value
     }
 
+    let radioValDateSend = this.FormsArray.get('SecondFormGroup').get('dateOptionOfSend').value;
 
+    if (radioValDateSend == '1') {
+      // B2C_DateTimeToSend: dateToSend,
+      objToApi['B2C_DateTimeToSend'] = new Date();
+
+    }
+    else if (radioValDateSend == '2') {
+
+      //check if time is not expired
+      let dateTimeDataValue = this.FormsArray.get('SecondFormGroup').get('dateTimeData').value;
+      let hours = dateTimeDataValue.time.split(':')[0];
+      let minutes = dateTimeDataValue.time.split(':')[1];
+
+      let dateTimeNewHour = new Date(dateTimeDataValue.date).setHours(hours);
+      let dateTimeNewHourAndMinute = new Date(dateTimeNewHour).setMinutes(minutes);
+
+      if (new Date(dateTimeNewHourAndMinute).getTime() < new Date().getTime()) {
+        // objToApi[]
+        this.formError = this.MsgList.timeExpired;
+        setTimeout(() => {
+          this.formError = '';
+        }, 2000)
+        return false;
+      }
+
+    }
 
     debugger
+    this.spinner = true;
     this.dataService.InsertUpdateB2COrder(objToApi).subscribe(result => {
       if (result.obj != undefined && result.obj != null) {
         this.GetPaymentToken(result.obj[0]['orderid']);
@@ -691,6 +708,16 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
       }
     })
 
+  }
+
+  formatDate(date) {
+    let newDate = new Date(date);
+    let day = newDate.getDate() < 10 ? '0' + newDate.getDate() : newDate.getDate();
+    let month = (newDate.getMonth() + 1) < 10 ? '0' + (newDate.getMonth() + 1) : (newDate.getMonth() + 1);
+    let year = newDate.getFullYear();
+    let hour = newDate.getHours() < 10 ? '0' + newDate.getHours() : newDate.getHours();
+    let minute = newDate.getMinutes() < 10 ? '0' + newDate.getMinutes() : newDate.getMinutes();
+    return month + '/' + day + '/' + year + ' ' + hour + ':' + minute;
   }
   GetPaymentToken(orderId) {
     let objToApi = {

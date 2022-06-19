@@ -176,7 +176,7 @@
                                 <!--[routerLink]="['/public/customer',element['UserId']]"-->
                                 <a (click)="goToCustomer(element['UserId'])">{{element[obj]}}</a><br>
                             </span>
-                            <div mat-button *ngIf="obj == 'Status'"
+                            <div mat-button *ngIf="obj == 'DescriptionWL'"
                                 [class.tableOrderStatusOpen]="element['StatusId'] == 1 || element['OrderStatus'] == 1"
                                 [class.tableOrderStatusWaiting]="element['StatusId'] == 2 || element['StatusId'] == 0 || element['OrderStatus'] == 2"
                                 [class.tableOrderStatusClose]="element['StatusId'] == 3 || element['OrderStatus'] == 3"
@@ -230,11 +230,12 @@
                             <span *ngIf="
                                         obj != 'idex' && 
                                         obj != 'OrganizationName' && 
-                                        obj != 'StatusDesc' &&
+                                        obj != 'DescriptionWL' &&
                                         obj != 'ApproveDate' && 
                                         obj != 'MDate'">{{element[obj]}}
                             </span>
-
+                            <!-- test merge -->
+                            <!-- test merge from policy -->
                         </td>
                     </ng-container>
                 </ng-container>

@@ -1,9 +1,10 @@
-.customer-data{
+.customer-data {
     display: flex;
     justify-content: space-between;
     flex-direction: row-reverse;
     flex-wrap: wrap;
 }
+
 /* mat-spinner{
     margin: auto;
     position: absolute;
@@ -13,85 +14,99 @@ mat-spinner >  svg{
     height: 50px !important;
 } */
 
-.marginTop{
+.marginTop {
     margin-top: 20px !important;
 }
-.wrapAprDel{
+
+.wrapAprDel {
     position: relative;
 }
+
 .tableButton {
     position: relative;
 }
-.smsSendInput{
+
+.smsSendInput {
     width: 100%;
 }
-.viewCodeButton{
+
+.viewCodeButton {
     margin: 2rem 0 0rem 0;
     text-align: center;
     display: flex;
     justify-content: center;
     flex-direction: row-reverse;
 }
-.viewCodeButton > button{
+
+.viewCodeButton>button {
     margin: 0 5px;
 }
-.addToExecOrderForm  > mat-form-field{
+
+.addToExecOrderForm>mat-form-field {
     padding: 0 3px;
 }
-.customerDataTitle{
+
+.customerDataTitle {
     text-align: center;
 }
-.margin0{
+
+.margin0 {
     margin: 0 auto;
 }
-.flexData{
+
+.flexData {
     justify-content: space-between;
 }
-.flexDataChild{
+
+.flexDataChild {
     flex-grow: 1;
     flex-basis: 0;
 }
-.flexDataChild > div{
+
+.flexDataChild>div {
     display: flex;
     justify-content: flex-end;
     flex-direction: row;
 }
-.flexDataChild > div > div{
+
+.flexDataChild>div>div {
     flex-grow: 1;
     flex-basis: 0;
 }
 
-.refBlock{
+.refBlock {
     flex-grow: 2;
 }
 
-.refBlock > mat-form-field{
+.refBlock>mat-form-field {
     width: 100%;
 }
 
-.subTitle{
+.subTitle {
     margin-left: 10px;
     font-size: 1.3rem;
     color: #8989a4;
 }
 
-mat-spinner{
+mat-spinner {
     margin: auto;
 }
 
-.inputValue{
+.inputValue {
     width: 100%;
     text-align: center;
     color: #757575;
 }
 
-.dataRows .mat-form-field{
+.dataRows .mat-form-field {
     width: 100%;
 }
-.dataRows .mat-form-field input{
+
+.dataRows .mat-form-field input {
     text-align: center;
 }
-.dataRows .mat-form-field-appearance-legacy .mat-form-field-underline{
+
+.dataRows .mat-form-field-appearance-legacy .mat-form-field-underline {
     background-color: unset;
 }
 
@@ -100,115 +115,134 @@ mat-spinner{
 
 tr.example-element-row:not(.example-expanded-row):hover {
     background: whitesmoke;
-  }
-  
-  tr.example-element-row:not(.example-expanded-row):active {
+}
+
+tr.example-element-row:not(.example-expanded-row):active {
     background: #efefef;
-  }
+}
 
-  .tableWrapNoInfo{
-      position: relative;
-  }
-  .noInfo{
-      position: absolute;
-      bottom: 3px;
-      width: 100%;
-      text-align: center;
-  }
+.tableWrapNoInfo {
+    position: relative;
+}
 
-  .flexElements{
+.noInfo {
+    position: absolute;
+    bottom: 3px;
+    width: 100%;
+    text-align: center;
+}
+
+.flexElements {
     display: flex;
     flex-direction: column;
-  }
-  .flexButtonsElement{
+}
+
+.flexButtonsElement {
     flex-direction: row;
     justify-content: center;
     margin-top: auto;
     position: relative;
     padding-top: 20px;
-  }
+}
 
-  .comments mat-form-field{
+.comments mat-form-field {
     width: 100%;
-  }
-  .changeDate{
-      display: flex;
-  }
-  .changeDate > mat-icon{
-      color: #88C43E;
-  }
-  .changeDate > span{
-      text-decoration: underline;
-  }
-  .changeDate > span:hover{
-      cursor: pointer;
-  }
-
-  .flex-element-child{
-    padding: 10px !important;
-}
-.formBorder{
-    padding: 10px !important;
 }
 
-.paddingB0{
+.changeDate {
+    display: flex;
+}
+
+.changeDate>mat-icon {
+    color: #88C43E;
+}
+
+.changeDate>span {
+    text-decoration: underline;
+}
+
+.changeDate>span:hover {
+    cursor: pointer;
+}
+
+.flex-element-child {
+    padding: 10px !important;
+}
+
+.formBorder {
+    padding: 10px !important;
+}
+
+.paddingB0 {
     padding-bottom: 0 !important;
 }
-.padding0{
+
+.padding0 {
     padding: 0 !important
 }
 
-.additionalOptionsSMS{
+.additionalOptionsSMS {
     padding: 0 1em !important;
-     margin: 2em auto !important;
+    margin: 2em auto !important;
 }
 
 
 
 
-.smsFormWrap{
+.smsFormWrap {
     display: flex;
     flex-direction: column;
 }
-.smsFormWrap > div{
+
+.smsFormWrap>div {
     margin: 10px;
     flex-grow: 1;
 }
 
-.smsFormWrap mat-form-field{
+.smsFormWrap mat-form-field {
     width: 100%;
 }
 
-.buttonSendSms{
+.buttonSendSms {
     text-align: center;
 }
 
+.policyType {
+    margin-right: 2em;
+}
 
-@media screen and (max-width: 1024px){
+@media screen and (max-width: 1024px) {
+
     /* .customer-data{
         flex-direction: column;
     } */
-    .flexElement{
+    .flexElement {
         flex-direction: column-reverse !important;
     }
-    .customer-data > div{
+
+    .customer-data>div {
         width: 50%;
         padding: 0 10px;
         text-align: right;
     }
-    .customerDataTitle{
+
+    .customerDataTitle {
         text-align: right;
     }
-    .flexData{
+
+    .flexData {
         display: unset;
     }
-    .flexData > div{
+
+    .flexData>div {
         margin: 15px 0;
     }
-    .refBlock{
+
+    .refBlock {
         margin: 5px;
     }
-    .refBlock > mat-form-field{
+
+    .refBlock>mat-form-field {
         width: 100%;
     }
 }

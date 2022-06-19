@@ -31,7 +31,7 @@ import { SharedService } from 'src/app/Services/SharedService/shared.service';
 })
 export class LogInIframeComponent implements OnInit {
   /**
-   * 5326100350000992
+   * 4580458045804580
    * 890108558
    * 03/22
    * 500
@@ -70,6 +70,7 @@ export class LogInIframeComponent implements OnInit {
   companyIdByParams: boolean = false;
 
   previewLongDescription: boolean = false;
+  testdesc: string = 'Plain Text Example &amp; <strong>Bold \n Text Example</strong>';
 
   sumForm = this.fb.group({
     cardSumControl: ['']
@@ -93,6 +94,7 @@ export class LogInIframeComponent implements OnInit {
 
     //change iframe data for preview
     this.sharingIframeService.iframePreviewInfo.subscribe(result => {
+      debugger
 
       if (this.infoData != undefined) {
         Object.keys(result).forEach(key => {

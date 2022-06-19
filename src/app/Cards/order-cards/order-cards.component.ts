@@ -91,6 +91,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
   manualError: string = '';
   excelFileError: string = '';
   excelSendError: string = '';
+  policyList;
   // excelCustomerError: string = '';
 
   fileUplodadeValid: boolean = false;
@@ -100,13 +101,15 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
     // fileDesc: (''),
     orderDescription: ['', [Validators.required, this.noWhitespaceValidator]],
     file: ['', Validators.required],
-    searchCustomer: ['']
+    searchCustomer: [''],
+    policySelectExcel: ['']
   });
 
   manualCardgroup = this.fb.group({
     customer: ['', Validators.required],
     orderDescription: ['', [Validators.required, this.noWhitespaceValidator]],
-    searchCustomer: ['']
+    searchCustomer: [''],
+    policySelectManual: ['']
   });
 
   loadingCardGroup = this.fb.group({
@@ -153,7 +156,6 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
 
 
   ngOnInit(): void {
-
     window.scroll(0, 0);
     this.pagePermissionAccessLevel = this.sharedService.pagesAccessLevel.value.length > 0 ? JSON.parse(this.sharedService.pagesAccessLevel.value) : JSON.parse(JSON.stringify(this.pagePermissionAccessLevel));
     this.sharedService.pagesAccessLevel.next('');
@@ -165,6 +167,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
 
     this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
     this.getAllCustomers();
+    this.GetPoliciesByCompanyId();
 
 
 
@@ -179,6 +182,40 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
     this.loadingCardGroupChange();
   }
 
+  GetPoliciesByCompanyId() {
+
+    let objToApi = {
+      Token: this.userToken
+    }
+
+    this.dataService.GetPoliciesByCompanyId(objToApi).subscribe(result => {
+      if (typeof result == 'string') {
+        // this.sharedService.exitSystemEvent(result);
+        return false;
+      }
+      //set new token
+      let tempObjUser = JSON.parse(localStorage.getItem('user'));
+      tempObjUser['Token'] = result['Token'];
+      localStorage.setItem('user', JSON.stringify(tempObjUser));
+      this.userToken = result['Token'];
+
+      if (result['obj'] != null) {
+        this.policyList = result['obj'];
+        if (this.policyList.length > 0) {
+          this.manualCardgroup.get('policySelectManual').setValidators(Validators.required);
+          this.excelCardCreatingForm.get('policySelectExcel').setValidators(Validators.required);
+        }
+
+      }
+      else {
+        this.dialog.open(DialogComponent, {
+          data: { message: result.errdesc }
+        })
+      }
+
+    })
+  }
+
 
   getAllCustomers() {
     let objToApi = {
@@ -186,7 +223,6 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
     }
 
     this.dataService.GetAllCustomers(objToApi).subscribe(result => {
-      debugger
       if (typeof result == 'string') {
         // this.dialog.open(DialogComponent, {
         //   data: { message: result }
@@ -249,7 +285,8 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
 
       let Customer = {
         customerId: this.manualCardgroup.get('customer').value != undefined ? this.manualCardgroup.get('customer').value['id'] : '-1',
-        orderDescription: this.manualCardgroup.get('orderDescription').value
+        orderDescription: this.manualCardgroup.get('orderDescription').value,
+        policy: this.manualCardgroup.get('policySelectManual').value
       }
 
       this.urlSharingService.changeMessage(JSON.stringify(Customer));
@@ -266,11 +303,13 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
 
 
   fileOptionChange(event) {
-    debugger
-    if (this.excelCardCreatingForm.get('customer').valid && this.excelCardCreatingForm.get('orderDescription').valid) {
+    //&& this.excelCardCreatingForm.get('policySelectExcel').valid
+    if (
+      this.excelCardCreatingForm.get('customer').valid &&
+      this.excelCardCreatingForm.get('orderDescription').valid) {
       if (event.target.files.length > 0) {
         const file = event.target.files[0];
-        debugger
+
         if (!file.type.includes('excel') && !file.type.includes('sheet')) {
           this.fileUplodadeValid = false;
           this.dialog.open(DialogComponent, {
@@ -292,6 +331,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
           formData.append('OrderName', this.excelCardCreatingForm.get('orderDescription').value);
           // formData.append('Description', this.excelCardCreatingForm.get('orderDescription').value);
           formData.append('ExcelFile', file);
+          formData.append('Policy', this.excelCardCreatingForm.get('policySelectExcel').value);
 
 
           debugger
@@ -312,12 +352,14 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
               if (result.err != -1) {
                 this.fileUplodadeValid = true;
                 this.filename = result.obj[1][0].NewFileName;
+
                 let objGetFile = {
                   excelName: this.filename,
                   customerId: this.excelCardCreatingForm.get('customer').value.id,
                   fileData: JSON.stringify(result),
                   // fileDescription: this.excelCardCreatingForm.get('orderDescription').value
-                  OrderName: this.excelCardCreatingForm.get('orderDescription').value
+                  OrderName: this.excelCardCreatingForm.get('orderDescription').value,
+                  Policy: this.excelCardCreatingForm.get('policySelectExcel').value
 
                 }
                 localStorage.setItem('excelFileData', JSON.stringify(objGetFile));

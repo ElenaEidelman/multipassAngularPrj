@@ -115,9 +115,9 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy, OnC
     { value: 'Total', viewValue: 'שווי ההזמנה' },//v
     { value: 'CardsQty', viewValue: 'כמות שוברים בהזמנה' },
     { value: 'MDate', viewValue: 'תאריך יצירת הזמנה' },
-    { value: 'ApproveDate', viewValue: 'תאריך שליחה' },//v
+    { value: 'ApproveDate', viewValue: 'תאריך שליחת שוברים' },//v
     { value: 'CrmOrderId', viewValue: 'מספר אסמכתא' },//v
-    { value: 'Status', viewValue: 'בתהליך יצירה' },
+    { value: 'DescriptionWL', viewValue: 'סטטוס' },
   ];
 
 
@@ -201,7 +201,6 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy, OnC
 
     this.filterActionButtonSpinner = true;
     this.dataService.getAllOrders(objToApi).subscribe(result => {
-
       this.filterActionButtonSpinner = false;
 
       if (typeof result == 'string') {
@@ -218,6 +217,14 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy, OnC
       tempObjUser['Token'] = result['Token'];
       localStorage.setItem('user', JSON.stringify(tempObjUser));
       this.userToken = result['Token'];
+
+
+      result['obj'].forEach(element => {
+
+        element['ApproveDate'] = (element['ApproveDate'] == null) ? "" : element['ApproveDate'].includes('1753') ? "" : element['ApproveDate'];
+        element['CancelationDate'] = (element['CancelationDate'] == null) ? "" : element['CancelationDate'].includes('1753') ? "" : element['CancelationDate'];
+        element['SendDate'] = (element['SendDate']) == null ? "" : element['SendDate'].includes('1753') ? "" : element['SendDate'];
+      });
 
       this.dataSourceSpare.data = result['obj'];
       this.dataSource.data = result['obj'];
@@ -399,7 +406,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy, OnC
   excelFileExport() {
     if (this.pagePermissionAccessLevel.AccessLevel != this.MockData.accessLevelReadOnly) {
       let tableLabels = this.orderLabelForTable;
-
+      debugger
       let workbook = new Workbook();
       let worksheet = workbook.addWorksheet('הזמנות');
 
@@ -410,7 +417,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy, OnC
 
       worksheet.columns = worksheetArr;
       let dataForExcel = JSON.parse(JSON.stringify(this.dataSource.data));
-
+      debugger
       for (let data of Object.values(dataForExcel)) {
         for (let element of Object.keys(data)) {
           if (element == 'MDate' || element == 'ApproveDate') {//element == 'MDate' ||
@@ -435,6 +442,9 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy, OnC
   }
 
   formatDate(value) {
+    if (value == "") {
+      return value;
+    }
     let date = new Date(value.toString());
     let day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
     let month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);

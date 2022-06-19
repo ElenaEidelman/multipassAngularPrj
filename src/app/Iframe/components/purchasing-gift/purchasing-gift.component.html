@@ -224,7 +224,7 @@
                         <div>
                             <form [formGroup]="FormsArray.get('SecondFormGroup')" (ngSubmit)="nextStep(stepper)">
                                 <div>
-                                    <!-- <div class="formFieldTitle titleFlex">
+                                    <div class="formFieldTitle titleFlex">
                                         <div>מתי לשלוח את המתנה?</div>
                                     </div>
                                     <div class="OptionsWrap">
@@ -232,8 +232,8 @@
                                             formControlName="dateOptionOfSend" (change)="sendDateChange($event)">
                                             <mat-radio-button value="1">עכשיו</mat-radio-button>
                                             <mat-radio-button value="2">במועד מאוחר יותר</mat-radio-button>
-                                    </mat-radio-group>
-                                </div> -->
+                                        </mat-radio-group>
+                                    </div>
 
                                     <div [@openClose]="openCloseTimeDateSendGift ? true : false"
                                         formGroupName="dateTimeData">
@@ -430,7 +430,7 @@
                                 </div>
 
                                 <!--next prev step buttons-->
-                                <mat-error *ngIf="formError != ''">{{formError}}</mat-error>
+                                <mat-error *ngIf="formError != ''" class="formError">{{formError}}</mat-error>
                                 <div class="wrapNextPrevButton">
                                     <button type="button" (click)="prevStep(stepper)" mat-button
                                         class="prevButton">לחזור
@@ -475,7 +475,8 @@
                         <mat-card-header>
                             <!-- <div mat-card-avatar class="example-header-image"></div> -->
                             <!-- <mat-card-title>₪{{selectedSum}}</mat-card-title> -->
-                            <mat-card-subtitle>שובר כספי בסך <strong>₪{{selectedSum}}</strong> למימוש ב{{companyName}}
+                            <mat-card-subtitle>שובר כספי בסך <span style="font-weight: 500;">₪{{selectedSum}}</span>
+                                למימוש ב{{companyName}}
                             </mat-card-subtitle>
                         </mat-card-header>
                         <mat-card-content *ngIf="viewChangeSum">

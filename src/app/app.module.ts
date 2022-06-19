@@ -97,6 +97,7 @@ import { SafeHtmlPipe } from './Iframe/Pipes/safe-html.pipe';
 import { MockCodeToNullPipe } from './Pipes/convertMockDateToNull/mock-date-to-null.pipe';
 import { CustomDateAdapter } from './Support/custom.date.adapter';
 import { TextOnlyDirective } from './directives/TextOnly/text-only.directive';
+import { SystemSettingsComponent } from './system-settings/system-settings.component';
 
 
 
@@ -155,7 +156,8 @@ import { TextOnlyDirective } from './directives/TextOnly/text-only.directive';
     PopupDialogComponent,
     SafeHtmlPipe,
     MockCodeToNullPipe,
-    TextOnlyDirective
+    TextOnlyDirective,
+    SystemSettingsComponent
 
   ],
   imports: [

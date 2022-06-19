@@ -375,6 +375,22 @@
 
 
             <div class="innerElement flexElement">
+                <div class="policyType">
+                    <mat-form-field>
+                        <mat-label>בחר סוג פעילות</mat-label>
+                        <mat-select [formControl]="policySelectControl" #policySelectManual readonly="true">
+                            <ng-container *ngFor="let policy  of policyList; let i = index">
+                                <mat-option [value]="policy.POL_ID">
+                                    {{policy.POL_NAME }} - {{policy.POL_ID}}
+                                </mat-option>
+                            </ng-container>
+                        </mat-select>
+                        <mat-error>
+                            {{MsgList.requiredField}}
+                            <mat-icon>error</mat-icon>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
                 <div class="refBlock">
                     <mat-form-field>
                         <mat-label dir="rtl">מספר אסמכתא</mat-label>

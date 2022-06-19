@@ -187,7 +187,6 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
       UserId: this.userId
     }
 
-    debugger
     this.dataService.GetCardInfoById(objToApi).subscribe(result => {
       this.mainSpinner = false;
       if (typeof result == 'string') {
@@ -208,6 +207,7 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
 
       // if (typeof result == 'object' && result.obj != null) {
       this.CardInfo = result.obj[1][0];
+      debugger
       this.orderLine = result.obj[9] != null ? result.obj[9]['Id'] : [];
       this.OrderDetails = result.obj[3];
 
@@ -262,9 +262,9 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
         }
 
 
-        debugger
+
         this.dataService.UpdateCards(objToApi).subscribe(result => {
-          debugger
+
 
           this.saveUserDataSpinner = false;
           if (typeof result == 'string') {
@@ -324,9 +324,9 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
 
   }
   activeVoidCard(cardStatus) {
-
+    debugger
     if (this.pagePermissionAccessLevel.AccessLevel != this.MockData.accessLevelReadOnly) {
-
+      debugger
 
       this.spinnerActiveVoidCard = true;
       //card is active
@@ -344,7 +344,6 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
 
 
         this.dataService.VoidCards(objToApi).subscribe(result => {
-          debugger
 
           this.spinnerActiveVoidCard = false;
           if (typeof result == 'string') {
@@ -365,7 +364,7 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
 
           // if (result.err != -1) {
           this.CardInfo.IsActive = !this.CardInfo.IsActive;
-
+          debugger
           // this.historyDataSource.data = [];
           this.historyLabelForTable = [];
           this.getTablesData();
@@ -413,6 +412,7 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
 
           // if (result.errdesc == 'OK') {
           this.CardInfo.IsActive = !this.CardInfo.IsActive;
+          debugger
           // this.historyDataSource.data = [];
           this.historyLabelForTable = [];
           this.getTablesData();

@@ -50,7 +50,7 @@ export class IframeComponent implements OnInit, OnChanges {
     GiftCardPic: [''],
     BackGround: [''],
     Logo: [''],
-    Phone: ['', Validators.pattern('[0]{1}[0-9]{1,2}[0-9]{7}|[*]{1}[0-9]{3,5}')],
+    Phone: [''],//, Validators.pattern('[0]{1}[0-9]{1,2}[0-9]{7}|[*]{1}[0-9]{3,5}')
     Mail: ['', Validators.email],
     // Website: [''],
     LinktoBranches: [''],

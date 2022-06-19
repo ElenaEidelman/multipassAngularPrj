@@ -87,7 +87,7 @@
                 <div class="formRow">
                     <mat-form-field>
                         <mat-label>טלפון</mat-label>
-                        <input matInput formControlName="Phone" [maxLength]="10" numbersOnly2>
+                        <input matInput formControlName="Phone" numbersOnly2>
 
                         <mat-icon matPrefix *ngIf="previewForm.get('Phone').value == ''">phone</mat-icon>
                         <mat-icon matPrefix *ngIf="previewForm.get('Phone').value != ''"

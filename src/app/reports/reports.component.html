@@ -114,7 +114,7 @@
                                                 <mat-label>מתאריך</mat-label>
                                                 <input matInput [matDatepicker]="picker"
                                                     [disabled]="!rangeOfDatesDatePickerView1Form"
-                                                    formControlName="FDate" [max]="maxDateForReport">
+                                                    formControlName="FDate" [max]="maxDateForReport" [min]="" readonly>
                                                 <!-- <button class="clearButton" *ngIf="Report1Form.get('ValidateDate').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.newCustomerForm.get('ValidateDate').setValue('')">
                                                     <mat-icon>close</mat-icon>
                                                 </button> -->
@@ -138,7 +138,7 @@
                                             <mat-label>עד תאריך</mat-label>
                                             <input matInput [matDatepicker]="picker2"
                                                 [disabled]="!rangeOfDatesDatePickerView1Form" formControlName="TDate"
-                                                [max]="maxDateForReport">
+                                                [max]="maxDateForReport" readonly>
                                             <mat-datepicker-toggle
                                                 [class.matDatepickerDisabled]="!rangeOfDatesDatePickerView1Form"
                                                 [disabled]="!rangeOfDatesDatePickerView1Form" matSuffix [for]="picker2">
@@ -257,7 +257,8 @@
                                                 class="datePicker datePickerPadding marginTop-1">
                                                 <mat-label>מתאריך</mat-label>
                                                 <input matInput [matDatepicker]="picker3" disabled="false"
-                                                    formControlName="FDate" [max]="maxDateForReport">
+                                                    formControlName="FDate" [max]="maxDateForReport"
+                                                    [min]="minDateForReportBalance" readonly>
                                                 <mat-datepicker-toggle matSuffix [for]="picker3">
                                                 </mat-datepicker-toggle>
                                                 <mat-datepicker #picker3></mat-datepicker>
@@ -273,7 +274,8 @@
                                                 class="datePicker datePickerPadding marginTop-1">
                                                 <mat-label>עד תאריך</mat-label>
                                                 <input matInput [matDatepicker]="picker4" disabled="false"
-                                                    formControlName="TDate" [max]="maxDateForReport">
+                                                    formControlName="TDate" [max]="maxDateForReport"
+                                                    [min]="minDateForReportBalance" readonly>
                                                 <mat-datepicker-toggle matSuffix [for]="picker4">
                                                 </mat-datepicker-toggle>
                                                 <mat-datepicker #picker4></mat-datepicker>
@@ -292,19 +294,20 @@
                                                 <mat-label>תאריך ושעת שליחה</mat-label>
                                                 <input matInput formControlName="ScheduleDate"
                                                     [ngxMatDatetimePicker]="picker5" placeholder="תאריך ושעת שליחה"
-                                                    disabled="false">
-                                                <mat-datepicker-toggle matSuffix [for]="picker5">
+                                                    [disabled]="scheduleDateDisable" [min]="scheduleDateMin">
+                                                <mat-datepicker-toggle matSuffix [for]="picker5"
+                                                    [class.matDatepickerDisabled]="scheduleDateDisable">
                                                 </mat-datepicker-toggle>
                                                 <ngx-mat-datetime-picker #picker5 [showSpinners]="true"
                                                     [showSeconds]="false" [stepHour]="1" [stepMinute]="1"
                                                     [touchUi]="false" color="primary" [enableMeridian]="true"
-                                                    [disableMinute]="false" [hideTime]="false">
+                                                    [disableMinute]="false" [hideTime]="false" [min]="scheduleDateMin">
                                                 </ngx-mat-datetime-picker>
-                                                <!-- <mat-error *ngIf="Report2Form.get('ScheduleDate').hasError('required')">
+                                                <mat-error *ngIf="Report2Form.get('ScheduleDate').hasError('required')">
                                                     <mat-icon>error</mat-icon>
                                                     {{MsgList.requiredField}}
 
-                                                </mat-error> -->
+                                                </mat-error>
 
                                             </mat-form-field>
                                         </div>

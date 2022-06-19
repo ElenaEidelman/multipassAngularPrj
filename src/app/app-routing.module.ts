@@ -33,6 +33,7 @@ import { LogInIframeComponent } from './Iframe/components/log-in/log-in.componen
 import { PurchasingGiftComponent } from './Iframe/components/purchasing-gift/purchasing-gift.component';
 import { ThanksPageComponent } from './Iframe/components/thanks-page/thanks-page.component';
 import { PagePermissionGuardGuard } from './guards/pagePermissionGuard/page-permission-guard.guard';
+import { SystemSettingsComponent } from './system-settings/system-settings.component';
 
 const routes: Routes = [
   { path: 'logIn', component: LogInComponent },
@@ -59,6 +60,7 @@ const routes: Routes = [
       { path: 'allSMStemplates', component: AllSmsTemplatesComponent, canActivate: [PagePermissionGuardGuard] },
       { path: 'testExpandingTable', component: TestExpandingTableComponent, canActivate: [PagePermissionGuardGuard] },
       { path: 'excelView', component: ExcelFileViewComponent, canActivate: [PagePermissionGuardGuard] },
+      { path: 'SystemSettings', component: SystemSettingsComponent, canActivate: [PagePermissionGuardGuard] },
 
 
       {

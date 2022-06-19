@@ -97,6 +97,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   chagesToServer = [];
   DigitalBatch;
   orderCardsData;
+  policyList;
 
   manualOrder: boolean = false;
   excelOrder: boolean = false;
@@ -192,6 +193,8 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   OrderNameGroup = this.fb.group({
     Comments: ['', [Validators.required, this.noWhitespaceValidator]]
   });
+
+  policySelectControl = new FormControl(['', Validators.required]);
   Comments = new FormControl(['', Validators.required]);
 
   ngOnInit() {
@@ -219,6 +222,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     ];
     this.getStatusList();
     this.getSmsTemplates();
+    this.GetPoliciesByCompanyId();
 
 
     //this code need when i will change url
@@ -230,8 +234,6 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     else {
       // this.idUnsubscribe = this.activeRoute.params.subscribe(param => {
       this.urlSharingService.changeMessage('');
-
-      let t = urlParams;
 
 
       //manual order
@@ -248,6 +250,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
         this.orderStatus.description = 'הזמנה חדשה';
         this.customerId = JSON.parse(urlParams)['customerId'];
+        this.policySelectControl.setValue(JSON.parse(urlParams)['policy']);
         this.newOrder = true;
 
         //set comments to field
@@ -345,6 +348,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       CoreOrderID: this.orderId
     }
     this.dataService.GetOrderDetails(objToApi).subscribe(result => {
+
       if (typeof result == 'string') {
         // this.dialog.open(DialogComponent, {
         //   data: { message: result }
@@ -375,8 +379,11 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
 
       this.OrderNameGroup.get('Comments').setValue(result['obj'][0]['OrderName']);
+      this.policySelectControl.setValue(+result['obj'][0]['Policy']);
 
-
+      if (result.obj[0].StatusId > 1) {
+        this.policySelectControl.disable();
+      }
       //if order created from excel file
       this.excelOrder = (this.dataByPage.DigitalBatch > 0 || this.dataByPage.DigitalBatch != 0) && this.dataByPage.DigitalBatch != null;
 
@@ -418,6 +425,39 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       //   // })
       //   this.sharedService.exitSystemEvent();
       // }
+
+    })
+  }
+
+  GetPoliciesByCompanyId() {
+
+    let objToApi = {
+      Token: this.userToken
+    }
+
+    this.dataService.GetPoliciesByCompanyId(objToApi).subscribe(result => {
+      if (typeof result == 'string') {
+        // this.sharedService.exitSystemEvent(result);
+        return false;
+      }
+      //set new token
+      let tempObjUser = JSON.parse(localStorage.getItem('user'));
+      tempObjUser['Token'] = result['Token'];
+      localStorage.setItem('user', JSON.stringify(tempObjUser));
+      this.userToken = result['Token'];
+
+      if (result['obj'] != null) {
+        this.policyList = result['obj'];
+        // if (this.policyList.length > 0) {
+        //   this.policySelectControl.setValue(this.policy);
+        // }
+
+      }
+      else {
+        this.dialog.open(DialogComponent, {
+          data: { message: result.errdesc }
+        })
+      }
 
     })
   }
@@ -584,7 +624,8 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
           Validity: validity,
           OpCode: "insert",
           OrderName: this.OrderNameGroup.get('Comments').value,
-          Reference: this.RefControl.value == '' ? 0 : this.RefControl.value
+          Reference: this.RefControl.value == '' ? 0 : this.RefControl.value,
+          Policy: this.policySelectControl.value
         }
         //query for insert update order lines, but not for the first line
         if (this.orderDetailsTable.data.length > 1) {
@@ -753,12 +794,15 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         OrderID: this.orderId,
         OpCode: "Save",
         Reference: this.RefControl.value == '' ? 0 : this.RefControl.value,
-        OrderName: this.OrderNameGroup.get('Comments').value.trim()
+        OrderName: this.OrderNameGroup.get('Comments').value.trim(),
+        Policy: this.policySelectControl.value
       }
 
       //first save reference and comments
       this.createCardsSpinner = true;
+
       this.dataService.InsertUpdateOrder(objToApiChanges).subscribe(result => {
+
         this.createCardsSpinner = false;
         if (typeof result == 'string') {
           // this.dialog.open(DialogComponent, {
@@ -793,6 +837,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         }
 
         //alert('before approve');
+
         this.dataService.ApproveOrder(objToApi).subscribe(result => {
           //alert('after approve');
 
@@ -976,10 +1021,10 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
     if (this.pagePermissionAccessLevel.AccessLevel != this.MockData.accessLevelReadOnly) {
 
-      if (this.OrderNameGroup.valid && this.RefControl.value.toString() != '') {
+      if (this.OrderNameGroup.valid) {
 
 
-        if (this.RefControl.value == 0) {
+        if (this.RefControl.value == 0 || this.RefControl.value == '') {
 
           this.errorMsg = this.MsgList.referenceRequired
           setTimeout(() => {
@@ -996,7 +1041,8 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
           OrderID: this.orderId,
           OpCode: "Save",
           Reference: this.RefControl.value,
-          OrderName: this.OrderNameGroup.get('Comments').value.trim()
+          OrderName: this.OrderNameGroup.get('Comments').value.trim(),
+          Policy: this.policySelectControl.value
         }
 
         this.chagesToServer = [];
@@ -1004,9 +1050,9 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
 
         //alert('before save changes');
-        debugger
+
         this.dataService.InsertUpdateOrder(objToApi).subscribe(result => {
-          debugger
+
           // alert('after save changes');
 
 
@@ -1050,6 +1096,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         });
       }
       else {
+
         this.errorMsg = this.MsgList.fillAllFieldsError;
         setTimeout(() => this.errorMsg = '', 2000);
         this.OrderNameGroup.markAllAsTouched();

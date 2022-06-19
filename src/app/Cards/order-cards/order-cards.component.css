@@ -1,143 +1,180 @@
-.formRow{
+.formRow {
     /* display: flex;
     flex-direction: row-reverse;
     justify-content: space-between; */
 }
 
-.wrapForm{
+.wrapForm {
     display: flex;
     flex-direction: column;
 }
 
-.formRow{
+.formRow {
     display: flex;
     flex-direction: row-reverse;
     justify-content: space-between;
 }
 
-.formRow > div.formRowChild{
+.formRow>div.formRowChild {
     flex-grow: 1;
     flex-basis: 0;
-    margin: 0 15px;
+    margin: auto 15px;
 
 }
-.formRowChild mat-form-field{
+
+.formRowChild mat-form-field {
     width: 100%;
 }
+
 /* .formRow > div > mat-form-field{
     width:100%;
 } */
-.wrapSelectUser{
+.wrapSelectUser {
     display: flex;
     flex-direction: row-reverse;
 }
-.wrapSelectUser > div{
+
+.wrapSelectUser>div {
     margin: 10px;
 }
-.wrapSelectUser > div.wrapUserButton{
+
+.wrapSelectUser>div.wrapUserButton {
     margin: auto 2em;
 }
-.wrapUserButton{
+
+.wrapUserButton {
     display: flex;
     flex-direction: row-reverse;
 }
-.wrapUserButton > *{
+
+.wrapUserButton>* {
     margin: auto auto 0;
     text-align: CENTER;
 }
-.downloadButton:hover{
+
+.downloadButton:hover {
     text-decoration: none;
 }
-.bWrap{
+
+.bWrap {
     margin: 0 30px;
 }
-.loadB > button{
+
+.loadB>button {
     /* width: 100%;
     margin: 0; */
 }
-.buttonsWrap{
+
+.buttonsWrap {
     display: flex;
     justify-content: center;
     /* flex-direction: column; */
 }
-.linkButton  mat-icon{
+
+.linkButton mat-icon {
     /* color: #686866; */
 }
-mat-hint{
+
+mat-hint {
     display: block;
 }
-.buttonAny{
+
+.buttonAny {
     display: flex;
     flex-direction: column;
     text-align: center;
     margin: auto;
-    
+
 }
-.buttonAny > button{
+
+.buttonAny>button {
     width: fit-content;
     margin: auto;
 }
-.wrap-content{
+
+.wrap-content {
     margin: 2em 0;
 }
-.marginSelectTop{
+
+.marginSelectTop {
     margin-top: 18px;
 }
-.hiddenLoadingCardContent{
+
+.hiddenLoadingCardContent {
     padding-bottom: 1em;
 }
-.sendButtonWrap{
+
+.sendButtonWrap {
     margin: 15px auto;
     text-align: center;
     display: flex;
     flex-direction: column;
 }
 
-.flexB{
+.flexB {
     display: flex;
     justify-content: center;
     margin-left: auto;
 }
-.textA .mat-form-field-infix{
+
+.textA .mat-form-field-infix {
     padding-top: 10px;
 }
 
-.mat-button.mat-primary.mat-button-disabled, .mat-button.mat-accent.mat-button-disabled, .mat-button.mat-warn.mat-button-disabled, .mat-button.mat-button-disabled.mat-button-disabled, .mat-icon-button.mat-primary.mat-button-disabled, .mat-icon-button.mat-accent.mat-button-disabled, .mat-icon-button.mat-warn.mat-button-disabled, .mat-icon-button.mat-button-disabled.mat-button-disabled, .mat-stroked-button.mat-primary.mat-button-disabled, .mat-stroked-button.mat-accent.mat-button-disabled, .mat-stroked-button.mat-warn.mat-button-disabled, .mat-stroked-button.mat-button-disabled.mat-button-disabled{
+.mat-button.mat-primary.mat-button-disabled,
+.mat-button.mat-accent.mat-button-disabled,
+.mat-button.mat-warn.mat-button-disabled,
+.mat-button.mat-button-disabled.mat-button-disabled,
+.mat-icon-button.mat-primary.mat-button-disabled,
+.mat-icon-button.mat-accent.mat-button-disabled,
+.mat-icon-button.mat-warn.mat-button-disabled,
+.mat-icon-button.mat-button-disabled.mat-button-disabled,
+.mat-stroked-button.mat-primary.mat-button-disabled,
+.mat-stroked-button.mat-accent.mat-button-disabled,
+.mat-stroked-button.mat-warn.mat-button-disabled,
+.mat-stroked-button.mat-button-disabled.mat-button-disabled {
     color: #fff !important;
 }
-.getForExampleExcelFile{
+
+.getForExampleExcelFile {
     color: #757575;
     text-decoration: underline;
 }
-.getForExampleExcelFile:hover{
+
+.getForExampleExcelFile:hover {
     cursor: pointer;
     color: #272626;
 }
 
-.formWrapRow  mat-form-field{
+.formWrapRow mat-form-field {
     width: 100%;
 }
+
 /* .addButton {
     background: #88C43E !important;
     color: #fff !important;
 } */
 
 
-@media screen and (max-width: 1024px){
-    .textA .mat-form-field-infix{
+@media screen and (max-width: 1024px) {
+    .textA .mat-form-field-infix {
         padding-top: 0px;
     }
-    .flexB{
+
+    .flexB {
         margin-left: 0;
         margin: auto;
     }
-    .formWrapRow{
+
+    .formWrapRow {
         flex-direction: column;
     }
-    .wrapSelectUser{
+
+    .wrapSelectUser {
         justify-content: space-between;
     }
-    .wrapSelectUser > div.wrapUserButton{
+
+    .wrapSelectUser>div.wrapUserButton {
         margin: auto 10px;
     }
 }

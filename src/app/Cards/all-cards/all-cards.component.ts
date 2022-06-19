@@ -110,7 +110,6 @@ export class AllCardsComponent implements OnInit, AfterViewInit, OnChanges {
     window.scroll(0, 0);
     this.maxFromDate = new Date();
     this.maxToDate = new Date();
-    debugger
 
 
     this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
@@ -148,8 +147,10 @@ export class AllCardsComponent implements OnInit, AfterViewInit, OnChanges {
 
     if (formSearchFiled) {
       this.spinner = true;
+
+
       this.dataService.GetAllCards(objToApi).subscribe(result => {
-        debugger
+
         this.spinner = false;
 
         if (typeof result == 'string') {
@@ -253,7 +254,6 @@ export class AllCardsComponent implements OnInit, AfterViewInit, OnChanges {
     }
 
     this.dataService.GetOrdersStatus(objToApi).subscribe(result => {
-      debugger
       if (typeof result == 'string') {
         // this.dialog.open(DialogComponent, {
         //   data: { message: result }
