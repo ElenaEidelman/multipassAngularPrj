@@ -324,16 +324,11 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
 
   }
   activeVoidCard(cardStatus) {
-    debugger
     if (this.pagePermissionAccessLevel.AccessLevel != this.MockData.accessLevelReadOnly) {
-      debugger
-
       this.spinnerActiveVoidCard = true;
       //card is active
 
       if (cardStatus) {
-
-
         let objToApi = {
           Token: this.userToken,
           OrderId: this.OrderDetails != null ? this.OrderDetails.IdForDisplay : null,
@@ -343,8 +338,9 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
 
 
 
+        debugger
         this.dataService.VoidCards(objToApi).subscribe(result => {
-
+          debugger
           this.spinnerActiveVoidCard = false;
           if (typeof result == 'string') {
             // this.dialog.open(DialogComponent, {

@@ -23,7 +23,7 @@ export class ExcelFileViewComponent implements OnInit, OnDestroy {
     private urlSharingService: UrlSharingService
   ) { }
   excelData;
-  Policy;
+  // Policy;
   userToken: string;
   customerId;
   tableSource;
@@ -46,7 +46,7 @@ export class ExcelFileViewComponent implements OnInit, OnDestroy {
       this.excelFileData = JSON.parse(localStorage.getItem('excelFileData'));
       this.customerId = this.excelFileData.customerId;
       this.excelData = JSON.parse(this.excelFileData.fileData).obj[0];
-      this.Policy = this.excelFileData.Policy;
+      // this.Policy = this.excelFileData.Policy;
       debugger
       this.createTableToViewExcelFile(this.excelData);
     }
@@ -68,7 +68,7 @@ export class ExcelFileViewComponent implements OnInit, OnDestroy {
     formDataForOrdersLine.append('OrderName', this.excelFileData.OrderName)
     formDataForOrdersLine.append('OpCode', 'create')
     formDataForOrdersLine.append('FileName', this.excelFileData.excelName)
-    formDataForOrdersLine.append('Policy', this.Policy)
+    // formDataForOrdersLine.append('Policy', this.Policy)
 
 
     debugger

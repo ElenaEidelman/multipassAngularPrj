@@ -102,14 +102,14 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
     orderDescription: ['', [Validators.required, this.noWhitespaceValidator]],
     file: ['', Validators.required],
     searchCustomer: [''],
-    policySelectExcel: ['']
+    // policySelectExcel: ['']
   });
 
   manualCardgroup = this.fb.group({
     customer: ['', Validators.required],
     orderDescription: ['', [Validators.required, this.noWhitespaceValidator]],
     searchCustomer: [''],
-    policySelectManual: ['']
+    // policySelectManual: ['']
   });
 
   loadingCardGroup = this.fb.group({
@@ -202,8 +202,8 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
       if (result['obj'] != null) {
         this.policyList = result['obj'];
         if (this.policyList.length > 0) {
-          this.manualCardgroup.get('policySelectManual').setValidators(Validators.required);
-          this.excelCardCreatingForm.get('policySelectExcel').setValidators(Validators.required);
+          // this.manualCardgroup.get('policySelectManual').setValidators(Validators.required);
+          // this.excelCardCreatingForm.get('policySelectExcel').setValidators(Validators.required);
         }
 
       }
@@ -286,7 +286,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
       let Customer = {
         customerId: this.manualCardgroup.get('customer').value != undefined ? this.manualCardgroup.get('customer').value['id'] : '-1',
         orderDescription: this.manualCardgroup.get('orderDescription').value,
-        policy: this.manualCardgroup.get('policySelectManual').value
+        // policy: this.manualCardgroup.get('policySelectManual').value
       }
 
       this.urlSharingService.changeMessage(JSON.stringify(Customer));
@@ -331,7 +331,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
           formData.append('OrderName', this.excelCardCreatingForm.get('orderDescription').value);
           // formData.append('Description', this.excelCardCreatingForm.get('orderDescription').value);
           formData.append('ExcelFile', file);
-          formData.append('Policy', this.excelCardCreatingForm.get('policySelectExcel').value);
+          // formData.append('Policy', this.excelCardCreatingForm.get('policySelectExcel').value);
 
 
           debugger
@@ -359,7 +359,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
                   fileData: JSON.stringify(result),
                   // fileDescription: this.excelCardCreatingForm.get('orderDescription').value
                   OrderName: this.excelCardCreatingForm.get('orderDescription').value,
-                  Policy: this.excelCardCreatingForm.get('policySelectExcel').value
+                  // Policy: this.excelCardCreatingForm.get('policySelectExcel').value
 
                 }
                 localStorage.setItem('excelFileData', JSON.stringify(objGetFile));

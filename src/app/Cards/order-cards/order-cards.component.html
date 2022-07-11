@@ -35,10 +35,10 @@
                             <form [formGroup]="excelCardCreatingForm">
                                 <div class="wrapForm">
                                     <div class="formRow">
-
+                                        <!-- 
                                         <div class="formRowChild"
-                                            *ngIf="policyList != undefined && policyList.length > 0">
-                                            <mat-form-field>
+                                            *ngIf="policyList != undefined && policyList.length > 0"> -->
+                                        <!-- <mat-form-field>
                                                 <mat-label>בחר סוג פעילות</mat-label>
                                                 <mat-select formControlName="policySelectExcel">
                                                     <ng-container *ngFor="let policy  of policyList; let i = index">
@@ -51,8 +51,8 @@
                                                     {{MsgList.requiredField}}
                                                     <mat-icon>error</mat-icon>
                                                 </mat-error>
-                                            </mat-form-field>
-                                            <!-- <mat-form-field>
+                                            </mat-form-field> -->
+                                        <!-- <mat-form-field>
                                             <mat-label>בחר קבוצת סניפים</mat-label>
                                             <mat-select formControlName="policySelectExcel" #policySelectManual>
                                                 <ng-container *ngFor="let policy  of policyList; let i = index">
@@ -66,7 +66,7 @@
                                                 <mat-icon>error</mat-icon>
                                             </mat-error>
                                         </mat-form-field> -->
-                                        </div>
+                                        <!-- </div> -->
                                         <div class="formRowChild">
                                             <mat-form-field>
                                                 <mat-label>בחר או הוסף לקוח </mat-label>
@@ -189,9 +189,9 @@
                             <form [formGroup]="manualCardgroup">
                                 <div class="wrapForm">
                                     <div class="formRow">
-                                        <div class="formRowChild"
-                                            *ngIf="policyList != undefined && policyList.length > 0">
-                                            <mat-form-field>
+                                        <!-- <div class="formRowChild"
+                                            *ngIf="policyList != undefined && policyList.length > 0"> -->
+                                        <!-- <mat-form-field>
                                                 <mat-label>בחר סוג פעילות</mat-label>
                                                 <mat-select formControlName="policySelectManual" #policySelectManual>
                                                     <ng-container *ngFor="let policy  of policyList; let i = index">
@@ -204,8 +204,8 @@
                                                     {{MsgList.requiredField}}
                                                     <mat-icon>error</mat-icon>
                                                 </mat-error>
-                                            </mat-form-field>
-                                            <!-- <mat-form-field>
+                                            </mat-form-field> -->
+                                        <!-- <mat-form-field>
                                                 <mat-label>בחר קבוצת סניפים</mat-label>
                                                 <mat-select formControlName="customer" #policySelectManual>
                                                     <ng-container *ngFor="let policy  of policyList; let i = index">
@@ -219,7 +219,7 @@
                                                     <mat-icon>error</mat-icon>
                                                 </mat-error>
                                             </mat-form-field> -->
-                                        </div>
+                                        <!-- </div> -->
                                         <div class="formRowChild">
                                             <mat-form-field>
                                                 <mat-label>בחר או הוסף לקוח</mat-label>
@@ -274,11 +274,13 @@
                                             </div>
 
                                         </div>
-                                        <div class="formRowChild"
+                                        <!-- <div class="formRowChild"
                                             *ngIf="(policyList != undefined && policyList.length == 0) || policyList == undefined">
+                                        </div> -->
+                                        <div class="formRowChild">
                                         </div>
-
                                     </div>
+
                                     <div class="formRow sendButtonWrap">
                                         <button mat-button class="addButton" (click)="checkFormValidity()">
                                             הכנס

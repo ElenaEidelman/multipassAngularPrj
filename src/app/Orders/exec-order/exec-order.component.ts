@@ -51,7 +51,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   faFileExcel = faFileExcel;
   MsgList = MsgList;
   MockData = MockData;
-
+  dateChanging: boolean = false;
 
 
   // OrderData;
@@ -194,7 +194,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     Comments: ['', [Validators.required, this.noWhitespaceValidator]]
   });
 
-  policySelectControl = new FormControl(['', Validators.required]);
+  // policySelectControl = new FormControl(['', Validators.required]);
   Comments = new FormControl(['', Validators.required]);
 
   ngOnInit() {
@@ -250,7 +250,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
         this.orderStatus.description = 'הזמנה חדשה';
         this.customerId = JSON.parse(urlParams)['customerId'];
-        this.policySelectControl.setValue(JSON.parse(urlParams)['policy']);
+        // this.policySelectControl.setValue(JSON.parse(urlParams)['policy']);
         this.newOrder = true;
 
         //set comments to field
@@ -379,11 +379,11 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
 
       this.OrderNameGroup.get('Comments').setValue(result['obj'][0]['OrderName']);
-      this.policySelectControl.setValue(+result['obj'][0]['Policy']);
+      // this.policySelectControl.setValue(+result['obj'][0]['Policy']);
 
-      if (result.obj[0].StatusId > 1) {
-        this.policySelectControl.disable();
-      }
+      // if (result.obj[0].StatusId > 1) {
+      //   this.policySelectControl.disable();
+      // }
       //if order created from excel file
       this.excelOrder = (this.dataByPage.DigitalBatch > 0 || this.dataByPage.DigitalBatch != 0) && this.dataByPage.DigitalBatch != null;
 
@@ -625,7 +625,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
           OpCode: "insert",
           OrderName: this.OrderNameGroup.get('Comments').value,
           Reference: this.RefControl.value == '' ? 0 : this.RefControl.value,
-          Policy: this.policySelectControl.value
+          // Policy: this.policySelectControl.value
         }
         //query for insert update order lines, but not for the first line
         if (this.orderDetailsTable.data.length > 1) {
@@ -795,7 +795,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         OpCode: "Save",
         Reference: this.RefControl.value == '' ? 0 : this.RefControl.value,
         OrderName: this.OrderNameGroup.get('Comments').value.trim(),
-        Policy: this.policySelectControl.value
+        // Policy: this.policySelectControl.value
       }
 
       //first save reference and comments
@@ -858,6 +858,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
           // if (result['Token'] != undefined || result['Token'] != null) {
 
           //set new token
+          debugger
           let tempObjUser = JSON.parse(localStorage.getItem('user'));
           tempObjUser['Token'] = result['Token'];
           localStorage.setItem('user', JSON.stringify(tempObjUser));
@@ -1042,7 +1043,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
           OpCode: "Save",
           Reference: this.RefControl.value,
           OrderName: this.OrderNameGroup.get('Comments').value.trim(),
-          Policy: this.policySelectControl.value
+          // Policy: this.policySelectControl.value
         }
 
         this.chagesToServer = [];
@@ -1131,6 +1132,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         })
       }
       else {
+        this.dateChanging = true;
         let validityDate = new Date(dialogResult.result.date);
         validityDate.setHours(23, 59, 59);
         let objToApi = {
@@ -1144,6 +1146,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         }
 
         this.dataService.InsertUpdateLines(objToApi).subscribe(result => {
+          this.dateChanging = false;
           if (typeof result == 'string') {
             // this.dialog.open(DialogComponent, {
             //   data: { message: result }
@@ -1174,6 +1177,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
             this.orderDetails.unshift(element);
           });
 
+          this.GetCards();
           this.orderDetailsTable = new MatTableDataSource(this.orderDetails);
           this.totalData();
           // }
@@ -1347,6 +1351,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
       // if (typeof result == 'object') {
       this.orderCardsData = result['obj'][0];
+      debugger
       this.DigitalBatch = result['obj'][1];
 
 
@@ -1391,6 +1396,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         tableLabels.push({ value: 'ValidationField', viewValue: 'שדה אימות' })
       }
 
+      // debugger
       let tableData = JSON.parse(JSON.stringify(this.orderCardsData));
 
       let workbook = new Workbook();

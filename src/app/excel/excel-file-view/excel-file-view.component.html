@@ -1,6 +1,6 @@
 <div class="pageTitle main2-title sticky top100">
     <div>
-        נתוני קובץ אקסל 
+        נתוני קובץ אקסל
     </div>
 </div>
 <div class="page-wrap">
@@ -12,10 +12,10 @@
 
                     <!-- ID Column -->
                     <ng-container matColumnDef="{{column}}" *ngFor="let column of tableLabels">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> {{column}} </th>
-                            <td mat-cell *matCellDef="let row">
-                                <span>{{row[column]}} </span>
-                            </td>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{column}} </th>
+                        <td mat-cell *matCellDef="let row">
+                            <span>{{row[column]}} </span>
+                        </td>
                     </ng-container>
 
 

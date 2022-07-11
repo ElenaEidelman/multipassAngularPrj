@@ -253,7 +253,10 @@
                                     <div *ngIf="orderStatus.id == 4 && (dataByPage.DigitalBatch == 0)"> {{element[obj]}}
                                     </div>
                                     <div *ngIf="orderStatus.id == '4' && (dataByPage.DigitalBatch > 0 || dataByPage.DigitalBatch != 0)"
-                                        class="changeDate" (click)="changeDateOfRow(element, obj)">
+                                        class="changeDate" [class.not-active]="dateChanging"
+                                        (click)="changeDateOfRow(element, obj)">
+                                        <mat-spinner class="spinner" *ngIf="dateChanging"></mat-spinner>
+
                                         <mat-icon matTooltip="ערוך לוח שנה">edit_calendar</mat-icon>
                                         <span>{{element[obj]}} </span>
                                     </div>
@@ -375,7 +378,7 @@
 
 
             <div class="innerElement flexElement">
-                <div class="policyType">
+                <!-- <div class="policyType">
                     <mat-form-field>
                         <mat-label>בחר סוג פעילות</mat-label>
                         <mat-select [formControl]="policySelectControl" #policySelectManual readonly="true">
@@ -390,7 +393,7 @@
                             <mat-icon>error</mat-icon>
                         </mat-error>
                     </mat-form-field>
-                </div>
+                </div> -->
                 <div class="refBlock">
                     <mat-form-field>
                         <mat-label dir="rtl">מספר אסמכתא</mat-label>

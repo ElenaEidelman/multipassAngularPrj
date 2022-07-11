@@ -99,6 +99,7 @@ $ git merge new-branch
   }
 
   checkResult(result) {
+    debugger
     if (typeof result == 'object') {
 
       if (result['Token'] != null && result['Token'] != '') {
@@ -506,6 +507,7 @@ $ git merge new-branch
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/AllCards/VoidCards`, objToApi).pipe(
       map(result => {
         //
+        debugger
         return this.checkResult(result);
       }),
       catchError(error => {
