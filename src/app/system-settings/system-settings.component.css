@@ -1,0 +1,15 @@
+.wrapTables {
+   display: flex;
+   justify-content: space-between;
+   flex-wrap: wrap;
+   flex-direction: row-reverse;
+}
+
+.wrapTables>div {
+   flex-grow: 1;
+   margin: 12px;
+   flex-basis: 0;
+   width: 48%;
+   min-width: 48%;
+   max-width: 48%;
+}

@@ -111,21 +111,28 @@ export class NewUserComponent implements OnInit {
       }
 
 
+
       Object.keys(this.userDataForm.controls).forEach(control => {
         if (this.userDataForm.get(control).value != '') {
-          objToApi[control] = this.userDataForm.get(control).value.toString().trim();
+
+          if (typeof this.userDataForm.get(control).value != 'object') {
+            objToApi[control] = this.userDataForm.get(control).value.toString().trim();
+          }
+          else {
+            //debugger
+            objToApi[control] = (this.userDataForm.get(control).value)['value'];
+          }
         }
       });
       objToApi['OrganizationName'] = '';
       objToApi['BusinessFile'] = '';
 
       this.dataService.InsertUpdateBackOfficeUsers(objToApi).subscribe(result => {
-
         this.saveFormSpinner = false;
         if (typeof result == 'string') {
-          // this.dialog.open(DialogComponent, {
-          //   data: { message: result }
-          // })
+          this.dialog.open(DialogComponent, {
+            data: { message: result }
+          })
 
           // this.sharedService.exitSystemEvent();
           return false;

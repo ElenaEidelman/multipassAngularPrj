@@ -27,6 +27,8 @@ import { MDBBootstrapModule } from 'angular-bootstrap-md';
 import { CookieService } from 'ngx-cookie-service';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatStepperModule } from '@angular/material/stepper';
+import { DatePipe } from '@angular/common';
+
 
 
 
@@ -214,6 +216,7 @@ import { SystemSettingsComponent } from './system-settings/system-settings.compo
     { provide: MatPaginatorIntl, useClass: MatPaginatorIntlCro },
     { provide: MAT_DATE_LOCALE, useValue: 'en-GB' },
     { provide: DateAdapter, useClass: CustomDateAdapter },
+    { provide: DatePipe },
     CookieService
   ],
   bootstrap: [AppComponent]

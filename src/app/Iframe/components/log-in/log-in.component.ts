@@ -94,7 +94,7 @@ export class LogInIframeComponent implements OnInit {
 
     //change iframe data for preview
     this.sharingIframeService.iframePreviewInfo.subscribe(result => {
-      debugger
+
 
       if (this.infoData != undefined) {
         Object.keys(result).forEach(key => {
@@ -193,14 +193,24 @@ export class LogInIframeComponent implements OnInit {
     }
 
 
-
+    debugger
     this.dataServiceIframe.GetIFrameCompanyInfo(objToApi).subscribe(result => {
+      debugger
 
-      if (result.obj != undefined && result.obj != null && Object.keys(result.obj).length > 0) {
-        this.sharingIframeService.companyInfoService.next(JSON.stringify(result));
-        this.infoData = result.obj[0];
-        this.spareData = JSON.parse(JSON.stringify(this.infoData))
 
+      if (typeof result == 'string') {
+        this.dialog.open(DialogComponent, {
+          data: { message: result }
+        })
+        return false;
+      }
+      else {
+        if (result.obj != undefined && result.obj != null && Object.keys(result.obj).length > 0) {
+          this.sharingIframeService.companyInfoService.next(JSON.stringify(result));
+          this.infoData = result.obj[0];
+          this.spareData = JSON.parse(JSON.stringify(this.infoData))
+
+        }
       }
     })
   }

@@ -149,8 +149,9 @@ export class AllCardsComponent implements OnInit, AfterViewInit, OnChanges {
       this.spinner = true;
 
 
+      debugger
       this.dataService.GetAllCards(objToApi).subscribe(result => {
-
+        debugger
         this.spinner = false;
 
         if (typeof result == 'string') {
@@ -342,12 +343,15 @@ export class AllCardsComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   goToOrder(orderId: number, customerId: number) {
-    let Order = {
-      orderId: orderId,
-      customerId: customerId
+
+    if (orderId != 0) {
+      let Order = {
+        orderId: orderId,
+        customerId: customerId
+      }
+      this.urlSharingService.changeMessage(JSON.stringify(Order));
+      this.router.navigate(['/public/order']);
     }
-    this.urlSharingService.changeMessage(JSON.stringify(Order));
-    this.router.navigate(['/public/order']);
   }
 
   goToCustomer(customerId: number) {

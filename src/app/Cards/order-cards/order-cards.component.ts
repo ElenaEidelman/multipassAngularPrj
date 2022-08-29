@@ -288,7 +288,6 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
         orderDescription: this.manualCardgroup.get('orderDescription').value,
         // policy: this.manualCardgroup.get('policySelectManual').value
       }
-
       this.urlSharingService.changeMessage(JSON.stringify(Customer));
       // let route = ['/public/newOrder', this.manualCardgroup.get('customer').value != undefined ? this.manualCardgroup.get('customer').value['id'] : '-1']
       this.router.navigate(['/public/newOrder']);
@@ -386,7 +385,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
                   this.dialog.open(DialogWithTableDataComponent, {
                     maxHeight: '200px',
                     data: {
-                      title: result.errdesc,
+                      subTitle: result.errdesc,
                       data_Source: data,
                       dataLabelsList: dataLabelsList
                     }

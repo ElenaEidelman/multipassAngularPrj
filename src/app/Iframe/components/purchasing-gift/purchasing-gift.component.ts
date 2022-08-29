@@ -6,6 +6,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { MatStepper } from '@angular/material/stepper';
 import { DOCUMENT } from '@angular/common';
 import { MatTabGroup } from '@angular/material/tabs';
+import { DatePipe } from '@angular/common';
 import {
   trigger,
   state,
@@ -77,6 +78,7 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
     private route: Router,
     private sharingIframeService: IframeSharingServiceService,
     private getDataService: DataServiceService,
+    public datepipe: DatePipe,
     @Inject(DOCUMENT) private document: Document) { }
 
 
@@ -671,9 +673,10 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
 
     let radioValDateSend = this.FormsArray.get('SecondFormGroup').get('dateOptionOfSend').value;
 
+    debugger
     if (radioValDateSend == '1') {
       // B2C_DateTimeToSend: dateToSend,
-      objToApi['B2C_DateTimeToSend'] = new Date();
+      objToApi['B2C_DateTimeToSend'] = this.datepipe.transform(new Date(), 'yyyy-MM-ddTHH:mm:ss.000');
 
     }
     else if (radioValDateSend == '2') {
@@ -694,17 +697,32 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
         }, 2000)
         return false;
       }
+      else {
+        objToApi['B2C_DateTimeToSend'] = this.datepipe.transform(new Date(dateTimeNewHourAndMinute), 'yyyy-MM-ddTHH:mm:ss.000');;
+      }
 
     }
 
-    debugger
     this.spinner = true;
+
+    debugger
     this.dataService.InsertUpdateB2COrder(objToApi).subscribe(result => {
+      debugger
       if (result.obj != undefined && result.obj != null) {
-        this.GetPaymentToken(result.obj[0]['orderid']);
+        // this.GetPaymentToken(result.obj[0]['orderid']);
+
+        let t = `${localStorage.getItem('baseUrlIframe').replace('/api', '')}/clearance/PaymetCC?param=` + result.obj;
+        debugger
+        this.document.location.href = `${localStorage.getItem('baseUrlIframe').replace('/api', '')}/clearance/PaymetCC?param=` + result.obj;
+
+
       }
       else {
-        alert(result);
+
+        this.dialog.open(DialogComponent, {
+          data: { message: result }
+        })
+        // alert(result);
       }
     })
 
@@ -719,46 +737,26 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
     let minute = newDate.getMinutes() < 10 ? '0' + newDate.getMinutes() : newDate.getMinutes();
     return month + '/' + day + '/' + year + ' ' + hour + ':' + minute;
   }
-  GetPaymentToken(orderId) {
-    let objToApi = {
-      OrderId: orderId,
-      CompanyIdEnc: this.companyId
-    }
+  // GetPaymentToken(orderId) {
+  //   let objToApi = {
+  //     OrderId: orderId,
+  //     CompanyIdEnc: this.companyId
+  //   }
 
-    debugger
-    this.dataService.GetPaymentToken(objToApi).subscribe(result => {
-      debugger
-      /**
-       *       
-      if (this.companyIdByParams) {
-        this.route.navigate(['/gift-card/' + this.sumForm.get('cardSumControl').value], { skipLocationChange: true });
-      }
-      else {
-        this.route.navigate(['public/admin/iframe/iframeView/gift-card/' + this.sumForm.get('cardSumControl').value], { skipLocationChange: true });
+  //   debugger
+  //   this.dataService.GetPaymentToken(objToApi).subscribe(result => {
+  //     debugger
 
-      }
-       */
+  //     if (result.obj != undefined && Object.keys(result.obj).length > 0) {
 
+  //       let t = `${localStorage.getItem('baseUrlIframe').replace('/api', '')}/clearance/PaymetCC?param=` + result.obj[0]['PaymentToken'];
 
+  //       this.document.location.href = `${localStorage.getItem('baseUrlIframe').replace('/api', '')}/clearance/PaymetCC?param=` + result.obj[0]['PaymentToken'];
 
+  //     }
+  //   })
 
-      if (result.obj != undefined && Object.keys(result.obj).length > 0) {
-
-        let t = `${localStorage.getItem('baseUrlIframe').replace('/api', '')}/clearance/PaymetCC?param=` + result.obj[0]['PaymentToken'];
-
-        this.document.location.href = `${localStorage.getItem('baseUrlIframe').replace('/api', '')}/clearance/PaymetCC?param=` + result.obj[0]['PaymentToken'];
-
-        /**
-         * this.document.location.href == 
-         * http://localhost:4200/public/admin/iframe/iframeView/giftCard
-         * 
-         * 'https://tempdomain-test-3.mltp.co.il/clearance/PaymetCC?param=RpEhZJa4wiWs9BU3LbIdxKR8WhDk-dbYbkU6rHHSVh7OdWkg2Y4IeqJwhtp_w-xKLzxyMsjFay7z-B7cEhBICg2'
-         */
-
-      }
-    })
-
-  }
+  // }
 
   sendDateChange(event) {
     if (event.value == 1) {

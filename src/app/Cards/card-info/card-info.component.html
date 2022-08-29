@@ -168,8 +168,8 @@
                         <div class="selectWrap">
                             <mat-form-field>
                                 <mat-label>בחר תבנית מסרון</mat-label>
-
-                                <mat-select formControlName="smsTemplates" [disabled]="OrderDetails == null"
+                                <mat-select formControlName="smsTemplates"
+                                    [disabled]="userDetailsForm.get('PhoneNumber').value == ''"
                                     (selectionChange)="smsTempleteSelect($event)">
                                     <mat-option *ngFor="let template of smsTemplatesData" [value]="template.Id">
                                         {{template.TemplateName}}</mat-option>
@@ -189,7 +189,8 @@
 
                     </div>
                     <div class="buttonSendSms">
-                        <button mat-button class="sendButton" (click)="sendSMS()" [disabled]="OrderDetails == null">שלח
+                        <button mat-button class="sendButton" (click)="sendSMS()"
+                            [disabled]="userDetailsForm.get('PhoneNumber').value == '' || CardInfo.OrderId == 0">שלח
                             הודעה</button>
                         <div class="errorSendSms error" [@openClose]="errorSendSms != ''">
                             {{errorSendSms}}

@@ -112,7 +112,7 @@ export class LogInComponent implements OnInit {
       }
 
       this.dataService.ValidateOtp(objToApi).subscribe(result => {
-
+        debugger
         if (result['Token'] != '' && result['obj'] != null) {
           let userObj = {
             Token: result['Token'],

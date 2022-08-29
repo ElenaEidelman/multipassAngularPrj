@@ -111,12 +111,13 @@ export class ExistUserComponent implements OnInit {
     }
 
 
+    debugger
     this.dataService.GetUsersByFilter(objToApi).subscribe(result => {
-
+      debugger
       if (typeof result == 'string') {
-        // this.dialog.open(DialogComponent, {
-        //   data: { message: result }
-        // })
+        this.dialog.open(DialogComponent, {
+          data: { message: result }
+        })
 
         // this.sharedService.exitSystemEvent();
         return false;

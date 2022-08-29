@@ -99,7 +99,6 @@ $ git merge new-branch
   }
 
   checkResult(result) {
-    debugger
     if (typeof result == 'object') {
 
       if (result['Token'] != null && result['Token'] != '') {
@@ -146,6 +145,18 @@ $ git merge new-branch
 
   GetPoliciesByCompanyId(objToApi) {
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/Policy/GetPoliciesByCompanyId`, objToApi, httpOptions).pipe(
+      map(result => {
+        return this.checkResult(result);
+      }),
+      catchError(err => {
+
+        return of(err.message);
+      })
+    );
+  }
+
+  GetAllSupplierGroups(objToApi) {
+    return this.http.post(`${localStorage.getItem('baseUrl')}/api/AllUsers/GetAllSupplierGroups`, objToApi, httpOptions).pipe(
       map(result => {
         return this.checkResult(result);
       }),
@@ -403,7 +414,16 @@ $ git merge new-branch
     );
   }
 
-
+  GetSupplierGroupsDetails(objToApi) {
+    return this.http.post(`${localStorage.getItem('baseUrl')}/api/InsertUpdateOrder/GetSupplierGroupsDetails`, objToApi).pipe(
+      map(result => {
+        return this.checkResult(result);
+      }),
+      catchError(error => {
+        return of(error.message);
+      })
+    );
+  }
 
   GetSMSFormats(objToApi) {
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/SMS/GetSMSFormats`, objToApi).pipe(

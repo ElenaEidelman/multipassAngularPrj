@@ -139,6 +139,7 @@
                                 <div class="flexTD">
                                     <div>
                                         <button mat-button class="addButton tableButton"
+                                            [disabled]="row['StatusDescription'] == 'מושהה'"
                                             (click)="goToOrderCards(0,row['id'])">הזמנה חדשה</button>
 
                                     </div>

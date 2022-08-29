@@ -187,7 +187,9 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
       UserId: this.userId
     }
 
+    debugger
     this.dataService.GetCardInfoById(objToApi).subscribe(result => {
+      debugger
       this.mainSpinner = false;
       if (typeof result == 'string') {
         // this.dialog.open(DialogComponent, {
@@ -624,88 +626,94 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
   }
 
   sendSMS() {
-    if (this.pagePermissionAccessLevel.AccessLevel != this.MockData.accessLevelReadOnly) {
-      if (this.sendSms.valid) {
-        this.dialog.open(DialogConfirmComponent, {
-          data: { message: 'האם לשלוח SMS?', eventButton: 'שלח' }
-
-        }).afterClosed().subscribe(result => {
-          if (result.result.includes('yes')) {
-
-            let phone = result.result.split('phone: ')[1];
 
 
-            // let objToApi = {
-            //   Token: this.userToken,
-            //   TemplateFormat: this.sendSms.get('previewSmsTemplate').value,
-            //   Phone: phone
-            // }
+    if (this.CardInfo.OrderId != 0) {
+      if (this.pagePermissionAccessLevel.AccessLevel != this.MockData.accessLevelReadOnly) {
+        if (this.sendSms.valid) {
+          this.dialog.open(DialogConfirmComponent, {
+            data: { message: 'האם לשלוח SMS?', eventButton: 'שלח' }
 
-            // let objToApi = {
-            //   Token: this.userToken,
-            //   TemplateId: this.sendSms.get('smsTemplates').value,
-            //   UserId : +this.userId,
-            //   CoreOrderId:this.OrderDetails.Id,
-            //   From: this.OrderDetails.PrimaryUser.OrganizationName
-            // }
+          }).afterClosed().subscribe(result => {
+            if (result.result.includes('yes')) {
 
-            let objToApi = {
-              Token: this.userToken,
-              TemplateId: this.sendSms.get('smsTemplates').value,
-              UserId: +this.userId,
-              OrderLineIds: Array.of(this.orderLine),
-              CoreOrderId: this.OrderDetails.Id,
-              From: this.OrderDetails.PrimaryUser.OrganizationName
-            }
+              let phone = result.result.split('phone: ')[1];
 
 
-            this.dataService.SendSMSByOrderLine(objToApi).subscribe(result => {
-              if (typeof result == 'string') {
-                // this.dialog.open(DialogComponent, {
-                //   data: { message: result }
-                // })
+              // let objToApi = {
+              //   Token: this.userToken,
+              //   TemplateFormat: this.sendSms.get('previewSmsTemplate').value,
+              //   Phone: phone
+              // }
 
-                this.sharedService.exitSystemEvent(result);
-                return false;
+              // let objToApi = {
+              //   Token: this.userToken,
+              //   TemplateId: this.sendSms.get('smsTemplates').value,
+              //   UserId : +this.userId,
+              //   CoreOrderId:this.OrderDetails.Id,
+              //   From: this.OrderDetails.PrimaryUser.OrganizationName
+              // }
+
+              let objToApi = {
+                Token: this.userToken,
+                TemplateId: this.sendSms.get('smsTemplates').value,
+                UserId: +this.userId,
+                OrderLineIds: Array.of(this.orderLine),
+                CoreOrderId: (this.OrderDetails != undefined && this.OrderDetails != null) ? this.OrderDetails.Id : 0,
+                From: (this.OrderDetails != undefined && this.OrderDetails != null) ? this.OrderDetails.PrimaryUser.OrganizationName : ""
               }
 
-              // if (result['Token'] != undefined || result['Token'] != null) {
+          
+              this.dataService.SendSMSByOrderLine(objToApi).subscribe(result => {
 
-              //set new token
-              let tempObjUser = JSON.parse(localStorage.getItem('user'));
-              tempObjUser['Token'] = result['Token'];
-              localStorage.setItem('user', JSON.stringify(tempObjUser));
-              this.userToken = result['Token'];
+                if (typeof result == 'string') {
+                  // this.dialog.open(DialogComponent, {
+                  //   data: { message: result }
+                  // })
 
-              // if (result.err != -1) {
-              this.dialog.open(DialogComponent, {
-                data: { message: 'נשלח בהצלחה' }
+                  this.sharedService.exitSystemEvent(result);
+                  return false;
+                }
+
+                // if (result['Token'] != undefined || result['Token'] != null) {
+
+                //set new token
+                let tempObjUser = JSON.parse(localStorage.getItem('user'));
+                tempObjUser['Token'] = result['Token'];
+                localStorage.setItem('user', JSON.stringify(tempObjUser));
+                this.userToken = result['Token'];
+
+                // if (result.err != -1) {
+                this.dialog.open(DialogComponent, {
+                  data: { message: 'נשלח בהצלחה' }
+                });
+                // }
+
+                // }
+                // else {
+                //   // this.dialog.open(DialogComponent, {
+                //   //   data: {message: result}
+                //   // })
+                //   this.sharedService.exitSystemEvent();
+                // }
               });
-              // }
-
-              // }
-              // else {
-              //   // this.dialog.open(DialogComponent, {
-              //   //   data: {message: result}
-              //   // })
-              //   this.sharedService.exitSystemEvent();
-              // }
-            });
-          }
-        })
+            }
+          })
+        }
+        else {
+          this.errorSendSms = 'נא לבחור תבנית ההודעה';
+          setTimeout(() => {
+            this.errorSendSms = '';
+          }, 2000)
+        }
       }
       else {
-        this.errorSendSms = 'נא לבחור תבנית ההודעה';
-        setTimeout(() => {
-          this.errorSendSms = '';
-        }, 2000)
+        this.dialog.open(DialogComponent, {
+          data: { message: MsgList.readOnly }
+        })
       }
     }
-    else {
-      this.dialog.open(DialogComponent, {
-        data: { message: MsgList.readOnly }
-      })
-    }
+
   }
 
   smsTempleteSelect(event) {

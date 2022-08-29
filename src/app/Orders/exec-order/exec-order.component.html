@@ -160,8 +160,8 @@
             </div>
 
             <div>
-                <div class="element-page-title  marginTop">תאור של הזמנה</div>
-                <div class="innerElement margin0 comments">
+                <!-- <div class="element-page-title  marginTop">תאור של הזמנה</div> -->
+                <!-- <div class="innerElement margin0 comments">
                     <form [formGroup]="OrderNameGroup">
                         <mat-form-field>
                             <textarea matInput placeholder="...תאור של הזמנה" formControlName="Comments"
@@ -171,7 +171,7 @@
                             </mat-error>
                         </mat-form-field>
                     </form>
-                </div>
+                </div> -->
             </div>
 
 
@@ -187,16 +187,18 @@
 
 
 
-
+                <!-- 
                 <div class="wrapAprDel">
                     <button mat-button class="linkButton" (click)="saveChanges()">שמור שינויים
                         <mat-icon>save</mat-icon>
-                    </button>
-                    <!-- <mat-spinner class="spinner orangeSp" *ngIf="saveChangesSpinner"></mat-spinner>
+                    </button> -->
+                <!-- <mat-spinner class="spinner orangeSp" *ngIf="saveChangesSpinner"></mat-spinner>
                     <div class="error" [@openClose]="errorRefMsg != ''">{{errorRefMsg}}</div>
                     <div class="saveMessage" [@openClose]="orderRefMsg != ''">{{orderRefMsg}}</div> -->
 
-                </div>
+                <!-- </div> -->
+
+
                 <div
                     *ngIf="orderStatus.id == '1' && (dataByPage.DigitalBatch != undefined && (dataByPage.DigitalBatch > 0 || dataByPage.DigitalBatch != 0))">
                     <!-- <div class="viewCodeButton"> -->
@@ -217,11 +219,11 @@
                 </div>
                 <mat-spinner class="spinner orangeSp" *ngIf="createCardsSpinner"></mat-spinner>
             </div>
-            <div [@openClose]="infoMsg != ''" [@openClose]="errorMsg != ''" class="infoMsg">
+            <!-- <div [@openClose]="infoMsg != ''" [@openClose]="errorMsg != ''" class="infoMsg">
                 <mat-icon class="infoIcon">info</mat-icon>
                 <div class="infoMessage" [innerHTML]="infoMsg"></div>
                 <div class="infoMessage" [innerHTML]="errorMsg"></div>
-            </div>
+            </div> -->
         </div>
 
         <!-- table -->
@@ -377,31 +379,84 @@
 
 
 
-            <div class="innerElement flexElement">
-                <!-- <div class="policyType">
-                    <mat-form-field>
-                        <mat-label>בחר סוג פעילות</mat-label>
-                        <mat-select [formControl]="policySelectControl" #policySelectManual readonly="true">
-                            <ng-container *ngFor="let policy  of policyList; let i = index">
-                                <mat-option [value]="policy.POL_ID">
-                                    {{policy.POL_NAME }} - {{policy.POL_ID}}
-                                </mat-option>
-                            </ng-container>
-                        </mat-select>
-                        <mat-error>
-                            {{MsgList.requiredField}}
+            <form [formGroup]="OrderChangesGroup" (submit)="saveChanges()" class="marginTop">
+                <div class="marginOutline flexElement  wrapForFlex">
+
+                    <div class="policyType">
+                        <mat-form-field appearance="outline" *ngIf="policyList.length > 0">
+                            <mat-label>סוג שובר</mat-label>
+                            <mat-select formControlName="PolicyControl" readonly="true"
+                                [disabled]="orderStatus.id != '1'">
+                                <ng-container *ngFor="let policy  of policyList; let i = index">
+                                    <mat-option [value]="policy.POL_ID">
+                                        {{policy.POL_NAME }} {{policy.POL_ID}}
+                                    </mat-option>
+                                </ng-container>
+                            </mat-select>
+                            <mat-error>
+                                {{MsgList.requiredField}}
+                                <mat-icon>error</mat-icon>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="refBlock">
+                        <mat-form-field appearance="outline">
+                            <mat-label dir="rtl">מספר אסמכתא</mat-label>
+                            <input matInput formControlName="RefControl" numbersOnly>
+                            <mat-error>{{MsgList.requiredField}} <mat-icon>error</mat-icon>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="marginOutline flexElement  wrapForFlex">
+                    <div></div>
+                    <div class="supplierBlock">
+                        <mat-form-field appearance="outline" *ngIf="supplierGroups.length > 1">
+                            <mat-label>קבוצת ספקים</mat-label>
+                            <mat-select formControlName="SupplierGroups" readonly="true">
+                                <ng-container *ngFor="let supplier  of supplierGroups; let i = index">
+                                    <mat-option [value]="supplier.SUPGRP_ID">
+                                        {{supplier.SUPGRP_NAME }}
+                                    </mat-option>
+                                </ng-container>
+                            </mat-select>
+                            <mat-error>
+                                {{MsgList.requiredField}}
+                                <mat-icon>error</mat-icon>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                </div>
+                <div class="marginOutline flexElement  wrapForFlex comments">
+                    <!-- <form [formGroup]="OrderNameGroup"> -->
+                    <mat-form-field appearance="outline">
+                        <mat-label dir="rtl">תאור הזמנה</mat-label>
+                        <textarea matInput placeholder="תאור של הזמנה" formControlName="Comments" cdkTextareaAutosize
+                            #autosize="cdkTextareaAutosize"></textarea>
+                        <mat-error>{{MsgList.requiredField}}
                             <mat-icon>error</mat-icon>
                         </mat-error>
                     </mat-form-field>
-                </div> -->
-                <div class="refBlock">
-                    <mat-form-field>
-                        <mat-label dir="rtl">מספר אסמכתא</mat-label>
-                        <input matInput [formControl]="RefControl" numbersOnly>
-                        <mat-error>{{MsgList.requiredField}}</mat-error>
-                    </mat-form-field>
+                    <!-- </form> -->
                 </div>
-            </div>
+
+                <div class="wrapAprDel">
+                    <mat-spinner class="spinner orangeSp" *ngIf="saveChangesSpinner"></mat-spinner>
+
+                    <button mat-button class="linkButton">שמור שינויים
+                        <mat-icon>save</mat-icon>
+                    </button>
+                    <!-- <mat-spinner class="spinner orangeSp" *ngIf="saveChangesSpinner"></mat-spinner>
+                <div class="error" [@openClose]="errorRefMsg != ''">{{errorRefMsg}}</div>
+                <div class="saveMessage" [@openClose]="orderRefMsg != ''">{{orderRefMsg}}</div> -->
+                    <div [@openClose]="infoMsg != ''" [@openClose]="errorMsg != ''" class="infoMsg">
+                        <mat-icon class="infoIcon">info</mat-icon>
+                        <div class="infoMessage" [innerHTML]="infoMsg"></div>
+                        <div class="infoMessage" [innerHTML]="errorMsg"></div>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 </div>

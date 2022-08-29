@@ -95,6 +95,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
 
     window.scroll(0, 0);
+    debugger
     this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
 
 
@@ -109,8 +110,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
       Token: this.userToken
     }
 
+    debugger
     this.dataService.GetHomeData(objToApi).subscribe(result => {
-
+      debugger
       this.homeSpinner = false;
 
       if (typeof result == 'string') {

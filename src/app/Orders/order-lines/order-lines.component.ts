@@ -529,11 +529,16 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
 
       worksheet.columns = worksheetArr;
 
+      debugger
       for (let data of Object.values(tableData)) {
         for (let element of Object.keys(data)) {
           if (element == 'CardId') {
             let oldData = data[element];
             data[element] = oldData + '' + data['PinCode']
+          }
+          else if (element == 'active') {
+            let oldData = data[element];
+            data[element] = oldData == 1 ? 'פעיל' : 'חסום'
           }
         }
       }
@@ -542,6 +547,7 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
       // let userData = JSON.parse(localStorage.getItem('user')).obj;
       let userData = this.customerData;
 
+      debugger
       workbook.xlsx.writeBuffer().then((data) => {
         let blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
         fs.saveAs(blob, userData['FName'] + '_' + userData['LName'] + '_' + this.orderId + '.xlsx');

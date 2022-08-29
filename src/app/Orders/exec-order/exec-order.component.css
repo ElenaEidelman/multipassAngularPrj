@@ -20,6 +20,7 @@ mat-spinner >  svg{
 
 .wrapAprDel {
     position: relative;
+    text-align: center;
 }
 
 .tableButton {
@@ -208,7 +209,27 @@ tr.example-element-row:not(.example-expanded-row):active {
 }
 
 .policyType {
-    margin-right: 2em;
+    /* margin-right: 2em; */
+    display: flex;
+}
+
+.supplierBlock {
+    display: flex;
+}
+
+.marginOutline {
+    /* margin: 1.5em 0; */
+}
+
+.wrapForFlex>div {
+    flex-grow: 1;
+    flex-basis: 0;
+    margin: 5px;
+
+}
+
+.wrapForFlex>div mat-form-field {
+    width: 100%;
 }
 
 @media screen and (max-width: 1024px) {

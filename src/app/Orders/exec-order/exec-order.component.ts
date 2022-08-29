@@ -97,7 +97,8 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   chagesToServer = [];
   DigitalBatch;
   orderCardsData;
-  policyList;
+  policyList = [];
+  supplierGroups = [];
 
   manualOrder: boolean = false;
   excelOrder: boolean = false;
@@ -188,14 +189,20 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   });
 
   //מספר אסמכתה
-  RefControl = new FormControl('', Validators.required);
+  // RefControl = new FormControl('', Validators.required);
 
-  OrderNameGroup = this.fb.group({
-    Comments: ['', [Validators.required, this.noWhitespaceValidator]]
+  // OrderNameGroup = this.fb.group({
+  //   Comments: ['', [Validators.required, this.noWhitespaceValidator]]
+  // });
+  OrderChangesGroup = this.fb.group({
+    RefControl: ['', [Validators.required]],
+    Comments: ['', [Validators.required, this.noWhitespaceValidator]],
+    SupplierGroups: ['0'],
+    PolicyControl: ['', [Validators.required]]
   });
 
   // policySelectControl = new FormControl(['', Validators.required]);
-  Comments = new FormControl(['', Validators.required]);
+  // Comments = new FormControl(['', Validators.required]);
 
   ngOnInit() {
     window.scroll(0, 0);
@@ -208,8 +215,11 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     if (this.pagePermissionAccessLevel.AccessLevel == this.MockData.accessLevelReadOnly) {
       this.sendSmsGroup.disable();
       this.addToExecOrderForm.disable();
-      this.RefControl.disable();
-      this.OrderNameGroup.disable();
+      // this.RefControl.disable();  //1
+      // this.OrderNameGroup.disable();  // 1
+      this.OrderChangesGroup.disable();
+
+
       //Comments
       //OrderNameGroup
       //RefControl
@@ -222,8 +232,10 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     ];
     this.getStatusList();
     this.getSmsTemplates();
-    this.GetPoliciesByCompanyId();
 
+    this.GetPoliciesByCompanyId();
+    //this.GetSupplierGroups();
+    this.GetSupplierGroupsDetails();
 
     //this code need when i will change url
     let urlParams = this.urlSharingService.messageSource.getValue();
@@ -242,12 +254,13 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         this.customerId = JSON.parse(urlParams)['customerId'];
         this.newOrder = false;
 
+        debugger
         this.GetOrderDetails();
+        this.GetCards();
       }
 
       //new order
       if (url.includes('newOrder')) {
-
         this.orderStatus.description = 'הזמנה חדשה';
         this.customerId = JSON.parse(urlParams)['customerId'];
         // this.policySelectControl.setValue(JSON.parse(urlParams)['policy']);
@@ -255,7 +268,8 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
         //set comments to field
 
-        this.OrderNameGroup.get('Comments').setValue(JSON.parse(urlParams)['orderDescription']);
+        // this.OrderNameGroup.get('Comments').setValue(JSON.parse(urlParams)['orderDescription']);
+        this.OrderChangesGroup.get('Comments').setValue(JSON.parse(urlParams)['orderDescription']);
 
         let objToApi = {
           Token: this.userToken,
@@ -263,7 +277,6 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         }
 
         this.dataService.GetCustomersByFilter(objToApi).subscribe(result => {
-
           if (typeof result == 'string') {
             // this.dialog.open(DialogComponent, {
             //   data: { message: result }
@@ -315,7 +328,8 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         this.orderDetailsTable = new MatTableDataSource(orderDetails);
       }
       // })
-      this.GetCards();
+      // 
+      // this.GetCards();
 
 
       // this.RefControl.setValue(this.orderId);
@@ -347,8 +361,9 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       Token: this.userToken,
       CoreOrderID: this.orderId
     }
+    debugger
     this.dataService.GetOrderDetails(objToApi).subscribe(result => {
-
+      debugger
       if (typeof result == 'string') {
         // this.dialog.open(DialogComponent, {
         //   data: { message: result }
@@ -377,8 +392,10 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       this.dataByPage = result['obj'][0];
 
 
+      this.OrderChangesGroup.get('PolicyControl').setValue(+result['obj'][0]['Policy']);
+      this.OrderChangesGroup.get('Comments').setValue(result['obj'][0]['OrderName']);
+      this.OrderChangesGroup.get('SupplierGroups').setValue(result.obj[0].SupplierGroupID);
 
-      this.OrderNameGroup.get('Comments').setValue(result['obj'][0]['OrderName']);
       // this.policySelectControl.setValue(+result['obj'][0]['Policy']);
 
       // if (result.obj[0].StatusId > 1) {
@@ -387,7 +404,8 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       //if order created from excel file
       this.excelOrder = (this.dataByPage.DigitalBatch > 0 || this.dataByPage.DigitalBatch != 0) && this.dataByPage.DigitalBatch != null;
 
-      this.RefControl.setValue(this.dataByPage.CrmOrderId);//Reference
+
+      this.OrderChangesGroup.get("RefControl").setValue(this.dataByPage.CrmOrderId);//Reference
 
       //get customer data
       this.Customer = result['obj'][0]['User'];
@@ -431,35 +449,123 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
   GetPoliciesByCompanyId() {
 
+
     let objToApi = {
       Token: this.userToken
     }
 
-    this.dataService.GetPoliciesByCompanyId(objToApi).subscribe(result => {
-      if (typeof result == 'string') {
-        // this.sharedService.exitSystemEvent(result);
-        return false;
-      }
-      //set new token
-      let tempObjUser = JSON.parse(localStorage.getItem('user'));
-      tempObjUser['Token'] = result['Token'];
-      localStorage.setItem('user', JSON.stringify(tempObjUser));
-      this.userToken = result['Token'];
+    try {
+      this.dataService.GetPoliciesByCompanyId(objToApi).subscribe(result => {
 
-      if (result['obj'] != null) {
-        this.policyList = result['obj'];
-        // if (this.policyList.length > 0) {
-        //   this.policySelectControl.setValue(this.policy);
-        // }
+        if (typeof result == 'string') {
+          // this.sharedService.exitSystemEvent(result);
+          return false;
+        }
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
 
-      }
-      else {
-        this.dialog.open(DialogComponent, {
-          data: { message: result.errdesc }
-        })
-      }
+        if (result['obj'] != null) {
+          this.policyList = result['obj'];
+          debugger
 
-    })
+
+
+          // this.policyList.unshift({ POL_ID: "", POL_NAME: "" });
+          // this.OrderChangesGroup.get("PolicyControl").setValue("");
+          // setTimeout(() => {
+          //   this.policyList.shift();
+          // }, 500)
+
+        }
+        else {
+          this.dialog.open(DialogComponent, {
+            data: { message: result.errdesc }
+          })
+        }
+
+      })
+    } catch (error) {
+      console.log(error);
+    }
+
+
+  }
+
+  // GetSupplierGroups() {
+  //   let objToApi = {
+  //     Token: this.userToken
+  //   }
+
+  //   try {
+  //     this.dataService.GetAllSupplierGroups(objToApi).subscribe(result => {
+  //       if (typeof result == 'string') {
+  //         // this.sharedService.exitSystemEvent(result);
+  //         return false;
+  //       }
+  //       //set new token
+  //       let tempObjUser = JSON.parse(localStorage.getItem('user'));
+  //       tempObjUser['Token'] = result['Token'];
+  //       localStorage.setItem('user', JSON.stringify(tempObjUser));
+  //       this.userToken = result['Token'];
+
+  //       if (result['obj'] != null) {
+  //         this.supplierGroups = result['obj'];
+  //         this.supplierGroups.unshift({ groupId: "0", groupName: "כל הספקים" });
+  //         this.OrderChangesGroup.get("SupplierGroups").setValue("0");
+
+  //       }
+  //       else {
+  //         this.dialog.open(DialogComponent, {
+  //           data: { message: result.errdesc }
+  //         })
+  //       }
+
+  //     })
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+
+  // }
+
+  GetSupplierGroupsDetails() {
+    let objToApi = {
+      Token: this.userToken
+    }
+
+    try {
+      debugger
+      this.dataService.GetSupplierGroupsDetails(objToApi).subscribe(result => {
+        debugger
+        if (typeof result == 'string') {
+          // this.sharedService.exitSystemEvent(result);
+          return false;
+        }
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
+
+        if (result['obj'] != null) {
+          this.supplierGroups = result['obj'];
+          this.supplierGroups.unshift({ SUPGRP_ID: "0", SUPGRP_NAME: "כל הספקים" });
+          this.OrderChangesGroup.get("SupplierGroups").setValue("0");
+
+        }
+        else {
+          this.dialog.open(DialogComponent, {
+            data: { message: result.errdesc }
+          })
+        }
+
+      })
+    } catch (error) {
+      console.log(error);
+    }
+
   }
 
   getLastDateOfCurrentMonthAnd5Years() {
@@ -623,9 +729,10 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
           TicketCount: ticketCount,
           Validity: validity,
           OpCode: "insert",
-          OrderName: this.OrderNameGroup.get('Comments').value,
-          Reference: this.RefControl.value == '' ? 0 : this.RefControl.value,
-          // Policy: this.policySelectControl.value
+          // OrderName: this.OrderNameGroup.get('Comments').value,
+          OrderName: this.OrderChangesGroup.get('Comments').value,
+          Reference: this.OrderChangesGroup.get("RefControl").value == '' ? 0 : this.OrderChangesGroup.get("RefControl").value,
+          //Policy: this.OrderChangesGroup.get('PolicyControl').value
         }
         //query for insert update order lines, but not for the first line
         if (this.orderDetailsTable.data.length > 1) {
@@ -773,7 +880,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     if (this.orderDetails.length > 1 && this.pagePermissionAccessLevel.AccessLevel != this.MockData.accessLevelReadOnly) {
 
 
-      if (this.RefControl.value == 0 || this.RefControl.value == '') {
+      if (this.OrderChangesGroup.get("RefControl").value == 0 || this.OrderChangesGroup.get("RefControl").value == '') {
         this.infoMsg = this.MsgList.referenceRequired;
         setTimeout(() => {
           this.infoMsg = '';
@@ -782,8 +889,13 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         return false;
       }
 
-      if (!this.OrderNameGroup.valid) {
-        this.OrderNameGroup.markAllAsTouched();
+      // if (!this.OrderNameGroup.valid) {
+      //   this.OrderNameGroup.markAllAsTouched();
+      //   return false;
+      // }
+
+      if (!this.OrderChangesGroup.valid) {
+        this.OrderChangesGroup.markAllAsTouched();
         return false;
       }
 
@@ -793,16 +905,18 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         UserID: this.customerId,
         OrderID: this.orderId,
         OpCode: "Save",
-        Reference: this.RefControl.value == '' ? 0 : this.RefControl.value,
-        OrderName: this.OrderNameGroup.get('Comments').value.trim(),
-        // Policy: this.policySelectControl.value
+        Reference: this.OrderChangesGroup.get("RefControl").value == '' ? 0 : this.OrderChangesGroup.get("RefControl").value,
+        OrderName: this.OrderChangesGroup.get('Comments').value.trim(),
+        Policy: this.OrderChangesGroup.get('PolicyControl').value,
+        SupplierGroupId: this.OrderChangesGroup.get('SupplierGroups').value
       }
 
       //first save reference and comments
       this.createCardsSpinner = true;
 
+      debugger
       this.dataService.InsertUpdateOrder(objToApiChanges).subscribe(result => {
-
+        debugger
         this.createCardsSpinner = false;
         if (typeof result == 'string') {
           // this.dialog.open(DialogComponent, {
@@ -858,7 +972,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
           // if (result['Token'] != undefined || result['Token'] != null) {
 
           //set new token
-          debugger
+
           let tempObjUser = JSON.parse(localStorage.getItem('user'));
           tempObjUser['Token'] = result['Token'];
           localStorage.setItem('user', JSON.stringify(tempObjUser));
@@ -1019,13 +1133,13 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
   saveChanges() {
 
-
+    debugger
     if (this.pagePermissionAccessLevel.AccessLevel != this.MockData.accessLevelReadOnly) {
 
-      if (this.OrderNameGroup.valid) {
+      if (this.OrderChangesGroup.valid) {
 
 
-        if (this.RefControl.value == 0 || this.RefControl.value == '') {
+        if (this.OrderChangesGroup.get('RefControl').value == 0 || this.OrderChangesGroup.get('RefControl').value == '') {
 
           this.errorMsg = this.MsgList.referenceRequired
           setTimeout(() => {
@@ -1034,16 +1148,17 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
           }, 2000);
           return false;
         }
-        this.createCardsSpinner = true;
+        this.saveChangesSpinner = true;
 
         let objToApi = {
           Token: this.userToken,
           UserID: this.customerId,
           OrderID: this.orderId,
           OpCode: "Save",
-          Reference: this.RefControl.value,
-          OrderName: this.OrderNameGroup.get('Comments').value.trim(),
-          // Policy: this.policySelectControl.value
+          Reference: this.OrderChangesGroup.get("RefControl").value,
+          OrderName: this.OrderChangesGroup.get('Comments').value.trim(),
+          Policy: this.OrderChangesGroup.get('PolicyControl').value,
+          SupplierGroupId: this.OrderChangesGroup.get('SupplierGroups').value
         }
 
         this.chagesToServer = [];
@@ -1052,12 +1167,13 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
         //alert('before save changes');
 
+        debugger
         this.dataService.InsertUpdateOrder(objToApi).subscribe(result => {
-
+          debugger
           // alert('after save changes');
 
 
-          this.createCardsSpinner = false;
+          this.saveChangesSpinner = false;
           if (typeof result == 'string') {
             // this.dialog.open(DialogComponent, {
             //   data: { message: result }
@@ -1100,7 +1216,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
         this.errorMsg = this.MsgList.fillAllFieldsError;
         setTimeout(() => this.errorMsg = '', 2000);
-        this.OrderNameGroup.markAllAsTouched();
+        this.OrderChangesGroup.markAllAsTouched();
 
       }
     }
@@ -1344,6 +1460,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       // if (result['Token'] != undefined || result['Token'] != null) {
 
       //set new token
+
       let tempObjUser = JSON.parse(localStorage.getItem('user'));
       tempObjUser['Token'] = result['Token'];
       localStorage.setItem('user', JSON.stringify(tempObjUser));
@@ -1351,7 +1468,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
       // if (typeof result == 'object') {
       this.orderCardsData = result['obj'][0];
-      debugger
+
       this.DigitalBatch = result['obj'][1];
 
 
@@ -1395,8 +1512,6 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       if (this.DigitalBatch != '' && this.DigitalBatch != undefined) {
         tableLabels.push({ value: 'ValidationField', viewValue: 'שדה אימות' })
       }
-
-      // debugger
       let tableData = JSON.parse(JSON.stringify(this.orderCardsData));
 
       let workbook = new Workbook();
@@ -1408,12 +1523,14 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       });
 
       worksheet.columns = worksheetArr;
-
       for (let data of Object.values(tableData)) {
         for (let element of Object.keys(data)) {
           if (element == 'CardId') {
             let oldData = data[element];
             data[element] = oldData + '' + data['PinCode']
+          }
+          if (element == 'DSendLastSent') {
+            data[element] = this.formatDate(data[element]);
           }
         }
       }
@@ -1460,6 +1577,22 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     const isWhitespace = (control.value || '').trim().length === 0;
     const isValid = !isWhitespace;
     return isValid ? null : { 'whitespace': true };
+  }
+
+  formatDate(dateForFormat: any) {
+
+    if (dateForFormat != null && dateForFormat != "") {
+      let date = new Date(dateForFormat.toString());
+      let day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
+      let month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
+      let year = date.getFullYear();
+
+      return day + '/' + month + '/' + year;
+    }
+    else {
+      return "";
+    }
+
   }
 
   ngOnChanges(changes: SimpleChanges) {

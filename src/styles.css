@@ -10,6 +10,19 @@
   color: black;
 }
 
+.logInForm mat-label.ng-star-inserted {
+
+  background: transparent !important;
+}
+
+
+
+.policyType mat-label.ng-star-inserted,
+.supplierBlock mat-label.ng-star-inserted {
+  background: #fff !important;
+  /* padding-right: 5px !important; */
+}
+
 .textCenter {
   text-align: center !important;
 }
@@ -1269,6 +1282,7 @@ textarea.mat-input-element {
 
 .mat-elevation-z8 {
   overflow-x: auto;
+  box-shadow: 0px 0px 7px rgba(0, 0, 0, 0.1) !important;
 }
 
 .mat-paginator-container {
@@ -1684,7 +1698,15 @@ td.mat-footer-cell:first-of-type {
 
 .mat-button-disabled {
   color: #a4a4a2 !important;
-  ;
+  background: #dedada !important;
+  border: 1px solid #dedada !important;
+}
+
+.mat-button-disabled.mat-paginator-navigation-previous,
+.mat-button-disabled.mat-paginator-navigation-next {
+  color: #a4a4a2 !important;
+  background: unset !important;
+  border: unset !important;
 }
 
 .mat-checkbox-mixedmark {

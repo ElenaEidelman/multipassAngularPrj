@@ -186,7 +186,8 @@
                                 <ng-container *ngIf="data == 'OrderId'">
 
                                     <!--[routerLink]="['/public/order',row['CoreOrderId'], row['OrderUser']]"-->
-                                    <a (click)="goToOrder(row['CoreOrderId'], row['OrderUser'])">{{row[data]}}</a>
+                                    <a [class.isDisabled]="row['CoreOrderId'] == 0"
+                                        (click)="goToOrder(row['CoreOrderId'], row['OrderUser'])">{{row[data]}}</a>
                                 </ng-container>
                                 <!-- <ng-container *ngIf="data == 'OrganizationName'">
 
