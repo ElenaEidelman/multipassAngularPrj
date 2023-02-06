@@ -47,7 +47,8 @@
 
                 <!-- last added orders-->
                 <div class="mat-elevation-z8">
-                    <table mat-table [dataSource]="newOrderDataSource" matSort dir="rtl" class="tableView">
+                    <table mat-table [dataSource]="newOrderDataSource" #newOrderMatSort="matSort" matSort dir="rtl"
+                        class="tableView">
 
                         <!-- ID Column -->
                         <ng-container *ngFor="let data of newOrderLabelForTable">
@@ -77,7 +78,7 @@
                         </tr>
                     </table>
 
-                    <mat-paginator #MatPaginator [length]="newOrderDataSource.data.length"
+                    <mat-paginator #MatPaginatorNewOrder [length]="newOrderDataSource.data.length"
                         [pageSizeOptions]="[5, 25, 100]" aria-label="Select page of users"></mat-paginator>
                 </div>
 
@@ -88,7 +89,8 @@
 
                 <!-- last added customers-->
                 <div class="mat-elevation-z8">
-                    <table mat-table [dataSource]="lastCustomersDataSource" matSort dir="rtl" class="tableView">
+                    <table mat-table [dataSource]="lastCustomersDataSource" #lastCustomersMatSort="matSort" matSort
+                        dir="rtl" class="tableView">
 
                         <!-- ID Column -->
                         <ng-container *ngFor="let data of lastCustomersLabelForTable">
@@ -117,8 +119,9 @@
                         </tr>
                     </table>
 
-                    <mat-paginator [length]="lastCustomersDataSource.data.length" [pageSize]="2"
-                        [pageSizeOptions]="[5, 25, 100]" aria-label="Select page of users"></mat-paginator>
+                    <mat-paginator #MatPaginatorLastCustomers [length]="lastCustomersDataSource.data.length"
+                        [pageSize]="2" [pageSizeOptions]="[5, 25, 100]"
+                        aria-label="Select page of users"></mat-paginator>
                 </div>
             </div>
         </div>

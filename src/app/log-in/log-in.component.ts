@@ -37,6 +37,8 @@ export class LogInComponent implements OnInit {
     window.scroll(0, 0);
     // localStorage.removeItem('user');
     localStorage.removeItem('excelFileData');
+
+
   }
 
   SendOtp() {

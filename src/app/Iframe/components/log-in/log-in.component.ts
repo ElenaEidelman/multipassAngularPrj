@@ -208,6 +208,7 @@ export class LogInIframeComponent implements OnInit {
         if (result.obj != undefined && result.obj != null && Object.keys(result.obj).length > 0) {
           this.sharingIframeService.companyInfoService.next(JSON.stringify(result));
           this.infoData = result.obj[0];
+          debugger
           this.spareData = JSON.parse(JSON.stringify(this.infoData))
 
         }
@@ -219,6 +220,7 @@ export class LogInIframeComponent implements OnInit {
   //remove double back slash //
   checkPath(path) {
 
+    debugger
     if (path.includes('data:')) {
       return path;
     }

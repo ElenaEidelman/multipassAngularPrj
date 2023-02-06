@@ -96,6 +96,10 @@ const routes: Routes = [
 //http://localhost:4200/giftCard/login?companyid=bC1uVdEINfm7oJNltQd3PA2
 //https://tempdomain-test-3.mltp.co.il/giftCard/login?companyid=bC1uVdEINfm7oJNltQd3PA2
 
+
+//https://tempdomain-test-3.mltp.co.il/giftCard/login?companyid=bC1uVdEINfm7oJNltQd3PA2
+//https://tempdomain-test-7.mltp.co.il/order?t=aQwPrFXnUMnNYm6Tr4Pp3g2
+
 @NgModule({
   imports: [RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' })],
   exports: [RouterModule]

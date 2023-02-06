@@ -57,6 +57,24 @@ $ git merge new-branch
 
   }
 
+
+  testApiToTest7(objToApi, api) {
+
+    // return this.http.post('http://localhost:53385/api/BuyMeIFrame/LoginByCompanyId',
+    //   { CompanyIdEnc: "aQwPrFXnUMnNYm6Tr4Pp3g2" }, httpOptions)
+    //debugger
+    return this.http.post('https://tempdomain-test-7.mltp.co.il/api/BuyMeIFrame/' + api, objToApi, httpOptions).pipe(
+      map(result => {
+        //debugger
+        return result;
+      }),
+      catchError(err => {
+
+        return of(err.message);
+      })
+    );
+  }
+
   setBaseUrl() {
     this.getHost().subscribe(result => {
       localStorage.setItem('baseUrl', result['baseUrl']);
@@ -131,6 +149,7 @@ $ git merge new-branch
 
 
   GetHomeData(objToApi) {
+    debugger
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/DashBoard/GetHomeData`, objToApi, httpOptions).pipe(
       map(result => {
         return this.checkResult(result);
@@ -527,7 +546,7 @@ $ git merge new-branch
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/AllCards/VoidCards`, objToApi).pipe(
       map(result => {
         //
-        debugger
+        //debugger
         return this.checkResult(result);
       }),
       catchError(error => {

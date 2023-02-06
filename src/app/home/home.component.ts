@@ -27,9 +27,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   userToken;
   homeSpinner: boolean = true;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  // @ViewChild(MatPaginator) paginator: MatPaginator;
+  // @ViewChild(MatSort) sort: MatSort;
 
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild('MatPaginatorNewOrder') public matPaginatorNewOrder: MatPaginator;
+  @ViewChild('MatPaginatorLastCustomers') public matPaginatorLastCustomers: MatPaginator;
+
+  @ViewChild('lastCustomersMatSort') public lastCustomersMatSort: MatSort;
+  @ViewChild('newOrderMatSort') public newOrderMatSort: MatSort;
 
   constructor(
     public dialog: MatDialog,
@@ -95,7 +100,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
 
     window.scroll(0, 0);
-    debugger
     this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
 
 
@@ -110,9 +114,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
       Token: this.userToken
     }
 
-    debugger
+    //debugger
     this.dataService.GetHomeData(objToApi).subscribe(result => {
-      debugger
+      //debugger
       this.homeSpinner = false;
 
       if (typeof result == 'string') {
@@ -149,10 +153,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
               this.lastCustomersDataSource = new MatTableDataSource(result.obj[5]);
 
               setTimeout(() => {
-                this.newOrderDataSource.sort = this.sort;
-                this.lastCustomersDataSource.sort = this.sort;
-                this.newOrderDataSource.paginator = this.paginator;
-                this.lastCustomersDataSource.paginator = this.paginator;
+                debugger
+                this.newOrderDataSource.sort = this.newOrderMatSort;
+                this.lastCustomersDataSource.sort = this.lastCustomersMatSort;
+                this.newOrderDataSource.paginator = this.matPaginatorNewOrder;
+                this.lastCustomersDataSource.paginator = this.matPaginatorLastCustomers;
               }, 1000);
 
 

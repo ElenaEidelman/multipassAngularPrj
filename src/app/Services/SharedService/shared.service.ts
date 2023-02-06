@@ -32,7 +32,7 @@ export class SharedService {
 
   //get massage example
   getExitSystemEvent(): Observable<any> {
-    debugger
+    //debugger
     return this.subject.asObservable();
   }
 }
