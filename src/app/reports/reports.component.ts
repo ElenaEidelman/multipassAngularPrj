@@ -177,11 +177,11 @@ export class ReportsComponent implements OnInit, AfterViewInit {
     this.Report3Form.get('TDate').setValue(new Date(date.getFullYear(), prevMonth, lastDayOfPrevMonth.getDate(), 23, 59, 59))
 
 
-    debugger
+    //debugger
     let maxDateForRep = new Date(new Date().setDate(new Date().getDate() - 1));
     this.maxDateForReport = new Date(maxDateForRep.getFullYear(), maxDateForRep.getMonth(), maxDateForRep.getDate(), 23, 59, 59);
     this.maxDateForReportSpare = new Date(maxDateForRep.getFullYear(), maxDateForRep.getMonth(), maxDateForRep.getDate(), 23, 59, 59);
-    debugger
+    //debugger
     this.onReport2FormChanges();
   }
   onReport2FormChanges() {
@@ -211,7 +211,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
     })
 
     this.Report2Form.get('FDate').valueChanges.subscribe(val => {
-      debugger
+      //debugger
       this.minDateForReportBalance = '';
       this.maxDateForReportBalance = '';
     })
@@ -296,9 +296,9 @@ export class ReportsComponent implements OnInit, AfterViewInit {
   }
 
   sendBalanceReport() {
-    debugger
+    //debugger
     if (this.Report2Form.valid) {
-      debugger
+      //debugger
       let objToApi = {
         Token: this.userToken,
         UserId: this.Report2Form.get('customer').value.id,
@@ -313,9 +313,9 @@ export class ReportsComponent implements OnInit, AfterViewInit {
       objToApi['CanceledCheckB'] = false;
 
 
-      debugger
+      //debugger
       this.dataService.CreateRealizationReports(objToApi).subscribe(result => {
-        debugger
+        //debugger
         if (typeof result == 'string') {
           // this.dialog.open(DialogComponent, {
           //   data: { message: result }
@@ -471,7 +471,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         this.rangeOfDatesDatePickerView1Form = false;
         this.maxDateForReport = this.maxDateForReportSpare;
 
-        debugger
+        //debugger
         this[form].get('FDate').setValue(new Date(date.getFullYear(), date.getMonth(), 1, 0, 0, 0))
 
         //if firs day of month

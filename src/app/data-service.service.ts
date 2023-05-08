@@ -9,6 +9,17 @@ import { DialogComponent } from './PopUps/dialog/dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 // import host from "../HostFile.json";
 
+/**
+ * git remote rm origin     (remove origin url)
+ * git remote add origin https://github.com/ElenaEidelman/multipassAngularPrj   (add origin url)
+ * 
+ * --config git
+ * git config --global user.email
+ * git config --global user.name
+ * 
+ * 
+ */
+
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -58,22 +69,22 @@ $ git merge new-branch
   }
 
 
-  testApiToTest7(objToApi, api) {
+  // testApiToTest7(objToApi, api) {
 
-    // return this.http.post('http://localhost:53385/api/BuyMeIFrame/LoginByCompanyId',
-    //   { CompanyIdEnc: "aQwPrFXnUMnNYm6Tr4Pp3g2" }, httpOptions)
-    //debugger
-    return this.http.post('https://tempdomain-test-7.mltp.co.il/api/BuyMeIFrame/' + api, objToApi, httpOptions).pipe(
-      map(result => {
-        //debugger
-        return result;
-      }),
-      catchError(err => {
+  //   // return this.http.post('http://localhost:53385/api/BuyMeIFrame/LoginByCompanyId',
+  //   //   { CompanyIdEnc: "aQwPrFXnUMnNYm6Tr4Pp3g2" }, httpOptions)
+  //   ////debugger
+  //   return this.http.post('https://tempdomain-test-7.mltp.co.il/api/BuyMeIFrame/' + api, objToApi, httpOptions).pipe(
+  //     map(result => {
+  //       ////debugger
+  //       return result;
+  //     }),
+  //     catchError(err => {
 
-        return of(err.message);
-      })
-    );
-  }
+  //       return of(err.message);
+  //     })
+  //   );
+  // }
 
   setBaseUrl() {
     this.getHost().subscribe(result => {
@@ -117,14 +128,16 @@ $ git merge new-branch
   }
 
   checkResult(result) {
+    debugger
     if (typeof result == 'object') {
-
       if (result['Token'] != null && result['Token'] != '') {
         if (+result['err'] < 0) {
-
+          let temMsg = result['errdesc'] != null ? result['errdesc'] : 'err: ' + result['err'];
+          let errMsg = temMsg.includes("+") ? ([...new Set(((temMsg).split('+')).filter(n => n != ' ').map(n => n.trim()))]).join('\r\n') : temMsg;
           this.dialog.open(DialogComponent, {
-            data: { message: result['errdesc'] != null ? result['errdesc'] : 'err: ' + result['err'] }
+            data: { message: errMsg }
           })
+          // return result;
         }
         else {
           return result;
@@ -149,7 +162,7 @@ $ git merge new-branch
 
 
   GetHomeData(objToApi) {
-    debugger
+    ////debugger
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/DashBoard/GetHomeData`, objToApi, httpOptions).pipe(
       map(result => {
         return this.checkResult(result);
@@ -212,10 +225,33 @@ $ git merge new-branch
     );
   }
 
+  IsCardBelongToB2C(orderData) {
+
+    return this.http.post(`${localStorage.getItem('baseUrl')}/api/AllCards/IsCardBelongToB2C`, orderData, httpOptions).pipe(
+      map(result => {
+        return this.checkResult(result);
+      }),
+      catchError(err => {
+        return of(err.message);
+      })
+    );
+  }
+
 
   ApproveOrder(objToApi) {
     //
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/InsertUpdateOrder/ApproveOrder`, objToApi).pipe(
+      map(result => {
+        return this.checkResult(result);
+      }),
+      catchError(err => {
+        return of(err.message);
+      })
+    );
+  }
+  ApproveBatchOrder(objToApi) {
+    //
+    return this.http.post(`${localStorage.getItem('baseUrl')}/api/InsertUpdateOrder/ApproveBatchOrder`, objToApi).pipe(
       map(result => {
         return this.checkResult(result);
       }),
@@ -290,6 +326,29 @@ $ git merge new-branch
     );
   }
 
+  InsertUpdateOrderBatchByRange(objToApi) {
+    //api/InsertUpdateOrder/InsertUpdateOrder
+
+    return this.http.post(`${localStorage.getItem('baseUrl')}/api/InsertUpdateOrder/InsertUpdateOrderBatchByRange`, objToApi).pipe(
+      map(result => {
+        return result;
+      }),
+      catchError(error => {
+        return of(error.message);
+      })
+    );
+  }
+
+  InsertUpdateOrderByRange(objToApi) {
+    return this.http.post(`${localStorage.getItem('baseUrl')}/api/InsertUpdateOrder/InsertUpdateOrderByRange`, objToApi).pipe(
+      map(result => {
+        return this.checkResult(result);
+      }),
+      catchError(error => {
+        return of(error.message);
+      })
+    );
+  }
 
   GetOrdersByFilter(objToApi) {
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/Orders/GetOrdersByFilter`, objToApi).pipe(
@@ -546,7 +605,7 @@ $ git merge new-branch
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/AllCards/VoidCards`, objToApi).pipe(
       map(result => {
         //
-        //debugger
+        ////debugger
         return this.checkResult(result);
       }),
       catchError(error => {
@@ -648,6 +707,46 @@ $ git merge new-branch
     );
   }
 
+
+  InsertIssuanceVouchers(objToApi) {
+    return this.http.post(`${localStorage.getItem('baseUrl')}/api/AllCards/CreateCardsBatch`, objToApi).pipe(
+      map(result => {
+        //
+        return this.checkResult(result);
+      }),
+      catchError(error => {
+        //
+        return of(error.message);
+      })
+    );
+  }
+
+  GetIssuanceVouchers(objToApi) {
+    return this.http.post(`${localStorage.getItem('baseUrl')}/api/AllCards/GetAllCardsBatch`, objToApi).pipe(
+      map(result => {
+        //
+        //debugger
+        return this.checkResult(result);
+      }),
+      catchError(error => {
+        //
+        return of(error.message);
+      })
+    );
+  }
+
+  GetCardsListByIssuanceVoucherId(objToApi) {
+    return this.http.post(`${localStorage.getItem('baseUrl')}/api/AllCards/GetCardsByBatch`, objToApi).pipe(
+      map(result => {
+        //
+        return this.checkResult(result);
+      }),
+      catchError(error => {
+        //
+        return of(error.message);
+      })
+    );
+  }
   // GetUserToRole(objToApi) {
   //   return this.http.post(`${localStorage.getItem('baseUrl')}/api/Credential/GetUserToRole`, objToApi).pipe(
   //     map(result => {
@@ -660,4 +759,44 @@ $ git merge new-branch
   //     })
   //   );
   // }
+
+  LoadVouchersByExcelFile(objToApi) {
+    return this.http.post(`${localStorage.getItem('baseUrl')}/api/UploadFile/LoadVouchersByExcelFile`, objToApi).pipe(
+      map(result => {
+        //
+        return this.checkResult(result);
+      }),
+      catchError(error => {
+        //
+        return of(error.message);
+      })
+    );
+  }
+
+  InsertUpdateBatchOrder(objToApi) {
+    return this.http.post(`${localStorage.getItem('baseUrl')}/api/InsertUpdateOrder/InsertUpdateBatchOrder`, objToApi).pipe(
+      map(result => {
+        //
+        return result;
+      }),
+      catchError(error => {
+        //
+        return of(error.message);
+      })
+    );
+  }
+
+  CheckCardBelongingToTheCompany(objToApi) {
+    return this.http.post(`${localStorage.getItem('baseUrl')}/api/AllCards/ValidateCardRangeForBelongingToTheCompany`, objToApi).pipe(
+      map(result => {
+        //
+        return result;
+      }),
+      catchError(error => {
+        //
+        return of(error.message);
+      })
+    );
+  }
+
 }

@@ -29,11 +29,11 @@ export class TestComponent implements OnInit {
       CompanyIdEnc: "aQwPrFXnUMnNYm6Tr4Pp3g2",
       HostingURL: "https://tempdomain-test-7.mltp.co.il"
     };
-    //debugger
-    this.dataService.testApiToTest7(objToApi, 'LoginByCompanyId').subscribe(result => {
-      debugger
-      this.console = 'result is: ' + result;
-    })
+    ////debugger
+    // this.dataService.testApiToTest7(objToApi, 'LoginByCompanyId').subscribe(result => {
+    //   //debugger
+    //   this.console = 'result is: ' + result;
+    // })
   }
 
 
@@ -45,11 +45,11 @@ export class TestComponent implements OnInit {
     var objToApi = {
       CompanyIdEnc: 'bC1uVdEINfm7oJNltQd3PA2'
     };
-    debugger
-    this.dataService.testApiToTest7(objToApi, 'GetIFrameCompanyInfo').subscribe(result => {
-      debugger
-      this.console = 'result is: ' + result;
-    })
+    //debugger
+    // this.dataService.testApiToTest7(objToApi, 'GetIFrameCompanyInfo').subscribe(result => {
+    //   //debugger
+    //   this.console = 'result is: ' + result;
+    // })
   }
 
 
@@ -57,9 +57,9 @@ export class TestComponent implements OnInit {
     var objToApi = {
       CompanyIdEnc: 'bC1uVdEINfm7oJNltQd3PA2'
     };
-    debugger
+    //debugger
     this.dataServiceIframe.GetIFrameCompanyInfo(objToApi).subscribe(result => {
-      debugger
+      //debugger
       this.console = result;
     })
   }

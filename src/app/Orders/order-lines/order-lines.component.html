@@ -22,7 +22,8 @@
                     <fa-icon [icon]="faFileExcel"></fa-icon>
                 </button>
             </div>
-            <div *ngIf="this.OrderCreatedFromExcel && orderHaveCards">
+
+            <div *ngIf="(this.OrderCreatedFromExcel && orderHaveCards) || LoadingVoucherByExcelHavePhoneNumber">
                 <button mat-button class="addButton" (click)="addSelectForSmsColumn()">
                     SMS שליחת
                     <mat-icon>{{smsIcon}}</mat-icon>
@@ -30,7 +31,7 @@
             </div>
             <div *ngIf="orderHaveCards">
                 <button mat-button class="deleteButton" (click)="addSelectForBlockedColumn()">
-                    ביטול שוברים
+                    ביטול תווים
                     <mat-icon>{{deleteIcon}}</mat-icon>
                 </button>
             </div>

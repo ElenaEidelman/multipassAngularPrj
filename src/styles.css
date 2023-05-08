@@ -32,6 +32,25 @@
   margin: 5px 0;
 }
 
+.pageTitle>div>div {
+  display: flex;
+  /* justify-content: space-between; */
+  flex-direction: row-reverse;
+  padding: 3px 0;
+}
+
+.mat-form-field-infix {
+  display: flex !important;
+  /* if have to change this row, please check the view of coments in cardInfo*/
+}
+
+.subTitle {
+  margin-left: 10px;
+  font-size: 1.3rem;
+  color: #3c3f428a;
+  direction: rtl;
+}
+
 .wrapPage {
   margin: 15px;
 }
@@ -91,7 +110,7 @@ app-main-menu {
 .page-wrap {
   /* background: #eef0f2; */
   min-height: calc(100vh - 110px);
-  margin: 0 30px;
+  margin: 0 10px;
   /* display: flex;
   flex-direction: row-reverse; */
 }
@@ -279,6 +298,15 @@ mat-form-field {
   padding: 10px;
 }
 
+.matError {
+  position: absolute;
+  right: 0;
+  direction: rtl;
+  padding-top: 10px;
+  font-weight: 100;
+  color: red;
+}
+
 .error2 {
   color: red !important;
   margin-top: -2px;
@@ -397,11 +425,19 @@ a:hover {
   cursor: pointer;
 }
 
+.cursor:hover {
+  cursor: pointer;
+}
+
 button.titleMenuButton {
   /* background: #51768D; */
   background: #444445;
   /* text-shadow: 0px 0px 2px rgb(88 143 101); */
   color: #fff;
+}
+
+.log-in .title {
+  text-align: right;
 }
 
 button.titleMenuButton:hover {
@@ -489,6 +525,7 @@ table.dialogData tr th {
 
 table.dialogData tr th>div {
   text-align: center;
+  font-size: 1em !important;
 }
 
 table.tableView tr th {
@@ -499,18 +536,52 @@ table.tableView tr th {
   padding: 0 7px;
 }
 
+
+
+
+
+
+
+.tableWrapWithScroll {
+  max-height: 400px;
+  max-width: 100%;
+  overflow: auto;
+}
+
+
+
+.tableWrap {
+  /* max-height: 300px;
+  max-width: 100%;
+  overflow: auto; */
+}
+
+.tableWrap table tbody tr:last-child {
+  position: sticky;
+  bottom: 0;
+}
+
 table.tableView tr th>div {
   justify-content: center;
 }
 
 table.tableInsideElement tr>th:first-child,
 table.tableInsideElement tr>td:first-child {
-  padding-right: 0 !important;
+  padding-right: 0px !important;
+}
+
+table.tableInsideElement tr>th:last-child,
+table.tableInsideElement tr>td:last-child {
+  padding-left: 0px !important;
 }
 
 table.tableInsideElement tr th,
 tr td {
   text-align: center !important;
+}
+
+table.tableInsideElement tr td .last-row {
+  padding: 0 5px;
 }
 
 .addToExecOrderForm {
@@ -587,8 +658,53 @@ table.digitalFilesTable td {
 
 }
 
+.relative {
+  position: relative;
+}
+
+.checkBoxUnderInput {
+  position: absolute;
+  bottom: -35px;
+  right: -20px;
+  z-index: 99;
+}
+
+.excelIconButton {
+  color: #88C43E;
+  width: unset !important;
+  height: unset !important;
+  margin: 15px 0 !important;
+}
+
+.excelIconButton span.mat-button-wrapper {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.5;
+}
+
+.excelIconButton img {
+  width: 32px;
+  height: 32px;
+  content: url('assets/img/excel-icon.svg');
+  filter: invert(73%) sepia(8%) saturate(3478%) hue-rotate(44deg) brightness(102%) contrast(73%);
+  margin: auto;
+}
+
+.excelIconButton:hover {
+  cursor: pointer;
+}
+
+.excelIconButton:hover img {
+  width: 32px;
+  height: 32px;
+  content: url(assets/img/excel-hover-icon.svg);
+  filter: unset;
+  cursor: pointer;
+}
+
+
 .marginTop-1 {
-  margin-top: -1%;
+  margin-top: -0.5%;
 }
 
 .bgTransparent {
@@ -662,7 +778,8 @@ dialog-content-example-dialog div.innerElement {
   color: #fff;
   padding: 7px;
   border-radius: 4px;
-  width: 105px;
+  /* width: 105px; */
+  width: 100%;
 }
 
 .tableOrderStatusClose {
@@ -871,7 +988,7 @@ svg {
 }
 
 .mat-dialog-container {
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 1);
   padding: 0px !important;
   border-radius: 8px !important;
 }
@@ -998,6 +1115,35 @@ div.dialogMessage button {
   animation: flickerAnimation 1s infinite;
 }
 
+.productData {
+  text-align: center;
+  line-height: 1;
+  margin: 1em;
+}
+
+.productName {
+  color: #8FC636;
+  font-weight: 600;
+  padding: 0px 0px 10px;
+  font-size: 2em;
+  direction: rtl;
+}
+
+.productSubTitle {
+  color: #686866;
+  font-size: 1.1em;
+  font-weight: bold;
+}
+
+.tableActions {
+  display: flex;
+  flex-direction: row-reverse;
+  margin: 2em 0;
+}
+
+.tableActions>div {
+  margin-left: 10px;
+}
 
 @keyframes flickerAnimation {
   0% {
@@ -1475,7 +1621,9 @@ td.mat-footer-cell:first-of-type {
   white-space: pre-wrap;
 }
 
-
+.cdk-overlay-pane {
+  max-height: unset !important;
+}
 
 /* mobile */
 
@@ -1873,6 +2021,32 @@ mat-form-field.marginTop0>div.mat-form-field-wrapper>div.mat-form-field-flex>div
   display: flex;
 }
 
+.tableViewContent {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row-reverse;
+}
+
+.tableViewContent .tableCol {
+  width: 100%;
+
+}
+
+.tableViewContent .tableCol .colTitle {
+  background-color: #EFEFED;
+  color: #686866;
+  padding: 0.5em 5em;
+  font-weight: bold;
+}
+
+.tableViewContent .tableCol .colRow {
+  padding: 0.5em 5em;
+
+}
+
+.tableViewContent .tableCol .colRow mat-form-field {
+  width: 100%;
+}
 
 @media screen and (max-width: 1024px) {
   .mat-select-panel {

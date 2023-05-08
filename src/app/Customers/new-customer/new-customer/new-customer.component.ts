@@ -98,7 +98,7 @@ export class NewCustomerComponent implements OnInit {
     if (this.pagePermissionAccessLevel.AccessLevel == this.MockData.accessLevelReadOnly) {
       this.newCustomerForm.disable()
     }
-    debugger
+    //debugger
     this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
     this.getUserStatus();
   }

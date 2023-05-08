@@ -181,7 +181,7 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
     }
 
     this.dataService.GetAllCustomers(objToApi).subscribe(result => {
-      debugger
+      //debugger
 
       this.filterSpinner = false;
       if (typeof result == 'string') {
@@ -377,7 +377,7 @@ export class AllCustomersComponent implements OnInit, AfterViewInit {
           }
 
           this.dataService.DeleteSuspendUsers(objToApi).subscribe(result => {
-            debugger
+            //debugger
 
             if (typeof result == 'string') {
               // this.dialog.open(DialogComponent, {

@@ -20,6 +20,7 @@ import { SharedService } from 'src/app/Services/SharedService/shared.service';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { debug } from 'console';
 import { MockData } from 'src/app/Classes/mockData';
+import { OrderType } from 'src/app/Classes/OrderTypes';
 
 
 @Component({
@@ -61,10 +62,13 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
   userToken: string;
   userId;
   orderId;
+  OrderType = OrderType;
+  orderType;
   orderIdToPreview = '';
 
   tableSpinner: boolean = true;
   orderHaveCards: boolean = false;
+  LoadingVoucherByExcelHavePhoneNumber: boolean = false;
 
   errorMsg: string = '';
   errorSendSms: string = '';
@@ -100,9 +104,9 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
     { value: 'DSendPhone', viewValue: 'מספר נייד נמען	' },
     { value: 'LoadSum', viewValue: 'סכום טעינה ראשוני		' },
     { value: 'ValidationDate', viewValue: '	תוקף	' },
-    { value: 'KindOfLoadSumDesc', viewValue: 'סוג שובר טעינה	' },
+    { value: 'KindOfLoadSumDesc', viewValue: 'סוג תו טעינה	' },
     { value: 'DSendLastSent', viewValue: 'נשלח לאחרונה' },
-    { value: 'active', viewValue: 'סטטוס שובר' },
+    { value: 'active', viewValue: 'סטטוס תו' },
   ];
   tabelLabelsList = ['Row', 'CardId', 'DSendName', 'DSendPhone', 'LoadSum', 'ValidationDate', 'KindOfLoadSumDesc', 'DSendLastSent', 'active'];
 
@@ -122,6 +126,8 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit(): void {
     window.scroll(0, 0);
     this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
+
+
     // this.urlParamDestroy = this.activeRoute.params.subscribe(param => {
 
     this.pagePermissionAccessLevel = this.sharedService.pagesAccessLevel.value.length > 0 ? JSON.parse(this.sharedService.pagesAccessLevel.value) : JSON.parse(JSON.stringify(this.pagePermissionAccessLevel));
@@ -141,6 +147,22 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
       this.urlSharingService.changeMessage('');
       this.userId = JSON.parse(urlParams)['customerId'];
       this.orderId = JSON.parse(urlParams)['orderId'];
+      this.orderType = JSON.parse(urlParams)['orderType'];
+
+
+      //add another one column for magnetic cards
+      //debugger
+      if (this.orderType == this.OrderType.LoadingVoucherByExcel || this.orderType == this.OrderType.LoadingVouchersManually) {
+        //add additional column for loaded vouchers
+        this.tabelLabels.join();
+        this.tabelLabels.splice(2, 0, { value: 'Track', viewValue: "קידוד כרטיס" });
+        this.tabelLabels.join();
+
+
+        this.tabelLabelsList.join();
+        this.tabelLabelsList.splice(2, 0, "Track");
+      }
+
       this.GetCards();
       this.GetCustomerById();
     }
@@ -184,9 +206,15 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
       userId: this.userId
     }
 
+    if (this.orderType == this.OrderType.LoadingVoucherByExcel || this.orderType == this.OrderType.LoadingVouchersManually) {
+      objToAPI['OpCode'] = 'Magnetic'
+    }
+
+    debugger
+
 
     this.dataService.GetCardsByOrderId(objToAPI).subscribe(result => {
-
+      debugger
       this.tableSpinner = false;
       if (typeof result == 'string') {
         // this.dialog.open(DialogComponent, {
@@ -197,17 +225,27 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
         return false;
       }
 
+      if (this.orderType == this.OrderType.LoadingVoucherByExcel || this.orderType == this.OrderType.LoadingVouchersManually) {
+        this.LoadingVoucherByExcelHavePhoneNumber = result['obj'][0].filter(data => data.DSendPhone != '').length > 0;
+      }
+
       //check if order have created cards
-      result['obj'][0].every(element => {
-        if (element['CardId'] != null) {
-          this.orderHaveCards = true;
-          return false;
-        }
-        else {
-          this.orderHaveCards = false;
-          return true;
-        }
-      });
+
+      if (this.orderType != this.OrderType.LoadingVoucherByExcel && this.orderType != this.OrderType.LoadingVouchersManually) {
+        result['obj'][0].every(element => {
+          if (element['CardId'] != null) {
+            this.orderHaveCards = true;
+            debugger
+            return false;
+          }
+          else {
+            this.orderHaveCards = false;
+            debugger
+            return true;
+          }
+        });
+      }
+
 
       // if (result['Token'] != undefined || result['Token'] != null) {
 
@@ -223,11 +261,27 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
       //order id to preview
       this.orderIdToPreview = result['obj'][2];
 
+      //debugger
+      // if (this.orderType == this.OrderType.LoadingVoucherByExcel) {
+      //   //add additional column for loaded vouchers
+      //   this.tabelLabels.join();
+      //   this.tabelLabels.splice(2, 0, { value: 'Track', viewValue: "קידוד כרטיס" });
+      //   this.tabelLabels.join();
+
+
+      //   this.tabelLabelsList.join();
+      //   this.tabelLabelsList.splice(2, 0, "קידוד כרטיס");
+      // }
+
       this.dataTable.data = result['obj'][0];
 
 
       //DigitalBatch number, only if order created from excel
-      this.OrderCreatedFromExcel = result['obj'][1] != '' ? true : false;
+      if (this.orderType != this.OrderType.LoadingVoucherByExcel && this.orderType != this.OrderType.LoadingVouchersManually) {
+        this.OrderCreatedFromExcel = result['obj'][1] != '' ? true : false;
+        debugger
+      }
+
       this.DigitalBatch = result['obj'][1];
 
       // }
@@ -529,7 +583,7 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
 
       worksheet.columns = worksheetArr;
 
-      debugger
+      //debugger
       for (let data of Object.values(tableData)) {
         for (let element of Object.keys(data)) {
           if (element == 'CardId') {
@@ -547,7 +601,7 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
       // let userData = JSON.parse(localStorage.getItem('user')).obj;
       let userData = this.customerData;
 
-      debugger
+      //debugger
       workbook.xlsx.writeBuffer().then((data) => {
         let blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
         fs.saveAs(blob, userData['FName'] + '_' + userData['LName'] + '_' + this.orderId + '.xlsx');
@@ -598,6 +652,8 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
       orderId: orderId,
       customerId: customerId
     }
+
+    this.urlSharingService.changeOrderType(this.orderType);
     this.urlSharingService.changeMessage(JSON.stringify(Order));
     this.router.navigate(['/public/order']);
   }

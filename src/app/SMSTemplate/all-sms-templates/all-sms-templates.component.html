@@ -127,9 +127,9 @@
                                 </span>
                             </button>
                             <button mat-button class="linkButton" [class.errorActionButton]="!voucherNumberInsered"
-                                (click)="editButtonClicked('','מספר שובר')">
+                                (click)="editButtonClicked('','מספר תו')">
                                 <span>
-                                    <מספר שובר>*
+                                    <מספר תו>*
                                 </span>
                             </button>
                             <!-- <button mat-button class="linkButton" (click)="editButtonClicked('','פין קוד')">
@@ -144,6 +144,11 @@
                             <button mat-button class="linkButton" (click)="editButtonClicked('','לינק לברקוד')">
                                 <span>
                                     <לינק לברקוד>
+                                </span>
+                            </button>
+                            <button mat-button class="linkButton" (click)="editButtonClicked('','ארנק לדף לינק')">
+                                <span>
+                                    <ארנק לדף לינק>
                                 </span>
                             </button>
                         </mat-card-actions>
@@ -273,9 +278,9 @@
                                     </button>
                                     <button mat-button class="linkButton"
                                         [class.errorActionButton]="voucherNumberInseredById === 'voucherNumberInseredById' + temp.Id"
-                                        (click)="editButtonClicked(temp,'מספר שובר')">
+                                        (click)="editButtonClicked(temp,'מספר תו')">
                                         <span>
-                                            <מספר שובר>*
+                                            <מספר תו>*
                                         </span>
                                     </button>
                                     <!-- <button mat-button class="linkButton" (click)="editButtonClicked(temp,'פין קוד')">
@@ -293,6 +298,12 @@
                                         (click)="editButtonClicked(temp,'לינק לברקוד')">
                                         <span>
                                             <לינק לברקוד>
+                                        </span>
+                                    </button>
+                                    <button mat-button class="linkButton"
+                                        (click)="editButtonClicked(temp,'ארנק לדף לינק')">
+                                        <span>
+                                            <ארנק לדף לינק>
                                         </span>
                                     </button>
                                 </mat-card-actions>

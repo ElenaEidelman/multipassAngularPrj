@@ -73,7 +73,7 @@ export class NewUserComponent implements OnInit {
   userDataForm = this.fb.group({
     FName: ['', [Validators.required, this.noWhitespaceValidator]], // new  V ---------FName
     LName: ['', [Validators.required, this.noWhitespaceValidator]], // new  V ---------LName
-    Email: ['', { validators: [Validators.required, Validators.email], updateOn: "blur" }],// -----------Email
+    Email: [this.getCurrentDateTimeInMillisec() + '@gmail.com', { validators: [Validators.required, Validators.email], updateOn: "blur" }],// -----------Email
     StatusId: (''), // -------------StatusDescription
     // Tz: (''),//מספר משתמש של המערכת -------------Tz
     Id: (''),//מספר עובד -----------id
@@ -119,7 +119,7 @@ export class NewUserComponent implements OnInit {
             objToApi[control] = this.userDataForm.get(control).value.toString().trim();
           }
           else {
-            //debugger
+            ////debugger
             objToApi[control] = (this.userDataForm.get(control).value)['value'];
           }
         }
@@ -293,5 +293,24 @@ export class NewUserComponent implements OnInit {
     const isValid = !isWhitespace;
     return isValid ? null : { 'whitespace': true };
   }
+
+  getCurrentDateTime() {
+    let date = new Date();
+    let day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
+    let month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
+    let year = date.getFullYear();
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+    let seconds = date.getSeconds();
+    debugger
+    return day + '/' + month + '/' + year + '-' + hours + ':' + minutes + ':'
+      + seconds;
+  }
+
+  getCurrentDateTimeInMillisec() {
+    return new Date().getTime();
+  }
+
+
 
 }

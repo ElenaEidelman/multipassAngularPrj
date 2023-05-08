@@ -22,7 +22,7 @@ export class MainMenuComponent implements OnInit {
   workWithIframe;
   mockMenu = [
     { MenuEngName: 'allOrders', MenuName: 'הזמנות' },
-    { MenuEngName: 'allCards', MenuName: 'שוברים' },
+    { MenuEngName: 'allCards', MenuName: 'תווים' },
     { MenuEngName: 'allCustomers', MenuName: 'לקוחות' },
     { MenuEngName: 'reports', MenuName: 'דוחות' },
     { MenuEngName: 'allUsers', MenuName: 'משתמשים' },
@@ -48,7 +48,7 @@ export class MainMenuComponent implements OnInit {
 
 
         this.dataService.GetMenuPages(objToApi).subscribe(result => {
-
+          debugger
           if (typeof result == 'string') {
             // this.dialog.open(DialogComponent, {
             //   data: { message: result }

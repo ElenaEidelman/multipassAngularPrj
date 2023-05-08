@@ -70,8 +70,7 @@ export class IframeSeviceService {
 
   GetBlessings(objToApi) {
     //api/B2CIFrame/GetBlessings
-
-    return this.http.post(`${localStorage.getItem('baseUrlIframe')}/api/B2CIFrame/GetBlessings`, objToApi, httpOptions).pipe(
+    return this.http.post(`${localStorage.getItem('baseUrl')}/api/B2CIFrame/GetBlessings`, objToApi, httpOptions).pipe(
       map(result => {
         return result;
       }),

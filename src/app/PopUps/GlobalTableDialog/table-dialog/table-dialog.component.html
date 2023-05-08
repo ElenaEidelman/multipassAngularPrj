@@ -1,0 +1,48 @@
+<div>
+   <div class="close-icon-wrap" (click)="dialogClose()">
+      <mat-icon matTooltip="סגור" matTooltipPosition="right">cancel</mat-icon>
+   </div>
+
+
+   <div class="log-in">
+      <div class="wrap-form" style="padding-right: 1em;">
+         <div class="title errorBG" style="margin: 0 1em 1em;">
+            {{data.title}}
+         </div>
+         <div class="dialogMessage">
+
+            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 dialogData" dir="rtl">
+               <ng-container matColumnDef="{{row}}" *ngFor="let row of data.dataLabelsList">
+                  <th mat-header-cell *matHeaderCellDef>
+                     <div style="padding-right: unset !important;">{{row}}</div>
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                     <div>
+                        <span class="errorBG" *ngIf="row == 'הערה'">{{element[row]}}</span>
+                        <span *ngIf="row != 'הערה'">{{element[row]}}</span>
+                        <!-- {{element[row]}} -->
+                     </div>
+                  </td>
+               </ng-container>
+
+
+               <tr mat-header-row *matHeaderRowDef="data.dataLabelsList; sticky: true"></tr>
+               <tr mat-row *matRowDef="let row; columns: data.dataLabelsList;"></tr>
+
+
+            </table>
+            <!-- <mat-paginator [length]="dataSource.data.length" [pageSizeOptions]="[5]"></mat-paginator> -->
+            <div class="errorBG" style="font-size: 15px;" *ngIf="data.subTitle != ''">
+               {{data.subTitle}}
+            </div>
+         </div>
+
+
+      </div>
+      <div class="wrapSendButton">
+         <div>
+            <button mat-button class="addButton" (click)="no()">סגור</button>
+         </div>
+      </div>
+   </div>
+</div>

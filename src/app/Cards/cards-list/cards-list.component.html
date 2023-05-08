@@ -1,0 +1,84 @@
+<div class="pageTitle main2-title sticky top100 allCards">
+   <div> רשימת כרטיסים </div>
+</div>
+<div class="page-wrap">
+   <div class="page-element width-block-auto">
+      <div class="formBorder formElement">
+         <div *ngIf="voucherData != null">
+            <div class="productData">
+               <div class="productName">
+                  {{voucherData[0].IssuanceDescription}}
+               </div>
+               <div class="productSubTitle">
+                  כמות כרטיסים: {{voucherData[0].CardsCount | number}}
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+
+
+
+   <div class="hiddenBlockWrap">
+      <!-- table -->
+      <div class="page-element width-block-auto">
+         <div class="element-page-title">רשימת כרטיסים</div>
+         <div style="position: relative; width: 100%">
+            <mat-spinner *ngIf="spinner" class="filterActionButton"></mat-spinner>
+         </div>
+         <div class="tableActions">
+            <div>
+               <button mat-button class="addButton" (click)="excelFileExport()">
+                  יצוא טבלה
+                  <fa-icon [icon]="faFileExcel"></fa-icon>
+               </button>
+            </div>
+            <div>
+               <button mat-button class="addButton" (click)="excelFileExporforLoad()">
+                  יצוא לטעינה
+                  <fa-icon [icon]="faFileExcel"></fa-icon>
+               </button>
+            </div>
+            <div>
+               <!--(click)="goToOrder(orderId, userId)"-->
+               <button mat-button class="linkButton" (click)="backToVouchersIssuance()">
+                  חזרה למסך הנפקות
+                  <mat-icon>arrow_back</mat-icon>
+               </button>
+            </div>
+         </div>
+
+         <div class="mat-elevation-z8" *ngIf="this.vouchersDataSource != null ">
+            <table mat-table [dataSource]="vouchersDataSource" matSort class="tableView" dir="ltr">
+
+               <!-- ID Column -->
+               <ng-container *ngFor="let data of displayedColumns">
+                  <ng-container matColumnDef="{{data}}">
+                     <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        {{returnHebTranslation(cardsLabelForTable,data)}} </th>
+                     <td mat-cell *matCellDef="let row">
+
+                        <ng-container *ngIf="data == 'CardValidDate'">
+                           {{row[data] | formatDate}}
+                        </ng-container>
+                        <ng-container *ngIf="data == 'BatchNum'">
+                           {{row['CardId']}}-{{row['Pin']}}
+                        </ng-container>
+                        <ng-container *ngIf="data != 'CardValidDate' && data != 'BatchNum'">
+                           {{row[data]}}
+                        </ng-container>
+                     </td>
+                  </ng-container>
+               </ng-container>
+
+               <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+               <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+            </table>
+            <mat-paginator [pageSize]="25" [pageSizeOptions]="[25, 55, 85, 100]"
+               class="mat-paginator-sticky"></mat-paginator>
+
+         </div>
+      </div>
+   </div>
+</div>

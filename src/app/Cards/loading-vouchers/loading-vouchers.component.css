@@ -1,0 +1,180 @@
+.formRow {
+   /* display: flex;
+   flex-direction: row-reverse;
+   justify-content: space-between; */
+}
+
+.wrapForm {
+   display: flex;
+   flex-direction: column;
+}
+
+.formRow {
+   display: flex;
+   flex-direction: row-reverse;
+   justify-content: space-between;
+}
+
+.formRow>div.formRowChild {
+   flex-grow: 1;
+   flex-basis: 0;
+   margin: auto 15px;
+
+}
+
+.formRowChild mat-form-field {
+   width: 100%;
+}
+
+/* .formRow > div > mat-form-field{
+   width:100%;
+} */
+.wrapSelectUser {
+   display: flex;
+   flex-direction: row-reverse;
+}
+
+.wrapSelectUser>div {
+   margin: 10px;
+}
+
+.wrapSelectUser>div.wrapUserButton {
+   margin: auto 2em;
+}
+
+.wrapUserButton {
+   display: flex;
+   flex-direction: row-reverse;
+}
+
+.wrapUserButton>* {
+   margin: auto auto 0;
+   text-align: CENTER;
+}
+
+.downloadButton:hover {
+   text-decoration: none;
+}
+
+.bWrap {
+   margin: 0 30px;
+}
+
+.loadB>button {
+   /* width: 100%;
+   margin: 0; */
+}
+
+.buttonsWrap {
+   display: flex;
+   justify-content: center;
+   /* flex-direction: column; */
+}
+
+.linkButton mat-icon {
+   /* color: #686866; */
+}
+
+mat-hint {
+   display: block;
+}
+
+.buttonAny {
+   display: flex;
+   flex-direction: column;
+   text-align: center;
+   margin: auto;
+
+}
+
+.buttonAny>button {
+   width: fit-content;
+   margin: auto;
+}
+
+.wrap-content {
+   margin: 2em 0;
+}
+
+.marginSelectTop {
+   margin-top: 18px;
+}
+
+.hiddenLoadingCardContent {
+   padding-bottom: 1em;
+}
+
+.sendButtonWrap {
+   margin: 15px auto;
+   text-align: center;
+   display: flex;
+   flex-direction: column;
+}
+
+.flexB {
+   display: flex;
+   justify-content: center;
+   margin-left: auto;
+}
+
+.textA .mat-form-field-infix {
+   padding-top: 10px;
+}
+
+.mat-button.mat-primary.mat-button-disabled,
+.mat-button.mat-accent.mat-button-disabled,
+.mat-button.mat-warn.mat-button-disabled,
+.mat-button.mat-button-disabled.mat-button-disabled,
+.mat-icon-button.mat-primary.mat-button-disabled,
+.mat-icon-button.mat-accent.mat-button-disabled,
+.mat-icon-button.mat-warn.mat-button-disabled,
+.mat-icon-button.mat-button-disabled.mat-button-disabled,
+.mat-stroked-button.mat-primary.mat-button-disabled,
+.mat-stroked-button.mat-accent.mat-button-disabled,
+.mat-stroked-button.mat-warn.mat-button-disabled,
+.mat-stroked-button.mat-button-disabled.mat-button-disabled {
+   color: #fff !important;
+}
+
+.getForExampleExcelFile {
+   color: #757575;
+   text-decoration: underline;
+}
+
+.getForExampleExcelFile:hover {
+   cursor: pointer;
+   color: #272626;
+}
+
+.formWrapRow mat-form-field {
+   width: 100%;
+}
+
+/* .addButton {
+   background: #88C43E !important;
+   color: #fff !important;
+} */
+
+
+@media screen and (max-width: 1024px) {
+   .textA .mat-form-field-infix {
+      padding-top: 0px;
+   }
+
+   .flexB {
+      margin-left: 0;
+      margin: auto;
+   }
+
+   .formWrapRow {
+      flex-direction: column;
+   }
+
+   .wrapSelectUser {
+      justify-content: space-between;
+   }
+
+   .wrapSelectUser>div.wrapUserButton {
+      margin: auto 10px;
+   }
+}

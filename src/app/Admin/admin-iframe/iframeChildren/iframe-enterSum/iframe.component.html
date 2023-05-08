@@ -8,7 +8,7 @@
                 <!--logo image-->
                 <div class="formRow">
                     <mat-form-field class="iframePrevieSmallImg">
-                        <mat-label>לוגו</mat-label>
+                        <mat-label>לוגו (רוחב 300)</mat-label>
                         <input [hidden]="true" name="Logo" #Logo (change)="fileOptionChange($event, 'Logo')"
                             type="file">
                         <input [hidden]="true" matInput readonly [value]="Logo.value" formControlName="Logo">
@@ -133,7 +133,7 @@
                 <!--gift card image-->
                 <div class="formRow">
                     <mat-form-field class="iframePrevieSmallImg">
-                        <mat-label>גיפט קארד</mat-label>
+                        <mat-label>גיפט קארד ( 350 * 410)</mat-label>
                         <input [hidden]="true" name="GiftCardPic" #GiftCardPic
                             (change)="fileOptionChange($event, 'GiftCardPic')" type="file">
                         <input [hidden]="true" matInput formControlName="GiftCardPic" readonly
@@ -158,7 +158,7 @@
                 <!--background image-->
                 <div class="formRow">
                     <mat-form-field class="iframePrevieSmallImg">
-                        <mat-label>רקע כללי</mat-label>
+                        <mat-label>(1920 * 1080) רקע כללי</mat-label>
                         <input [hidden]="true" name="BackGround" #BackGround
                             (change)="fileOptionChange($event, 'BackGround')" type="file">
                         <input [hidden]="true" matInput readonly [value]="BackGround.value"

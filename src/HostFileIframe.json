@@ -1,8 +1,8 @@
 {
-    "baseUrl": "https://tempdomain-test-3.mltp.co.il",
+    "baseUrl": "http://localhost:45036",
     "DevMode": "true",
     "minAmount": "100",
     "picSizeInMega": "1",
-    "http://localhost:45036": "https://tempdomain-test-3.mltp.co.il",
+    "http://localhost:45036": "https://multitavtest.mltp.co.il/",
     "https://multitav.co.il": ""
 }

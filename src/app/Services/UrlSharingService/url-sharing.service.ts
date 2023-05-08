@@ -24,12 +24,20 @@ export class UrlSharingService {
   public messageSource = new BehaviorSubject('');
   public currentMessage = this.messageSource.asObservable();
 
+  public orderTypeSource = new BehaviorSubject('');
+  public orderTypeMessage = this.orderTypeSource.asObservable();;
+
+
   // replaySubject = this.ReplaySubject.asObservable();
 
   constructor() { }
 
   changeMessage(message: string) {
     this.messageSource.next(message)
+  }
+
+  changeOrderType(orderType: string) {
+    this.orderTypeSource.next(orderType);
   }
 
   // addToReplaySubject(message){

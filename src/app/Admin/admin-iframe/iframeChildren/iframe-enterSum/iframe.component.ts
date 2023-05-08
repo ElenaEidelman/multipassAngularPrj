@@ -147,6 +147,7 @@ export class IframeComponent implements OnInit, OnChanges {
           this.dialog.open(DialogComponent, {
             data: { message: 'קובץ כבד מדי' }
           })
+          debugger
         }
         else {
           this.iframePicsFormData.set(controlName, file);

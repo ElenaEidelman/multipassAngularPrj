@@ -153,7 +153,7 @@ export class LogInIframeComponent implements OnInit {
 
 
         this.dataServiceIframe.GetIFrameB2CLink(objToApi).subscribe(result => {
-
+          debugger
 
           if (typeof result == 'object') {
             if (result.err != -1) {
@@ -188,14 +188,12 @@ export class LogInIframeComponent implements OnInit {
 
   getIframeCompanyInfo(tenant) {
 
+    debugger
     let objToApi = {
       CompanyIdEnc: tenant
     }
-
-
-    debugger
     this.dataServiceIframe.GetIFrameCompanyInfo(objToApi).subscribe(result => {
-      debugger
+      //debugger
 
 
       if (typeof result == 'string') {
@@ -208,7 +206,7 @@ export class LogInIframeComponent implements OnInit {
         if (result.obj != undefined && result.obj != null && Object.keys(result.obj).length > 0) {
           this.sharingIframeService.companyInfoService.next(JSON.stringify(result));
           this.infoData = result.obj[0];
-          debugger
+          //debugger
           this.spareData = JSON.parse(JSON.stringify(this.infoData))
 
         }
@@ -219,8 +217,6 @@ export class LogInIframeComponent implements OnInit {
 
   //remove double back slash //
   checkPath(path) {
-
-    debugger
     if (path.includes('data:')) {
       return path;
     }
@@ -246,6 +242,7 @@ export class LogInIframeComponent implements OnInit {
     if (this.sumForm.get('cardSumControl').valid) {
       //if company id got by parameters from url, navigate to another link
 
+      debugger
       if (this.companyIdByParams) {
         this.route.navigate(['/gift-card/' + this.sumForm.get('cardSumControl').value], { skipLocationChange: true });
       }

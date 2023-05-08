@@ -1,5 +1,5 @@
 <div class="pageTitle main2-title sticky top100">
-    <div>נתוני שובר</div>
+    <div>נתוני תו</div>
     <div class="readOnliNotifivation"
         *ngIf="pagePermissionAccessLevel.AccessLevel == this.MockData.accessLevelReadOnly">
         {{MsgList.readOnly}}
@@ -11,9 +11,9 @@
     <!--filter table-->
     <div class="page-element width-block-auto wrapCardsFilter">
 
-        <!-- נתוני שובר -->
+        <!-- נתוני תו -->
         <div class="page-element innerElement">
-            <div class="element-page-title element-page-title2">נתוני שובר</div>
+            <div class="element-page-title element-page-title2">נתוני תו</div>
             <div class="wrapInnerEl" *ngIf="CardInfo">
                 <div class="firstChild datePicker">
                     <div class="wrapExpData">
@@ -27,7 +27,7 @@
                 <div class="secondChild">
                     <div>
                         <div class="customer-info-element">
-                            <div class="customerDataTitle"> מספר שובר </div>
+                            <div class="customerDataTitle"> מספר תו </div>
                             <div class="detailsRow">{{CardInfo.CardId}}</div>
                         </div>
                     </div>
@@ -53,19 +53,19 @@
                             <div class="wrapActiveVoidButton">
                                 <button mat-button class="primaryButton" *ngIf="!CardInfo.IsActive"
                                     (click)="activeVoidCard(CardInfo.IsActive)">
-                                    הפעל שובר
+                                    הפעל תו
                                     <mat-icon class="mat-icon-rtl-mirror">touch_app</mat-icon>
                                 </button>
                                 <button mat-button class="deleteButton" *ngIf="CardInfo.IsActive"
                                     (click)="activeVoidCard(CardInfo.IsActive)">
-                                    חסום שובר
+                                    חסום תו
                                     <mat-icon class="mat-icon-rtl-mirror">block</mat-icon>
                                 </button>
                                 <mat-spinner *ngIf="spinnerActiveVoidCard" class="spinnerActiveVoidCard"></mat-spinner>
                             </div>
                         </div>
                         <div class="customer-info-element">
-                            <div class="customerDataTitle">סטטוס שובר</div>
+                            <div class="customerDataTitle">סטטוס תו</div>
                             <div class="detailsRow">{{CardInfo.IsActive ? 'פעיל' : 'חסום'}}</div>
                         </div>
                     </div>
@@ -96,7 +96,7 @@
 
                         <!--[routerLink]="['/public/order/', OrderDetails.Id, OrderDetails.UserId]"-->
                         <a (click)="goToOrder(OrderDetails.Id, OrderDetails.UserId)"
-                            matTooltip="להזמנה של השובר">{{OrderDetails.IdEx}}</a>
+                            matTooltip="להזמנה של התו">{{OrderDetails.IdEx}}</a>
                     </div>
                 </div>
                 <div class="customer-info-element">
@@ -166,7 +166,7 @@
                     <div class="smsFormWrap">
 
                         <div class="selectWrap">
-                            <mat-form-field>
+                            <mat-form-field *ngIf="!isIframeOrder">
                                 <mat-label>בחר תבנית מסרון</mat-label>
                                 <mat-select formControlName="smsTemplates"
                                     [disabled]="userDetailsForm.get('PhoneNumber').value == ''"
@@ -175,15 +175,44 @@
                                         {{template.TemplateName}}</mat-option>
                                 </mat-select>
                             </mat-form-field>
+                            <mat-form-field *ngIf="isIframeOrder">
+                                <mat-label>בחר תבנית מסרון</mat-label>
+                                <mat-select formControlName="smsTemplates"
+                                    [disabled]="userDetailsForm.get('PhoneNumber').value == ''"
+                                    (selectionChange)="celebratingChanged($event)">
+                                    <mat-option *ngFor="let template of blessingList" [value]="template.typeBlessingId">
+                                        {{template.Subject}}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
                         </div>
 
 
                         <div class="textAreaWrap sendSMS">
                             <mat-form-field class="textAreaWrap" appearance="outline">
                                 <textarea matInput formControlName="previewSmsTemplate" cdkTextareaAutosize
-                                    #autosize="cdkTextareaAutosize" readonly>
+                                    #autosize="cdkTextareaAutosize">
                                     </textarea>
                             </mat-form-field>
+                            <div class="underTextAreaElements" *ngIf="isIframeOrder">
+                                <div>
+                                    <div class="TAPaging"
+                                        *ngIf="blessingFilteredList != undefined && blessingFilteredList.length > 0">
+                                        <mat-icon class="primaryColor" (mousedown)="stepNext()">
+                                            chevron_right</mat-icon>
+                                        <span
+                                            class="marginAuto">{{blessingTextCurrentStep}}/{{blessingFilteredList.length}}</span>
+                                        <mat-icon class="primaryColor" (mousedown)="stepBefore()">
+                                            chevron_left</mat-icon>
+                                    </div>
+                                </div>
+                                <div class="underTALeftElement">
+                                    <div class="clearAll primaryColor" (mousedown)="clearBlessingTA()">נקה
+                                        הכל</div>
+                                    <div>
+                                        {{sendSms.get('previewSmsTemplate').value.length}}/150
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
 
@@ -215,7 +244,7 @@
                             <div>
                                 <mat-form-field>
                                     <mat-label>שם מלא</mat-label>
-                                    <input matInput placeholder="שם מלא של מחזיק השובר" formControlName="FullName">
+                                    <input matInput placeholder="שם מלא של מחזיק התו" formControlName="FullName">
                                     <mat-error>{{MsgList.requiredField}}</mat-error>
                                 </mat-form-field>
                             </div>
@@ -225,6 +254,35 @@
                                     <input matInput placeholder="מספר טלפון נייד" formControlName="PhoneNumber"
                                         [attr.maxlength]="10" numbersOnly>
                                     <mat-error *ngIf="userDetailsForm.get('PhoneNumber').errors?.pattern">
+                                        {{MsgList.phonePatternErr}}</mat-error>
+                                </mat-form-field>
+                            </div>
+                            <div></div>
+                        </div>
+
+                        <!-- b2c to who send the sms -->
+                        <!-- shows only for iframe orders-->
+                        <div class="formWrapRow" *ngIf="isIframeOrder">
+                            <div>
+                                <mat-form-field>
+                                    <mat-label>שם מקבל/מקבלת המתנה </mat-label>
+                                    <input matInput placeholder=" מייל מקבל/מקבלת המתנה " formControlName="B2CThoWho">
+                                    <mat-error>{{MsgList.requiredField}}</mat-error>
+                                </mat-form-field>
+                            </div>
+                            <div>
+                                <mat-form-field>
+                                    <mat-label>מייל מקבל/מקבלת המתנה </mat-label>
+                                    <input matInput placeholder=" מייל מקבל/מקבלת המתנה " formControlName="B2CEmail">
+                                    <mat-error>{{MsgList.emailFormatValidationErr}}</mat-error>
+                                </mat-form-field>
+                            </div>
+                            <div>
+                                <mat-form-field>
+                                    <mat-label>נייד מקבל/מקבלת המתנה </mat-label>
+                                    <input matInput placeholder="  נייד מקבל/מקבלת המתנה"
+                                        formControlName="B2CPhoneNumber" [attr.maxlength]="10" numbersOnly>
+                                    <mat-error *ngIf="userDetailsForm.get('B2CPhoneNumber').errors?.pattern">
                                         {{MsgList.phonePatternErr}}</mat-error>
                                 </mat-form-field>
                             </div>

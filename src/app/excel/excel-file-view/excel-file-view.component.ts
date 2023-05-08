@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { MsgList } from 'src/app/Classes/msgsList';
+import { OrderType } from 'src/app/Classes/OrderTypes';
 import { DataServiceService } from 'src/app/data-service.service';
 import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
 import { SharedService } from 'src/app/Services/SharedService/shared.service';
@@ -15,6 +16,7 @@ import { UrlSharingService } from 'src/app/Services/UrlSharingService/url-sharin
 })
 export class ExcelFileViewComponent implements OnInit, OnDestroy {
 
+  OrderType = OrderType;
   constructor(
     private router: Router,
     private dataService: DataServiceService,
@@ -22,6 +24,7 @@ export class ExcelFileViewComponent implements OnInit, OnDestroy {
     private sharedService: SharedService,
     private urlSharingService: UrlSharingService
   ) { }
+
   excelData;
   // Policy;
   userToken: string;
@@ -29,7 +32,9 @@ export class ExcelFileViewComponent implements OnInit, OnDestroy {
   tableSource;
   tableLabels;
   excelFileData;
+  orderType;
   createOrderSpinner: boolean = false;
+  orderTypeObj = OrderType;
 
   ngOnInit(): void {
 
@@ -40,14 +45,14 @@ export class ExcelFileViewComponent implements OnInit, OnDestroy {
 
   getExcelFile() {
 
-    let t = localStorage.getItem('excelFileData')
-    debugger
+    //let t = localStorage.getItem('excelFileData')
     if (localStorage.getItem('excelFileData') != '') {
       this.excelFileData = JSON.parse(localStorage.getItem('excelFileData'));
       this.customerId = this.excelFileData.customerId;
       this.excelData = JSON.parse(this.excelFileData.fileData).obj[0];
       // this.Policy = this.excelFileData.Policy;
-      debugger
+      this.orderType = localStorage.getItem('OrderType');
+      //debugger
       this.createTableToViewExcelFile(this.excelData);
     }
     else {
@@ -58,7 +63,8 @@ export class ExcelFileViewComponent implements OnInit, OnDestroy {
 
   goToCreateOrder() {
 
-
+    let t = this.orderType;
+    debugger
     //object for insert orderLines
 
     this.createOrderSpinner = true;
@@ -71,39 +77,88 @@ export class ExcelFileViewComponent implements OnInit, OnDestroy {
     // formDataForOrdersLine.append('Policy', this.Policy)
 
 
-    debugger
-    this.dataService.InsertUpdateOrderByExcel(formDataForOrdersLine).subscribe(result => {
-      debugger
-      this.createOrderSpinner = false;
-      if (result['Token'] != undefined || result['Token'] != null) {
+    if (this.orderType != this.orderTypeObj.LoadingVoucherByExcel) {
+      //debugger
+      this.dataService.InsertUpdateOrderByExcel(formDataForOrdersLine).subscribe(result => {
+        //debugger
+        this.createOrderSpinner = false;
 
-        //set new token
-        let tempObjUser = JSON.parse(localStorage.getItem('user'));
-        tempObjUser['Token'] = result['Token'];
-        localStorage.setItem('user', JSON.stringify(tempObjUser));
-        this.userToken = result['Token'];
+        if (result['Token'] != undefined || result['Token'] != null) {
+
+          //set new token
+          let tempObjUser = JSON.parse(localStorage.getItem('user'));
+          tempObjUser['Token'] = result['Token'];
+          localStorage.setItem('user', JSON.stringify(tempObjUser));
+          this.userToken = result['Token'];
 
 
-        if (result.obj != undefined && result.obj != null && Object.keys(result.obj).length > 0) {
-          // this.urlSharingService.changeMessage('orderId:' + result.obj[0].orderid + '-' + 'customerId:' + this.customerId);
+          if (result.obj != undefined && result.obj != null && Object.keys(result.obj).length > 0) {
+            // this.urlSharingService.changeMessage('orderId:' + result.obj[0].orderid + '-' + 'customerId:' + this.customerId);
 
-          let Order = {
-            orderId: result.obj[0].orderid,
-            customerId: this.customerId
+            let Order = {
+              orderId: result.obj[0].orderid,
+              customerId: this.customerId
+            }
+
+            this.urlSharingService.changeMessage(JSON.stringify(Order));
+            this.urlSharingService.changeOrderType(this.orderType);
+            //localStorage.setItem('OrderType', this.orderType);
+            this.router.navigate(['/public/order/']);
           }
 
-          this.urlSharingService.changeMessage(JSON.stringify(Order));
-          this.router.navigate(['/public/order/']);
         }
+        else {
+          // this.dialog.open(DialogComponent, {
+          //   data: { message: MsgList.exitSystemAlert }
+          // })
+          this.sharedService.exitSystemEvent(MsgList.exitSystemAlert);
+        }
+      });
+    }
+    else {
+      debugger
+      this.dataService.InsertUpdateBatchOrder(formDataForOrdersLine).subscribe(result => {
+        debugger
+        this.createOrderSpinner = false;
 
-      }
-      else {
-        // this.dialog.open(DialogComponent, {
-        //   data: { message: MsgList.exitSystemAlert }
-        // })
-        this.sharedService.exitSystemEvent(MsgList.exitSystemAlert);
-      }
-    });
+        if (result['Token'] != undefined || result['Token'] != null) {
+
+          //set new token
+          let tempObjUser = JSON.parse(localStorage.getItem('user'));
+          tempObjUser['Token'] = result['Token'];
+          localStorage.setItem('user', JSON.stringify(tempObjUser));
+          this.userToken = result['Token'];
+
+          if (result.err < 0) {
+            this.dialog.open(DialogComponent, {
+              data: { message: result.errdesc }
+            })
+            return false;
+          }
+
+          if (result.obj != undefined && result.obj != null && Object.keys(result.obj).length > 0) {
+            // this.urlSharingService.changeMessage('orderId:' + result.obj[0].orderid + '-' + 'customerId:' + this.customerId);
+
+            let Order = {
+              orderId: result.obj[0].orderid,
+              customerId: this.customerId
+            }
+
+            this.urlSharingService.changeMessage(JSON.stringify(Order));
+            this.urlSharingService.changeOrderType(this.orderType);
+            this.router.navigate(['/public/order/']);
+          }
+
+        }
+        else {
+          // this.dialog.open(DialogComponent, {
+          //   data: { message: MsgList.exitSystemAlert }
+          // })
+          this.sharedService.exitSystemEvent(MsgList.exitSystemAlert);
+        }
+      });
+    }
+
   }
 
   createTableToViewExcelFile(fileData) {
@@ -114,11 +169,18 @@ export class ExcelFileViewComponent implements OnInit, OnDestroy {
   }
 
   cancelOrder() {
-    localStorage.getItem('excelFileData') != '';
-    this.router.navigate(['/public/orderCards']);
+    switch (this.orderType) {
+      case this.OrderType.OrderByExcel: this.router.navigate(['/public/orderCards']);
+      case this.OrderType.LoadingVoucherByExcel: this.router.navigate(['/public/LoadingVouchers']);
+    }
+
+    // if (this.orderType = this.OrderType.OrderByExcel) {
+    //   this.router.navigate(['/public/orderCards']);
+    // }
 
   }
   ngOnDestroy() {
-    localStorage.setItem('excelFileData', '');
+    localStorage.removeItem('excelFileData');
+    localStorage.removeItem('OrderType');
   }
 }

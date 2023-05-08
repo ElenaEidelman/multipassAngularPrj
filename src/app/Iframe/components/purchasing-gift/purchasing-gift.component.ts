@@ -189,6 +189,7 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
 
     this.picSizeInMega = localStorage.getItem('picSizeInMega');
     this.companyInfo = this.sharingIframeService.companyInfoService.value != '' ? JSON.parse(this.sharingIframeService.companyInfoService.value) : this.sharingIframeService.companyInfoService.value;
+    debugger
     this.companyId = this.sharingIframeService.companyId.getValue();
     this.getIframeCompanyInfo();
 
@@ -247,9 +248,10 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
 
 
 
+    debugger
     this.dataService.GetBlessings(objToApi).subscribe(result => {
 
-
+      debugger
       if (typeof result == 'object') {
         if (result.err != -1) {
           this.blessingList = result.obj;
@@ -310,6 +312,7 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   celebratingChanged(event) {
+    debugger
     this.blessingTextCurrentStep = 1;
 
     let objToApi = {
@@ -317,6 +320,7 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
       SubjectId: event.value
     }
     this.dataService.GetBlessings(objToApi).subscribe(result => {
+      debugger
       if (typeof result == 'object') {
         if (result.err != -1) {
           // this.blessingList = result.obj;
@@ -354,6 +358,7 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   stepNext() {
+    debugger
     this.blessingTextView = !this.blessingTextView;
     if (this.blessingTextCurrentStep == this.blessingFilteredList.length) {
       this.blessingTextCurrentStep = 1;
@@ -673,7 +678,7 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
 
     let radioValDateSend = this.FormsArray.get('SecondFormGroup').get('dateOptionOfSend').value;
 
-    debugger
+    //debugger
     if (radioValDateSend == '1') {
       // B2C_DateTimeToSend: dateToSend,
       objToApi['B2C_DateTimeToSend'] = this.datepipe.transform(new Date(), 'yyyy-MM-ddTHH:mm:ss.000');
@@ -707,12 +712,12 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
 
     debugger
     this.dataService.InsertUpdateB2COrder(objToApi).subscribe(result => {
-      debugger
+      //debugger
       if (result.obj != undefined && result.obj != null) {
         // this.GetPaymentToken(result.obj[0]['orderid']);
 
         let t = `${localStorage.getItem('baseUrlIframe').replace('/api', '')}/clearance/PaymetCC?param=` + result.obj;
-        debugger
+        //debugger
         this.document.location.href = `${localStorage.getItem('baseUrlIframe').replace('/api', '')}/clearance/PaymetCC?param=` + result.obj;
 
 
@@ -743,9 +748,9 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
   //     CompanyIdEnc: this.companyId
   //   }
 
-  //   debugger
+  //   //debugger
   //   this.dataService.GetPaymentToken(objToApi).subscribe(result => {
-  //     debugger
+  //     //debugger
 
   //     if (result.obj != undefined && Object.keys(result.obj).length > 0) {
 

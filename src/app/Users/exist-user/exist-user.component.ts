@@ -111,9 +111,9 @@ export class ExistUserComponent implements OnInit {
     }
 
 
-    debugger
+    //debugger
     this.dataService.GetUsersByFilter(objToApi).subscribe(result => {
-      debugger
+      //debugger
       if (typeof result == 'string') {
         this.dialog.open(DialogComponent, {
           data: { message: result }
@@ -292,9 +292,9 @@ export class ExistUserComponent implements OnInit {
   }
 
   fillFormOfUserData(user) {
-    debugger
+    //debugger
     Object.keys(this.userDataForm.controls).forEach(control => {
-      debugger
+      //debugger
       if (control == 'StatusId') {
         let statusDesc = this.statusList.filter(status => status.StatusId == user.StatusId);
 
@@ -308,7 +308,7 @@ export class ExistUserComponent implements OnInit {
         this.userDataForm.get(control).setValue(this.roleList.filter(role => role.Id == user.Permission)[0]['Id']);
       }
       else {
-        debugger
+        //debugger
         this.userDataForm.get(control).setValue(user[control]);
       }
     });

@@ -48,17 +48,17 @@
 
         <!-- digital order-->
         <div class="page-element flexElements">
-            <div class="element-page-title">סיכום הזמנה דיגיטלית</div>
+            <div class="element-page-title"> {{OrderSummaryTitle}} </div>
             <div class="element-page-body">
                 <div class="innerElement margin0">
                     <div class="flexData">
                         <div class="flexDataChild">
                             <div>
-                                <div class="dataBolder"> {{totalTicketCount}} </div>
+                                <div class="dataBolder"> {{totalTicketCount | number:'1.0-0'}} </div>
                                 <div class="customerDataTitle"> :כמות כרטיסים </div>
                             </div>
                             <div>
-                                <div class="dataBolder">₪ {{totalOrderSum}} </div>
+                                <div class="dataBolder">₪ {{totalOrderSum | number:'1.0-0'}} </div>
                                 <div class="customerDataTitle">:סה"כ להזמנה </div>
                             </div>
                             <div>
@@ -94,9 +94,9 @@
                                 (click)="goToOrderLines(orderId, customerId)"> צפה בקודים
                                 <mat-icon>preview</mat-icon>
                             </button>
-                            <button *ngIf="excelOrder && orderStatus.id > '1'" mat-button
-                                [class.linkButton]="!additionalOptionsSMS" [class.sendButton]="additionalOptionsSMS"
-                                (click)="openSendSmsBlock()">שליחה לכולם
+                            <button *ngIf="(excelOrder || LoadingVoucherByExcelHavePhoneNumber) && orderStatus.id > '1'"
+                                mat-button [class.linkButton]="!additionalOptionsSMS"
+                                [class.sendButton]="additionalOptionsSMS" (click)="openSendSmsBlock()">שליחה לכולם
                                 <mat-icon>sms</mat-icon>
                             </button>
                             <button *ngIf="orderStatus.id > '1'" mat-button class="linkButton"
@@ -178,7 +178,12 @@
             <div class="flexButtonsElement">
                 <div *ngIf="orderStatus.id == '1' || orderStatus.id == '4'" class="deleteB margin">
                     <!-- <button mat-button class="deleteButton" (click)="deleteOrder()">מחק הזמנה -->
-                    <mat-icon class="deleteIcon" (click)="deleteOrder()" matTooltip="מחק הזמנה">delete</mat-icon>
+                    <mat-icon
+                        *ngIf="(this.orderType == this.OrderType.ManualOrder || this.orderType == this.OrderType.OrderByExcel)"
+                        class="deleteIcon" (click)="deleteOrder()" matTooltip="מחק הזמנה">delete</mat-icon>
+                    <mat-icon
+                        *ngIf="(this.orderType == this.OrderType.LoadingVoucherByExcel || this.orderType == this.OrderType.LoadingVouchersManually)"
+                        class="deleteIcon" (click)="deleteOrder()" matTooltip="מחק הזמנה">delete</mat-icon>
                     <!-- <mat-spinner class="spinner" *ngIf="deleteCardsSpinner"></mat-spinner> -->
                     <!-- </button> -->
                     <!-- <div class="saveMessage" [@openClose]="orderMsgDelete != ''">{{orderMsgDelete}}</div>
@@ -199,23 +204,30 @@
                 <!-- </div> -->
 
 
-                <div
-                    *ngIf="orderStatus.id == '1' && (dataByPage.DigitalBatch != undefined && (dataByPage.DigitalBatch > 0 || dataByPage.DigitalBatch != 0))">
+                <div *ngIf="
+                            orderStatus.id == '1' && 
+                           ( (dataByPage.DigitalBatch != undefined && (dataByPage.DigitalBatch > 0 || dataByPage.DigitalBatch != 0)) ||
+                            this.orderType == this.OrderType.LoadingVoucherByExcel )">
                     <!-- <div class="viewCodeButton"> -->
 
                     <!--[routerLink]="['/public/orderLines/',orderId,customerId]"-->
-                    <button mat-button class="linkButton" (click)="goToOrderLines(orderId, customerId)"> רשימת הנמענים
+                    <button mat-button class="linkButton" (click)="goToOrderLines(orderId, customerId)">
+                        {{GoToOrderLinesTitle}}
                         <mat-icon>preview</mat-icon>
                     </button>
                     <!-- </div> -->
                 </div>
-                <div *ngIf="orderStatus.id == '1'" class="wrapAprDel nextLevelButton">
-                    <button mat-button class="addButton" (click)="ApproveOrder($event)"> אישור ויצירת שוברים
+                <div *ngIf="orderStatus.id == '1' && (this.orderType == this.OrderType.ManualOrder || this.orderType == this.OrderType.OrderByExcel)"
+                    class="wrapAprDel nextLevelButton">
+                    <button mat-button class="addButton" (click)="ApproveOrder($event)"> אישור ויצירת תווים
                         <mat-icon>done_outline</mat-icon>
                     </button>
-                    <!-- <mat-spinner class="spinner orangeSp" *ngIf="createCardsSpinner"></mat-spinner>
-                    <div class="error" [@openClose]="errorMsg != ''">{{errorMsg}}</div>
-                    <div class="saveMessage" [@openClose]="orderMsg != ''">{{orderMsg}}</div>                     -->
+                </div>
+                <div *ngIf="orderStatus.id == '1' && (this.orderType == this.OrderType.LoadingVoucherByExcel || this.orderType == this.OrderType.LoadingVouchersManually)"
+                    class="wrapAprDel nextLevelButton">
+                    <button mat-button class="addButton" (click)="ApproveLoadingOrder($event)"> אישור וטעינת תווים
+                        <mat-icon>done_outline</mat-icon>
+                    </button>
                 </div>
                 <mat-spinner class="spinner orangeSp" *ngIf="createCardsSpinner"></mat-spinner>
             </div>
@@ -229,9 +241,12 @@
         <!-- table -->
         <div class="page-element">
             <div class="element-page-title"> פרטי הזמנה </div>
-            <div class="mat-elevation-z8 tableWrapNoInfo">
-                <table mat-table [dataSource]="orderDetailsTable" class="mat-elevation-z8 tableInsideElement tableView"
-                    dir="rtl">
+
+            <!-- create orders line  <<NOT for loading vouchers manually>>  -->
+            <div class="tableWrap tableWrapWithScroll mat-elevation-z8 tableWrapNoInfo"
+                *ngIf="orderType != OrderType.LoadingVouchersManually">
+                <table mat-table [dataSource]="orderDetailsTable"
+                    class="mat-elevation-z8 tableInsideElement tableFirstColumnWidthShort tableView" dir="rtl">
                     <ng-container *ngFor="let obj of displayedColumnsOrderDetails; let columnNum = index;">
 
                         <ng-container *ngIf="obj != 'additionalColumn'" matColumnDef="{{obj}}">
@@ -241,21 +256,30 @@
 
 
                                 <!-- all rows before last -->
-                                <div *ngIf="obj != 'ValidationDate' && rowNum != orderDetails.length-1"
+                                <div *ngIf="(obj != 'QTY' && obj != 'TotalForItem' && obj != 'LoadSum' && obj != 'ValidationDate') && rowNum != orderDetails.length-1"
                                     class="dataRows">
                                     {{element[obj]}}
                                 </div>
                                 <div *ngIf="obj == 'ValidationDate' && rowNum != orderDetails.length-1"
                                     class="dataRows">
-                                    <div *ngIf="orderStatus.id != '4'" class="changeDate"
+                                    <div *ngIf="orderStatus.id != '4' " class="changeDate"
                                         (click)="changeDateOfRow(element, obj)">
                                         <mat-icon matTooltip="ערוך לוח שנה">edit_calendar</mat-icon>
                                         <span>{{element[obj]}}</span>
                                     </div>
-                                    <div *ngIf="orderStatus.id == 4 && (dataByPage.DigitalBatch == 0)"> {{element[obj]}}
+                                    <div *ngIf="(orderStatus.id == 4 && (dataByPage.DigitalBatch == 0)) && !IsB2COrder">
+                                        {{element[obj]}}
                                     </div>
-                                    <div *ngIf="orderStatus.id == '4' && (dataByPage.DigitalBatch > 0 || dataByPage.DigitalBatch != 0)"
+                                    <div *ngIf="(orderStatus.id == '4' && (dataByPage.DigitalBatch > 0 || dataByPage.DigitalBatch != 0)) && !IsB2COrder"
                                         class="changeDate" [class.not-active]="dateChanging"
+                                        (click)="changeDateOfRow(element, obj)">
+                                        <mat-spinner class="spinner" *ngIf="dateChanging"></mat-spinner>
+
+                                        <mat-icon matTooltip="ערוך לוח שנה">edit_calendar</mat-icon>
+                                        <span>{{element[obj]}} </span>
+                                    </div>
+
+                                    <div *ngIf="IsB2COrder" class="changeDate" [class.not-active]="dateChanging"
                                         (click)="changeDateOfRow(element, obj)">
                                         <mat-spinner class="spinner" *ngIf="dateChanging"></mat-spinner>
 
@@ -265,17 +289,21 @@
                                 </div>
 
 
+                                <div
+                                    *ngIf="(obj == 'TotalForItem' || obj == 'LoadSum' || obj == 'QTY') && rowNum != orderDetails.length-1">
+                                    {{element[obj] | number:'1.0-0'}}
+                                </div>
                                 <!-- last row -->
-                                <!-- [class.displayNone]="!newOrder || excelOrder" -->
+                                <!-- [class.displayNone]=" !newOrder || excelOrder" -->
                                 <div class="last-row"
-                                    *ngIf="((rowNum == orderDetails.length-1) && !excelOrder && dataByPage.StatusId == 1) || (newOrder && (rowNum == orderDetails.length-1))">
+                                    *ngIf="((rowNum == orderDetails.length-1) && !excelOrder && dataByPage.StatusId == 1 && this.orderType != this.OrderType.LoadingVoucherByExcel) || (newOrder && (rowNum == orderDetails.length-1))">
                                     <form [formGroup]="addToExecOrderForm" class="addToExecOrderForm"
                                         *ngIf="viewAddToExecOrderForm">
                                         <ng-container *ngIf="obj == 'QTY'">
                                             <mat-form-field>
                                                 <mat-label>כמות כרטיסים</mat-label>
                                                 <input matInput formControlName="ticketCount" #ticketCount
-                                                    placeholder="0" numbersOnly>
+                                                    placeholder="0" inputWithComma>
                                                 <!-- <mat-error
                                                     [@openClose]="addToExecOrderForm.get('ticketCount').hasError('pattern')">
                                                     *רק מספרים
@@ -285,8 +313,8 @@
                                         <ng-container *ngIf="obj == 'LoadSum'">
                                             <mat-form-field>
                                                 <mat-label>סכום טעינה</mat-label>
-                                                <input matInput formControlName="chargeAmount" #chargeAmount numbersOnly
-                                                    [attr.maxlength]="4">
+                                                <input matInput formControlName="chargeAmount" #chargeAmount
+                                                    inputWithComma [attr.maxlength]="5">
                                                 <!-- <span matPrefix>00.</span> -->
                                                 <mat-error
                                                     [@openClose]="addToExecOrderForm.get('chargeAmount').hasError('min')">
@@ -316,8 +344,14 @@
                                             <mat-form-field class="inputIncludeValue marginTop-1">
                                                 <input matInput formControlName="TotalForItem">
                                                 <span class="inputValue">
-                                                    {{this.addToExecOrderForm.get('ticketCount').value *
-                                                    this.addToExecOrderForm.get('chargeAmount').value}}
+                                                    {{((this.addToExecOrderForm.get('ticketCount').value != null ?
+                                                    this.addToExecOrderForm.get('ticketCount').value :
+                                                    '').replaceAll(',','')
+                                                    *
+                                                    (this.addToExecOrderForm.get('chargeAmount').value != null ?
+                                                    this.addToExecOrderForm.get('chargeAmount').value :
+                                                    '').replaceAll(',',''))
+                                                    | number:'1.0-0'}}
                                                 </span>
                                                 <!-- <span matPrefix>00.</span> -->
                                             </mat-form-field>
@@ -353,12 +387,13 @@
 
 
 
-                                <div *ngIf="((rowNum == orderDetails.length-1) && !excelOrder && dataByPage.StatusId == 1) || (newOrder && (rowNum == orderDetails.length-1))"
+                                <div *ngIf="((rowNum == orderDetails.length-1) && !excelOrder && dataByPage.StatusId == 1 && this.orderType != this.OrderType.LoadingVoucherByExcel) || (newOrder && (rowNum == orderDetails.length-1))"
                                     class="tableButton">
 
-                                    <button mat-button class="addButton" (click)="addOrderLine()">הכנס</button>
-                                    <mat-error class="error" *ngIf="addOrderLineErrMsg != ''">{{addOrderLineErrMsg}}
-                                    </mat-error>
+                                    <button mat-button class="addButton" (click)="addOrderLine()"
+                                        [disabled]="addToExecOrderForm.invalid">הכנס</button>
+                                    <!-- <mat-error class="error" *ngIf="addOrderLineErrMsg != ''">{{addOrderLineErrMsg}}
+                                    </mat-error> -->
                                     <mat-spinner class="spinner orangeSp" *ngIf="insertOrderLineSpinner"></mat-spinner>
                                 </div>
 
@@ -367,15 +402,234 @@
 
                     </ng-container>
 
-                    <tr mat-header-row *matHeaderRowDef="displayedColumnsOrderDetails"></tr>
+                    <tr mat-header-row *matHeaderRowDef="displayedColumnsOrderDetails; sticky: true"></tr>
                     <tr mat-row *matRowDef="let row; columns: displayedColumnsOrderDetails;"></tr>
 
                 </table>
+                <mat-error class="error" *ngIf="addOrderLineErrMsg != ''">{{addOrderLineErrMsg}}
+                </mat-error>
                 <div class="noInfo saveMessage"
                     *ngIf="dataByPage.DigitalBatch != undefined && (dataByPage.DigitalBatch > 0 || dataByPage.DigitalBatch != 0)">
                     לא ניתן להוסיף שורות להזמנה שנוצרה מקובץ
                 </div>
             </div>
+
+
+            <!-- create orders line for loaded vouchers manually  -->
+            <div class="tableWrap tableWrapWithScroll mat-elevation-z8 tableWrapNoInfo"
+                *ngIf="orderType == OrderType.LoadingVouchersManually">
+                <table mat-table [dataSource]="orderDetailsVouchersManuallyTable"
+                    class="mat-elevation-z8 tableInsideElement tableView tableColumnShortWidth" dir="rtl">
+                    <ng-container
+                        *ngFor="let obj of displayedColumnsOrderDetailsVouchersManually; let columnNum = index;">
+
+                        <ng-container *ngIf="obj != 'additionalColumn'" matColumnDef="{{obj}}">
+                            <!-- <table> -->
+                            <th mat-header-cell *matHeaderCellDef>{{columnsHebVouchersManually[obj] | uppercase}}</th>
+                            <td mat-cell *matCellDef="let element; let rowNum = index">
+
+
+                                <!-- all rows before last -->
+                                <div *ngIf="(obj != 'LoadSum' && obj != 'TotalForItem' && obj != 'ValidationDate') && rowNum != orderDetailsVoucherManually.length-1"
+                                    class="dataRows">
+                                    {{element[obj] }}
+                                </div>
+
+                                <div
+                                    *ngIf="(obj == 'LoadSum' || obj == 'TotalForItem') && rowNum != orderDetailsVoucherManually.length-1">
+                                    {{element[obj] | number:'1.0-0' }}
+                                </div>
+                                <div *ngIf="obj == 'ValidationDate' && rowNum != orderDetailsVoucherManually.length-1"
+                                    class="dataRows">
+                                    <div *ngIf="orderStatus.id != '4'" class="changeDate"
+                                        (click)="changeDateOfRow(element, obj)">
+                                        <mat-icon matTooltip="ערוך לוח שנה">edit_calendar</mat-icon>
+                                        <span>{{element[obj] }}</span>
+                                    </div>
+                                    <div *ngIf="orderStatus.id == 4 && (dataByPage.DigitalBatch == 0)"> {{element[obj]}}
+                                    </div>
+                                    <div *ngIf="orderStatus.id == '4' && (dataByPage.DigitalBatch > 0 || dataByPage.DigitalBatch != 0)"
+                                        class="changeDate" [class.not-active]="dateChanging"
+                                        (click)="changeDateOfRow(element, obj)">
+                                        <mat-spinner class="spinner" *ngIf="dateChanging"></mat-spinner>
+
+                                        <mat-icon matTooltip="ערוך לוח שנה">edit_calendar</mat-icon>
+                                        <span>{{element[obj]}} </span>
+                                    </div>
+                                </div>
+
+
+
+                                <!-- last row -->
+                                <!-- [class.displayNone]="!newOrder || excelOrder" -->
+                                <div class="last-row" *ngIf="(rowNum == orderDetailsVoucherManually.length-1) ">
+                                    <form [formGroup]="manuallyVouchersForm" class="addToExecOrderForm"
+                                        *ngIf="viewAddToExecOrderForm2">
+                                        <ng-container *ngIf="obj == 'FromCard'">
+                                            <mat-form-field>
+                                                <mat-label>מכרטיס</mat-label>
+                                                <input matInput formControlName="FromCard" placeholder="0" numbersOnly
+                                                    minlength="8" maxlength="8"
+                                                    (ngModelChange)="checkCardValidityFronSide(obj,$event)">
+                                                <mat-error
+                                                    *ngIf="(!manuallyVouchersForm.get('FromCard').errors?.required) && (manuallyVouchersForm.get('FromCard').errors?.minlength || manuallyVouchersForm.get('FromCard').errors?.maxlength)">
+                                                    * מספר כרטיס חייב להכיל 8 תווים
+                                                </mat-error>
+                                                <mat-error
+                                                    *ngIf="manuallyVouchersForm.get('FromCard').errors?.required">
+                                                    * {{MsgList.requiredField}}
+                                                </mat-error>
+                                                <mat-error
+                                                    *ngIf="manuallyVouchersForm.get('FromCard').errors != undefined && manuallyVouchersForm.get('FromCard').errors.FromCardNotBelongs">
+                                                    {{cardFromNotBelongsError}}*
+                                                </mat-error>
+                                                <mat-error
+                                                    *ngIf="manuallyVouchersForm.get('FromCard').errors != undefined && manuallyVouchersForm.get('FromCard').errors.CardNumberExist">
+                                                    *מספר כרטיס קיים בהזמנה
+                                                </mat-error>
+
+
+                                                <!-- <mat-error *ngIf="fromCardCheck">
+                                                    * test error from card
+                                                </mat-error> -->
+
+                                            </mat-form-field>
+                                        </ng-container>
+                                        <ng-container *ngIf="obj == 'ToCard'">
+                                            <mat-form-field>
+                                                <mat-label>עד כרטיס</mat-label>
+                                                <input matInput formControlName="ToCard" placeholder="0" numbersOnly
+                                                    minlength="8" maxlength="8"
+                                                    (ngModelChange)="checkCardValidityFronSide(obj,$event)">
+                                                <mat-error
+                                                    *ngIf="(!manuallyVouchersForm.get('ToCard').errors?.required) && manuallyVouchersForm.get('ToCard').errors?.minlength || manuallyVouchersForm.get('ToCard').errors?.maxlength">
+                                                    * מספר כרטיס חייב להכיל 8 תווים
+                                                </mat-error>
+                                                <mat-error *ngIf="manuallyVouchersForm.get('ToCard').errors?.required">
+                                                    * {{MsgList.requiredField}}
+                                                </mat-error>
+
+                                                <mat-error
+                                                    *ngIf="manuallyVouchersForm.get('ToCard').errors != undefined && manuallyVouchersForm.get('ToCard').errors.incorrect">
+                                                    * מספר כרטיס נמוך מה 'מכרטיס'
+                                                </mat-error>
+                                                <mat-error
+                                                    *ngIf="manuallyVouchersForm.get('ToCard').errors != undefined && manuallyVouchersForm.get('ToCard').errors.equalValueError">
+                                                    * מספר כרטיס שווה ל 'מכרטיס'
+                                                </mat-error>
+                                                <mat-error
+                                                    *ngIf="manuallyVouchersForm.get('ToCard').errors != undefined && manuallyVouchersForm.get('ToCard').errors.ToCardNotBelongs">
+                                                    {{cardToNotBelongsError}}*
+                                                </mat-error>
+                                                <mat-error
+                                                    *ngIf="manuallyVouchersForm.get('ToCard').errors != undefined && manuallyVouchersForm.get('ToCard').errors.CardNumberExist">
+                                                    *מספר כרטיס קיים בהזמנה
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </ng-container>
+                                        <ng-container *ngIf="obj == 'LoadSum'">
+                                            <mat-form-field>
+                                                <mat-label>סכום טעינה</mat-label>
+                                                <input matInput formControlName="LoadSum" inputWithComma
+                                                    [attr.maxlength]="5">
+                                            </mat-form-field>
+                                        </ng-container>
+                                        <ng-container *ngIf="obj == 'ValidationDate'">
+                                            <mat-form-field class="datePicker datePickerPadding marginTop-1"
+                                                appearance="fill" dir="ltr">
+                                                <input matInput formControlName="ValidationDate"
+                                                    [matDatepicker]="picker2" [min]="minOrderDate" readonly>
+                                                <mat-datepicker-toggle matSuffix
+                                                    [for]="picker2"></mat-datepicker-toggle>
+                                                <mat-datepicker #picker2></mat-datepicker>
+
+                                            </mat-form-field>
+                                        </ng-container>
+
+                                        <ng-container *ngIf="obj == 'TotalForItem'">
+                                            <mat-form-field class="inputIncludeValue marginTop-1" aria-readonly="true">
+                                                <input matInput formControlName="TotalForItem" inputWithComma>
+                                                <span class="inputValue">
+                                                    {{ ( (this.manuallyVouchersForm.get('ToCard').value != null &&
+                                                    this.manuallyVouchersForm.get('FromCard').value != null &&
+                                                    this.manuallyVouchersForm.get('ToCard').value.length >= 8 &&
+                                                    this.manuallyVouchersForm.get('FromCard').value.length >= 8) ?
+                                                    (this.manuallyVouchersForm.get('LoadSum').value != null ?
+                                                    this.manuallyVouchersForm.get('LoadSum').value :
+                                                    '').replaceAll(',','')
+                                                    * (
+                                                    this.manuallyVouchersForm.get('ToCard').value -
+                                                    this.manuallyVouchersForm.get('FromCard').value + 1) : 0) |
+                                                    number:'1.0-0' }}
+                                                </span>
+                                            </mat-form-field>
+                                        </ng-container>
+
+                                        <ng-container *ngIf="obj == 'QTY'">
+                                            <mat-form-field class="inputIncludeValue marginTop-1">
+                                                <input matInput formControlName="CardsCount">
+                                                <span class="inputValue">
+                                                    {{(this.manuallyVouchersForm.get('ToCard').value != null &&
+                                                    this.manuallyVouchersForm.get('FromCard').value != null &&
+                                                    this.manuallyVouchersForm.get('ToCard').value.length >= 8 &&
+                                                    this.manuallyVouchersForm.get('FromCard').value.length >= 8) ?
+                                                    this.manuallyVouchersForm.get('ToCard').value -
+                                                    this.manuallyVouchersForm.get('FromCard').value + 1 : 0}}
+                                                </span>
+
+                                            </mat-form-field>
+                                        </ng-container>
+                                    </form>
+                                </div>
+
+                            </td>
+                        </ng-container>
+
+                        <ng-container *ngIf="obj == 'additionalColumn'" matColumnDef="{{obj}}">
+                            <th mat-header-cell *matHeaderCellDef></th>
+                            <td mat-cell *matCellDef="let element; let rowNum = index;">
+                                <div *ngIf="rowNum != orderDetailsVoucherManually.length-1" class="tableButton"
+                                    #orderLinesChildren2><!--orderLinesChildren2 not completed (delete manually)-->
+                                    <mat-icon class="deleteIcon" (click)="deleteRow(element, rowNum)"
+                                        matTooltip="מחק">delete
+                                    </mat-icon>
+                                    <mat-spinner class="spinner disableSpinner" id="spinnerDelete{{element.id}}">
+                                    </mat-spinner>
+
+                                </div>
+
+                                <div class="tableButton" *ngIf="rowNum == orderDetailsVoucherManually.length-1">
+                                    <button mat-button class="addButton" (click)="addOrderLineForManualVoucher()"
+                                        [disabled]="manuallyVouchersForm.invalid">הכנס</button>
+                                    <!-- <mat-error class="error" *ngIf="addOrderLineErrMsg != ''">{{addOrderLineErrMsg}}
+                                    </mat-error> -->
+                                    <mat-spinner class="spinner orangeSp" *ngIf="insertOrderLineSpinner2"></mat-spinner>
+                                </div>
+
+                            </td>
+                        </ng-container>
+
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumnsOrderDetailsVouchersManually; sticky: true">
+                    </tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumnsOrderDetailsVouchersManually;"></tr>
+
+                </table>
+                <!-- <div class="noInfo saveMessage"
+                    *ngIf="dataByPage.DigitalBatch != undefined && (dataByPage.DigitalBatch > 0 || dataByPage.DigitalBatch != 0)">
+                    לא ניתן להוסיף שורות להזמנה שנוצרה מקובץ
+                </div> -->
+                <mat-error class="error" *ngIf="addOrderLineErrMsg != ''">{{addOrderLineErrMsg}}
+                </mat-error>
+            </div>
+
+
+
+
+
+
+
 
 
 
@@ -384,9 +638,9 @@
 
                     <div class="policyType">
                         <mat-form-field appearance="outline" *ngIf="policyList.length > 0">
-                            <mat-label>סוג שובר</mat-label>
+                            <mat-label>סוג תו</mat-label>
                             <mat-select formControlName="PolicyControl" readonly="true"
-                                [disabled]="orderStatus.id != '1'">
+                                [disabled]="orderStatus.id != '1' && !IsB2COrder">
                                 <ng-container *ngFor="let policy  of policyList; let i = index">
                                     <mat-option [value]="policy.POL_ID">
                                         {{policy.POL_NAME }} {{policy.POL_ID}}
@@ -402,7 +656,7 @@
                     <div class="refBlock">
                         <mat-form-field appearance="outline">
                             <mat-label dir="rtl">מספר אסמכתא</mat-label>
-                            <input matInput formControlName="RefControl" numbersOnly>
+                            <input matInput formControlName="RefControl" numbersOnly dir="rtl">
                             <mat-error>{{MsgList.requiredField}} <mat-icon>error</mat-icon>
                             </mat-error>
                         </mat-form-field>

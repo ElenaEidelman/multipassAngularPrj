@@ -97,14 +97,14 @@ export class AllCardsComponent implements OnInit, AfterViewInit, OnChanges {
   formErrorMsg: string = '';
 
   cardsLabelForTable = [
-    { value: 'CardId', viewValue: 'מספר שובר' },
+    { value: 'CardId', viewValue: 'מספר תו' },
     { value: 'FullName', viewValue: 'שם לקוח' },
     { value: 'PhoneNumber', viewValue: 'מספר טלפון' },
     { value: 'CurrentBudget', viewValue: 'יתרה' },// no data !!!!
     { value: 'OrderId', viewValue: 'מספר הזמנה' },
     { value: 'CreationDate', viewValue: 'תאריך הנפקה' },
     // {value: 'dataSend', viewValue: 'תאריך שליחה'},
-    { value: 'Status', viewValue: 'סטטוס שובר' } //CardStatusDesc
+    { value: 'Status', viewValue: 'סטטוס תו' } //CardStatusDesc
   ];
   ngOnInit(): void {
     window.scroll(0, 0);
@@ -149,9 +149,7 @@ export class AllCardsComponent implements OnInit, AfterViewInit, OnChanges {
       this.spinner = true;
 
 
-      debugger
       this.dataService.GetAllCards(objToApi).subscribe(result => {
-        debugger
         this.spinner = false;
 
         if (typeof result == 'string') {

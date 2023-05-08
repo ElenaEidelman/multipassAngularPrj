@@ -197,10 +197,10 @@ export class AllSmsTemplatesComponent implements OnInit {
       if (this.SMSForm.get('Id-' + template.Id).valid) {
 
         this.voucherValidityInseredById = this.SMSForm.get('Id-' + template.Id).value['TemplateFormat' + template.Id].indexOf('<תוקף>') == -1 ? 'voucherValidityInseredById' + template.Id : '';
-        this.voucherNumberInseredById = this.SMSForm.get('Id-' + template.Id).value['TemplateFormat' + template.Id].indexOf('<מספר שובר>') == -1 ? 'voucherNumberInseredById' + template.Id : '';
+        this.voucherNumberInseredById = this.SMSForm.get('Id-' + template.Id).value['TemplateFormat' + template.Id].indexOf('<מספר תו>') == -1 ? 'voucherNumberInseredById' + template.Id : '';
 
         if (this.SMSForm.get('Id-' + template.Id).value['TemplateFormat' + template.Id].indexOf('<תוקף>') != -1 &&
-          this.SMSForm.get('Id-' + template.Id).value['TemplateFormat' + template.Id].indexOf('<מספר שובר>') != -1) {
+          this.SMSForm.get('Id-' + template.Id).value['TemplateFormat' + template.Id].indexOf('<מספר תו>') != -1) {
 
 
           //check if template name exist in another template
@@ -301,7 +301,7 @@ export class AllSmsTemplatesComponent implements OnInit {
     else {
 
       this.voucherValidityInsered = this.newTemplateForm.get('TemplateFormat').value.indexOf('<תוקף>') == -1 ? false : true;
-      this.voucherNumberInsered = this.newTemplateForm.get('TemplateFormat').value.indexOf('<מספר שובר>') == -1 ? false : true;
+      this.voucherNumberInsered = this.newTemplateForm.get('TemplateFormat').value.indexOf('<מספר תו>') == -1 ? false : true;
 
       if (this.newTemplateForm.valid && this.voucherValidityInsered && this.voucherNumberInsered) {
 
@@ -314,11 +314,11 @@ export class AllSmsTemplatesComponent implements OnInit {
           return false;
 
         }
-        this.voucherNumberInsered = this.newTemplateForm.value.TemplateFormat.indexOf('<מספר שובר>') == -1;
+        this.voucherNumberInsered = this.newTemplateForm.value.TemplateFormat.indexOf('<מספר תו>') == -1;
         this.voucherValidityInsered = this.newTemplateForm.value.TemplateFormat.indexOf('<תוקף>') == -1;
 
         if (this.newTemplateForm.value.TemplateFormat.indexOf('<תוקף>') != -1 &&
-          this.newTemplateForm.value.TemplateFormat.indexOf('<מספר שובר>') != -1) {
+          this.newTemplateForm.value.TemplateFormat.indexOf('<מספר תו>') != -1) {
           this.spinnerNewTemp = true;
           let objToApi = {
             Token: this.userToken,
@@ -541,7 +541,7 @@ Json:
   sendSMSForExample(template, newTmp: boolean) {
     if (newTmp) {
       this.voucherValidityInsered = this.newTemplateForm.get('TemplateFormat').value.indexOf('<תוקף>') == -1 ? false : true;
-      this.voucherNumberInsered = this.newTemplateForm.get('TemplateFormat').value.indexOf('<מספר שובר>') == -1 ? false : true;
+      this.voucherNumberInsered = this.newTemplateForm.get('TemplateFormat').value.indexOf('<מספר תו>') == -1 ? false : true;
     }
     if (newTmp && !this.newTemplateForm.valid || (this.voucherValidityInsered == false || this.voucherNumberInsered == false)) {
       this.newTemplateSendError = 'נא למלא שדות חובה';

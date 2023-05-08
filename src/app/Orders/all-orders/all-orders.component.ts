@@ -113,9 +113,9 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy, OnC
     { value: 'idex', viewValue: 'מספר הזמנה' }, //v
     { value: 'OrganizationName', viewValue: 'שם הלקוח' },
     { value: 'Total', viewValue: 'שווי ההזמנה' },//v
-    { value: 'CardsQty', viewValue: 'כמות שוברים בהזמנה' },
+    { value: 'CardsQty', viewValue: 'כמות תווים בהזמנה' },
     { value: 'MDate', viewValue: 'תאריך יצירת הזמנה' },
-    { value: 'ApproveDate', viewValue: 'תאריך שליחת שוברים' },//v
+    { value: 'ApproveDate', viewValue: 'תאריך שליחת תווים' },//v
     { value: 'CrmOrderId', viewValue: 'מספר אסמכתא' },//v
     { value: 'DescriptionWL', viewValue: 'סטטוס' },
   ];
@@ -406,7 +406,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy, OnC
   excelFileExport() {
     if (this.pagePermissionAccessLevel.AccessLevel != this.MockData.accessLevelReadOnly) {
       let tableLabels = this.orderLabelForTable;
-      debugger
+      ////debugger
       let workbook = new Workbook();
       let worksheet = workbook.addWorksheet('הזמנות');
 
@@ -417,7 +417,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy, OnC
 
       worksheet.columns = worksheetArr;
       let dataForExcel = JSON.parse(JSON.stringify(this.dataSource.data));
-      debugger
+      //debugger
       for (let data of Object.values(dataForExcel)) {
         for (let element of Object.keys(data)) {
           if (element == 'MDate' || element == 'ApproveDate') {//element == 'MDate' ||

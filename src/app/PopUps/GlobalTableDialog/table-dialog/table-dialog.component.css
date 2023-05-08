@@ -1,0 +1,29 @@
+.close-icon-wrap {
+   position: relative;
+}
+
+.close-icon-wrap mat-icon {
+   position: absolute;
+   right: -20px;
+   top: -25px;
+   font-size: 32px;
+   color: #fff;
+}
+
+.log-in {
+   padding: 15px;
+}
+
+.wrap-form {
+   height: 300px;
+   overflow-y: scroll;
+}
+
+th {
+   font-size: 1em !important;
+}
+
+.wrapSendButton>div {
+   margin-top: 1em;
+   text-align: right;
+}

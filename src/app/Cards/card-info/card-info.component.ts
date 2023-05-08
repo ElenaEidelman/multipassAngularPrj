@@ -10,11 +10,16 @@ import { CustomerData } from 'src/app/Classes/customerData';
 import { MockData } from 'src/app/Classes/mockData';
 import { MsgList } from 'src/app/Classes/msgsList';
 import { DataServiceService } from 'src/app/data-service.service';
+import { PopupDialogComponent } from 'src/app/Iframe/Dialogs/popupDialog/popup-dialog/popup-dialog.component';
 import { DatePickerDialog } from 'src/app/Orders/exec-order/exec-order.component';
 import { DialogConfirmComponent } from 'src/app/PopUps/dialog-confirm/dialog-confirm.component';
 import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
+import { IframeSeviceService } from 'src/app/Services/IframeService/iframe-sevice.service';
+import { IframeSharingServiceService } from 'src/app/Services/IframeService/iframe-sharing-service.service';
 import { SharedService } from 'src/app/Services/SharedService/shared.service';
 import { UrlSharingService } from 'src/app/Services/UrlSharingService/url-sharing.service';
+
+import { forkJoin } from 'rxjs';
 
 import { PhoneConfirmComponent } from 'src/app/SMSTemplate/all-sms-templates/all-sms-templates.component';
 
@@ -52,7 +57,9 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
     private sharedService: SharedService,
     private fb: FormBuilder,
     private urlSharingService: UrlSharingService,
-    private router: Router) { }
+    private router: Router,
+    private sharingIframeService: IframeSharingServiceService,
+    private dataServiceIframe: IframeSeviceService) { }
 
   pagePermissionAccessLevel = {
     AccessLevel: '',
@@ -61,6 +68,10 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
 
 
   mainSpinner: boolean = true;
+  isIframeOrder: boolean = false;
+  blessingList;
+  blessingTextCurrentStep: number = 1;
+  blessingFilteredList;
 
   // data table
   public historyTableTemplate = [
@@ -97,12 +108,15 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
 
   userDetailsForm = this.fb.group({
     FullName: ['', [Validators.required, this.noWhitespaceValidator]],
+    B2CThoWho: ['', [Validators.required, this.noWhitespaceValidator]],
     PhoneNumber: ['', [Validators.required, Validators.pattern('[0]{1}[0-9]{2,3}[0-9]{7}')]],
+    B2CEmail: ['', [Validators.required, Validators.email]],
+    B2CPhoneNumber: ['', [Validators.required, Validators.pattern('[0]{1}[0-9]{2,3}[0-9]{7}')]],
   });
 
   sendSms = this.fb.group({
     smsTemplates: ['', Validators.required],
-    previewSmsTemplate: ['', Validators.required]
+    previewSmsTemplate: [{ value: '', disabled: true }, Validators.required]
   });
   smsTemplatesData = [];
   orderCardsData;
@@ -136,10 +150,48 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
       this.userId = JSON.parse(urlParams)['userId'];
       this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
       this.urlSharingService.changeMessage('');
-      this.getSmsTemplates();
+      this.IsCardBelongToB2C();
       this.getTablesData();
+
+
+      //check if order created from iframe
+      //
+      if (!this.isIframeOrder) {
+        this.getSmsTemplates();
+      }
+
+
     }
     // });
+  }
+
+  //check if order created from iframe
+  IsCardBelongToB2C() {
+    let objToApi = {
+      Token: this.userToken,
+      CardId: this.cardId
+    }
+
+    //
+    this.dataService.IsCardBelongToB2C(objToApi).subscribe(result => {
+
+      if (result != undefined) {
+        if (typeof result == 'string') {
+          this.sharedService.exitSystemEvent(result);
+          return false;
+        }
+
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
+        this.isIframeOrder = result.obj;
+
+      }
+    })
+
+
   }
 
   getSmsTemplates() {
@@ -147,7 +199,6 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
     let objToApi = {
       Token: this.userToken
     }
-
     this.dataService.GetSMSFormats(objToApi).subscribe(result => {
       if (typeof result == 'string') {
         // this.dialog.open(DialogComponent, {
@@ -187,9 +238,9 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
       UserId: this.userId
     }
 
-    debugger
+    //
     this.dataService.GetCardInfoById(objToApi).subscribe(result => {
-      debugger
+      // 
       this.mainSpinner = false;
       if (typeof result == 'string') {
         // this.dialog.open(DialogComponent, {
@@ -209,10 +260,24 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
 
       // if (typeof result == 'object' && result.obj != null) {
       this.CardInfo = result.obj[1][0];
-      debugger
       this.orderLine = result.obj[9] != null ? result.obj[9]['Id'] : [];
       this.OrderDetails = result.obj[3];
 
+      // this.isIframeOrder = this.OrderDetails['B2CThoWho'] != '' && this.OrderDetails['B2C_DateTimeToSend'] != null && this.OrderDetails['B2C_Notes'] != '' ? true : false;
+
+      //insert iframe data
+      if (this.isIframeOrder) {
+
+        //get blessing list
+        this.getBlessingList();
+        this.sendSms.get('previewSmsTemplate').setValue(this.OrderDetails['B2C_Notes']);
+        this.sendSms.get('previewSmsTemplate').enable();
+
+        this.userDetailsForm.get('B2CEmail').setValue(this.OrderDetails['B2C_Email']);
+        this.userDetailsForm.get('B2CPhoneNumber').setValue(this.OrderDetails['B2C_Mobile']);
+        this.userDetailsForm.get('B2CThoWho').setValue(this.OrderDetails['B2CThoWho']);
+
+      }
 
       this.userDetailsForm.get('FullName').setValue(this.CardInfo.FullName);
       this.userDetailsForm.get('PhoneNumber').setValue(this.CardInfo.PhoneNumber);
@@ -263,6 +328,11 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
           OrderId: this.OrderDetails != null ? this.OrderDetails.IdForDisplay : null
         }
 
+        if (this.isIframeOrder) {
+          objToApi['B2C_Mobile'] = this.userDetailsForm.get('B2CPhoneNumber').value
+          objToApi['B2C_Email'] = this.userDetailsForm.get('B2CEmail').value
+          objToApi['B2CThoWho'] = this.userDetailsForm.get('B2CThoWho').value
+        }
 
 
         this.dataService.UpdateCards(objToApi).subscribe(result => {
@@ -340,9 +410,9 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
 
 
 
-        debugger
+        //
         this.dataService.VoidCards(objToApi).subscribe(result => {
-          debugger
+          // 
           this.spinnerActiveVoidCard = false;
           if (typeof result == 'string') {
             // this.dialog.open(DialogComponent, {
@@ -362,7 +432,7 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
 
           // if (result.err != -1) {
           this.CardInfo.IsActive = !this.CardInfo.IsActive;
-          debugger
+          //
           // this.historyDataSource.data = [];
           this.historyLabelForTable = [];
           this.getTablesData();
@@ -410,7 +480,7 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
 
           // if (result.errdesc == 'OK') {
           this.CardInfo.IsActive = !this.CardInfo.IsActive;
-          debugger
+
           // this.historyDataSource.data = [];
           this.historyLabelForTable = [];
           this.getTablesData();
@@ -630,6 +700,7 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
 
     if (this.CardInfo.OrderId != 0) {
       if (this.pagePermissionAccessLevel.AccessLevel != this.MockData.accessLevelReadOnly) {
+        // 
         if (this.sendSms.valid) {
           this.dialog.open(DialogConfirmComponent, {
             data: { message: 'האם לשלוח SMS?', eventButton: 'שלח' }
@@ -637,35 +708,21 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
           }).afterClosed().subscribe(result => {
             if (result.result.includes('yes')) {
 
-              let phone = result.result.split('phone: ')[1];
-
-
-              // let objToApi = {
-              //   Token: this.userToken,
-              //   TemplateFormat: this.sendSms.get('previewSmsTemplate').value,
-              //   Phone: phone
-              // }
-
-              // let objToApi = {
-              //   Token: this.userToken,
-              //   TemplateId: this.sendSms.get('smsTemplates').value,
-              //   UserId : +this.userId,
-              //   CoreOrderId:this.OrderDetails.Id,
-              //   From: this.OrderDetails.PrimaryUser.OrganizationName
-              // }
-
+              //  let phone = result.result.split('phone: ')[1];
+              // 
               let objToApi = {
                 Token: this.userToken,
-                TemplateId: this.sendSms.get('smsTemplates').value,
+                TemplateId: this.isIframeOrder ? 0 : this.sendSms.get('smsTemplates').value,
+                BlessingText: this.isIframeOrder ? this.sendSms.get('smsTemplates').value : '',
                 UserId: +this.userId,
                 OrderLineIds: Array.of(this.orderLine),
                 CoreOrderId: (this.OrderDetails != undefined && this.OrderDetails != null) ? this.OrderDetails.Id : 0,
                 From: (this.OrderDetails != undefined && this.OrderDetails != null) ? this.OrderDetails.PrimaryUser.OrganizationName : ""
               }
 
-          
+              debugger
               this.dataService.SendSMSByOrderLine(objToApi).subscribe(result => {
-
+                debugger
                 if (typeof result == 'string') {
                   // this.dialog.open(DialogComponent, {
                   //   data: { message: result }
@@ -683,19 +740,11 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
                 localStorage.setItem('user', JSON.stringify(tempObjUser));
                 this.userToken = result['Token'];
 
-                // if (result.err != -1) {
-                this.dialog.open(DialogComponent, {
-                  data: { message: 'נשלח בהצלחה' }
-                });
-                // }
-
-                // }
-                // else {
-                //   // this.dialog.open(DialogComponent, {
-                //   //   data: {message: result}
-                //   // })
-                //   this.sharedService.exitSystemEvent();
-                // }
+                if (result.err >= 0) {
+                  this.dialog.open(DialogComponent, {
+                    data: { message: 'נשלח בהצלחה' }
+                  });
+                }
               });
             }
           })
@@ -736,6 +785,142 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
     const isWhitespace = (control.value || '').trim().length === 0;
     const isValid = !isWhitespace;
     return isValid ? null : { 'whitespace': true };
+  }
+
+
+  getBlessingList() {
+
+
+
+    let objToApi = {
+      TenantId: this.OrderDetails.PrimaryUser.OrganizationName
+    }
+
+
+    this.dataServiceIframe.GetBlessings(objToApi).subscribe(result => {
+
+      if (typeof result == 'object') {
+        if (result.err != -1) {
+          this.blessingList = result.obj;
+          // get type of blessing
+          this.blessingList.forEach(id => {
+            let objToApi = {
+              TenantId: this.OrderDetails.PrimaryUser.OrganizationName,
+              SubjectId: id.typeBlessingId
+            }
+            this.dataServiceIframe.GetBlessings(objToApi).subscribe(result => {
+              if (typeof result == 'object') {
+                if (result.err != -1) {
+                  //
+                  let indexOfBlessingText;
+                  let blessingObj = result.obj.filter((obj, index) => {
+                    //
+                    if (obj.Blessing == this.OrderDetails['B2C_Notes']) {
+                      indexOfBlessingText = index;
+                      return obj;
+                    }
+                  });
+                  if (blessingObj.length > 0) {
+                    this.sendSms.get('smsTemplates').setValue(blessingObj[0].typeBlessingId);
+                    //here
+                    this.blessingFilteredList = result.obj;
+                    this.blessingTextCurrentStep = indexOfBlessingText + 1;
+                    //
+                  }
+                }
+                else {
+                  this.dialog.open(PopupDialogComponent, {
+                    data: { title: '', text: result.errdesc }
+                  })
+                }
+              }
+              else {
+                this.dialog.open(PopupDialogComponent, {
+                  data: { title: '', text: result }
+                })
+              }
+              // this.blessingList = result['obj'];
+            });
+
+          })
+          // 
+        }
+        else {
+          this.dialog.open(PopupDialogComponent, {
+            data: { title: '', text: result.errdesc }
+          })
+        }
+      }
+      else {
+        this.dialog.open(PopupDialogComponent, {
+          data: { title: '', text: result }
+        })
+      }
+    });
+    // this.FormGroup.get('celebrating').setValue(this.blessingList[0].title);
+    // this.FormGroup.get('celebrating').setValue(this.blessingList[0].title);
+  }
+
+  celebratingChanged(event) {
+    this.blessingTextCurrentStep = 1;
+
+    let objToApi = {
+      TenantId: this.OrderDetails.PrimaryUser.OrganizationName,
+      SubjectId: event.value
+    }
+
+    this.dataServiceIframe.GetBlessings(objToApi).subscribe(result => {
+
+      if (typeof result == 'object') {
+        if (result.err != -1) {
+          // this.blessingList = result.obj;
+
+          this.blessingFilteredList = result.obj;
+          //
+          this.sendSms.get('previewSmsTemplate').setValue(this.blessingFilteredList[0].Blessing);
+        }
+        else {
+          this.dialog.open(PopupDialogComponent, {
+            data: { title: '', text: result.errdesc }
+          })
+        }
+      }
+      else {
+        this.dialog.open(PopupDialogComponent, {
+          data: { title: '', text: result }
+        })
+      }
+      // this.blessingList = result['obj'];
+    });
+  }
+
+  stepBefore() {
+    // this.blessingTextView = !this.blessingTextView;
+    if (this.blessingTextCurrentStep == 1) {
+      this.blessingTextCurrentStep = this.blessingFilteredList.length;
+
+    }
+    else {
+      this.blessingTextCurrentStep--;
+    }
+    this.sendSms.get('previewSmsTemplate').setValue(this.blessingFilteredList[this.blessingTextCurrentStep - 1].Blessing);
+
+  }
+
+  stepNext() {
+
+    //this.blessingTextView = !this.blessingTextView;
+    if (this.blessingTextCurrentStep == this.blessingFilteredList.length) {
+      this.blessingTextCurrentStep = 1;
+    }
+    else {
+      this.blessingTextCurrentStep++;
+    }
+    this.sendSms.get('previewSmsTemplate').setValue(this.blessingFilteredList[this.blessingTextCurrentStep - 1].Blessing);
+
+  }
+  clearBlessingTA() {
+    this.sendSms.get('previewSmsTemplate').setValue('');
   }
 
   ngAfterViewInit() {

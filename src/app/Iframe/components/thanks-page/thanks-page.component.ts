@@ -20,11 +20,11 @@ export class ThanksPageComponent implements OnInit {
   thankyouResponse;
   @Input() orderId = '';
   ngOnInit() {
-    debugger
+    //debugger
     localStorage.removeItem('picSizeInMega');
 
     this.activatedRoute.queryParams.subscribe(params => {
-      debugger
+      //debugger
       if (Object.keys(params).length > 0) {
         let orderid = params['orderid'];
         this.GetResume(orderid);
@@ -45,7 +45,7 @@ export class ThanksPageComponent implements OnInit {
       OrderIdEnc: orderid
     }
     this.dataService.GetResume(objToApi).subscribe(result => {
-      debugger
+      //debugger
       this.thankyouResponse = result.obj[0]["OrderHeader"][0];
       console.log(result.obj[0]);
     })
@@ -53,7 +53,7 @@ export class ThanksPageComponent implements OnInit {
 
   resendGiftCard() {
     let companyInfo = localStorage.getItem('companyInfo');
-    debugger
+    //debugger
 
 
     window.location.href = localStorage.getItem('companyInfo');

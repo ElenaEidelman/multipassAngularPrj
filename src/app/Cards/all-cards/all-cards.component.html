@@ -1,8 +1,8 @@
 <div class="pageTitle main2-title sticky top100 allCards">
-    <div>שוברים</div>
+    <div>תווים</div>
     <div>
         <a routerLink="/public/orderCards">
-            <button mat-raised-button class="titleMenuButton">הזמנת שוברים
+            <button mat-raised-button class="titleMenuButton">הזמנת תווים
                 <mat-icon>queue</mat-icon>
             </button>
         </a>
@@ -12,15 +12,15 @@
 
     <!-- filter table -->
     <div class="page-element width-block-auto">
-        <div class="element-page-title">חיפוש שוברים </div>
+        <div class="element-page-title">חיפוש תווים </div>
         <div class="formBorder formElement">
             <form [formGroup]="cardsForm" *ngIf="cardsFilterFormView">
                 <div class="formWrap">
                     <div class="formWrapRow">
                         <div>
                             <mat-form-field>
-                                <mat-label>מספר שובר</mat-label>
-                                <input matInput placeholder="מספר שובר" formControlName="CardId">
+                                <mat-label>מספר תו</mat-label>
+                                <input matInput placeholder="מספר תו" formControlName="CardId">
                                 <!-- <a [routerLink]="['/public/cardInfo',row['CardId'], userId]"
                                 *ngIf="column['value'] == 'CardId'">{{row[column['value']]}}</a> -->
                                 <button class="clearButton" *ngIf="this.cardsForm.get('CardId').value != ''" mat-button

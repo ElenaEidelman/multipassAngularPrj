@@ -1,4 +1,7 @@
+// import { BrowserModule } from 'git@angular/platform-browser';
 import { BrowserModule } from '@angular/platform-browser';
+
+
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
@@ -37,7 +40,8 @@ import { DatePipe } from '@angular/common';
 
 
 
-import { ChartsModule } from 'ng2-charts';
+import { ChartsModule } from 'ng2-charts'; // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ChartsModule  used in angular bootstrap
+
 // import { ChartsModule, WavesModule } from 'angular-bootstrap-md';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -81,11 +85,9 @@ import { DialogComponent } from './PopUps/dialog/dialog.component';
 import { FormatDatePipe } from './Pipes/format-date.pipe';
 import { ExcelFileViewComponent } from './excel/excel-file-view/excel-file-view.component';
 import { LoweUppCaseCheckPipe } from './Pipes/LowerUpperCaseCheck/lowe-upp-case-check.pipe';
-import { NumberDirective } from './directives/numbers-only.directive';
-import { AlphabetOnlyDirective } from './directives/letters-only.directive';
+import { NumberDirective } from './directives/NumbersOnly/numbers-only.directive';
 import { TestComponent } from './test/test.component';
 import { DialogWithTableDataComponent } from './Cards/order-cards/Dialogs/dialog-with-table-data/dialog-with-table-data.component';
-import { FloatNumberDirective } from './directives/float-numbers-only.directive';
 import { AdminIframeComponent } from './Admin/admin-iframe/admin-iframe.component';
 import { IframeSetupComponent } from './Admin/admin-iframe/iframeChildren/iframe-thankyou/iframe-setup.component';
 import { IframeSettingsComponent } from './Admin/admin-iframe/iframeChildren/iframe-page2/iframe-settings.component';
@@ -100,6 +102,11 @@ import { MockCodeToNullPipe } from './Pipes/convertMockDateToNull/mock-date-to-n
 import { CustomDateAdapter } from './Support/custom.date.adapter';
 import { TextOnlyDirective } from './directives/TextOnly/text-only.directive';
 import { SystemSettingsComponent } from './system-settings/system-settings.component';
+import { VouchersIssuanceComponent } from './Cards/vouchers-issuance/vouchers-issuance.component';
+import { LoadingVouchersComponent } from './Cards/loading-vouchers/loading-vouchers.component';
+import { CardsListComponent } from './Cards/cards-list/cards-list.component';
+import { InputWithCommaDirective } from './directives/InputWithComma/input-with-comma.directive';
+import { TableDialogComponent } from './PopUps/GlobalTableDialog/table-dialog/table-dialog.component';
 
 
 
@@ -140,11 +147,9 @@ import { SystemSettingsComponent } from './system-settings/system-settings.compo
     LoweUppCaseCheckPipe,
     DatePickerDialog,
     NumberDirective,
-    AlphabetOnlyDirective,
     TestComponent,
     AddCustomerDialogComponent,
     DialogWithTableDataComponent,
-    FloatNumberDirective,
     AdminIframeComponent,
     IframeSetupComponent,
     IframeSettingsComponent,
@@ -159,8 +164,12 @@ import { SystemSettingsComponent } from './system-settings/system-settings.compo
     SafeHtmlPipe,
     MockCodeToNullPipe,
     TextOnlyDirective,
-    SystemSettingsComponent
-
+    SystemSettingsComponent,
+    VouchersIssuanceComponent,
+    LoadingVouchersComponent,
+    CardsListComponent,
+    InputWithCommaDirective,
+    TableDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -201,12 +210,11 @@ import { SystemSettingsComponent } from './system-settings/system-settings.compo
   ],
   exports: [
     NumberDirective,
-    FloatNumberDirective,
-    AlphabetOnlyDirective
   ],
   entryComponents: [
     AddCustomerDialogComponent,
     DialogWithTableDataComponent,
+    TableDialogComponent,
     PreviewIMGComponent,
     VideosDialogComponent,
     VideoImageDialogComponent,

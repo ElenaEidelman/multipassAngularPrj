@@ -100,7 +100,8 @@
                     </div>
                     <div class="formWrapRow">
                         <div>
-                            <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
+                            <mat-form-field appearance="fill"
+                                class="datePicker datePickerPadding marginTop-1 marginTop0">
                                 <mat-label>מתאריך</mat-label>
                                 <input matInput [matDatepicker]="picker" formControlName="FromDate" readonly
                                     (dateChange)="dateFromChanged($event, 'FromDate')" [max]="maxFromDate">
@@ -115,7 +116,8 @@
                             </mat-form-field>
                         </div>
                         <div>
-                            <mat-form-field appearance="fill" class="datePicker datePickerPadding marginTop-1">
+                            <mat-form-field appearance="fill"
+                                class="datePicker datePickerPadding marginTop-1 marginTop0">
                                 <mat-label>עד תאריך</mat-label>
                                 <input matInput [matDatepicker]="picker2" formControlName="ToDate" readonly
                                     [min]="minToDate" [max]="maxToDate"

@@ -2,7 +2,7 @@ import { Route } from '@angular/compiler/src/core';
 import { typeWithParameters } from '@angular/compiler/src/render3/util';
 import { Component, EventEmitter, Inject, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChildren, ViewEncapsulation } from '@angular/core';
 import { tick } from '@angular/core/testing';
-import { ControlContainer, FormBuilder, FormControl, Validators } from '@angular/forms';
+import { AbstractControl, ControlContainer, FormBuilder, FormControl, FormGroupDirective, NgForm, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, throwMatDialogContentAlreadyAttachedError } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Data, Router, RouterModule } from '@angular/router';
@@ -23,6 +23,11 @@ import { UrlSharingService } from 'src/app/Services/UrlSharingService/url-sharin
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { SharedService } from 'src/app/Services/SharedService/shared.service';
 import { MockData } from 'src/app/Classes/mockData';
+import { OrderType } from 'src/app/Classes/OrderTypes';
+import { ErrorStateMatcher } from '@angular/material/core';
+import { TableDialogComponent } from 'src/app/PopUps/GlobalTableDialog/table-dialog/table-dialog.component';
+
+
 
 @Component({
   selector: 'app-exec-order',
@@ -46,12 +51,34 @@ import { MockData } from 'src/app/Classes/mockData';
 })
 
 
+
 export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
+
+
+
+
+
+
   @ViewChildren('orderLinesChildren') orderLinesChildren;
+  @ViewChildren('orderLinesChildren2') orderLinesChildren2; // for order of loading vouchers manually
   faFileExcel = faFileExcel;
   MsgList = MsgList;
   MockData = MockData;
   dateChanging: boolean = false;
+  orderType;
+  OrderType = OrderType;
+
+  LoadingVoucherByExcelHavePhoneNumber: boolean = false;
+
+
+
+
+  //titles
+  OrderSummaryTitle: string = ''; //סיכום הזמנה דיגיטלית
+  GoToOrderLinesTitle: string = '';
+
+  cardFromNotBelongsError: string = "";
+  cardToNotBelongsError: string = "";
 
 
   // OrderData;
@@ -73,6 +100,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   insertOrderLineSpinner: boolean = false;
+  insertOrderLineSpinner2: boolean = false;
   createCardsSpinner: boolean = false;
   deleteCardsSpinner: boolean = false;
   orderFromExcel: boolean = false;
@@ -91,6 +119,9 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   errorSendSms: string = '';
   infoMsg: string = '';
   descriptionStatusInjected: string = '';
+
+
+  fromCrdWrongValue: boolean = true;
 
   newCustomer = {}; //set all parameters to lowerCase
 
@@ -145,9 +176,14 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     { id: 0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem: 0 }
   ];
 
-  displayedColumnsOrderDetails = ['id', 'QTY', 'LoadSum', 'ValidationDate', 'TotalForItem', 'additionalColumn'];
+  orderDetailsVoucherManually = [
+    { FromCard: '', ToCard: '', LoadSum: 0, ValidationDate: '', TotalForItem: 0, QTY: 0 }
+  ];
 
-  orderDetailsUpdateForm = this.fb.group({});
+  displayedColumnsOrderDetails = ['id', 'QTY', 'LoadSum', 'ValidationDate', 'TotalForItem', 'additionalColumn'];
+  displayedColumnsOrderDetailsVouchersManually = ['FromCard', 'ToCard', 'LoadSum', 'ValidationDate', 'TotalForItem', 'QTY', 'additionalColumn'];
+
+  //orderDetailsUpdateForm = this.fb.group({});
 
   columnsHeb = {
     'id': "מס''ד",
@@ -155,6 +191,15 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     'LoadSum': 'סכום טעינה',
     'ValidationDate': 'תוקף',
     'TotalForItem': "סה''כ סכום טעינה",
+  }
+
+  columnsHebVouchersManually = {
+    'FromCard': 'מכרטיס',
+    'ToCard': 'עד כרטיס',
+    'LoadSum': 'סכום טעינה',
+    'ValidationDate': 'תוקף',
+    'TotalForItem': 'סה"כ סכום טעינה',
+    'QTY': 'כמות כרטיסים'
   }
 
   Orders: MatTableDataSource<any>;
@@ -170,12 +215,17 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   sendSuccess: boolean = false;
   noInfoView: boolean;
   viewAddToExecOrderForm: boolean = true;
+  viewAddToExecOrderForm2: boolean = true;
+  viewManuallyVouchersForm: boolean = true;
+  IsB2COrder: boolean = false;
+
 
   totalTicketCount: number = 0;
   totalOrderSum: number = 0;
 
   userToken: string;
   orderDetailsTable;
+  orderDetailsVouchersManuallyTable = new MatTableDataSource();
 
   date: any;
 
@@ -187,6 +237,21 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     validity: [this.getLastDateOfCurrentMonthAnd5Years(), Validators.required],
     TotalForItem: [{ value: '', disabled: true }]
   });
+
+  //for additional empty row for vauchers loading manually
+  manuallyVouchersForm = this.fb.group({
+    FromCard: ['', [Validators.required]],
+    ToCard: ['', [Validators.required]],
+    LoadSum: ['', [Validators.required]],
+    ValidationDate: [this.getLastDateOfCurrentMonthAnd5Years(), Validators.required],
+    TotalForItem: [{ value: '', disabled: true }],
+    CardsCount: [{ value: '', disabled: true }]
+  },
+    // {
+    //   validator: checkMatchValidator('FromCard', 'ToCard')
+    // }
+  );
+
 
   //מספר אסמכתה
   // RefControl = new FormControl('', Validators.required);
@@ -208,6 +273,16 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     window.scroll(0, 0);
     let url = this.router.url;
     this.userToken = JSON.parse(localStorage.getItem('user')).Token;
+    // //
+
+    //get order type
+    this.urlSharingService.orderTypeMessage.subscribe(type => {
+      // //
+
+      this.orderType = type;
+    });
+
+    // this.SetDynamicTitles();
 
     this.pagePermissionAccessLevel = this.sharedService.pagesAccessLevel.value.length > 0 ? JSON.parse(this.sharedService.pagesAccessLevel.value) : JSON.parse(JSON.stringify(this.pagePermissionAccessLevel));
     this.sharedService.pagesAccessLevel.next('');
@@ -230,6 +305,13 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     this.orderDetails = [
       { id: 0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem: 0 }
     ];
+
+    this.orderDetailsVoucherManually = [
+      { FromCard: '', ToCard: '', LoadSum: 0, ValidationDate: '', TotalForItem: 0, QTY: 0 }
+    ];
+
+
+
     this.getStatusList();
     this.getSmsTemplates();
 
@@ -237,7 +319,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     //this.GetSupplierGroups();
     this.GetSupplierGroupsDetails();
 
-    //this code need when i will change url
+    //this code need for change url
     let urlParams = this.urlSharingService.messageSource.getValue();
 
     if (urlParams == '') {
@@ -247,29 +329,31 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       // this.idUnsubscribe = this.activeRoute.params.subscribe(param => {
       this.urlSharingService.changeMessage('');
 
-
       //manual order
       if (url.includes('order')) {
+        //
         this.orderId = JSON.parse(urlParams)['orderId'];
         this.customerId = JSON.parse(urlParams)['customerId'];
         this.newOrder = false;
-
-        debugger
         this.GetOrderDetails();
         this.GetCards();
+        // 
       }
 
       //new order
       if (url.includes('newOrder')) {
         this.orderStatus.description = 'הזמנה חדשה';
         this.customerId = JSON.parse(urlParams)['customerId'];
+
         // this.policySelectControl.setValue(JSON.parse(urlParams)['policy']);
         this.newOrder = true;
+        ////
 
         //set comments to field
 
         // this.OrderNameGroup.get('Comments').setValue(JSON.parse(urlParams)['orderDescription']);
         this.OrderChangesGroup.get('Comments').setValue(JSON.parse(urlParams)['orderDescription']);
+        this.OrderChangesGroup.get("RefControl").setValue(0);
 
         let objToApi = {
           Token: this.userToken,
@@ -308,7 +392,11 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
 
           //if order created from excel file
-          this.excelOrder = (this.dataByPage.DigitalBatch > 0 || this.dataByPage.DigitalBatch != 0) && this.dataByPage.DigitalBatch != null;
+          //also check if it not magnetic order
+          if (this.orderType != this.OrderType.LoadingVoucherByExcel && this.orderType != this.OrderType.LoadingVouchersManually) {
+            this.excelOrder = (this.dataByPage.DigitalBatch > 0 || this.dataByPage.DigitalBatch != 0) && this.dataByPage.DigitalBatch != null;
+          }
+
           // }
           // if (result.Token == null && result.errdesc != null && result.errdesc != '') {
           //   this.dialog.open(DialogComponent, {
@@ -324,8 +412,17 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
           // }
         });
 
-        let orderDetails = [{ id: 0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem: 0 }];
-        this.orderDetailsTable = new MatTableDataSource(orderDetails);
+
+        if (this.orderType != this.OrderType.LoadingVouchersManually) {
+          let orderDetails = [{ id: 0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem: 0 }];
+          this.orderDetailsTable = new MatTableDataSource(orderDetails);
+        }
+        else if (this.orderType == this.OrderType.LoadingVouchersManually) {
+          let orderDetails = [{ FromCard: '', ToCard: '', LoadSum: 0, ValidationDate: '', TotalForItem: 0, QTY: 0 }];
+          this.orderDetailsVouchersManuallyTable = new MatTableDataSource(orderDetails);
+
+        }
+
       }
       // })
       // 
@@ -336,6 +433,100 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       this.totalData();
     }
   }
+
+  //have to be removed
+  // checkCardValidity(element, value) {
+  //   //
+
+  //   let fieldFromCard = this.manuallyVouchersForm.get('FromCard');
+  //   let fieldToCard = this.manuallyVouchersForm.get('ToCard');
+
+  //   if (value.length == 8) {
+  //     debugger
+  //     this.checkCardValidityFronSide(element, value);
+
+  //     if (this.manuallyVouchersForm.get(element).valid) {
+  //       this.manuallyVouchersForm.get(element).setErrors({ 'CardNumberExist': false })
+  //       let objToApi = {
+  //         Token: this.userToken,
+  //         CardId: value
+  //       }
+  //       // 
+  //       this.dataService.CheckCardBelongingToTheCompany(objToApi).subscribe(result => {
+  //         // 
+  //         debugger
+  //         if (typeof result == 'object') {
+  //           if (result['Token'] != null && result['Token'] != '') {
+
+  //             if (+result['err'] < 0) {
+  //               switch (element) {
+  //                 case 'FromCard':
+  //                   fieldFromCard.setErrors({ 'FromCardNotBelongs': true });
+  //                   this.cardFromNotBelongsError = result['errdesc'];
+  //                   break;
+  //                 case 'ToCard':
+  //                   fieldToCard.setErrors({ 'ToCardNotBelongs': true });
+  //                   this.cardToNotBelongsError = result['errdesc'];
+  //                   break;
+  //               }
+  //             }
+  //             else {
+  //               fieldFromCard.setErrors({ 'FromCardNotBelongs': false });
+  //               fieldToCard.setErrors({ 'ToCardNotBelongs': false });
+
+
+  //               setTimeout(() => {
+  //                 fieldFromCard.setErrors(null);
+  //                 fieldToCard.setErrors(null);
+  //                 this.cardFromNotBelongsError = '';
+  //                 this.cardToNotBelongsError = '';
+
+  //                 // this.checkCardValidityFronSide(element, value);
+  //                 this.checkCardValidityFronSide('FromCard', fieldFromCard.value);
+  //                 this.checkCardValidityFronSide('ToCard', fieldToCard.value);
+
+  //               }, 0)
+  //             }
+  //           }
+  //         }
+  //         else if (typeof result == 'string') {
+  //           this.dialog.open(DialogComponent, {
+  //             data: { message: result }
+  //           })
+  //         }
+  //       })
+  //     }
+  //   }
+
+
+  // }
+
+  checkCardValidityFronSide(element, value) {
+    let fieldFromCard = this.manuallyVouchersForm.get('FromCard');
+    let fieldToCard = this.manuallyVouchersForm.get('ToCard');
+    let cardNumber = value;
+
+    //check range between to/from card
+    if (fieldToCard.value < fieldFromCard.value) {
+      fieldToCard.setErrors({ 'incorrect': true })
+    }
+    else if (fieldToCard.value == fieldFromCard.value) {
+      fieldToCard.setErrors({ 'equalValueError': true })
+    }
+    else {
+      fieldToCard.setErrors({ 'incorrect': false })
+      fieldToCard.setErrors({ 'equalValueError': false })
+      fieldToCard.setErrors(null);
+    }
+
+    //check if entering card is exist on order
+    this.orderDetailsVoucherManually.map((cardDetails, index) => {
+      if (cardNumber >= cardDetails.FromCard && cardNumber <= cardDetails.ToCard) {
+        this.manuallyVouchersForm.get(element).setErrors({ 'CardNumberExist': true });
+      }
+    })
+  }
+
 
   // getCalendarFilter() {
   //   let lastDateOfMonth = this.addToExecOrderForm.get('validity').value;//last day of current month
@@ -356,12 +547,25 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   //   this.maxDate = new Date(Fyear, +Fmonth, +Fday);
   // }
 
+  SetDynamicTitles() {
+
+    switch (this.orderType) {
+
+      case this.OrderType.OrderByExcel: this.OrderSummaryTitle = 'סיכום הזמנה דיגיטלית'; this.GoToOrderLinesTitle = 'רשימת הנמענים'; break;
+      case this.OrderType.ManualOrder: this.OrderSummaryTitle = 'סיכום הזמנה דיגיטלית'; this.GoToOrderLinesTitle = 'רשימת הנמענים'; break;
+      // case this.OrderType.Digital: this.OrderSummaryTitle = 'סיכום הזמנה דיגיטלית'; this.GoToOrderLinesTitle = 'רשימת הנמענים'; break;
+
+      case this.OrderType.LoadingVoucherByExcel: this.OrderSummaryTitle = 'סיכום הזמנה מגנטית'; this.GoToOrderLinesTitle = 'רשימת כרטיסים'; break;
+      case this.OrderType.LoadingVouchersManually: this.OrderSummaryTitle = 'סיכום הזמנה מגנטית'; this.GoToOrderLinesTitle = 'רשימת כרטיסים'; break;
+      // case this.OrderType.Magnetic: this.OrderSummaryTitle = 'סיכום הזמנה מגנטית'; this.GoToOrderLinesTitle = 'רשימת כרטיסים'; break;
+    }
+  }
   GetOrderDetails() {
     let objToApi = {
       Token: this.userToken,
       CoreOrderID: this.orderId
     }
-    debugger
+    //
     this.dataService.GetOrderDetails(objToApi).subscribe(result => {
       debugger
       if (typeof result == 'string') {
@@ -382,7 +586,22 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       this.userToken = result['Token'];
 
       // if (typeof result == 'object' && result.obj != null) {
+
+
+      //debugger
+      //get order type
+      if (result.obj[0].GiftCardType == 0) {
+        this.orderType = (result.obj[0].DigitalBatch == '' || result.obj[0].DigitalBatch == null) ? this.OrderType.LoadingVouchersManually : this.OrderType.LoadingVoucherByExcel
+      }
+      else if (result.obj[0].GiftCardType == 1) {
+        this.orderType = (result.obj[0].DigitalBatch == '' || result.obj[0].DigitalBatch == null) ? this.OrderType.ManualOrder : this.OrderType.OrderByExcel
+      }
+
+      //debugger
+      this.SetDynamicTitles();
+
       this.orderIdToPreview = result.obj[0].idex;
+      this.IsB2COrder = result.obj[0].IsB2COrder;
 
 
       let statusData = this.statusListArr.filter(status => status.StatusId == result.obj[0].StatusId);
@@ -392,6 +611,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       this.dataByPage = result['obj'][0];
 
 
+      //
       this.OrderChangesGroup.get('PolicyControl').setValue(+result['obj'][0]['Policy']);
       this.OrderChangesGroup.get('Comments').setValue(result['obj'][0]['OrderName']);
       this.OrderChangesGroup.get('SupplierGroups').setValue(result.obj[0].SupplierGroupID);
@@ -401,10 +621,17 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       // if (result.obj[0].StatusId > 1) {
       //   this.policySelectControl.disable();
       // }
+
+
+
       //if order created from excel file
-      this.excelOrder = (this.dataByPage.DigitalBatch > 0 || this.dataByPage.DigitalBatch != 0) && this.dataByPage.DigitalBatch != null;
+      //also check if it not magnetic order
+      if (this.orderType != this.OrderType.LoadingVoucherByExcel && this.orderType != this.OrderType.LoadingVouchersManually) {
+        this.excelOrder = (this.dataByPage.DigitalBatch > 0 || this.dataByPage.DigitalBatch != 0) && this.dataByPage.DigitalBatch != null;
+      }
 
 
+      //
       this.OrderChangesGroup.get("RefControl").setValue(this.dataByPage.CrmOrderId);//Reference
 
       //get customer data
@@ -414,15 +641,36 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         this.newCustomer[element.toLowerCase()] = this.Customer[element]
       });
 
-      this.Orders = new MatTableDataSource(result['obj'][0]['Lines']);
-      this.orderDetails = [];
-      this.Orders.data.forEach((element, index) => {
-        this.orderDetails.push(element);
-      });
-      this.orderDetails.push({ id: 0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem: 0 })
 
-      this.orderDetailsTable = new MatTableDataSource(this.orderDetails);
-      this.totalData();
+
+
+      this.Orders = new MatTableDataSource(result['obj'][0]['Lines']);
+
+      //if order is by range
+      if (this.orderType == this.OrderType.LoadingVouchersManually) {
+
+        this.orderDetailsVoucherManually = [];
+        this.Orders.data.forEach((element, index) => {
+          this.orderDetailsVoucherManually.push(element);
+        });
+        this.orderDetailsVoucherManually.push({ FromCard: '', ToCard: '', LoadSum: 0, ValidationDate: '', TotalForItem: 0, QTY: 0 })
+        debugger
+        this.orderDetailsVouchersManuallyTable = new MatTableDataSource(this.orderDetailsVoucherManually);
+        this.totalDataFromManualVoucher();
+
+      }
+      else {
+        this.orderDetails = [];
+        this.Orders.data.forEach((element, index) => {
+          this.orderDetails.push(element);
+        });
+        this.orderDetails.push({ id: 0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem: 0 })
+
+        debugger
+        this.orderDetailsTable = new MatTableDataSource(this.orderDetails);
+        this.totalData();
+      }
+
 
       // }
       // if (result.obj == null && result.errdesc != null && result.errdesc != '') {
@@ -457,7 +705,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     try {
       this.dataService.GetPoliciesByCompanyId(objToApi).subscribe(result => {
 
-        if (typeof result == 'string') {
+        if (result == undefined) {
           // this.sharedService.exitSystemEvent(result);
           return false;
         }
@@ -469,7 +717,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
         if (result['obj'] != null) {
           this.policyList = result['obj'];
-          debugger
+          //
 
 
 
@@ -536,9 +784,9 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     try {
-      debugger
+      //
       this.dataService.GetSupplierGroupsDetails(objToApi).subscribe(result => {
-        debugger
+        //
         if (typeof result == 'string') {
           // this.sharedService.exitSystemEvent(result);
           return false;
@@ -629,6 +877,22 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     )
   }
 
+
+  totalDataFromManualVoucher() {
+    //
+    this.totalTicketCount = 0;
+    this.totalOrderSum = 0;
+    this.orderDetailsVoucherManually.forEach((el, i) => {
+      if (i != this.orderDetailsVoucherManually.length - 1) {
+        //
+        this.totalTicketCount += (+el.ToCard - +el.FromCard + 1);
+        this.totalOrderSum += el.LoadSum * (+el.ToCard - +el.FromCard + 1);
+      }
+
+    }
+    )
+  }
+
   sendMessageToCustomer() {
     this.alertMessage = AlertMessage.sendSuccessfully;
     this.sendSuccess = true;
@@ -640,6 +904,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
   deleteRow(element, row) {
 
+    debugger
     if (this.pagePermissionAccessLevel.AccessLevel != this.MockData.accessLevelReadOnly) {
       let date = element.ValidationDate.split('/');
       let dateForApi = date[1] + '-' + date[0] + '-' + date[2];
@@ -654,7 +919,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         OpCode: "delete"
       }
 
-
+      debugger
       //show spinner of order line by id
       this.orderLinesChildren._results.forEach(el => {
         let spinner = (el.nativeElement.children['spinnerDelete' + element.id] as HTMLBodyElement);
@@ -664,7 +929,9 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         }
       })
 
+      debugger
       this.dataService.InsertUpdateLines(objToApi).subscribe(result => {
+        debugger
         if (typeof result == 'string') {
           // this.dialog.open(DialogComponent, {
           //   data: { message: result }
@@ -681,26 +948,39 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         localStorage.setItem('user', JSON.stringify(tempObjUser));
         this.userToken = result['Token'];
 
-        this.orderDetails = [
-          { id: 0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem: 0 }
-        ];
-        if (result['obj'][0]['Lines'].length > 0) {
-          this.orderDetails.unshift(...result['obj'][0]['Lines']);
+
+        //here111
+        if (this.orderType == this.OrderType.LoadingVouchersManually) {
+
+          this.orderDetailsVoucherManually = [
+            { FromCard: '', ToCard: '', LoadSum: 0, ValidationDate: '', TotalForItem: 0, QTY: 0 }
+          ];
+
+          this.Orders = new MatTableDataSource(result['obj'][0]['Lines']);
+          this.Orders.data.forEach((element, index) => {
+            this.orderDetailsVoucherManually.unshift(element);
+          });
+
+          this.GetCards();
+          this.orderDetailsVouchersManuallyTable = new MatTableDataSource(this.orderDetailsVoucherManually);
+          this.totalDataFromManualVoucher();
+
+
+        }
+        else {
+          this.orderDetails = [
+            { id: 0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem: 0 }
+          ];
+          if (result['obj'][0]['Lines'].length > 0) {
+            this.orderDetails.unshift(...result['obj'][0]['Lines']);
+          }
+          this.orderDetailsTable.data = this.orderDetails;
+          this.totalData();
         }
 
-        // let filteringObj = this.orderDetails.filter((el, indexRow) => {
-        //    return indexRow != row;
-        // });
-        this.orderDetailsTable.data = this.orderDetails;
-        this.totalData();
-        // this.orderDetails = filteringObj;
-        // }
-        // else {
-        //   // this.dialog.open(DialogComponent, {
-        //   //   data: {message: MsgList.exitSystemAlert}
-        //   // })
-        //   this.sharedService.exitSystemEvent();
-        // }
+
+
+
       });
     }
     else {
@@ -709,12 +989,27 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       })
     }
   }
+
+  deleteRowOfManualVoucher(element, row) {
+
+    // //
+    // this.orderDetailsVoucherManually = [
+    //   { FromCard: '', ToCard: '', LoadSum: 0, ValidationDate: '', TotalForItem: 0, QTY: 0 }
+    // ];
+    // this.tempOBJ.splice(row, 1);
+
+    // this.orderDetailsVoucherManually.unshift(...this.tempOBJ);
+    // this.orderDetailsVouchersManuallyTable = new MatTableDataSource(this.orderDetailsVoucherManually);
+    alert('under construction');
+  }
+
   addOrderLine() {
+    //
     if (this.newOrder || !this.excelOrder) {
       if (this.addToExecOrderForm.valid) {
         this.insertOrderLineSpinner = true;
-        let ticketCount = +this.addToExecOrderForm.get('ticketCount').value;
-        let chargeAmount = +this.addToExecOrderForm.get('chargeAmount').value;
+        let ticketCount = +((this.addToExecOrderForm.get('ticketCount').value).replaceAll(',', ''));
+        let chargeAmount = +((this.addToExecOrderForm.get('chargeAmount').value).replaceAll(',', ''));
         let validity = new Date(this.addToExecOrderForm.get('validity').value);
         validity.setHours(23, 59, 59)
         // let validityFormating = (new Date(validity).getDate() < 10 ? '0' + new Date(validity).getDate() : new Date(validity).getDate()) + '/' + ((new Date(validity).getMonth() + 1) < 10 ? '0' + (new Date(validity).getMonth() + 1) : new Date(validity).getMonth() + 1) + '/' + new Date(validity).getFullYear();
@@ -738,7 +1033,6 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         if (this.orderDetailsTable.data.length > 1) {
 
           objToApi['OrderId'] = this.orderId;
-          // 
 
           this.dataService.InsertUpdateLines(objToApi).subscribe(result => {
             if (typeof result == 'string') {
@@ -763,7 +1057,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
             this.userToken = result['Token'];
 
             // if (result['obj'] != undefined) {
-
+            //
             this.orderDetails = [
               { id: 0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem: 0 }
             ];
@@ -794,19 +1088,13 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
         //insert first line, create new order
         else {
-
-
           this.dataService.InsertUpdateOrder(objToApi).subscribe(result => {
             if (typeof result == 'string') {
-              // this.dialog.open(DialogComponent, {
-              //   data: { message: result }
-              // })
-
               this.sharedService.exitSystemEvent(result);
               return false;
             }
 
-
+            //
             this.addToExecOrderForm.get('validity').setValue(this.getLastDateOfCurrentMonthAnd5Years());
             // if (result['Token'] != undefined || result['Token'] != null) {
             this.insertOrderLineSpinner = false;
@@ -815,14 +1103,9 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
               this.orderDetails = [
                 { id: 0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem: 0 }
               ];
-
               this.dataByPage['MDate'] = new Date();
-
               this.orderIdToPreview = result.obj[0].idex;
-
-
               this.orderDetails.unshift(result['obj'][0]['Lines'][0]);
-              // 
               this.orderDetailsTable = new MatTableDataSource(this.orderDetails);
 
 
@@ -836,15 +1119,9 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
               let statusData = this.statusListArr.filter(status => status.StatusId == result.obj[0].OrderStatus);
               this.orderStatus.id = statusData[0].StatusId;
               this.orderStatus.description = statusData[0].Description;
+              //
 
             }
-            // }
-            // else {
-            //   // this.dialog.open(DialogComponent, {
-            //   //   data: {message: MsgList.exitSystemAlert}
-            //   // })
-            //   this.sharedService.exitSystemEvent();
-            // }
           });
         }
 
@@ -874,8 +1151,159 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  ApproveOrder(element) {
 
+  addOrderLineForManualVoucher() {
+    if (this.manuallyVouchersForm.valid) {
+
+      this.insertOrderLineSpinner2 = true;
+      let formData = this.manuallyVouchersForm.value;
+      //let TotalForItem = (formData.LoadSum).replaceAll(',','') * (formData.ToCard - formData.FromCard + 1);
+      //let QTY = formData.ToCard - formData.FromCard + 1;
+      let validity = new Date(formData.ValidationDate);
+      validity.setHours(23, 59, 59)
+      let objToApi = {
+        Token: this.userToken,
+        UserId: this.customerId,
+        ChargeAmount: +(formData.LoadSum.replaceAll(',', '')),
+        OpCode: "Magnetic",
+        FromCard: formData.FromCard,
+        ToCard: formData.ToCard,
+        Validity: validity,
+      }
+
+      //first line
+      if (this.orderDetailsVouchersManuallyTable.data.length == 1) {
+        this.dataService.InsertUpdateOrderBatchByRange(objToApi).subscribe(result => {
+          this.insertOrderLineSpinner2 = false;
+          if (typeof result == 'string') {
+            this.sharedService.exitSystemEvent(result);
+            return false;
+          }
+          if (result.err < 0 && result.obj != null) {
+
+            //here
+
+
+            //translate table label
+            let newDataArr = [];
+            result.obj.forEach(data => {
+              newDataArr.push({ 'מספר תו': data.CardId })
+            })
+
+            this.dialog.open(TableDialogComponent, {
+              maxHeight: '200px',
+              data: { title: result.errdesc, data_Source: newDataArr, dataLabelsList: ['מספר תו'] }
+            })
+            return false;
+          }
+
+          //set new token
+          let tempObjUser = JSON.parse(localStorage.getItem('user'));
+          tempObjUser['Token'] = result['Token'];
+          localStorage.setItem('user', JSON.stringify(tempObjUser));
+          this.userToken = result['Token'];
+
+          this.orderDetailsVoucherManually = [
+            { FromCard: '', ToCard: '', LoadSum: 0, ValidationDate: '', TotalForItem: 0, QTY: 0 }
+          ];
+          this.dataByPage['MDate'] = new Date();
+          this.orderIdToPreview = result.obj[0].idex;
+          this.orderDetailsVoucherManually.unshift(...result['obj'][0]['Lines']);
+          this.orderDetailsVouchersManuallyTable = new MatTableDataSource(this.orderDetailsVoucherManually);
+
+          //after created new order, set order id
+          this.orderId = result['obj'][0]['orderid'];
+
+          //calculate new total dat
+          this.totalDataFromManualVoucher();
+
+          //set status data
+          let statusData = this.statusListArr.filter(status => status.StatusId == result.obj[0].OrderStatus);
+          this.orderStatus.id = statusData[0].StatusId;
+          this.orderStatus.description = statusData[0].Description;
+        })
+      }
+      //second and more lines
+      else if (this.orderDetailsVouchersManuallyTable.data.length > 1) {
+        objToApi['OrderId'] = this.orderId;
+        this.dataService.InsertUpdateLines(objToApi).subscribe(result => {
+          if (typeof result == 'string') {
+            this.sharedService.exitSystemEvent(result);
+            return false;
+          }
+          if (result.err < 0 && result.obj != null) {
+            //translate table label
+            let newDataArr = [];
+            result.obj.forEach(data => {
+              newDataArr.push({ 'מספר תו': data.CardId })
+            })
+
+            this.dialog.open(TableDialogComponent, {
+              maxHeight: '200px',
+              data: { title: result.errdesc, data_Source: newDataArr, dataLabelsList: ['מספר תו'] }
+            })
+            return false;
+          }
+          this.insertOrderLineSpinner2 = false;
+
+          this.manuallyVouchersForm.get('ValidationDate').setValue(this.getLastDateOfCurrentMonthAnd5Years());
+          // 
+          // if (result['Token'] != undefined || result['Token'] != null) {
+
+          //set new token
+          let tempObjUser = JSON.parse(localStorage.getItem('user'));
+          tempObjUser['Token'] = result['Token'];
+          localStorage.setItem('user', JSON.stringify(tempObjUser));
+          this.userToken = result['Token'];
+
+
+          this.orderDetailsVoucherManually = [
+            { FromCard: '', ToCard: '', LoadSum: 0, ValidationDate: '', TotalForItem: 0, QTY: 0 }
+          ];
+
+
+          this.orderDetailsVoucherManually.unshift(...result['obj'][0]['Lines']);
+          this.orderDetailsVouchersManuallyTable = new MatTableDataSource(this.orderDetailsVoucherManually);
+
+
+          //calculate new total dat
+          this.totalDataFromManualVoucher();
+
+          //set status data
+          let statusData = this.statusListArr.filter(status => status.StatusId == result.obj[0].OrderStatus);
+          this.orderStatus.id = statusData[0].StatusId;
+          this.orderStatus.description = statusData[0].Description;
+
+        });
+
+        /////
+      }
+
+
+      //reset form
+      //
+      this.viewAddToExecOrderForm2 = false;
+
+      setTimeout(() => {
+        this.manuallyVouchersForm.reset();
+        //
+        // this.manuallyVouchersForm.markAsUntouched();
+        this.manuallyVouchersForm.get('ValidationDate').setValue(this.getLastDateOfCurrentMonthAnd5Years());
+        this.viewAddToExecOrderForm2 = true;
+      }, 0);
+    }
+    else {
+      this.addOrderLineErrMsg = 'נא למלא את כל השדות';
+
+      setTimeout(() => {
+        this.addOrderLineErrMsg = '';
+      }, 3000);
+    }
+  }
+
+
+  ApproveOrder(element) {
+    //
     let buttonClicked = element.currentTarget;
     if (this.orderDetails.length > 1 && this.pagePermissionAccessLevel.AccessLevel != this.MockData.accessLevelReadOnly) {
 
@@ -910,13 +1338,13 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         Policy: this.OrderChangesGroup.get('PolicyControl').value,
         SupplierGroupId: this.OrderChangesGroup.get('SupplierGroups').value
       }
-
+      //
       //first save reference and comments
       this.createCardsSpinner = true;
 
-      debugger
+      //
       this.dataService.InsertUpdateOrder(objToApiChanges).subscribe(result => {
-        debugger
+        //
         this.createCardsSpinner = false;
         if (typeof result == 'string') {
           // this.dialog.open(DialogComponent, {
@@ -1036,7 +1464,141 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
+  ApproveLoadingOrder(element) {
+    // let buttonClicked = element.currentTarget;
+    // if (this.orderType == this.OrderType.LoadingVouchersManually) {
+    //   alert('under construction');
+    // }
+    // else if (this.orderType == this.OrderType.LoadingVoucherByExcel) {
+    //   alert('under construction');
+    // }
 
+
+    let buttonClicked = element.currentTarget;
+
+    let orderDetailsValid: boolean = false;
+    if (this.orderType == this.OrderType.LoadingVouchersManually) {
+      orderDetailsValid = this.orderDetailsVoucherManually.length > 1;
+    }
+    else {
+      orderDetailsValid = this.orderDetails.length > 1;
+    }
+    if (orderDetailsValid && this.pagePermissionAccessLevel.AccessLevel != this.MockData.accessLevelReadOnly) {
+
+
+      if (this.OrderChangesGroup.get("RefControl").value == 0 || this.OrderChangesGroup.get("RefControl").value == '') {
+        this.infoMsg = this.MsgList.referenceRequired;
+        setTimeout(() => {
+          this.infoMsg = '';
+        }, 2000)
+
+        return false;
+      }
+
+      // if (!this.OrderNameGroup.valid) {
+      //   this.OrderNameGroup.markAllAsTouched();
+      //   return false;
+      // }
+
+      if (!this.OrderChangesGroup.valid) {
+        this.OrderChangesGroup.markAllAsTouched();
+        return false;
+      }
+
+
+      let objToApiChanges = {
+        Token: this.userToken,
+        UserID: this.customerId,
+        OrderID: this.orderId,
+        OpCode: "Save",
+        Reference: this.OrderChangesGroup.get("RefControl").value == '' ? 0 : this.OrderChangesGroup.get("RefControl").value,
+        OrderName: this.OrderChangesGroup.get('Comments').value.trim(),
+        Policy: this.OrderChangesGroup.get('PolicyControl').value,
+        SupplierGroupId: this.OrderChangesGroup.get('SupplierGroups').value
+      }
+      //
+      //first save reference and comments
+      this.createCardsSpinner = true;
+
+      this.dataService.InsertUpdateOrder(objToApiChanges).subscribe(result => {
+
+        this.createCardsSpinner = false;
+        if (typeof result == 'string') {
+          // this.dialog.open(DialogComponent, {
+          //   data: { message: result }
+          // })
+
+          this.sharedService.exitSystemEvent(result);
+          return false;
+        }
+        // if (result['Token'] != undefined || result['Token'] != null) {
+
+        // if (result.err != -1) {
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
+
+        buttonClicked.disabled = true;
+        this.createCardsSpinner = true;
+        this.descriptionStatusInjected = 'בייצור'
+        this.infoMsg = `
+            פעולה יכולה לקחת כמה דקות
+            </br>
+            נא להמתין ליצירת הכרטיסים
+            `;
+
+        let objToApi = {
+          Token: this.userToken,
+          OrderId: this.orderId.toString(),
+          UserID: this.customerId
+        }
+
+        //alert('before approve');
+
+        this.dataService.ApproveBatchOrder(objToApi).subscribe(result => {
+          //alert('after approve');
+
+          this.descriptionStatusInjected = '';
+          buttonClicked.disabled = false;
+          this.createCardsSpinner = false;
+          this.infoMsg = '';
+
+          if (typeof result == 'string') {
+            // this.dialog.open(DialogComponent, {
+            //   data: { message: result }
+            // })
+
+            this.sharedService.exitSystemEvent(result);
+            return false;
+          }
+          //set new token
+
+          let tempObjUser = JSON.parse(localStorage.getItem('user'));
+          tempObjUser['Token'] = result['Token'];
+          localStorage.setItem('user', JSON.stringify(tempObjUser));
+          this.userToken = result['Token'];
+
+          // if (result.err != -1) {
+          localStorage.setItem('createOrderByExcel', '');
+          this.infoMsg = 'הזמנה נקלטה בהצלחה';
+
+          setTimeout(() => {
+            this.infoMsg = '';
+            this.goToOrder(result.obj[0]['orderid'], this.customerId);
+          }, 2000);
+        })
+      })
+    }
+    else {
+      this.errorMsg = 'נא ליצור לפחות הזמנה אחת';
+
+      setTimeout(() => {
+        this.errorMsg = '';
+      }, 3000)
+    }
+  }
 
   deleteOrder() {
 
@@ -1119,6 +1681,10 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
+  deleteLoadedOrder() {
+    alert('under construction');
+  }
+
   calculateTotalCharge() {
     let ticketCount = this.addToExecOrderForm.get('ticketCount').value;
     let chargeAmount = this.addToExecOrderForm.get('chargeAmount').value;
@@ -1133,7 +1699,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
   saveChanges() {
 
-    debugger
+    //
     if (this.pagePermissionAccessLevel.AccessLevel != this.MockData.accessLevelReadOnly) {
 
       if (this.OrderChangesGroup.valid) {
@@ -1167,9 +1733,9 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
         //alert('before save changes');
 
-        debugger
+        //
         this.dataService.InsertUpdateOrder(objToApi).subscribe(result => {
-          debugger
+          //
           // alert('after save changes');
 
 
@@ -1284,18 +1850,42 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
             data: { message: 'נשמר בהצלחה' }
           })
 
-          this.orderDetails = [
-            { id: 0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem: 0 }
-          ];
+          debugger
+          //here
 
-          this.Orders = new MatTableDataSource(result['obj'][0]['Lines']);
-          this.Orders.data.forEach((element, index) => {
-            this.orderDetails.unshift(element);
-          });
+          if (this.orderType == this.OrderType.LoadingVouchersManually) {
 
-          this.GetCards();
-          this.orderDetailsTable = new MatTableDataSource(this.orderDetails);
-          this.totalData();
+            this.orderDetailsVoucherManually = [
+              { FromCard: '', ToCard: '', LoadSum: 0, ValidationDate: '', TotalForItem: 0, QTY: 0 }
+            ];
+
+            this.Orders = new MatTableDataSource(result['obj'][0]['Lines']);
+            this.Orders.data.forEach((element, index) => {
+              this.orderDetailsVoucherManually.unshift(element);
+            });
+
+            this.GetCards();
+            this.orderDetailsVouchersManuallyTable = new MatTableDataSource(this.orderDetailsVoucherManually);
+            this.totalDataFromManualVoucher();
+
+
+          }
+          else {
+            this.orderDetails = [
+              { id: 0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem: 0 }
+            ];
+
+            this.Orders = new MatTableDataSource(result['obj'][0]['Lines']);
+            this.Orders.data.forEach((element, index) => {
+              this.orderDetails.unshift(element);
+            });
+
+            this.GetCards();
+            this.orderDetailsTable = new MatTableDataSource(this.orderDetails);
+            this.totalData();
+          }
+
+
           // }
           // }
           // else {
@@ -1446,7 +2036,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
 
 
-
+    //
     this.dataService.GetCardsByOrderId(objToAPI).subscribe(result => {
 
       if (typeof result == 'string') {
@@ -1469,6 +2059,9 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       // if (typeof result == 'object') {
       this.orderCardsData = result['obj'][0];
 
+      //check if cards loaded by LoadingVoucherByExcel contains phone number
+      this.LoadingVoucherByExcelHavePhoneNumber = this.orderCardsData.filter(data => (data.DSendPhone != '' && data.DSendPhone != null)).length > 0;
+      debugger
       this.DigitalBatch = result['obj'][1];
 
 
@@ -1504,13 +2097,18 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         { value: 'DSendPhone', viewValue: 'מספר נייד נמען	' },
         { value: 'LoadSum', viewValue: 'סכום טעינה ראשוני		' },
         { value: 'ValidationDate', viewValue: '	תוקף	' },
-        { value: 'KindOfLoadSumDesc', viewValue: 'סוג שובר טעינה	' },
+        { value: 'KindOfLoadSumDesc', viewValue: 'סוג תו טעינה	' },
         { value: 'DSendLastSent', viewValue: 'נשלח לאחרונה' }
       ];
 
       //add another column to file if order created from excel file
       if (this.DigitalBatch != '' && this.DigitalBatch != undefined) {
         tableLabels.push({ value: 'ValidationField', viewValue: 'שדה אימות' })
+      }
+
+      if (this.orderType == this.OrderType.LoadingVoucherByExcel || this.orderType == this.OrderType.LoadingVouchersManually) {
+        // tableLabels.push({ value: 'PrintNumber', viewValue: ' קידוד כרטיס' })
+        tableLabels.splice(2, 0, { value: 'PrintNumber', viewValue: ' קידוד כרטיס' })
       }
       let tableData = JSON.parse(JSON.stringify(this.orderCardsData));
 
@@ -1551,10 +2149,13 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   goToOrderLines(orderId, customerId) {
     let OrderLine = {
       orderId: orderId,
-      customerId: customerId
+      customerId: customerId,
+      orderType: this.orderType
     }
-
+    //
     this.urlSharingService.changeMessage(JSON.stringify(OrderLine));
+    //
+    //this.urlSharingService.changeOrderType(this.orderType);
     this.router.navigate(['/public/orderLines']);
   }
 
@@ -1594,6 +2195,21 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     }
 
   }
+  formatDateWithLine(dateForFormat: any) {
+
+    if (dateForFormat != null && dateForFormat != "") {
+      let date = new Date(dateForFormat.toString());
+      let day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
+      let month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
+      let year = date.getFullYear();
+
+      return day + '-' + month + '-' + year;
+    }
+    else {
+      return "";
+    }
+
+  }
 
   ngOnChanges(changes: SimpleChanges) {
 
@@ -1601,8 +2217,11 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
   ngOnDestroy() {
     // this.idUnsubscribe.unsubscribe();
+    this.urlSharingService.changeOrderType('');
   }
 }
+
+
 
 
 //dialog

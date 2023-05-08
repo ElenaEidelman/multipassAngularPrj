@@ -34,6 +34,9 @@ import { PurchasingGiftComponent } from './Iframe/components/purchasing-gift/pur
 import { ThanksPageComponent } from './Iframe/components/thanks-page/thanks-page.component';
 import { PagePermissionGuardGuard } from './guards/pagePermissionGuard/page-permission-guard.guard';
 import { SystemSettingsComponent } from './system-settings/system-settings.component';
+import { VouchersIssuanceComponent } from './Cards/vouchers-issuance/vouchers-issuance.component';
+import { LoadingVouchersComponent } from './Cards/loading-vouchers/loading-vouchers.component';
+import { CardsListComponent } from './Cards/cards-list/cards-list.component';
 
 const routes: Routes = [
   { path: 'logIn', component: LogInComponent },
@@ -44,6 +47,7 @@ const routes: Routes = [
       { path: 'home', component: HomeComponent },
       { path: 'order', component: ExecOrderComponent, canActivate: [PagePermissionGuardGuard] },
       { path: 'newOrder', component: ExecOrderComponent, canActivate: [PagePermissionGuardGuard] },
+      { path: 'loadVouchersManualy', component: ExecOrderComponent, canActivate: [PagePermissionGuardGuard] },
       { path: 'allOrders', component: AllOrdersComponent, canActivate: [PagePermissionGuardGuard] },
       { path: 'allCustomers', component: AllCustomersComponent, canActivate: [PagePermissionGuardGuard] },
       { path: 'newCustomer', component: NewCustomerComponent, canActivate: [PagePermissionGuardGuard] },
@@ -61,6 +65,9 @@ const routes: Routes = [
       { path: 'testExpandingTable', component: TestExpandingTableComponent, canActivate: [PagePermissionGuardGuard] },
       { path: 'excelView', component: ExcelFileViewComponent, canActivate: [PagePermissionGuardGuard] },
       { path: 'SystemSettings', component: SystemSettingsComponent, canActivate: [PagePermissionGuardGuard] },
+      { path: 'IssuanceVouchers', component: VouchersIssuanceComponent },
+      { path: 'LoadingVouchers', component: LoadingVouchersComponent },
+      { path: 'CardsList', component: CardsListComponent },
 
 
       {

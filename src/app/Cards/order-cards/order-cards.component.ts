@@ -16,6 +16,7 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { UrlSharingService } from 'src/app/Services/UrlSharingService/url-sharing.service';
 import { SharedService } from 'src/app/Services/SharedService/shared.service';
 import { MockData } from 'src/app/Classes/mockData';
+import { OrderType } from 'src/app/Classes/OrderTypes';
 
 @Component({
   selector: 'app-order-cards',
@@ -48,6 +49,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
   @ViewChild('customersSelectManual') customersSelectManual: any;
 
   MsgList = MsgList;
+  OrderType = OrderType;
   MockData = MockData;
 
   tabGroups = [
@@ -288,7 +290,9 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
         orderDescription: this.manualCardgroup.get('orderDescription').value,
         // policy: this.manualCardgroup.get('policySelectManual').value
       }
+      //debugger
       this.urlSharingService.changeMessage(JSON.stringify(Customer));
+      this.urlSharingService.changeOrderType(this.OrderType.ManualOrder);
       // let route = ['/public/newOrder', this.manualCardgroup.get('customer').value != undefined ? this.manualCardgroup.get('customer').value['id'] : '-1']
       this.router.navigate(['/public/newOrder']);
     }
@@ -303,6 +307,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
 
   fileOptionChange(event) {
     //&& this.excelCardCreatingForm.get('policySelectExcel').valid
+    //debugger
     if (
       this.excelCardCreatingForm.get('customer').valid &&
       this.excelCardCreatingForm.get('orderDescription').valid) {
@@ -333,9 +338,9 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
           // formData.append('Policy', this.excelCardCreatingForm.get('policySelectExcel').value);
 
 
-          debugger
+          //debugger
           this.dataService.InsertUpdateOrderByExcel(formData).subscribe(result => {
-            debugger
+            //debugger
 
 
             this.fileUploading = false;
@@ -348,7 +353,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
               localStorage.setItem('user', JSON.stringify(tempObjUser));
               this.userToken = result['Token'];
 
-              if (result.err != -1) {
+              if (result.err >= 0) {
                 this.fileUplodadeValid = true;
                 this.filename = result.obj[1][0].NewFileName;
 
@@ -357,15 +362,16 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
                   customerId: this.excelCardCreatingForm.get('customer').value.id,
                   fileData: JSON.stringify(result),
                   // fileDescription: this.excelCardCreatingForm.get('orderDescription').value
-                  OrderName: this.excelCardCreatingForm.get('orderDescription').value,
+                  OrderName: this.excelCardCreatingForm.get('orderDescription').value
                   // Policy: this.excelCardCreatingForm.get('policySelectExcel').value
 
                 }
                 localStorage.setItem('excelFileData', JSON.stringify(objGetFile));
+                localStorage.setItem('OrderType', OrderType.OrderByExcel);
                 this.uploadDoc.nativeElement.value = '';
 
               }
-              if (result.err == -1) {
+              else {
 
                 //if have missing data in file
                 if (result.obj != null && result.obj.length > 0) {
@@ -374,6 +380,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
                   let data = [];
                   let dataLabelsList = ['FirstName', 'LastName', 'Cellular', 'Amount'];
 
+                  //debugger
                   result.obj[0].forEach(element => {
                     dataLabelsList.forEach(labels => {
                       dataOBJ[labels] = element[labels]
@@ -438,7 +445,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
       //check from card number
       if (val['fromCardNumber'] != '') {
         let card = this.cardsData.filter(el => el['cardId'] == val['fromCardNumber']);
-        //this.fromCardCheckedOrderNumber = card.length > 0 ? +card[0]['orderId'] : 'מספר שובר לא תקין';
+        //this.fromCardCheckedOrderNumber = card.length > 0 ? +card[0]['orderId'] : 'מספר תו לא תקין';
 
         if (card.length > 0) {
           this.fromCardCheckedOrderNumber = +card[0]['orderId'];
@@ -446,7 +453,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
         }
         else {
           this.fromCardCheckedOrderNumber = '';
-          this.fromCardError = 'מספר שובר לא תקין*';
+          this.fromCardError = 'מספר תו לא תקין*';
         }
 
       }
@@ -458,7 +465,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
       //check to card number
       if (val['toCardNumber'] != '') {
         let card = this.cardsData.filter(el => el['cardId'] == val['toCardNumber']);
-        //this.toCardCheckedOrderNumber = card.length > 0 ? +card[0]['orderId'] : 'מספר שובר לא תקין';
+        //this.toCardCheckedOrderNumber = card.length > 0 ? +card[0]['orderId'] : 'מספר תו לא תקין';
 
         if (card.length > 0) {
           this.toCardCheckedOrderNumber = +card[0]['orderId'];
@@ -479,7 +486,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
         }
         else {
           this.toCardCheckedOrderNumber = '';
-          this.toCardError = 'מספר שובר לא תקין*';
+          this.toCardError = 'מספר תו לא תקין*';
         }
 
       }

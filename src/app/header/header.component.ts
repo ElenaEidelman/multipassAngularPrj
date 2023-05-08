@@ -33,7 +33,7 @@ export class HeaderComponent implements OnInit {
     private dialog: MatDialog,
     private http: HttpClient) {
     this.clickEventSubscription = this.sharedService.getExitSystemEvent().subscribe((el) => {
-      debugger
+      //debugger
       this.exitSystem(el);
     })
   }

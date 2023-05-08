@@ -1,35 +1,41 @@
-.mat-progress-spinner{
+.mat-progress-spinner {
     margin: auto;
     z-index: 999;
 }
-.tableActions{
+
+/* .tableActions{
     display: flex;
     flex-direction: row-reverse;
     margin: 2em 0;
-}
-.tableActions > div{
+} */
+/* .tableActions>div {
     margin-left: 10px;
-}
-.tableWrap{
+} */
+
+.tableWrap {
     position: relative;
 }
-.main2-title{
-    flex-direction: row-reverse;;
+
+.main2-title {
+    flex-direction: row-reverse;
+    ;
 }
-.smsLabel{
+
+.smsLabel {
     position: absolute;
     bottom: 0.3em;
     right: 2em;
 }
 
-.additionalOptions{
+.additionalOptions {
     display: flex;
     flex-direction: column;
     margin: 0 auto !important;
     overflow: visible !important;
     width: 50%;
 }
-.additionalOptionsSMS > div{
+
+.additionalOptionsSMS>div {
     /* margin: auto;
     flex-grow: 1;
     flex-basis: 0;
@@ -37,18 +43,20 @@
     /* margin: 0 20px; */
 }
 
-.additionalOptionDelete{
+.additionalOptionDelete {
     display: flex;
     margin: 2em 0;
     padding: 15px;
     width: fit-content;
     margin-left: auto;
 }
-.voidBWrap{
+
+.voidBWrap {
     position: relative;
     text-align: center;
 }
-.voidSpinner{
+
+.voidSpinner {
     position: absolute;
     top: -24px;
     right: 7px;
@@ -57,24 +65,26 @@
 /* table tr > td:first-child{
     background:#DDE0E0;
 } */
-.checkBoxBG{
+.checkBoxBG {
     /* background:#EFEFED; */
 }
 
-.textAreaWrap{
+.textAreaWrap {
     width: 100%;
 }
-.buttonSendSms{
+
+.buttonSendSms {
     text-align: center;
     margin-bottom: 10px !important;
 }
-.selectWrap{
+
+.selectWrap {
     margin: auto 0 !important;
 }
 
 
 @media screen and (max-width: 1024px) {
-    .tableActions{
+    .tableActions {
         justify-content: center;
     }
 }

@@ -1,106 +1,128 @@
-.wrapCardsFilter{
+.wrapCardsFilter {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     flex-direction: row-reverse;
 }
-.wrapExpData{
+
+.wrapExpData {
     display: flex;
     justify-content: flex-end;
 }
-.padd{
+
+.padd {
     padding-left: 10px;
 }
-.changeDate{
+
+.changeDate {
     display: flex;
-    flex-direction: row-reverse;
-    justify-content: center;
+    flex-direction: row;
+    justify-content: right;
 }
-.changeDate > span{
+
+.changeDate>span {
     text-decoration: underline;
     margin: 0 5px;
 }
-.changeDate > mat-icon{
+
+.changeDate>mat-icon {
     color: #88C43E;
 }
-.innerElement{
+
+.innerElement {
     margin: 1.5rem 0;
     position: relative;
 }
-.wrapInnerEl > div.secondChild{
+
+.wrapInnerEl>div.secondChild {
     display: flex;
     justify-content: space-between;
     flex-direction: row-reverse;
     height: 100%;
 }
-.wrapData{
+
+.wrapData {
     height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
 }
-.wrapData > div{
+
+.wrapData>div {
     flex-grow: 1;
     flex-basis: 0;
-    text-align: center;
+    text-align: right;
 }
-.wrapInnerElCol{
+
+.wrapInnerElCol {
     display: flex;
     justify-content: space-between;
-    flex-direction:column;
+    flex-direction: column;
 }
-.wrapInnerElCol > div.secondChild > div{
+
+.wrapInnerElCol>div.secondChild>div {
     flex-grow: 1;
     display: flex;
     justify-content: space-between;
     flex-direction: row-reverse;
 }
-.dataRow{
-    flex-direction: row-reverse; 
+
+.dataRow {
+    flex-direction: row-reverse;
 }
-.dataRow > div{
+
+.dataRow>div {
     margin: auto;
 }
 
-.datePicker{
+.datePicker {
     margin-bottom: auto;
 }
-.cardInfo{
+
+.cardInfo {
     flex-direction: row !important;
 }
-.wrapInnerEl > div.secondChild > div{
+
+.wrapInnerEl>div.secondChild>div {
     flex-grow: 1;
     flex-basis: 0;
     display: flex;
     flex-direction: column-reverse;
-    text-align: center;
+    text-align: right;
     /* text-align: center; */
 }
-.buttonCardFunc{
+
+.buttonCardFunc {
     margin: auto 0;
 }
-.buttonSave{
+
+.buttonSave {
     text-align: center;
     padding: 10px;
     position: relative;
 }
-.buttonSave mat-spinner{
+
+.buttonSave mat-spinner {
     position: absolute !important;
     top: -12px;
     right: 0;
     left: 0;
     margin: auto;
 }
-.formWrapRow{
+
+.formWrapRow {
     flex-wrap: wrap;
 }
-.formWrap > div.formWrapRow > div {
+
+.formWrap>div.formWrapRow>div {
     margin: 0 6px;
 }
-.templateTextArea{
+
+.templateTextArea {
     width: 100%;
 }
-.sendSMS textarea{
+
+.sendSMS textarea {
     font: inherit;
     background: transparent;
     color: currentColor;
@@ -113,55 +135,100 @@
     vertical-align: bottom;
     text-align: inherit;
 }
+
 /* .detailsRow{
     text-align: center;
 } */
-.customer-info-element{
+.customer-info-element {
     flex-grow: 1;
 }
-.element-page-title2{
+
+.element-page-title2 {
     position: absolute;
     top: -30px;
     right: 0;
 
 }
-textarea{
+
+textarea {
     min-height: 8em;
     padding: 10px !important;
     border: 1px solid #DDE0E0;
     border-radius: 10px;
     background: #fff;
 }
-.spinnerActiveVoidCard{
+
+.spinnerActiveVoidCard {
     position: absolute;
     top: -1.3em;
     right: 1em;
 }
-.wrapActiveVoidButton{
+
+.wrapActiveVoidButton {
     position: relative;
 }
 
-.smsFormWrap mat-form-field{
+.smsFormWrap mat-form-field {
     width: 100%;
 }
 
+
+.underTextAreaElements {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    margin-top: -35px;
+    color: #A8A6BA;
+    position: relative;
+    z-index: 999;
+    direction: rtl;
+}
+
+.underTALeftElement {
+    display: flex;
+}
+
+.underTALeftElement>div {
+    margin-right: 15px;
+}
+
+.TAPaging {
+    display: flex;
+}
+
+.TAPaging mat-icon:hover {
+    cursor: pointer;
+}
+
+.clearAll {
+    text-decoration: underline;
+}
+
+div.clearAll:hover {
+    cursor: pointer;
+}
+
 @media screen and (max-width: 1024px) {
-    .innerElement{
+    .innerElement {
         margin: 1.5rem auto;
     }
-    .element-page-title2{
+
+    .element-page-title2 {
         top: -27px;
         font-size: 17px;
     }
-    .wrapInnerEl > div.secondChild{
+
+    .wrapInnerEl>div.secondChild {
         flex-wrap: wrap;
     }
-    .wrapInnerEl > div.secondChild > div{
+
+    .wrapInnerEl>div.secondChild>div {
         flex-basis: unset;
         flex-grow: unset;
         width: 50%;
         margin: 0.5em 0px;
     }
+
     /*.customer-info-element{
         display: flex;
         flex-direction: row-reverse;

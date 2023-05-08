@@ -1,0 +1,161 @@
+<div class="pageTitle main2-title sticky top100 allCards">
+   <div>הנפקת תווים מגנטיים</div>
+</div>
+<div class="page-wrap">
+   <div class="page-element width-block-auto">
+      <!-- <div class="element-page-title">הנפקת תווים מגנטיים</div> -->
+      <div class="formBorder formElement">
+         <form [formGroup]="IssuanceVouchersForm" (submit)="MakeIssuanceVoucher()" *ngIf="viewForm">
+            <div class="tableViewContent">
+
+               <div class="tableCol">
+                  <div class="colTitle">תיאור ההנפקה</div>
+                  <div class="colRow">
+                     <mat-form-field>
+                        <textarea placeholder="נא להכניס תאור של ההזמנה*" matInput formControlName="Description"
+                           cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1" maxlength="40">
+                    </textarea>
+                        <button class="clearButton" *ngIf="this.IssuanceVouchersForm.get('Description').value != ''"
+                           mat-button matPrefix mat-icon-button aria-label="Clear"
+                           (click)="IssuanceVouchersForm.get('Description').setValue('')">
+                           <mat-icon>close</mat-icon>
+                        </button>
+                        <mat-error *ngIf="this.IssuanceVouchersForm.get('Description').errors?.required">
+                           {{MsgList.requiredField}}
+                           <mat-icon>error</mat-icon>
+                        </mat-error>
+                     </mat-form-field>
+                  </div>
+               </div>
+               <div class="tableCol">
+                  <div class="colTitle">כמות כרטיסים</div>
+                  <div class="colRow">
+                     <mat-form-field>
+                        <input matInput placeholder="כמות כרטיסים*" formControlName="VouchersCount" inputWithComma
+                           maxlength="6">
+                        <button class="clearButton" *ngIf="this.IssuanceVouchersForm.get('VouchersCount').value != ''"
+                           mat-button matPrefix mat-icon-button aria-label="Clear"
+                           (click)="IssuanceVouchersForm.get('VouchersCount').setValue('')">
+                           <mat-icon>close</mat-icon>
+                        </button>
+
+                        <mat-error *ngIf="this.IssuanceVouchersForm.get('VouchersCount').errors?.required">
+                           {{MsgList.requiredField}}
+                           <mat-icon>error</mat-icon>
+                        </mat-error>
+                        <mat-error
+                           *ngIf="this.IssuanceVouchersForm.get('VouchersCount').errors?.count && !this.IssuanceVouchersForm.get('VouchersCount').errors?.required">
+                           ניתן להפיק עד 10,000 תווים בהנפקה
+                           <mat-icon>error</mat-icon>
+                        </mat-error>
+                     </mat-form-field>
+                  </div>
+               </div>
+               <div class="tableCol">
+                  <div class="colTitle"> תוקף</div>
+                  <div class="colRow">
+                     <mat-form-field appearance="fill"
+                        class="datePicker datePickerPadding marginTop-1 marginTop0 relative">
+                        <!-- <mat-label>תוקף </mat-label> -->
+                        <input matInput [matDatepicker]="validDatePicker" formControlName="ValidDate" readonly
+                           [max]="maxToDate">
+                        <!-- <button class="clearButton" *ngIf="this.IssuanceVouchersForm.get('ValidDate').value != ''"
+                           mat-button matPrefix mat-icon-button aria-label="Clear"
+                           (click)="this.IssuanceVouchersForm.get('ValidDate').setValue('')">
+                           <mat-icon>close</mat-icon>
+                        </button> -->
+                        <mat-datepicker-toggle matSuffix [for]="validDatePicker"></mat-datepicker-toggle>
+                        <mat-datepicker #validDatePicker></mat-datepicker>
+                        <mat-checkbox class="checkBoxUnderInput " (change)='checkBoxvalue($event)'
+                           formControlName="CheckBoxNoValidation"> ללא
+                           תוקף</mat-checkbox>
+                        <mat-error>{{MsgList.dateFormatValidationErr}}</mat-error>
+                     </mat-form-field>
+
+
+
+                  </div>
+               </div>
+
+            </div>
+            <div class="buttonsWrap actionsButton">
+               <button mat-button class="addButton" type="submit"
+                  [disabled]="!this.IssuanceVouchersForm.valid || (this.IssuanceVouchersForm.get('Description').errors?.required || this.IssuanceVouchersForm.get('VouchersCount').errors?.required)">בצע
+                  הנפקה</button>
+               <mat-spinner *ngIf="filterActionButtonSpinner" class="filterActionButton"></mat-spinner>
+            </div>
+         </form>
+      </div>
+   </div>
+
+
+
+   <div class="hiddenBlockWrap">
+      <!-- table -->
+      <div class="page-element width-block-auto">
+         <div class="element-page-title">רשימת הנפקות</div>
+         <div class="mat-elevation-z8">
+            <table mat-table [dataSource]="cardsDataSource" matSort class="tableView" dir="ltr">
+
+               <!-- ID Column -->
+               <ng-container *ngFor="let data of displayedColumns">
+                  <ng-container matColumnDef="{{data}}">
+                     <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        {{returnHebTranslation(cardsLabelForTable,data)}} </th>
+                     <td mat-cell *matCellDef="let row">
+
+                        <ng-container *ngIf="data == 'IssuanceDescription'">
+                           <a (click)="goToOrder(row['VoucherId'])">{{row[data]}}</a>
+                        </ng-container>
+                        <ng-container *ngIf="data == 'VoucherExcelFilePath'">
+                           <!-- <a [href]="row[data]" download>
+                              יצוא
+                              <fa-icon [icon]="faFileExcel"></fa-icon>
+
+                           </a> -->
+
+                           <button mat-icon-button class="excelIconButton cursor"
+                              (click)="excelFileExport(row['VoucherId'],row['IssuanceDescription'],row['CardsCount'])">
+                              <img src="">
+                              יצוא טבלה
+                           </button>
+
+
+                        </ng-container>
+                        <ng-container *ngIf="data == 'VoucherExcelFileLoad'">
+                           <button mat-icon-button class="excelIconButton cursor"
+                              (click)="excelFileExporforLoad(row['VoucherId'],row['IssuanceDescription'],row['CardsCount'])">
+                              <img src="">
+                              <div> יצוא לטעינה</div>
+                           </button>
+
+
+                        </ng-container>
+                        <ng-container *ngIf="data == 'VoucherValidDate'">
+                           {{row[data] == null ? 'ללא תוקף' : row[data] | formatDate}}
+                        </ng-container>
+                        <ng-container *ngIf="data == 'CreationDate'">
+                           {{row[data] | formatDate}}
+                        </ng-container>
+                        <ng-container *ngIf="data == 'CardsCount'">
+                           {{row[data] | number}}
+                        </ng-container>
+                        <ng-container
+                           *ngIf="data != 'CardsCount' && data != 'VoucherExcelFilePath' && data != 'VoucherValidDate' && data != 'IssuanceDescription' && data != 'CreationDate'">
+                           {{row[data]}}
+                        </ng-container>
+                     </td>
+                  </ng-container>
+               </ng-container>
+
+               <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+               <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+            </table>
+            <mat-paginator [pageSize]="25" [length]="cardsDataSource.data.length" [pageSizeOptions]="[25, 55, 85, 100]"
+               class="mat-paginator-sticky"></mat-paginator>
+
+         </div>
+      </div>
+   </div>
+</div>

@@ -114,9 +114,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
       Token: this.userToken
     }
 
-    //debugger
+    ////debugger
     this.dataService.GetHomeData(objToApi).subscribe(result => {
-      //debugger
+      ////debugger
       this.homeSpinner = false;
 
       if (typeof result == 'string') {
@@ -153,7 +153,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
               this.lastCustomersDataSource = new MatTableDataSource(result.obj[5]);
 
               setTimeout(() => {
-                debugger
+                //debugger
                 this.newOrderDataSource.sort = this.newOrderMatSort;
                 this.lastCustomersDataSource.sort = this.lastCustomersMatSort;
                 this.newOrderDataSource.paginator = this.matPaginatorNewOrder;
