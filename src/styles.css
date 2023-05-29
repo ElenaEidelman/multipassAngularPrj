@@ -438,6 +438,7 @@ button.titleMenuButton {
 
 .log-in .title {
   text-align: right;
+  word-wrap: break-word;
 }
 
 button.titleMenuButton:hover {
@@ -519,13 +520,13 @@ table.dialogData tr th {
   background: #EFEFED !important;
   color: #686866 !important;
   text-align: center !important;
-  font-size: 0.43em;
+  /* font-size: 0.43em; */
   padding: 0 7px;
 }
 
 table.dialogData tr th>div {
   text-align: center;
-  font-size: 1em !important;
+  /* font-size: 1em !important; */
 }
 
 table.tableView tr th {
@@ -548,6 +549,8 @@ table.tableView tr th {
   overflow: auto;
 }
 
+table.dialogData tr th {}
+
 
 
 .tableWrap {
@@ -556,7 +559,7 @@ table.tableView tr th {
   overflow: auto; */
 }
 
-.tableWrap table tbody tr:last-child {
+.tableWrapWithScroll table tbody tr:last-child {
   position: sticky;
   bottom: 0;
 }
@@ -965,6 +968,7 @@ button.additionalColButton {
 
 .mat-dialog-container {
   overflow: unset !important;
+  max-width: 600px;
 }
 
 .mat-error {
@@ -1625,6 +1629,25 @@ td.mat-footer-cell:first-of-type {
   max-height: unset !important;
 }
 
+.wrapSendButton {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.mat-paginator-range-actions:nth-child(1) {
+  order: 1;
+}
+
+.mat-paginator-range-actions :nth-child(2) {
+  order: 3;
+  rotate: 180deg;
+}
+
+.mat-paginator-range-actions :nth-child(3) {
+  order: 2;
+  rotate: 180deg;
+}
+
 /* mobile */
 
 @media screen and (max-width: 1024px) {
@@ -1803,7 +1826,12 @@ td.mat-footer-cell:first-of-type {
 
   .mat-paginator-range-actions {
     direction: ltr;
+    display: flex;
   }
+
+
+
+
 
   [dir=rtl] th.mat-header-cell:last-of-type:not(:only-of-type),
   [dir=rtl] td.mat-cell:last-of-type:not(:only-of-type),

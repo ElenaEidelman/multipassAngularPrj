@@ -23,7 +23,8 @@
                 </button>
             </div>
 
-            <div *ngIf="(this.OrderCreatedFromExcel && orderHaveCards) || LoadingVoucherByExcelHavePhoneNumber">
+            <div
+                *ngIf="((this.OrderCreatedFromExcel && orderHaveCards) || LoadingVoucherByExcelHavePhoneNumber) && orderStatus == 4">
                 <button mat-button class="addButton" (click)="addSelectForSmsColumn()">
                     SMS שליחת
                     <mat-icon>{{smsIcon}}</mat-icon>
@@ -88,7 +89,8 @@
         <div>
             <mat-form-field>
                 <mat-label>סינון</mat-label>
-                <input matInput (keyup)="applyFilter($event)" placeholder="לדוגמה: פעיל" #input>
+                <input matInput (keyup)="applyFilter($event)" placeholder="לדוגמה: פעיל" #input
+                    style="width: 200px !important;">
                 <mat-icon matPrefix>filter_list</mat-icon>
             </mat-form-field>
 

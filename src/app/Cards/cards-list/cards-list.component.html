@@ -29,7 +29,7 @@
          <div class="tableActions">
             <div>
                <button mat-button class="addButton" (click)="excelFileExport()">
-                  יצוא טבלה
+                  יצוא להדפסה
                   <fa-icon [icon]="faFileExcel"></fa-icon>
                </button>
             </div>
@@ -58,13 +58,16 @@
                         {{returnHebTranslation(cardsLabelForTable,data)}} </th>
                      <td mat-cell *matCellDef="let row">
 
-                        <ng-container *ngIf="data == 'CardValidDate'">
+                        <!-- <ng-container *ngIf="data == 'CardValidDate'">
                            {{row[data] | formatDate}}
+                        </ng-container> -->
+                        <ng-container *ngIf="data == 'IsUsed'">
+                           {{row[data] == 0 ? 'זמין' : 'לא זמין'}}
                         </ng-container>
                         <ng-container *ngIf="data == 'BatchNum'">
                            {{row['CardId']}}-{{row['Pin']}}
                         </ng-container>
-                        <ng-container *ngIf="data != 'CardValidDate' && data != 'BatchNum'">
+                        <ng-container *ngIf=" data != 'BatchNum' && data != 'IsUsed'">
                            {{row[data]}}
                         </ng-container>
                      </td>

@@ -108,10 +108,7 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
 
   userDetailsForm = this.fb.group({
     FullName: ['', [Validators.required, this.noWhitespaceValidator]],
-    B2CThoWho: ['', [Validators.required, this.noWhitespaceValidator]],
     PhoneNumber: ['', [Validators.required, Validators.pattern('[0]{1}[0-9]{2,3}[0-9]{7}')]],
-    B2CEmail: ['', [Validators.required, Validators.email]],
-    B2CPhoneNumber: ['', [Validators.required, Validators.pattern('[0]{1}[0-9]{2,3}[0-9]{7}')]],
   });
 
   sendSms = this.fb.group({
@@ -187,7 +184,17 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
         localStorage.setItem('user', JSON.stringify(tempObjUser));
         this.userToken = result['Token'];
         this.isIframeOrder = result.obj;
+        if (this.isIframeOrder) {
 
+          /**
+           *     B2CThoWho: ['', [Validators.required, this.noWhitespaceValidator]],
+           *     B2CEmail: ['', [Validators.email]],
+    B2CPhoneNumber: ['', [Validators.required, Validators.pattern('[0]{1}[0-9]{2,3}[0-9]{7}')]],
+           */
+          this.userDetailsForm.addControl('B2CThoWho', new FormControl('', [Validators.required, this.noWhitespaceValidator]));
+          this.userDetailsForm.addControl('B2CPhoneNumber', new FormControl('', [Validators.required, Validators.pattern('[0]{1}[0-9]{2,3}[0-9]{7}')]));
+          this.userDetailsForm.addControl('B2CEmail', new FormControl('', Validators.email))
+        }
       }
     })
 

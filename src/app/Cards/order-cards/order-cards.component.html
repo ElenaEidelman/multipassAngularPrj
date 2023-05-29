@@ -90,13 +90,15 @@
                                                     </div>
                                                     <ng-container
                                                         *ngFor="let customer of customersSpare; let i = index">
-                                                        <mat-option [value]="customer">
+                                                        <mat-option [value]="customer"
+                                                            [disabled]="customer.id === '-1'">
                                                             {{customer.organizationName}}
                                                             <!-- {{customer}} -->
                                                         </mat-option>
                                                     </ng-container>
                                                 </mat-select>
-                                                <!-- <mat-error *ngIf="excelCustomerError">{{excelCustomerError}}</mat-error> -->
+                                                <!-- <mat-error *ngIf="
+                                                            excelCustomerError">{{excelCustomerError}}</mat-error> -->
                                                 <!-- <mat-error
                                                     [@openClose]="excelCardCreatingForm.get('customer').hasError('required')">
                                                     נא
@@ -136,7 +138,7 @@
                                                 <div>
                                                     <div>בדיקה וטעינה של הקובץ</div>
                                                     <button mat-button class="sendButton marginRight"
-                                                        [disabled]="this.excelCardCreatingForm.get('orderDescription').errors?.required && this.excelCardCreatingForm.get('orderDescription').errors?.required"
+                                                        [disabled]="this.excelCardCreatingForm.get('orderDescription').errors?.required || this.excelCardCreatingForm.get('customer').errors?.required"
                                                         (click)="uploadDoc.click()">
                                                         <span>בחירת קובץ</span>
                                                         <mat-icon>attach_file</mat-icon>
@@ -187,6 +189,7 @@
                     <div class="wrap-content">
                         <div class="element-page-title">הזמנה ידנית</div>
                         <div class="formBorder formElement">
+
                             <form [formGroup]="manualCardgroup">
                                 <div class="wrapForm">
                                     <div class="formRow">
@@ -243,9 +246,13 @@
                                                         </div>
 
                                                     </div>
+
                                                     <ng-container
                                                         *ngFor="let customer of customersSpare; let i = index">
-                                                        <mat-option [value]="customer">
+                                                        <!-- <mat-option value="option2" disabled>Option 2
+                                                            (disabled)</mat-option> -->
+                                                        <mat-option [value]="customer"
+                                                            [disabled]="customer.id === '-1'">
                                                             {{customer.organizationName }}
                                                             <!-- {{customer}} -->
                                                         </mat-option>

@@ -25,7 +25,10 @@ export class UrlSharingService {
   public currentMessage = this.messageSource.asObservable();
 
   public orderTypeSource = new BehaviorSubject('');
-  public orderTypeMessage = this.orderTypeSource.asObservable();;
+  public orderTypeMessage = this.orderTypeSource.asObservable();
+
+  public issuanceVoucherFormData = new BehaviorSubject('');
+  public issuanceVoucherFormDataMessage = this.issuanceVoucherFormData.asObservable();
 
 
   // replaySubject = this.ReplaySubject.asObservable();
@@ -38,6 +41,9 @@ export class UrlSharingService {
 
   changeOrderType(orderType: string) {
     this.orderTypeSource.next(orderType);
+  }
+  setIssuanceVouchersFormData(issuanceVouchersForm: string) {
+    this.issuanceVoucherFormData.next(issuanceVouchersForm);
   }
 
   // addToReplaySubject(message){

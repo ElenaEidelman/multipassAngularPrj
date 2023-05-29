@@ -262,14 +262,22 @@
                                 </div>
                                 <div *ngIf="obj == 'ValidationDate' && rowNum != orderDetails.length-1"
                                     class="dataRows">
+
+                                    <!-- magnetic order by excel before approving -->
+                                    <!-- digital order manually before approving -->
                                     <div *ngIf="orderStatus.id != '4' " class="changeDate"
                                         (click)="changeDateOfRow(element, obj)">
+                                        <mat-spinner class="spinner" *ngIf="dateChanging"></mat-spinner>
                                         <mat-icon matTooltip="ערוך לוח שנה">edit_calendar</mat-icon>
                                         <span>{{element[obj]}}</span>
                                     </div>
+
+
+
                                     <div *ngIf="(orderStatus.id == 4 && (dataByPage.DigitalBatch == 0)) && !IsB2COrder">
                                         {{element[obj]}}
                                     </div>
+
                                     <div *ngIf="(orderStatus.id == '4' && (dataByPage.DigitalBatch > 0 || dataByPage.DigitalBatch != 0)) && !IsB2COrder"
                                         class="changeDate" [class.not-active]="dateChanging"
                                         (click)="changeDateOfRow(element, obj)">
@@ -375,9 +383,11 @@
                                         (click)="deleteRow(element, rowNum)" matTooltip="מחק">delete
                                     </mat-icon>
 
+                                    <!-- "(dataByPage.DigitalBatch != undefined && (dataByPage.DigitalBatch > 0 ||
+                                        dataByPage.DigitalBatch != 0) && (orderDetails.length-1 != 1)) && (orderStatus.id == '1' || orderStatus.id == '0')" -->
                                     <mat-icon
                                         *ngIf="(dataByPage.DigitalBatch != undefined && (dataByPage.DigitalBatch > 0 ||
-                                        dataByPage.DigitalBatch != 0) && (orderDetails.length-1 != 1)) && (orderStatus.id == '1' || orderStatus.id == '0')"
+                                        dataByPage.DigitalBatch != 0) ) && (orderStatus.id == '1' || orderStatus.id == '0')"
                                         class="deleteIcon" (click)="deleteRow(element, rowNum)" matTooltip="מחק">delete
                                     </mat-icon>
                                     <mat-spinner class="spinner disableSpinner" id="spinnerDelete{{element.id}}">
@@ -441,21 +451,28 @@
                                 </div>
                                 <div *ngIf="obj == 'ValidationDate' && rowNum != orderDetailsVoucherManually.length-1"
                                     class="dataRows">
-                                    <div *ngIf="orderStatus.id != '4'" class="changeDate"
-                                        (click)="changeDateOfRow(element, obj)">
+
+
+                                    <!-- magnetic order by range before approving -->
+                                    <!-- orderType is LoadingVouchersManually -->
+                                    <div class="changeDate" (click)="changeDateOfRow(element, obj)">
+                                        <mat-spinner class="spinner" *ngIf="dateChanging"></mat-spinner>
                                         <mat-icon matTooltip="ערוך לוח שנה">edit_calendar</mat-icon>
                                         <span>{{element[obj] }}</span>
                                     </div>
-                                    <div *ngIf="orderStatus.id == 4 && (dataByPage.DigitalBatch == 0)"> {{element[obj]}}
-                                    </div>
-                                    <div *ngIf="orderStatus.id == '4' && (dataByPage.DigitalBatch > 0 || dataByPage.DigitalBatch != 0)"
+
+                                    <!-- <div *ngIf="orderStatus.id == 4 && (dataByPage.DigitalBatch == 0)">
+                                        {{element[obj]}}2
+                                    </div> -->
+
+                                    <!-- <div *ngIf="orderStatus.id == '4' && (dataByPage.DigitalBatch > 0 || dataByPage.DigitalBatch != 0)"
                                         class="changeDate" [class.not-active]="dateChanging"
                                         (click)="changeDateOfRow(element, obj)">
                                         <mat-spinner class="spinner" *ngIf="dateChanging"></mat-spinner>
 
-                                        <mat-icon matTooltip="ערוך לוח שנה">edit_calendar</mat-icon>
-                                        <span>{{element[obj]}} </span>
-                                    </div>
+                                        <mat-icon matTooltip="5ערוך לוח שנה">edit_calendar</mat-icon>
+                                        <span>{{element[obj]}} 3</span>
+                                    </div> -->
                                 </div>
 
 
@@ -502,25 +519,17 @@
                                                     minlength="8" maxlength="8"
                                                     (ngModelChange)="checkCardValidityFronSide(obj,$event)">
                                                 <mat-error
-                                                    *ngIf="(!manuallyVouchersForm.get('ToCard').errors?.required) && manuallyVouchersForm.get('ToCard').errors?.minlength || manuallyVouchersForm.get('ToCard').errors?.maxlength">
+                                                    *ngIf="manuallyVouchersForm.get('ToCard').value != '' && (manuallyVouchersForm.get('ToCard').errors?.minlength || manuallyVouchersForm.get('ToCard').errors?.maxlength)">
                                                     * מספר כרטיס חייב להכיל 8 תווים
                                                 </mat-error>
-                                                <mat-error *ngIf="manuallyVouchersForm.get('ToCard').errors?.required">
-                                                    * {{MsgList.requiredField}}
-                                                </mat-error>
-
                                                 <mat-error
-                                                    *ngIf="manuallyVouchersForm.get('ToCard').errors != undefined && manuallyVouchersForm.get('ToCard').errors.incorrect">
+                                                    *ngIf="manuallyVouchersForm.get('ToCard').value != '' && (manuallyVouchersForm.get('ToCard').errors != undefined && manuallyVouchersForm.get('ToCard').errors.incorrect)">
                                                     * מספר כרטיס נמוך מה 'מכרטיס'
                                                 </mat-error>
-                                                <mat-error
+                                                <!-- <mat-error
                                                     *ngIf="manuallyVouchersForm.get('ToCard').errors != undefined && manuallyVouchersForm.get('ToCard').errors.equalValueError">
                                                     * מספר כרטיס שווה ל 'מכרטיס'
-                                                </mat-error>
-                                                <mat-error
-                                                    *ngIf="manuallyVouchersForm.get('ToCard').errors != undefined && manuallyVouchersForm.get('ToCard').errors.ToCardNotBelongs">
-                                                    {{cardToNotBelongsError}}*
-                                                </mat-error>
+                                                </mat-error> -->
                                                 <mat-error
                                                     *ngIf="manuallyVouchersForm.get('ToCard').errors != undefined && manuallyVouchersForm.get('ToCard').errors.CardNumberExist">
                                                     *מספר כרטיס קיים בהזמנה
@@ -531,7 +540,8 @@
                                             <mat-form-field>
                                                 <mat-label>סכום טעינה</mat-label>
                                                 <input matInput formControlName="LoadSum" inputWithComma
-                                                    [attr.maxlength]="5">
+                                                    [attr.maxlength]="5"
+                                                    (ngModelChange)="CalculateOrderLineTottalSum()">
                                             </mat-form-field>
                                         </ng-container>
                                         <ng-container *ngIf="obj == 'ValidationDate'">
@@ -550,7 +560,7 @@
                                             <mat-form-field class="inputIncludeValue marginTop-1" aria-readonly="true">
                                                 <input matInput formControlName="TotalForItem" inputWithComma>
                                                 <span class="inputValue">
-                                                    {{ ( (this.manuallyVouchersForm.get('ToCard').value != null &&
+                                                    <!-- {{ ( (this.manuallyVouchersForm.get('ToCard').value != null &&
                                                     this.manuallyVouchersForm.get('FromCard').value != null &&
                                                     this.manuallyVouchersForm.get('ToCard').value.length >= 8 &&
                                                     this.manuallyVouchersForm.get('FromCard').value.length >= 8) ?
@@ -560,7 +570,9 @@
                                                     * (
                                                     this.manuallyVouchersForm.get('ToCard').value -
                                                     this.manuallyVouchersForm.get('FromCard').value + 1) : 0) |
-                                                    number:'1.0-0' }}
+                                                    number:'1.0-0' }} -->
+                                                    {{TotalForOrderLine}}
+
                                                 </span>
                                             </mat-form-field>
                                         </ng-container>
@@ -569,12 +581,14 @@
                                             <mat-form-field class="inputIncludeValue marginTop-1">
                                                 <input matInput formControlName="CardsCount">
                                                 <span class="inputValue">
-                                                    {{(this.manuallyVouchersForm.get('ToCard').value != null &&
+                                                    <!-- {{(this.manuallyVouchersForm.get('ToCard').value != null &&
                                                     this.manuallyVouchersForm.get('FromCard').value != null &&
                                                     this.manuallyVouchersForm.get('ToCard').value.length >= 8 &&
                                                     this.manuallyVouchersForm.get('FromCard').value.length >= 8) ?
                                                     this.manuallyVouchersForm.get('ToCard').value -
-                                                    this.manuallyVouchersForm.get('FromCard').value + 1 : 0}}
+                                                    this.manuallyVouchersForm.get('FromCard').value + 1 : 0}} -->
+                                                    {{CardsCountForOrderLine}}
+
                                                 </span>
 
                                             </mat-form-field>

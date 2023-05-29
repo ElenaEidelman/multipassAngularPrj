@@ -1,7 +1,9 @@
-import { Component, ElementRef, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnChanges, OnInit, SimpleChanges, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { encode } from 'querystring';
 import { MockData } from 'src/app/Classes/mockData';
 import { MsgList } from 'src/app/Classes/msgsList';
 import { DataServiceService } from 'src/app/data-service.service';
@@ -13,7 +15,9 @@ import { SharedService } from 'src/app/Services/SharedService/shared.service';
 @Component({
   selector: 'app-iframe',
   templateUrl: './iframe.component.html',
-  styleUrls: ['./iframe.component.css']
+  encapsulation: ViewEncapsulation.None,
+  styleUrls: ['./iframe.component.css'],
+
 })
 export class IframeComponent implements OnInit, OnChanges {
 
@@ -42,7 +46,8 @@ export class IframeComponent implements OnInit, OnChanges {
     private iframeSharingServiceService: IframeSharingServiceService,
     private dialog: MatDialog,
     private router: Router,
-    private sharedService: SharedService) { }
+    private sharedService: SharedService,
+    protected sanitizer: DomSanitizer) { }
 
   previewForm = this.fb.group({
     ExternalLink: [''],
@@ -102,13 +107,14 @@ export class IframeComponent implements OnInit, OnChanges {
     }
 
     this.dataServiceIframe.GetIFrameCompanyInfo(objToApi).subscribe(result => {
-      debugger
+
       this.setupSpinner = false;
       if (typeof result == 'object') {
         if (result.err != -1) {
           let IframeSetupObj = result.obj[0];
 
           this.iframeDataSpare = JSON.parse(JSON.stringify(result.obj[0]));
+
           Object.keys(this.previewForm.controls).forEach(control => {
             if (this.iframePicsFormData.has(control)) {
               this.iframePicsFormData.set(control, IframeSetupObj[control])
@@ -147,7 +153,7 @@ export class IframeComponent implements OnInit, OnChanges {
           this.dialog.open(DialogComponent, {
             data: { message: 'קובץ כבד מדי' }
           })
-          debugger
+
         }
         else {
           this.iframePicsFormData.set(controlName, file);
@@ -202,20 +208,23 @@ export class IframeComponent implements OnInit, OnChanges {
       this.iframePicsFormData.append('Phone', this.previewForm.get('Phone').value)
       this.iframePicsFormData.append('Mail', this.previewForm.get('Mail').value)
       this.iframePicsFormData.append('LinktoBranches', this.previewForm.get('LinktoBranches').value)
-      this.iframePicsFormData.append('ShortDescription', this.previewForm.get('ShortDescription').value)
-      this.iframePicsFormData.append('LongDescription', this.previewForm.get('LongDescription').value)
+      this.iframePicsFormData.append('ShortDescription', encodeURIComponent(this.previewForm.get('ShortDescription').value.toString()))
+      this.iframePicsFormData.append('LongDescription', encodeURIComponent(this.previewForm.get('LongDescription').value.toString()))
       this.iframePicsFormData.append('Marketing', this.previewForm.get('Marketing').value)
       this.iframePicsFormData.append('Instructions', this.previewForm.get('Instructions').value)
 
-      let t = this.iframePicsFormData.getAll('CompanyIdEnc');
+      let t = this.iframePicsFormData.getAll('ShortDescription');
+      let t2 = this.iframePicsFormData.getAll('LongDescription');
+      let t3 = this.iframePicsFormData.getAll('CompanyIdEnc');
 
 
       this.dataServiceIframe.InsertUpdateIFrame(this.iframePicsFormData).subscribe(result => {
+        debugger
 
-
+        this.iframePicsFormData = new FormData();
         this.setupSpinner = false;
         if (typeof result == 'object') {
-          if (result.errdesc != -1) {
+          if (result.err >= 0) {
             this.dialog.open(DialogComponent, {
               data: { message: this.MsgList.savedSuccessfully }
             })
@@ -240,6 +249,8 @@ export class IframeComponent implements OnInit, OnChanges {
       })
     }
   }
+
+
 
   returnDataToIframe(control) {
 

@@ -112,11 +112,12 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy, OnC
   orderLabelForTable = [
     { value: 'idex', viewValue: 'מספר הזמנה' }, //v
     { value: 'OrganizationName', viewValue: 'שם הלקוח' },
-    { value: 'Total', viewValue: 'שווי ההזמנה' },//v
+    { value: 'Total', viewValue: 'סכום טעינה ראשוני' },//v
     { value: 'CardsQty', viewValue: 'כמות תווים בהזמנה' },
     { value: 'MDate', viewValue: 'תאריך יצירת הזמנה' },
-    { value: 'ApproveDate', viewValue: 'תאריך שליחת תווים' },//v
-    { value: 'CrmOrderId', viewValue: 'מספר אסמכתא' },//v
+    { value: 'ApproveDate', viewValue: 'תאריך שליחת תווים' },
+    { value: 'CrmOrderId', viewValue: 'מספר אסמכתא' },
+    { value: 'GiftCardType', viewValue: 'סוג כרטיסים' },
     { value: 'DescriptionWL', viewValue: 'סטטוס' },
   ];
 
@@ -202,7 +203,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy, OnC
     this.filterActionButtonSpinner = true;
     this.dataService.getAllOrders(objToApi).subscribe(result => {
       this.filterActionButtonSpinner = false;
-
+      // debugger
       if (typeof result == 'string') {
         // this.dialog.open(DialogComponent, {
         //   data: { message: result }
@@ -422,6 +423,9 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy, OnC
         for (let element of Object.keys(data)) {
           if (element == 'MDate' || element == 'ApproveDate') {//element == 'MDate' ||
             data[element] = this.formatDate(data[element]);
+          }
+          if (element == 'GiftCardType') {//element == 'MDate' ||
+            data[element] = data[element] == 0 ? 'מגנטי' : 'דיגיטלי';
           }
         }
       }

@@ -97,7 +97,7 @@ import { LogInIframeComponent } from './Iframe/components/log-in/log-in.componen
 import { PurchasingGiftComponent, VideoImageDialogComponent, VideosDialogComponent } from './Iframe/components/purchasing-gift/purchasing-gift.component';
 import { ThanksPageComponent } from './Iframe/components/thanks-page/thanks-page.component';
 import { PopupDialogComponent } from './Iframe/Dialogs/popupDialog/popup-dialog/popup-dialog.component';
-import { SafeHtmlPipe } from './Iframe/Pipes/safe-html.pipe';
+// import { SafeHtmlPipe } from './Iframe/Pipes/safe-html.pipe';
 import { MockCodeToNullPipe } from './Pipes/convertMockDateToNull/mock-date-to-null.pipe';
 import { CustomDateAdapter } from './Support/custom.date.adapter';
 import { TextOnlyDirective } from './directives/TextOnly/text-only.directive';
@@ -107,6 +107,8 @@ import { LoadingVouchersComponent } from './Cards/loading-vouchers/loading-vouch
 import { CardsListComponent } from './Cards/cards-list/cards-list.component';
 import { InputWithCommaDirective } from './directives/InputWithComma/input-with-comma.directive';
 import { TableDialogComponent } from './PopUps/GlobalTableDialog/table-dialog/table-dialog.component';
+import { SafePipe } from './Pipes/safe/safe.pipe';
+
 
 
 
@@ -161,7 +163,7 @@ import { TableDialogComponent } from './PopUps/GlobalTableDialog/table-dialog/ta
     VideoImageDialogComponent,
     ThanksPageComponent,
     PopupDialogComponent,
-    SafeHtmlPipe,
+    // SafeHtmlPipe,
     MockCodeToNullPipe,
     TextOnlyDirective,
     SystemSettingsComponent,
@@ -169,7 +171,8 @@ import { TableDialogComponent } from './PopUps/GlobalTableDialog/table-dialog/ta
     LoadingVouchersComponent,
     CardsListComponent,
     InputWithCommaDirective,
-    TableDialogComponent
+    TableDialogComponent,
+    SafePipe
   ],
   imports: [
     BrowserModule,

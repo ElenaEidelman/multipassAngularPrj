@@ -14,14 +14,23 @@
    padding: 15px;
 }
 
-.wrap-form {
-   height: 300px;
-   overflow-y: scroll;
+tr.mat-header-row {
+   background: #EFEFED;
 }
 
-th {
-   font-size: 1em !important;
+.wrap-form {
+   height: 450px;
+   /* overflow-y: scroll; */
 }
+
+td:last-child {
+   padding-right: 24px !important;
+}
+
+.mat-table thead {
+   z-index: 999;
+}
+
 
 .wrapSendButton>div {
    margin-top: 1em;

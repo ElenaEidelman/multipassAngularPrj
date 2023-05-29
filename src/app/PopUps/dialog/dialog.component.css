@@ -142,6 +142,11 @@ mat-icon {
     text-align: center;
 }
 
+.contentHeigh {
+    max-height: 400px;
+    overflow: auto;
+}
+
 .dialogMessage {
     font-size: 2em;
     margin: 10px 10px 0;

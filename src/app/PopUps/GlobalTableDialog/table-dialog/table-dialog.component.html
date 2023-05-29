@@ -5,11 +5,11 @@
 
 
    <div class="log-in">
-      <div class="wrap-form" style="padding-right: 1em;">
+      <div class="wrap-form">
          <div class="title errorBG" style="margin: 0 1em 1em;">
             {{data.title}}
          </div>
-         <div class="dialogMessage">
+         <div class=" tableWrapWithScroll">
 
             <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 dialogData" dir="rtl">
                <ng-container matColumnDef="{{row}}" *ngFor="let row of data.dataLabelsList">

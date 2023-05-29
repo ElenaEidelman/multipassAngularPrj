@@ -128,7 +128,6 @@ $ git merge new-branch
   }
 
   checkResult(result) {
-    debugger
     if (typeof result == 'object') {
       if (result['Token'] != null && result['Token'] != '') {
         if (+result['err'] < 0) {
@@ -318,7 +317,7 @@ $ git merge new-branch
 
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/InsertUpdateOrder/InsertUpdateLines`, objToApi).pipe(
       map(result => {
-        return this.checkResult(result);
+        return result;
       }),
       catchError(error => {
         return of(error.message);
@@ -380,7 +379,7 @@ $ git merge new-branch
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/AllCustomers/GetAllCustomers`, objToApi).pipe(
       map(result => {
         //
-        return this.checkResult(result);
+        return result;
       }),
       catchError(error => {
         //
@@ -759,6 +758,20 @@ $ git merge new-branch
   //     })
   //   );
   // }
+
+  GetdefaultCardValidation(objToApi) {
+    return this.http.post(`${localStorage.getItem('baseUrl')}/api/AllCards/GetdefaultCardValidation`, objToApi).pipe(
+      map(result => {
+        //
+        //debugger
+        return this.checkResult(result);
+      }),
+      catchError(error => {
+        //
+        return of(error.message);
+      })
+    );
+  }
 
   LoadVouchersByExcelFile(objToApi) {
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/UploadFile/LoadVouchersByExcelFile`, objToApi).pipe(

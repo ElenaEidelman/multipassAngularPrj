@@ -16,12 +16,13 @@
             <!-- texts -->
             <div class="infoTextsWrap">
                 <div class="textWrap">
-                    <div class="hr" [innerHTML]="infoData.ShortDescription" class="preWrap"></div>
+                    <div class="hr" [innerHTML]="infoData.ShortDescription | safe:'html'" class="preWrap"></div>
                     <div class="hr">
                         <div *ngIf="!previewLongDescription"
-                            [innerHTML]="(infoData.LongDescription | slice:0:150) + ' ...' " class="preWrap">
+                            [innerHTML]="(infoData.LongDescription | slice:0:150) + ' ...' | safe:'html' "
+                            class="preWrap">
                         </div>
-                        <div [@openClose]="previewLongDescription" [innerHTML]="infoData.LongDescription"
+                        <div [@openClose]="previewLongDescription" [innerHTML]="infoData.LongDescription | safe:'html'"
                             class="preWrap">
                         </div>
                         <div (click)="previewLongDescriptionFunc()">

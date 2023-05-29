@@ -76,6 +76,7 @@ export class LoadingVouchersComponent implements OnInit {
 
   cardsData = [];
   fileUploadButtonDisabled: boolean = true;
+  UploadFileButtonName: string = 'בחירת קובץ';
 
   fromCardCheckedOrderNumber: any;
   toCardCheckedOrderNumber: any;
@@ -249,22 +250,38 @@ export class LoadingVouchersComponent implements OnInit {
       // }
       // else {
       // if (typeof result == 'object' && result['obj'] != null && result['obj'].length > 0) {
-      this.customers = result['obj'].sort(function (a, b) {
-        if (a.organizationName < b.organizationName) { return -1; }
-        if (a.organizationName > b.organizationName) { return 1; }
-        return 0;
-      });
+      if (typeof result == 'object' && result['err'] < 0 && result['obj'] == null) {
 
-      this.customers = this.customers.filter(customer => customer.StatusId != 3);
-      this.customersSpare = this.customers.filter(customer => customer.StatusId != 3);
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
 
+        this.customers = [{ id: '-1', organizationName: '' }];
+        this.customersSpare = [{ id: '-1', organizationName: '' }];
 
-      if (this.userId != undefined && this.indexId != undefined) {
-        this[this.tabGroups.filter(tab => tab.index == this.indexId)[0]['tabName']].get('customer').setValue(this.fillteringUserData(this.userId));
       }
-      else {
-        this.indexId = 0;
+
+      try {
+        this.customers = result['obj'].sort(function (a, b) {
+          if (a.organizationName < b.organizationName) { return -1; }
+          if (a.organizationName > b.organizationName) { return 1; }
+          return 0;
+        });
+
+        this.customers = this.customers.filter(customer => customer.StatusId != 3);
+        this.customersSpare = this.customers.filter(customer => customer.StatusId != 3);
+
+
+        if (this.userId != undefined && this.indexId != undefined) {
+          this[this.tabGroups.filter(tab => tab.index == this.indexId)[0]['tabName']].get('customer').setValue(this.fillteringUserData(this.userId));
+        }
+        else {
+          this.indexId = 0;
+        }
       }
+      catch (e) { }
       // }
       // if (typeof result == 'object' && result['obj'] == null) {
       //   // this.errorMsg = 'No Data Found';
@@ -302,7 +319,7 @@ export class LoadingVouchersComponent implements OnInit {
   fileOptionChange(event) {
     //&& this.excelCardCreatingForm.get('policySelectExcel').valid
     // //debugger
-
+    this.UploadFileButtonName = 'בחירת קובץ';
     if (event.target.files.length > 0) {
       const file = event.target.files[0];
 
@@ -339,7 +356,7 @@ export class LoadingVouchersComponent implements OnInit {
             return false;
           }
 
-          if (result.err < 0 && result.obj == null) {
+          if (result.err < 0 && (result.obj == null || result.obj.length == 0)) {
             this.dialog.open(DialogComponent, {
               data: { message: result.errdesc }
             })
@@ -360,6 +377,7 @@ export class LoadingVouchersComponent implements OnInit {
               this.fileUplodadeValid = true;
               //debugger
               this.filename = result.obj[1][0].NewFileName;
+              this.UploadFileButtonName = 'החלף קובץ';
 
               let objGetFile = {
                 excelName: this.filename,
@@ -379,55 +397,76 @@ export class LoadingVouchersComponent implements OnInit {
 
               //if have missing data in file
 
-
+              // debugger
               if (result.obj != null && result.obj.length > 0) {
                 let dataOBJ = {};
                 let data_Source = new MatTableDataSource([]);
                 let data = [];
                 let dataLabelsList = ['מספר תו', 'שם פרטי', 'שם משפחה', 'סכום', 'טלפון סלולרי', 'הערה'];
 
-                //debugger
-                result.obj.forEach(element => {
-                  //debugger
-                  dataLabelsList.forEach(labels => {
-                    //debugger
-                    if (labels == 'הערה') {
-                      //let errMsg = temMsg.includes("+") ? ([...new Set(((temMsg).split('+')).filter(n => n != ' ').map(n => n.trim()))]).join('\r\n') : temMsg;
-                      // debugger
-                      dataOBJ[labels] = element['ErrorMsg'].replaceAll('+', '').replaceAll('OK', '').trim();
-                    }
-                    else {
-                      dataOBJ[labels] = element[labels]
-                    }
+                //check for correct excel format
 
-                  })
-                  data.push(dataOBJ);
-                  dataOBJ = {};
-                });
+                let responseExcelFormat = Object.keys(result.obj[0]);
+                let comparingResult = true;
+                responseExcelFormat.every((val) => {
 
-                // debugger
-                data_Source.data = data;
-                debugger
-                this.dialog.open(TableDialogComponent, {
-                  maxHeight: '200px',
-                  data: {
-                    title: result.errdesc,
-                    data_Source: data,
-                    dataLabelsList: dataLabelsList
+                  let excelFormatToCompare = ['מספר תו', 'שם פרטי', 'שם משפחה', 'סכום', 'טלפון סלולרי', 'LoadError', 'ErrorMsg'];
+                  comparingResult = excelFormatToCompare.indexOf(val) >= 0;
+                  if (!comparingResult) {
+
+                    this.dialog.open(DialogComponent, {
+                      data: { message: result.errdesc }
+                    })
+                    return false;
                   }
-                });
+                  return true;
+                })
+                if (comparingResult) {
+                  result.obj.forEach(element => {
+                    debugger
+
+                    if (element.ErrorMsg != '' && element.ErrorMsg != null) {
+                      debugger
+                      dataLabelsList.forEach(labels => {
+                        debugger
+                        if (labels == 'הערה') {
+                          //let errMsg = temMsg.includes("+") ? ([...new Set(((temMsg).split('+')).filter(n => n != ' ').map(n => n.trim()))]).join('\r\n') : temMsg;
+                          debugger
+                          dataOBJ[labels] = element['ErrorMsg'].replaceAll('+', '').replaceAll('OK', '').trim();
+                        }
+                        else {
+                          try {
+                            debugger
+                            dataOBJ[labels] = element[labels]
+                          }
+                          catch (err) {
+                            debugger
+                          }
+                        }
+
+                      })
+                      data.push(dataOBJ);
+                      dataOBJ = {};
+                    }
+
+
+
+                  });
+
+
+                  data_Source.data = data;
+
+                  this.dialog.open(TableDialogComponent, {
+                    maxHeight: '200px',
+                    data: {
+                      title: result.errdesc,
+                      data_Source: data,
+                      dataLabelsList: dataLabelsList
+                    }
+                  });
+                }
+
               }
-              // else {
-              //   let err = ([...new Set(((result.errdesc).split('+')).filter(n => n != ' ').map(n => n.trim()))]).join('\r\n');
-              //   //debugger
-              //   this.dialog.open(DialogComponent, {
-              //     data: {
-              //       title: '',
-              //       subTitle: err,
-              //       message: 'קובץ אינו תקין'
-              //     }
-              //   })
-              // }
 
 
               this.uploadDoc.nativeElement.value = '';

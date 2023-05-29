@@ -126,10 +126,11 @@
                                     <סכום טעינה>
                                 </span>
                             </button>
-                            <button mat-button class="linkButton" [class.errorActionButton]="!voucherNumberInsered"
-                                (click)="editButtonClicked('','מספר תו')">
+
+                            <!-- [class.errorActionButton]="!walletLinkButtonInsered" -->
+                            <button mat-button class="linkButton" (click)="editButtonClicked('','מספר תו')">
                                 <span>
-                                    <מספר תו>*
+                                    <מספר תו>
                                 </span>
                             </button>
                             <!-- <button mat-button class="linkButton" (click)="editButtonClicked('','פין קוד')">
@@ -146,9 +147,10 @@
                                     <לינק לברקוד>
                                 </span>
                             </button>
-                            <button mat-button class="linkButton" (click)="editButtonClicked('','ארנק לדף לינק')">
+                            <button mat-button class="linkButton" [class.errorActionButton]="!walletLinkButtonInsered"
+                                (click)="editButtonClicked('','לינק לדף ארנק')">
                                 <span>
-                                    <ארנק לדף לינק>
+                                    <לינק לדף ארנק>*
                                 </span>
                             </button>
                         </mat-card-actions>
@@ -276,11 +278,11 @@
                                             <סכום טעינה>
                                         </span>
                                     </button>
-                                    <button mat-button class="linkButton"
-                                        [class.errorActionButton]="voucherNumberInseredById === 'voucherNumberInseredById' + temp.Id"
-                                        (click)="editButtonClicked(temp,'מספר תו')">
+
+                                    <!-- [class.errorActionButton]="walletLinkButtonInseredById === 'walletLinkButtonInseredById' + temp.Id" -->
+                                    <button mat-button class="linkButton" (click)="editButtonClicked(temp,'מספר תו')">
                                         <span>
-                                            <מספר תו>*
+                                            <מספר תו>
                                         </span>
                                     </button>
                                     <!-- <button mat-button class="linkButton" (click)="editButtonClicked(temp,'פין קוד')">
@@ -301,9 +303,10 @@
                                         </span>
                                     </button>
                                     <button mat-button class="linkButton"
-                                        (click)="editButtonClicked(temp,'ארנק לדף לינק')">
+                                        [class.errorActionButton]="walletLinkButtonInseredById === 'walletLinkButtonInseredById' + temp.Id"
+                                        (click)="editButtonClicked(temp,'לינק לדף ארנק')">
                                         <span>
-                                            <ארנק לדף לינק>
+                                            <לינק לדף ארנק>*
                                         </span>
                                     </button>
                                 </mat-card-actions>

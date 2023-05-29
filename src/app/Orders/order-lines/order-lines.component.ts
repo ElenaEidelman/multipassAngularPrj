@@ -65,6 +65,7 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
   OrderType = OrderType;
   orderType;
   orderIdToPreview = '';
+  orderStatus;
 
   tableSpinner: boolean = true;
   orderHaveCards: boolean = false;
@@ -100,15 +101,16 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
   public tabelLabels = [
     { value: 'Row', viewValue: "מס''ד" },
     { value: 'CardId', viewValue: 'קוד דיגיטלי' },
-    { value: 'DSendName', viewValue: 'שם נמען' },
-    { value: 'DSendPhone', viewValue: 'מספר נייד נמען	' },
+    // { value: 'DSendName', viewValue: 'שם נמען' },
+    // { value: 'DSendPhone', viewValue: 'מספר נייד נמען	' },
     { value: 'LoadSum', viewValue: 'סכום טעינה ראשוני		' },
     { value: 'ValidationDate', viewValue: '	תוקף	' },
     { value: 'KindOfLoadSumDesc', viewValue: 'סוג תו טעינה	' },
-    { value: 'DSendLastSent', viewValue: 'נשלח לאחרונה' },
+    // { value: 'DSendLastSent', viewValue: 'נשלח לאחרונה' },
     { value: 'active', viewValue: 'סטטוס תו' },
   ];
-  tabelLabelsList = ['Row', 'CardId', 'DSendName', 'DSendPhone', 'LoadSum', 'ValidationDate', 'KindOfLoadSumDesc', 'DSendLastSent', 'active'];
+  // tabelLabelsList = ['Row', 'CardId', 'DSendName', 'DSendPhone', 'LoadSum', 'ValidationDate', 'KindOfLoadSumDesc', 'DSendLastSent', 'active'];
+  tabelLabelsList = ['Row', 'CardId', 'LoadSum', 'ValidationDate', 'KindOfLoadSumDesc', 'active'];
 
   selection = new SelectionModel<any>(true, []);
 
@@ -225,9 +227,12 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
         return false;
       }
 
-      if (this.orderType == this.OrderType.LoadingVoucherByExcel || this.orderType == this.OrderType.LoadingVouchersManually) {
+      if (this.orderType == this.OrderType.LoadingVoucherByExcel) {
         this.LoadingVoucherByExcelHavePhoneNumber = result['obj'][0].filter(data => data.DSendPhone != '').length > 0;
       }
+
+      //LoadingVoucherByExcelHavePhoneNumber
+      debugger
 
       //check if order have created cards
 
@@ -235,16 +240,17 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
         result['obj'][0].every(element => {
           if (element['CardId'] != null) {
             this.orderHaveCards = true;
-            debugger
             return false;
           }
           else {
             this.orderHaveCards = false;
-            debugger
             return true;
           }
         });
       }
+
+      //orderHaveCards
+      debugger
 
 
       // if (result['Token'] != undefined || result['Token'] != null) {
@@ -261,6 +267,10 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
       //order id to preview
       this.orderIdToPreview = result['obj'][2];
 
+      //get order status by first card
+      this.orderStatus = result.obj[0][0]['Status'];
+      debugger
+
       //debugger
       // if (this.orderType == this.OrderType.LoadingVoucherByExcel) {
       //   //add additional column for loaded vouchers
@@ -274,13 +284,16 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
       // }
 
       this.dataTable.data = result['obj'][0];
-
+      debugger
 
       //DigitalBatch number, only if order created from excel
       if (this.orderType != this.OrderType.LoadingVoucherByExcel && this.orderType != this.OrderType.LoadingVouchersManually) {
         this.OrderCreatedFromExcel = result['obj'][1] != '' ? true : false;
-        debugger
+
       }
+
+      //OrderCreatedFromExcel
+      debugger
 
       this.DigitalBatch = result['obj'][1];
 
@@ -394,6 +407,7 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
         this.dataService.SendSMSByOrderLine(objToApi).subscribe(result => {
+          debugger
           if (typeof result == 'string') {
             // this.dialog.open(DialogComponent, {
             //   data: { message: result }
@@ -414,7 +428,12 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
 
           this.dialog.open(DialogComponent, {
             data: { title: 'ההודעות נשלחות ברקע', message: this.previewSmsTemplate.value, subTitle: ' ההודעה נשלחה ל ' + selectedRows.length + ' נמענים ' }
+          }).afterClosed().subscribe(result => {
+
+            this.addSelectForSmsColumn();
           })
+
+
           // }
           // else {
           //   this.dialog.open(DialogComponent, {
@@ -565,13 +584,29 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
 
     if (this.pagePermissionAccessLevel.AccessLevel != this.MockData.accessLevelReadOnly) {
       let tableLabels = this.tabelLabels;
+      let tableData = JSON.parse(JSON.stringify(this.dataTable.data));
 
 
       //add another column to file if order created from excel file
-      if (this.DigitalBatch != '' && this.DigitalBatch != undefined) {
+      if (this.DigitalBatch != '' && this.DigitalBatch != undefined && this.orderType == this.OrderType.OrderByExcel) {
         tableLabels.push({ value: 'ValidationField', viewValue: 'שדה אימות' })
       }
-      let tableData = JSON.parse(JSON.stringify(this.dataTable.data));
+
+      debugger
+      if ((this.OrderCreatedFromExcel && this.orderHaveCards) || this.LoadingVoucherByExcelHavePhoneNumber) {
+        tableLabels.splice(tableLabels.length, 0, { value: 'DSendLastSent', viewValue: 'נשלח לאחרונה' });
+        tableLabels.splice(3, 0, { value: 'DSendName', viewValue: 'שם נמען' });
+        tableLabels.splice(4, 0, { value: 'DSendPhone', viewValue: 'מספר נייד נמען' });
+
+        this.tabelLabelsList.splice(this.tabelLabelsList.length, 0, 'DSendLastSent');
+        this.tabelLabelsList.splice(3, 0, 'DSendName');
+        this.tabelLabelsList.splice(4, 0, 'DSendPhone');
+
+
+
+      }
+
+
 
       let workbook = new Workbook();
       let worksheet = workbook.addWorksheet('ProductSheet');
@@ -583,16 +618,20 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
 
       worksheet.columns = worksheetArr;
 
-      //debugger
+      debugger
       for (let data of Object.values(tableData)) {
         for (let element of Object.keys(data)) {
           if (element == 'CardId') {
-            let oldData = data[element];
-            data[element] = oldData + '' + data['PinCode']
+            data[element] = data[element] + '' + data['PinCode']
           }
           else if (element == 'active') {
-            let oldData = data[element];
-            data[element] = oldData == 1 ? 'פעיל' : 'חסום'
+            data[element] = data[element] == 1 ? 'פעיל' : 'חסום'
+          }
+          else if (element == 'DSendLastSent') {
+            try {
+              data[element] = this.formatDate(data[element]);
+            }
+            catch (err) { }
           }
         }
       }
@@ -609,6 +648,21 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  formatDate(dateForFormat: any) {
+
+    if (dateForFormat != null && dateForFormat != "") {
+      let date = new Date(dateForFormat.toString());
+      let day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
+      let month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
+      let year = date.getFullYear();
+
+      return day + '/' + month + '/' + year;
+    }
+    else {
+      return "";
+    }
+
+  }
   GetCustomerById() {
 
     let objToApi = {

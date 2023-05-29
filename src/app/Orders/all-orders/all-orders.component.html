@@ -178,6 +178,10 @@
                                 <!--[routerLink]="['/public/customer',element['UserId']]"-->
                                 <a (click)="goToCustomer(element['UserId'])">{{element[obj]}}</a><br>
                             </span>
+                            <span *ngIf="obj == 'GiftCardType'">
+                                <!--[routerLink]="['/public/customer',element['UserId']]"-->
+                                {{element[obj] == 0 ? 'מגנטי' : 'דיגיטלי'}}<br>
+                            </span>
                             <div mat-button *ngIf="obj == 'DescriptionWL'"
                                 [class.tableOrderStatusOpen]="element['StatusId'] == 1 || element['OrderStatus'] == 1"
                                 [class.tableOrderStatusWaiting]="element['StatusId'] == 2 || element['StatusId'] == 0 || element['OrderStatus'] == 2"
@@ -233,7 +237,8 @@
                                         obj != 'OrganizationName' && 
                                         obj != 'DescriptionWL' &&
                                         obj != 'ApproveDate' && 
-                                        obj != 'MDate'">{{element[obj]}}
+                                        obj != 'MDate' &&
+                                        obj != 'GiftCardType'">{{element[obj]}}
                             </span>
                             <!-- test merge -->
                             <!-- test merge from policy -->

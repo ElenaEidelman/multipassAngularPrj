@@ -225,6 +225,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
     }
 
     this.dataService.GetAllCustomers(objToApi).subscribe(result => {
+      debugger
       if (typeof result == 'string') {
         // this.dialog.open(DialogComponent, {
         //   data: { message: result }
@@ -232,6 +233,18 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
 
         this.sharedService.exitSystemEvent(result);
         return false;
+      }
+      if (typeof result == 'object' && result['err'] < 0 && result['obj'] == null) {
+
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
+
+        this.customers = [{ id: '-1', organizationName: '' }];
+        this.customersSpare = [{ id: '-1', organizationName: '' }];
+
       }
 
       // if (typeof result == 'string') {
@@ -248,22 +261,27 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
       // }
       // else {
       // if (typeof result == 'object' && result['obj'] != null && result['obj'].length > 0) {
-      this.customers = result['obj'].sort(function (a, b) {
-        if (a.organizationName < b.organizationName) { return -1; }
-        if (a.organizationName > b.organizationName) { return 1; }
-        return 0;
-      });
-
-      this.customers = this.customers.filter(customer => customer.StatusId != 3);
-      this.customersSpare = this.customers.filter(customer => customer.StatusId != 3);
+      try {
 
 
-      if (this.userId != undefined && this.indexId != undefined) {
-        this[this.tabGroups.filter(tab => tab.index == this.indexId)[0]['tabName']].get('customer').setValue(this.fillteringUserData(this.userId));
+        this.customers = result['obj'].sort(function (a, b) {
+          if (a.organizationName < b.organizationName) { return -1; }
+          if (a.organizationName > b.organizationName) { return 1; }
+          return 0;
+        });
+
+        this.customers = this.customers.filter(customer => customer.StatusId != 3);
+        this.customersSpare = this.customers.filter(customer => customer.StatusId != 3);
+        debugger
+
+        if (this.userId != undefined && this.indexId != undefined) {
+          this[this.tabGroups.filter(tab => tab.index == this.indexId)[0]['tabName']].get('customer').setValue(this.fillteringUserData(this.userId));
+        }
+        else {
+          this.indexId = 0;
+        }
       }
-      else {
-        this.indexId = 0;
-      }
+      catch (e) { }
       // }
       // if (typeof result == 'object' && result['obj'] == null) {
       //   // this.errorMsg = 'No Data Found';

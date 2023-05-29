@@ -77,8 +77,8 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   OrderSummaryTitle: string = ''; //סיכום הזמנה דיגיטלית
   GoToOrderLinesTitle: string = '';
 
-  cardFromNotBelongsError: string = "";
-  cardToNotBelongsError: string = "";
+  // cardFromNotBelongsError: string = "";
+  // cardToNotBelongsError: string = "";
 
 
   // OrderData;
@@ -109,6 +109,8 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
 
 
+
+
   errorMsg: string = '';
   orderMsg: string = '';
   orderMsgDelete: string = '';
@@ -119,6 +121,9 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   errorSendSms: string = '';
   infoMsg: string = '';
   descriptionStatusInjected: string = '';
+
+  TotalForOrderLine: number = 0;
+  CardsCountForOrderLine: number = 0;
 
 
   fromCrdWrongValue: boolean = true;
@@ -241,7 +246,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   //for additional empty row for vauchers loading manually
   manuallyVouchersForm = this.fb.group({
     FromCard: ['', [Validators.required]],
-    ToCard: ['', [Validators.required]],
+    ToCard: [''],
     LoadSum: ['', [Validators.required]],
     ValidationDate: [this.getLastDateOfCurrentMonthAnd5Years(), Validators.required],
     TotalForItem: [{ value: '', disabled: true }],
@@ -277,9 +282,8 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
     //get order type
     this.urlSharingService.orderTypeMessage.subscribe(type => {
-      // //
-
       this.orderType = type;
+      this.SetDynamicTitles();
     });
 
     // this.SetDynamicTitles();
@@ -335,8 +339,10 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         this.orderId = JSON.parse(urlParams)['orderId'];
         this.customerId = JSON.parse(urlParams)['customerId'];
         this.newOrder = false;
+
         this.GetOrderDetails();
-        this.GetCards();
+
+        //this.GetCards();
         // 
       }
 
@@ -442,7 +448,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   //   let fieldToCard = this.manuallyVouchersForm.get('ToCard');
 
   //   if (value.length == 8) {
-  //     debugger
+  //     
   //     this.checkCardValidityFronSide(element, value);
 
   //     if (this.manuallyVouchersForm.get(element).valid) {
@@ -454,7 +460,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   //       // 
   //       this.dataService.CheckCardBelongingToTheCompany(objToApi).subscribe(result => {
   //         // 
-  //         debugger
+  //         
   //         if (typeof result == 'object') {
   //           if (result['Token'] != null && result['Token'] != '') {
 
@@ -502,29 +508,83 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   // }
 
   checkCardValidityFronSide(element, value) {
+
+
     let fieldFromCard = this.manuallyVouchersForm.get('FromCard');
     let fieldToCard = this.manuallyVouchersForm.get('ToCard');
     let cardNumber = value;
 
-    //check range between to/from card
-    if (fieldToCard.value < fieldFromCard.value) {
-      fieldToCard.setErrors({ 'incorrect': true })
+
+    //set tickets count
+    if (fieldFromCard.value != '' && fieldFromCard.value.length >= 8 && fieldToCard.value != '' && fieldToCard.value.length >= 8) {
+      this.CardsCountForOrderLine = fieldToCard.value - fieldFromCard.value + 1;
     }
-    else if (fieldToCard.value == fieldFromCard.value) {
-      fieldToCard.setErrors({ 'equalValueError': true })
+    else if (fieldFromCard.value != '' && fieldFromCard.value.length >= 8 && fieldToCard.value == '') {
+      this.CardsCountForOrderLine = 1;
+    }
+
+    else if (fieldFromCard.value == '') {
+      this.CardsCountForOrderLine = 0;
+    }
+
+
+    //check range between to/from card
+    if ((fieldToCard.value != null && fieldToCard.value.length > 1) && +fieldToCard.value < +fieldFromCard.value) {
+      fieldToCard.setErrors({ 'incorrect': true })
+
+      this.CardsCountForOrderLine = 0;
+      this.TotalForOrderLine = 0;
     }
     else {
       fieldToCard.setErrors({ 'incorrect': false })
-      fieldToCard.setErrors({ 'equalValueError': false })
+      // fieldToCard.setErrors({ 'equalValueError': false })
       fieldToCard.setErrors(null);
+
+      if (fieldToCard.value != null) {
+        if (fieldToCard.value.length == 0 && fieldFromCard.value.length >= 8) {
+          this.CardsCountForOrderLine = 1;
+
+        }
+        else if (fieldToCard.value.length > 1 && +fieldToCard.value == +fieldFromCard.value) {
+          // fieldToCard.setErrors({ 'equalValueError': true })
+          // this.CardsCountForOrderLine = 0;
+          // this.TotalForOrderLine = 0;
+          this.CardsCountForOrderLine = 1;
+          // this.manuallyVouchersForm.get('ToCard').setValue(null);
+        }
+        else if (fieldToCard.value.length >= 0 && fieldFromCard.value.length >= 8) {
+          this.CardsCountForOrderLine = ((fieldToCard.value - fieldFromCard.value) + 1) < 0 ? 0 : (fieldToCard.value - fieldFromCard.value) + 1;
+
+        }
+      }
+
+
+
+
+      this.CalculateOrderLineTottalSum();
+
     }
 
     //check if entering card is exist on order
     this.orderDetailsVoucherManually.map((cardDetails, index) => {
-      if (cardNumber >= cardDetails.FromCard && cardNumber <= cardDetails.ToCard) {
-        this.manuallyVouchersForm.get(element).setErrors({ 'CardNumberExist': true });
+      if (this.orderDetailsVoucherManually.length > 1 && index != this.orderDetailsVoucherManually.length - 1) {
+        if (cardNumber >= cardDetails.FromCard && cardNumber <= cardDetails.ToCard) {
+          this.manuallyVouchersForm.get(element).setErrors({ 'CardNumberExist': true });
+        }
       }
     })
+  }
+
+  CalculateOrderLineTottalSum() {
+
+
+    try {
+
+      let inseredSum = (this.manuallyVouchersForm.get('LoadSum').value).replaceAll(',', '');
+      this.TotalForOrderLine = (this.CardsCountForOrderLine * inseredSum) < 0 ? 0 : (this.CardsCountForOrderLine * inseredSum);
+    }
+    catch (e) { }
+
   }
 
 
@@ -549,6 +609,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
   SetDynamicTitles() {
 
+
     switch (this.orderType) {
 
       case this.OrderType.OrderByExcel: this.OrderSummaryTitle = 'סיכום הזמנה דיגיטלית'; this.GoToOrderLinesTitle = 'רשימת הנמענים'; break;
@@ -566,8 +627,9 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       CoreOrderID: this.orderId
     }
     //
+
     this.dataService.GetOrderDetails(objToApi).subscribe(result => {
-      debugger
+
       if (typeof result == 'string') {
         // this.dialog.open(DialogComponent, {
         //   data: { message: result }
@@ -588,8 +650,9 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       // if (typeof result == 'object' && result.obj != null) {
 
 
-      //debugger
+      //
       //get order type
+
       if (result.obj[0].GiftCardType == 0) {
         this.orderType = (result.obj[0].DigitalBatch == '' || result.obj[0].DigitalBatch == null) ? this.OrderType.LoadingVouchersManually : this.OrderType.LoadingVoucherByExcel
       }
@@ -597,8 +660,12 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         this.orderType = (result.obj[0].DigitalBatch == '' || result.obj[0].DigitalBatch == null) ? this.OrderType.ManualOrder : this.OrderType.OrderByExcel
       }
 
-      //debugger
+      //
+
       this.SetDynamicTitles();
+      if (this.router.url.includes('order')) {
+        this.GetCards();
+      }
 
       this.orderIdToPreview = result.obj[0].idex;
       this.IsB2COrder = result.obj[0].IsB2COrder;
@@ -654,7 +721,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
           this.orderDetailsVoucherManually.push(element);
         });
         this.orderDetailsVoucherManually.push({ FromCard: '', ToCard: '', LoadSum: 0, ValidationDate: '', TotalForItem: 0, QTY: 0 })
-        debugger
+
         this.orderDetailsVouchersManuallyTable = new MatTableDataSource(this.orderDetailsVoucherManually);
         this.totalDataFromManualVoucher();
 
@@ -666,7 +733,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         });
         this.orderDetails.push({ id: 0, QTY: 0, LoadSum: 0, ValidationDate: '', TotalForItem: 0 })
 
-        debugger
+
         this.orderDetailsTable = new MatTableDataSource(this.orderDetails);
         this.totalData();
       }
@@ -904,7 +971,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
   deleteRow(element, row) {
 
-    debugger
+
     if (this.pagePermissionAccessLevel.AccessLevel != this.MockData.accessLevelReadOnly) {
       let date = element.ValidationDate.split('/');
       let dateForApi = date[1] + '-' + date[0] + '-' + date[2];
@@ -919,7 +986,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         OpCode: "delete"
       }
 
-      debugger
+
       //show spinner of order line by id
       this.orderLinesChildren._results.forEach(el => {
         let spinner = (el.nativeElement.children['spinnerDelete' + element.id] as HTMLBodyElement);
@@ -929,9 +996,16 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         }
       })
 
-      debugger
+
+
+
       this.dataService.InsertUpdateLines(objToApi).subscribe(result => {
-        debugger
+
+
+        let test = (this.dataByPage.DigitalBatch != undefined && (this.dataByPage.DigitalBatch > 0 ||
+          this.dataByPage.DigitalBatch != 0) && (this.orderDetails.length - 1 != 1)) && (this.orderStatus.id == '1' || this.orderStatus.id == '0');
+
+
         if (typeof result == 'string') {
           // this.dialog.open(DialogComponent, {
           //   data: { message: result }
@@ -990,18 +1064,6 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  deleteRowOfManualVoucher(element, row) {
-
-    // //
-    // this.orderDetailsVoucherManually = [
-    //   { FromCard: '', ToCard: '', LoadSum: 0, ValidationDate: '', TotalForItem: 0, QTY: 0 }
-    // ];
-    // this.tempOBJ.splice(row, 1);
-
-    // this.orderDetailsVoucherManually.unshift(...this.tempOBJ);
-    // this.orderDetailsVouchersManuallyTable = new MatTableDataSource(this.orderDetailsVoucherManually);
-    alert('under construction');
-  }
 
   addOrderLine() {
     //
@@ -1129,6 +1191,8 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         this.viewAddToExecOrderForm = false;
         setTimeout(() => {
           this.addToExecOrderForm.reset();
+
+
           this.addToExecOrderForm.get('validity').setValue(new Date(new Date().setDate(new Date().getDate() + 1)));
           this.viewAddToExecOrderForm = true;
         }, 0);
@@ -1167,19 +1231,21 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         ChargeAmount: +(formData.LoadSum.replaceAll(',', '')),
         OpCode: "Magnetic",
         FromCard: formData.FromCard,
-        ToCard: formData.ToCard,
-        Validity: validity,
+        ToCard: formData.ToCard != '' ? formData.ToCard == formData.FromCard ? null : formData.ToCard : null,
+        Validity: validity.toISOString(),
       }
 
       //first line
       if (this.orderDetailsVouchersManuallyTable.data.length == 1) {
+
         this.dataService.InsertUpdateOrderBatchByRange(objToApi).subscribe(result => {
+
           this.insertOrderLineSpinner2 = false;
           if (typeof result == 'string') {
             this.sharedService.exitSystemEvent(result);
             return false;
           }
-          if (result.err < 0 && result.obj != null) {
+          if (result.err < 0 && result.obj != null && result.obj.length > 0) {
 
             //here
 
@@ -1187,12 +1253,14 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
             //translate table label
             let newDataArr = [];
             result.obj.forEach(data => {
-              newDataArr.push({ 'מספר תו': data.CardId })
+
+              newDataArr.push({ 'מספר תו': data.CardId, 'הערה': data.ErrorMsg })
             })
+
 
             this.dialog.open(TableDialogComponent, {
               maxHeight: '200px',
-              data: { title: result.errdesc, data_Source: newDataArr, dataLabelsList: ['מספר תו'] }
+              data: { title: result.errdesc, data_Source: newDataArr, dataLabelsList: ['מספר תו', 'הערה'] }
             })
             return false;
           }
@@ -1226,22 +1294,28 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       //second and more lines
       else if (this.orderDetailsVouchersManuallyTable.data.length > 1) {
         objToApi['OrderId'] = this.orderId;
+        //
         this.dataService.InsertUpdateLines(objToApi).subscribe(result => {
+
+          this.insertOrderLineSpinner2 = false;
           if (typeof result == 'string') {
             this.sharedService.exitSystemEvent(result);
             return false;
           }
-          if (result.err < 0 && result.obj != null) {
+          if (result.err < 0 && result.obj != null && result.obj.length > 0) {
             //translate table label
             let newDataArr = [];
             result.obj.forEach(data => {
-              newDataArr.push({ 'מספר תו': data.CardId })
+
+              newDataArr.push({ 'מספר תו': data.CardId, 'הערה': data.ErrorMsg })
             })
+
 
             this.dialog.open(TableDialogComponent, {
               maxHeight: '200px',
-              data: { title: result.errdesc, data_Source: newDataArr, dataLabelsList: ['מספר תו'] }
+              data: { title: result.errdesc, data_Source: newDataArr, dataLabelsList: ['מספר תו', 'הערה'] }
             })
+
             return false;
           }
           this.insertOrderLineSpinner2 = false;
@@ -1257,6 +1331,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
           this.userToken = result['Token'];
 
 
+          //
           this.orderDetailsVoucherManually = [
             { FromCard: '', ToCard: '', LoadSum: 0, ValidationDate: '', TotalForItem: 0, QTY: 0 }
           ];
@@ -1282,14 +1357,18 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
       //reset form
       //
+
       this.viewAddToExecOrderForm2 = false;
 
       setTimeout(() => {
         this.manuallyVouchersForm.reset();
         //
-        // this.manuallyVouchersForm.markAsUntouched();
+        this.manuallyVouchersForm.markAsUntouched();
+        this.CardsCountForOrderLine = 0;
+        this.TotalForOrderLine = 0;
         this.manuallyVouchersForm.get('ValidationDate').setValue(this.getLastDateOfCurrentMonthAnd5Years());
         this.viewAddToExecOrderForm2 = true;
+
       }, 0);
     }
     else {
@@ -1557,7 +1636,9 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
         //alert('before approve');
 
+
         this.dataService.ApproveBatchOrder(objToApi).subscribe(result => {
+
           //alert('after approve');
 
           this.descriptionStatusInjected = '';
@@ -1798,7 +1879,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     // // 
     // let t = element.ValidationDate;
 
-
+    debugger
     this.dialog.open(DatePickerDialog, {
       data: {
         date: element.ValidationDate,
@@ -1808,6 +1889,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     }).afterClosed().subscribe(dialogResult => {
 
 
+      debugger
       if (new Date(dialogResult.result.date) < new Date()) {
         this.dialog.open(DialogComponent, {
           data: { message: MsgList.wrongDate }
@@ -1817,6 +1899,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         this.dateChanging = true;
         let validityDate = new Date(dialogResult.result.date);
         validityDate.setHours(23, 59, 59);
+
         let objToApi = {
           Token: this.userToken,
           OrderId: this.orderId,
@@ -1850,8 +1933,6 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
             data: { message: 'נשמר בהצלחה' }
           })
 
-          debugger
-          //here
 
           if (this.orderType == this.OrderType.LoadingVouchersManually) {
 
@@ -1964,6 +2045,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
             }
 
             this.dataService.SendSMSByOrderLine(objToApi).subscribe(result => {
+
               if (typeof result == 'string') {
                 // this.dialog.open(DialogComponent, {
                 //   data: { message: result }
@@ -1988,6 +2070,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
               this.sendSmsGroup.reset();
               this.openSendSmsBlock();
+              this.GetCards();//here
               // }
               // else {
               //   this.dialog.open(DialogComponent, {
@@ -2034,9 +2117,12 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       userId: this.customerId
     }
 
+    if (this.orderType == this.OrderType.LoadingVoucherByExcel || this.orderType == this.OrderType.LoadingVouchersManually) {
+      objToAPI['OpCode'] = 'Magnetic'
+    }
 
 
-    //
+
     this.dataService.GetCardsByOrderId(objToAPI).subscribe(result => {
 
       if (typeof result == 'string') {
@@ -2059,9 +2145,10 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       // if (typeof result == 'object') {
       this.orderCardsData = result['obj'][0];
 
+
       //check if cards loaded by LoadingVoucherByExcel contains phone number
       this.LoadingVoucherByExcelHavePhoneNumber = this.orderCardsData.filter(data => (data.DSendPhone != '' && data.DSendPhone != null)).length > 0;
-      debugger
+
       this.DigitalBatch = result['obj'][1];
 
 
@@ -2090,27 +2177,46 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   excelFileExport() {
 
     if (this.pagePermissionAccessLevel.AccessLevel != this.MockData.accessLevelReadOnly) {
+
       let tableLabels = [
-        { value: 'ItemId', viewValue: "מס''ד" },
+        { value: 'Row', viewValue: "מס''ד" },
         { value: 'CardId', viewValue: 'קוד דיגיטלי' },
-        { value: 'DSendName', viewValue: 'שם נמען' },
-        { value: 'DSendPhone', viewValue: 'מספר נייד נמען	' },
-        { value: 'LoadSum', viewValue: 'סכום טעינה ראשוני		' },
-        { value: 'ValidationDate', viewValue: '	תוקף	' },
-        { value: 'KindOfLoadSumDesc', viewValue: 'סוג תו טעינה	' },
-        { value: 'DSendLastSent', viewValue: 'נשלח לאחרונה' }
+        // { value: 'DSendName', viewValue: 'שם נמען' },
+        // { value: 'DSendPhone', viewValue: 'מספר נייד נמען' },
+        { value: 'LoadSum', viewValue: 'סכום טעינה ראשוני' },
+        { value: 'ValidationDate', viewValue: 'תוקף' },
+        { value: 'KindOfLoadSumDesc', viewValue: 'סוג תו טעינה' },
+        // { value: 'DSendLastSent', viewValue: 'נשלח לאחרונה' }
+        { value: 'active', viewValue: 'סטטוס תו' }
       ];
 
+      if (this.excelOrder || this.LoadingVoucherByExcelHavePhoneNumber) {
+        tableLabels.splice(tableLabels.length, 0, { value: 'DSendLastSent', viewValue: 'נשלח לאחרונה' });
+        tableLabels.splice(3, 0, { value: 'DSendName', viewValue: 'שם נמען' });
+        tableLabels.splice(4, 0, { value: 'DSendPhone', viewValue: 'מספר נייד נמען' });
+      }
+
+
+
+      //here
+
       //add another column to file if order created from excel file
-      if (this.DigitalBatch != '' && this.DigitalBatch != undefined) {
+      if ((this.DigitalBatch != '' && this.DigitalBatch != undefined) && (this.orderType != this.OrderType.LoadingVoucherByExcel && this.orderType != this.OrderType.LoadingVouchersManually)) {
         tableLabels.push({ value: 'ValidationField', viewValue: 'שדה אימות' })
       }
 
       if (this.orderType == this.OrderType.LoadingVoucherByExcel || this.orderType == this.OrderType.LoadingVouchersManually) {
         // tableLabels.push({ value: 'PrintNumber', viewValue: ' קידוד כרטיס' })
-        tableLabels.splice(2, 0, { value: 'PrintNumber', viewValue: ' קידוד כרטיס' })
+        tableLabels.splice(2, 0, { value: 'Track', viewValue: ' קידוד כרטיס' })
       }
+
+      // if (this.orderType == this.OrderType.LoadingVouchersManually) {
+      //   tableLabels.splice(2, 0, { value: 'Track', viewValue: ' קידוד כרטיס' })
+
+      // }
+
       let tableData = JSON.parse(JSON.stringify(this.orderCardsData));
+      debugger
 
       let workbook = new Workbook();
       let worksheet = workbook.addWorksheet('ProductSheet');
@@ -2124,11 +2230,15 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       for (let data of Object.values(tableData)) {
         for (let element of Object.keys(data)) {
           if (element == 'CardId') {
+
             let oldData = data[element];
             data[element] = oldData + '' + data['PinCode']
           }
           if (element == 'DSendLastSent') {
             data[element] = this.formatDate(data[element]);
+          }
+          if (element == 'active') {
+            data[element] = data[element] == 1 ? 'פעיל' : 'חסום'
           }
         }
       }

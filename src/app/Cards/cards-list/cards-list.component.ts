@@ -9,6 +9,8 @@ import { UrlSharingService } from 'src/app/Services/UrlSharingService/url-sharin
 import * as fs from 'file-saver';
 import { DataServiceService } from 'src/app/data-service.service';
 import { SharedService } from 'src/app/Services/SharedService/shared.service';
+import { DialogComponent } from 'src/app/PopUps/dialog/dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-cards-list',
@@ -24,7 +26,8 @@ export class CardsListComponent implements OnInit {
     private urlSharingService: UrlSharingService,
     private router: Router,
     private dataService: DataServiceService,
-    private sharedService: SharedService) { }
+    private sharedService: SharedService,
+    public dialog: MatDialog) { }
 
   vouchersDataSource = null;
   displayedColumns: string[] = [];
@@ -53,7 +56,8 @@ export class CardsListComponent implements OnInit {
     { value: 'Masad', viewValue: 'מסד' },
     { value: 'CardId', viewValue: 'מספר תו' },
     { value: 'BatchNum', viewValue: 'מספר להדפסה' },
-    { value: 'PrintNumber', viewValue: 'קידוד פס מגנטי' },// no data !!!!
+    { value: 'PrintNumber', viewValue: 'קידוד פס מגנטי' },
+    { value: 'IsUsed', viewValue: 'זמינות הכרטיס' },
     { value: 'CardValidDate', viewValue: 'תוקף' },
   ];
   cardsLabelForLoad = [
@@ -68,7 +72,7 @@ export class CardsListComponent implements OnInit {
     window.scroll(0, 0);
     this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
 
-    // //debugger
+    // //
     let urlParams = this.urlSharingService.messageSource.getValue();
     //let urlParams = '{"voucherData":[{"id":"1","Description":"giftCard","Count":"2","IssuanceDate":"02/11/2022","ValidDate":"02/11/2022","Excel":"http://test.co.il"}]}';
     if (urlParams == '') {
@@ -77,24 +81,25 @@ export class CardsListComponent implements OnInit {
     else {
       this.urlSharingService.changeMessage('');
       this.voucherData = JSON.parse(urlParams)['voucherData'];
-      //debugger
+      //
       // this.allVouchersData = JSON.parse(urlParams)['allVouchersData'];
       this.voucherId = JSON.parse(urlParams)['VoucherId'];
       //this.createTableData(this.TempCardsData);
-      //debugger
+      //
       this.GetCardsListByIssuanceVoucherId(this.voucherId, this.voucherData[0].CardsCount);
     }
   }
 
 
   GetCardsListByIssuanceVoucherId(VoucherId: number, tempCardsCount: number) {
-    debugger
+
     let objToApi = {
       Token: this.userToken,
       VoucherId: VoucherId,
       TempCardsCount: tempCardsCount
 
     }
+
 
     debugger
     this.dataService.GetCardsListByIssuanceVoucherId(objToApi).subscribe(result => {
@@ -113,7 +118,7 @@ export class CardsListComponent implements OnInit {
 
 
       // this.cardsDataSource.data = result.obj;
-      ////debugger
+      ////
       this.createTableData(result.obj);
       this.spinner = false;
     });
@@ -141,7 +146,7 @@ export class CardsListComponent implements OnInit {
   }
 
   returnHebTranslation(obj, value) {
-    ////debugger
+    ////
     return obj.filter(el => el.value == value)[0].viewValue;
   }
 
@@ -162,25 +167,26 @@ export class CardsListComponent implements OnInit {
 
     worksheet.columns = worksheetArr;
 
-    //debugger
-    // for (let data of Object.values(tableData)) {
-    //   for (let element of Object.keys(data)) {
-    //     // if (element == 'CardId') {
-    //     //   let oldData = data[element];
-    //     //   data[element] = oldData + '' + data['PinCode']
-    //     // }
-    //     // else if (element == 'active') {
-    //     //   let oldData = data[element];
-    //     //   data[element] = oldData == 1 ? 'פעיל' : 'חסום'
-    //     // }
-    //   }
-    // }
+
+    for (let data of Object.values(tableData)) {
+      for (let element of Object.keys(data)) {
+        debugger
+        switch (element) {
+          case 'IsUsed': data[element] = data[element] == 0 ? 'זמין' : 'לא זמין';
+            break;
+          // case 'CardValidDate': data[element] = this.convertDateToNormalPreview(data[element]);
+          //   break;
+          case 'BatchNum': data[element] = data['CardId'] + '-' + data['Pin'];
+            break;
+        }
+      }
+    }
     worksheet.addRows(tableData, "n")
     // 046417001
     // let userData = JSON.parse(localStorage.getItem('user')).obj;
     //let userData = this.customerData;
 
-    //debugger
+    //
     workbook.xlsx.writeBuffer().then((data) => {
       let blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
       fs.saveAs(blob, this.voucherData[0].IssuanceDescription.replaceAll(' ', '-') + '-table' + '.xlsx');
@@ -191,7 +197,17 @@ export class CardsListComponent implements OnInit {
 
 
     let tableLabels = this.cardsLabelForLoad;
-    let tableData = JSON.parse(JSON.stringify(this.vouchersDataSource.data));
+    debugger
+    let availableCrdsList = this.vouchersDataSource.data.filter(card => card.IsUsed == 0);
+
+    if (availableCrdsList.length == 0) {
+      this.dialog.open(DialogComponent, {
+        data: { message: 'אין כרטיסים זמינים' }
+      })
+      return false;
+    }
+
+    let tableData = JSON.parse(JSON.stringify(availableCrdsList));
 
     let workbook = new Workbook();
     let worksheet = workbook.addWorksheet('ProductSheet');
@@ -202,10 +218,10 @@ export class CardsListComponent implements OnInit {
     });
     worksheet.columns = worksheetArr;
 
-    //debugger
+    //
     worksheet.addRows(tableData, "n");
     worksheet.views.reduceRight;
-    //debugger
+    //
     workbook.xlsx.writeBuffer().then((data) => {
       let blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
       fs.saveAs(blob, this.voucherData[0].IssuanceDescription.replaceAll(' ', '-') + '-order' + '.xlsx');
@@ -218,6 +234,16 @@ export class CardsListComponent implements OnInit {
     //   allVouchersData: this.allVouchersData
     // }
     // this.urlSharingService.changeMessage(JSON.stringify(VoucherData));
+    let t = this.urlSharingService.issuanceVoucherFormData.getValue();
+    //debugger
     this.router.navigate(['/public/IssuanceVouchers']);
+  }
+  convertDateToNormalPreview(dateOBJ) {
+    let date = new Date(dateOBJ.toString());
+    let day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
+    let month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
+    let year = date.getFullYear();
+
+    return day + '/' + month + '/' + year;
   }
 }

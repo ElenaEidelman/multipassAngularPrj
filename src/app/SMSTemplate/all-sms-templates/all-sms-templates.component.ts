@@ -47,11 +47,15 @@ export class AllSmsTemplatesComponent implements OnInit {
   spinnerId = -1;
   spinnerById = [];
   newSMSSend: boolean = false;
-  voucherNumberInsered: boolean = true;
+  // voucherNumberInsered: boolean = true;
+  walletLinkButtonInsered: boolean = true;
+
   voucherValidityInsered: boolean = true;
   newTemplateFormView: boolean = true;
 
-  voucherNumberInseredById: string = '';
+  // voucherNumberInseredById: string = '';
+  walletLinkButtonInseredById: string = '';
+
   voucherValidityInseredById: string = '';
 
 
@@ -197,10 +201,10 @@ export class AllSmsTemplatesComponent implements OnInit {
       if (this.SMSForm.get('Id-' + template.Id).valid) {
 
         this.voucherValidityInseredById = this.SMSForm.get('Id-' + template.Id).value['TemplateFormat' + template.Id].indexOf('<תוקף>') == -1 ? 'voucherValidityInseredById' + template.Id : '';
-        this.voucherNumberInseredById = this.SMSForm.get('Id-' + template.Id).value['TemplateFormat' + template.Id].indexOf('<מספר תו>') == -1 ? 'voucherNumberInseredById' + template.Id : '';
+        this.walletLinkButtonInseredById = this.SMSForm.get('Id-' + template.Id).value['TemplateFormat' + template.Id].indexOf('<לינק לדף ארנק>') == -1 ? 'walletLinkButtonInseredById' + template.Id : '';
 
         if (this.SMSForm.get('Id-' + template.Id).value['TemplateFormat' + template.Id].indexOf('<תוקף>') != -1 &&
-          this.SMSForm.get('Id-' + template.Id).value['TemplateFormat' + template.Id].indexOf('<מספר תו>') != -1) {
+          this.SMSForm.get('Id-' + template.Id).value['TemplateFormat' + template.Id].indexOf('<לינק לדף ארנק>') != -1) {
 
 
           //check if template name exist in another template
@@ -215,7 +219,7 @@ export class AllSmsTemplatesComponent implements OnInit {
           }
           else {
 
-            this.voucherNumberInseredById = '';
+            this.walletLinkButtonInseredById = '';
 
             this.templatesSMS;
 
@@ -301,9 +305,9 @@ export class AllSmsTemplatesComponent implements OnInit {
     else {
 
       this.voucherValidityInsered = this.newTemplateForm.get('TemplateFormat').value.indexOf('<תוקף>') == -1 ? false : true;
-      this.voucherNumberInsered = this.newTemplateForm.get('TemplateFormat').value.indexOf('<מספר תו>') == -1 ? false : true;
+      this.walletLinkButtonInsered = this.newTemplateForm.get('TemplateFormat').value.indexOf('<לינק לדף ארנק>') == -1 ? false : true;
 
-      if (this.newTemplateForm.valid && this.voucherValidityInsered && this.voucherNumberInsered) {
+      if (this.newTemplateForm.valid && this.voucherValidityInsered && this.walletLinkButtonInsered) {
 
         if (this.templatesSMS.filter(template => template.TemplateName == this.newTemplateForm.get('TemplateName').value).length > 0) {
           this.errorMessagenewSms = MsgList.smsTemplateNameExist;
@@ -314,11 +318,11 @@ export class AllSmsTemplatesComponent implements OnInit {
           return false;
 
         }
-        this.voucherNumberInsered = this.newTemplateForm.value.TemplateFormat.indexOf('<מספר תו>') == -1;
+        this.walletLinkButtonInsered = this.newTemplateForm.value.TemplateFormat.indexOf('<לינק לדף ארנק>') == -1;
         this.voucherValidityInsered = this.newTemplateForm.value.TemplateFormat.indexOf('<תוקף>') == -1;
 
         if (this.newTemplateForm.value.TemplateFormat.indexOf('<תוקף>') != -1 &&
-          this.newTemplateForm.value.TemplateFormat.indexOf('<מספר תו>') != -1) {
+          this.newTemplateForm.value.TemplateFormat.indexOf('<לינק לדף ארנק>') != -1) {
           this.spinnerNewTemp = true;
           let objToApi = {
             Token: this.userToken,
@@ -355,7 +359,7 @@ export class AllSmsTemplatesComponent implements OnInit {
             }, 2000);
 
             this.resetNewTemplate();
-            this.voucherNumberInsered = true;
+            this.walletLinkButtonInsered = true;
             this.voucherValidityInsered = true;
 
 
@@ -541,15 +545,15 @@ Json:
   sendSMSForExample(template, newTmp: boolean) {
     if (newTmp) {
       this.voucherValidityInsered = this.newTemplateForm.get('TemplateFormat').value.indexOf('<תוקף>') == -1 ? false : true;
-      this.voucherNumberInsered = this.newTemplateForm.get('TemplateFormat').value.indexOf('<מספר תו>') == -1 ? false : true;
+      this.walletLinkButtonInsered = this.newTemplateForm.get('TemplateFormat').value.indexOf('<לינק לדף ארנק>') == -1 ? false : true;
     }
-    if (newTmp && !this.newTemplateForm.valid || (this.voucherValidityInsered == false || this.voucherNumberInsered == false)) {
+    if (newTmp && !this.newTemplateForm.valid || (this.voucherValidityInsered == false || this.walletLinkButtonInsered == false)) {
       this.newTemplateSendError = 'נא למלא שדות חובה';
       setTimeout(() => {
         this.newTemplateSendError = '';
       }, 2000);
     }
-    if ((newTmp && this.newTemplateForm.valid && this.voucherValidityInsered && this.voucherNumberInsered) || !newTmp) {
+    if ((newTmp && this.newTemplateForm.valid && this.voucherValidityInsered && this.walletLinkButtonInsered) || !newTmp) {
 
 
       this.dialog.open(PhoneConfirmComponent, {

@@ -9,8 +9,11 @@ export class PublicComponent implements OnInit {
 
   constructor() { }
 
+  currentYear;
+
   ngOnInit(): void {
-    
+
+    this.currentYear = new Date().getFullYear();
   }
 
 }

@@ -43,7 +43,7 @@
                                           </div>
                                        </div>
                                        <ng-container *ngFor="let customer of customersSpare; let i = index">
-                                          <mat-option [value]="customer">
+                                          <mat-option [value]="customer" [disabled]="customer.id === '-1'">
                                              {{customer.organizationName}}
                                              <!-- {{customer}} -->
                                           </mat-option>
@@ -84,9 +84,10 @@
                                     <div>
                                        <div>בדיקה וטעינה של הקובץ</div>
                                        <button
-                                          [disabled]="this.excelCardCreatingForm.get('orderDescription').errors?.required && this.excelCardCreatingForm.get('orderDescription').errors?.required"
+                                          [disabled]="this.excelCardCreatingForm.get('orderDescription').errors?.required || this.excelCardCreatingForm.get('customer').errors?.required"
                                           mat-button class="sendButton marginRight" (click)="uploadDoc.click()">
-                                          <span>בחירת קובץ</span>
+                                          <!-- <span>בחירת קובץ</span> -->
+                                          <span>{{UploadFileButtonName}}</span>
                                           <mat-icon>attach_file</mat-icon>
                                           <mat-spinner *ngIf="fileUploading"></mat-spinner>
                                        </button>
@@ -160,7 +161,7 @@
 
                                        </div>
                                        <ng-container *ngFor="let customer of customersSpare; let i = index">
-                                          <mat-option [value]="customer">
+                                          <mat-option [value]="customer" [disabled]="customer.id === '-1'">
                                              {{customer.organizationName }}
                                              <!-- {{customer}} -->
                                           </mat-option>
