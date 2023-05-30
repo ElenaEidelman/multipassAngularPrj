@@ -2014,6 +2014,10 @@ mat-icon.routActive {
   color: #8FC636;
 }
 
+input.mat-datepicker-input {
+  margin-top: 0 !important;
+}
+
 .inputPadding {
   padding-top: 1.1em;
 }
@@ -2040,7 +2044,7 @@ fa-icon>svg {
 
 
 mat-form-field.marginTop0>div.mat-form-field-wrapper>div.mat-form-field-flex>div.mat-form-field-infix>span.mat-form-field-label-wrapper>label.mat-form-field-label {
-  margin-top: 0 !important;
+  margin-top: -2px !important;
 }
 
 .readOnliNotifivation {

@@ -112,7 +112,7 @@ export class AllOrdersComponent implements OnInit, AfterViewInit, OnDestroy, OnC
   orderLabelForTable = [
     { value: 'idex', viewValue: 'מספר הזמנה' }, //v
     { value: 'OrganizationName', viewValue: 'שם הלקוח' },
-    { value: 'Total', viewValue: 'סכום טעינה ראשוני' },//v
+    { value: 'Total', viewValue: 'שווי ההזמנה' },//v
     { value: 'CardsQty', viewValue: 'כמות תווים בהזמנה' },
     { value: 'MDate', viewValue: 'תאריך יצירת הזמנה' },
     { value: 'ApproveDate', viewValue: 'תאריך שליחת תווים' },

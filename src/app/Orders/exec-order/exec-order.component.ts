@@ -26,6 +26,7 @@ import { MockData } from 'src/app/Classes/mockData';
 import { OrderType } from 'src/app/Classes/OrderTypes';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { TableDialogComponent } from 'src/app/PopUps/GlobalTableDialog/table-dialog/table-dialog.component';
+import { debug } from 'console';
 
 
 
@@ -138,7 +139,8 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
   manualOrder: boolean = false;
   excelOrder: boolean = false;
-  minOrderDate = new Date();
+
+  minOrderDate = new Date(new Date().setDate(new Date().getDate() + 1));
 
 
   minDate: any;
@@ -276,6 +278,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
   ngOnInit() {
     window.scroll(0, 0);
+
     let url = this.router.url;
     this.userToken = JSON.parse(localStorage.getItem('user')).Token;
     // //
@@ -2358,12 +2361,13 @@ export class DatePickerDialog implements OnInit {
   }
 
   validity = new FormControl()
-  minOrderDate = new Date();
+  minOrderDate = new Date(new Date().setDate(new Date().getDate() + 1));
 
 
   ngOnInit(): void {
-
     this.validity.setValue(this.validityChangeFormat());//new Date
+    let t = this.minOrderDate;
+    debugger
   }
 
   validityChangeFormat() {
@@ -2372,7 +2376,7 @@ export class DatePickerDialog implements OnInit {
     let year = date[2];
     let month = date[0];
     let day = date[1];
-
+    debugger
     return new Date(day + '/' + month + '/' + year + ' 23:59:59');
   }
 
