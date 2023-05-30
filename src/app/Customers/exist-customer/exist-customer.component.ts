@@ -315,14 +315,7 @@ export class ExistCustomerComponent implements OnInit {
         }
       })
 
-      //change to numeric
-      // objToApi['Tz'] = +objToApi['Tz'];
-
-
-
-      debugger
       this.dataService.InsertUpdateUser(objToApi).subscribe(result => {
-        debugger
         this.saveFormSpinner = false;
         if (typeof result == 'string') {
           // this.dialog.open(DialogComponent, {
