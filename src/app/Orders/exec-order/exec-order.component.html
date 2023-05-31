@@ -94,7 +94,8 @@
                                 (click)="goToOrderLines(orderId, customerId)"> צפה בקודים
                                 <mat-icon>preview</mat-icon>
                             </button>
-                            <button *ngIf="(excelOrder || LoadingVoucherByExcelHavePhoneNumber) && orderStatus.id > '1'"
+                            <button
+                                *ngIf="(excelOrder || LoadingVoucherByExcelHavePhoneNumber) && orderStatus.id > '1' && !IsB2COrder"
                                 mat-button [class.linkButton]="!additionalOptionsSMS"
                                 [class.sendButton]="additionalOptionsSMS" (click)="openSendSmsBlock()">שליחה לכולם
                                 <mat-icon>sms</mat-icon>
@@ -217,7 +218,7 @@
                     </button>
                     <!-- </div> -->
                 </div>
-                <div *ngIf="orderStatus.id == '1' && (this.orderType == this.OrderType.ManualOrder || this.orderType == this.OrderType.OrderByExcel)"
+                <div *ngIf="orderStatus.id == '1' && (this.orderType == this.OrderType.ManualOrder || this.orderType == this.OrderType.OrderByExcel || IsB2COrder)"
                     class="wrapAprDel nextLevelButton">
                     <button mat-button class="addButton" (click)="ApproveOrder($event)"> אישור ויצירת תווים
                         <mat-icon>done_outline</mat-icon>
@@ -265,7 +266,7 @@
 
                                     <!-- magnetic order by excel before approving -->
                                     <!-- digital order manually before approving -->
-                                    <div *ngIf="orderStatus.id != '4' " class="changeDate"
+                                    <div *ngIf="orderStatus.id != '4' && !IsB2COrder" class="changeDate"
                                         (click)="changeDateOfRow(element, obj)">
                                         <mat-spinner class="spinner" *ngIf="dateChanging"></mat-spinner>
                                         <mat-icon matTooltip="ערוך לוח שנה">edit_calendar</mat-icon>

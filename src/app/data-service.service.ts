@@ -128,6 +128,7 @@ $ git merge new-branch
   }
 
   checkResult(result) {
+    //debugger
     if (typeof result == 'object') {
       if (result['Token'] != null && result['Token'] != '') {
         if (+result['err'] < 0) {
@@ -683,6 +684,7 @@ $ git merge new-branch
   GetMenuPages(objToApi) {
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/Credential/GetMenuPages`, objToApi).pipe(
       map(result => {
+        debugger
         return this.checkResult(result);
       }),
       catchError(error => {

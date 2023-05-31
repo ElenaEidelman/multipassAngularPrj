@@ -73,7 +73,7 @@ export class ExistCustomerComponent implements OnInit {
     LName: (''),
     Email: ['', [Validators.required, Validators.email]], //v
     Phone: ['', [Validators.required, Validators.pattern('[[0][0-9]{8,9}]*')]], //v
-    Permission: ['', Validators.required],//v
+    Role: ['', Validators.required],//v
     Phone1: ['', [Validators.pattern('[[0][0-9]{8,9}]*')]],
     userNumber: [{ value: '', disabled: true }], //v
     CityName: (''),//v
@@ -315,7 +315,10 @@ export class ExistCustomerComponent implements OnInit {
         }
       })
 
+      //here
+      debugger
       this.dataService.InsertUpdateUser(objToApi).subscribe(result => {
+        debugger
         this.saveFormSpinner = false;
         if (typeof result == 'string') {
           // this.dialog.open(DialogComponent, {

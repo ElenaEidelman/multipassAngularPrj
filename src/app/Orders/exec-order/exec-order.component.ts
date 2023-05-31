@@ -286,10 +286,11 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
     //get order type
     this.urlSharingService.orderTypeMessage.subscribe(type => {
       this.orderType = type;
-      this.SetDynamicTitles();
-    });
+      if (this.orderType != '') {
+        this.SetDynamicTitles();
+      }
 
-    // this.SetDynamicTitles();
+    });
 
     this.pagePermissionAccessLevel = this.sharedService.pagesAccessLevel.value.length > 0 ? JSON.parse(this.sharedService.pagesAccessLevel.value) : JSON.parse(JSON.stringify(this.pagePermissionAccessLevel));
     this.sharedService.pagesAccessLevel.next('');
@@ -612,7 +613,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
   SetDynamicTitles() {
 
-
+    debugger
     switch (this.orderType) {
 
       case this.OrderType.OrderByExcel: this.OrderSummaryTitle = 'סיכום הזמנה דיגיטלית'; this.GoToOrderLinesTitle = 'רשימת הנמענים'; break;
@@ -656,15 +657,17 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
       //
       //get order type
 
+      //0 magnetic
+      //1 digital
       if (result.obj[0].GiftCardType == 0) {
         this.orderType = (result.obj[0].DigitalBatch == '' || result.obj[0].DigitalBatch == null) ? this.OrderType.LoadingVouchersManually : this.OrderType.LoadingVoucherByExcel
       }
-      else if (result.obj[0].GiftCardType == 1) {
+      else if (result.obj[0].GiftCardType == 1 || result.obj[0].GiftCardType == 2) {
         this.orderType = (result.obj[0].DigitalBatch == '' || result.obj[0].DigitalBatch == null) ? this.OrderType.ManualOrder : this.OrderType.OrderByExcel
       }
 
       //
-
+      debugger
       this.SetDynamicTitles();
       if (this.router.url.includes('order')) {
         this.GetCards();
@@ -672,10 +675,12 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
       this.orderIdToPreview = result.obj[0].idex;
       this.IsB2COrder = result.obj[0].IsB2COrder;
+      debugger
 
 
       let statusData = this.statusListArr.filter(status => status.StatusId == result.obj[0].StatusId);
       this.orderStatus.id = statusData[0].StatusId;
+      debugger
       this.orderStatus.description = statusData[0].Description;
 
       this.dataByPage = result['obj'][0];

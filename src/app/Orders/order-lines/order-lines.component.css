@@ -16,6 +16,10 @@
     position: relative;
 }
 
+.filterRow {
+    width: 204px;
+}
+
 .main2-title {
     flex-direction: row-reverse;
     ;

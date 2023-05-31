@@ -87,9 +87,9 @@
             </div>
         </div>
         <div>
-            <mat-form-field>
+            <mat-form-field class="filterRow">
                 <mat-label>סינון</mat-label>
-                <input matInput (keyup)="applyFilter($event)" placeholder="לדוגמה: פעיל" #input
+                <input class="filterRow" matInput (keyup)="applyFilter($event)" placeholder="לדוגמה: פעיל" #input
                     style="width: 200px !important;">
                 <mat-icon matPrefix>filter_list</mat-icon>
             </mat-form-field>
