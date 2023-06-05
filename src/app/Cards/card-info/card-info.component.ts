@@ -248,6 +248,7 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
     //
     this.dataService.GetCardInfoById(objToApi).subscribe(result => {
       // 
+      debugger
       this.mainSpinner = false;
       if (typeof result == 'string') {
         // this.dialog.open(DialogComponent, {
@@ -269,7 +270,7 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
       this.CardInfo = result.obj[1][0];
       this.orderLine = result.obj[9] != null ? result.obj[9]['Id'] : [];
       this.OrderDetails = result.obj[3];
-
+      debugger
       // this.isIframeOrder = this.OrderDetails['B2CThoWho'] != '' && this.OrderDetails['B2C_DateTimeToSend'] != null && this.OrderDetails['B2C_Notes'] != '' ? true : false;
 
       //insert iframe data

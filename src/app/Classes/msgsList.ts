@@ -16,5 +16,6 @@ export const MsgList = {
     readOnly: 'לקריא בלבד',
     noData: 'אין נתונים',
     referenceRequired: 'נא להזין מספר אסמכתא',
-    timeExpired: 'זמן שליחה עבר, נא לבחור זמן אחר '
+    timeExpired: 'זמן שליחה עבר, נא לבחור זמן אחר ',
+    blockedCompany: 'חברה חסומה- לא ניתן להתחבר'
 }

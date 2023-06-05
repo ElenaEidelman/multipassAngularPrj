@@ -38,7 +38,7 @@ export class VouchersIssuanceComponent implements OnInit, OnDestroy {
 
   cardsDataSource = new MatTableDataSource([]);
   displayedColumns: string[] = [];
-  validationDate;
+  validationDate;//delete
 
 
   cardsLabelForTable = [
@@ -301,7 +301,7 @@ export class VouchersIssuanceComponent implements OnInit, OnDestroy {
                       // //
                       This.fiveAndHalpYearsFromNow = new Date().setFullYear(new Date().getFullYear() + 5, new Date().getMonth() + 6);
                       //This.IssuanceVouchersForm.get('ValidDate').setValue(new Date(This.fiveAndHalpYearsFromNow));
-                      debugger
+
                       This.setValidationDateToTheCalendar();
                       This.IssuanceVouchersForm.get('ValidDate').enable();
 

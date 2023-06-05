@@ -159,8 +159,8 @@
                                         <mat-form-field>
                                             <mat-label>תפקיד*</mat-label>
                                             <mat-select formControlName="Permission" tabindex="7">
-                                                <mat-option *ngFor="let role of rolesList" [value]="role">
-                                                    {{role}}
+                                                <mat-option *ngFor="let role of roleList" [value]="role.RoleDesc">
+                                                    {{role.RoleDesc}}
                                                 </mat-option>
                                             </mat-select>
                                             <!-- <input matInput placeholder="תפקיד*" formControlName="Permission" tabindex="7" pattern="^([^0-9]*)$"> -->

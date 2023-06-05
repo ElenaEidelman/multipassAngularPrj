@@ -318,11 +318,15 @@ export class LoadingVouchersComponent implements OnInit {
 
   fileOptionChange(event) {
     //&& this.excelCardCreatingForm.get('policySelectExcel').valid
-    // //debugger
+
+    //set error for uploaded file
+    this.excelCardCreatingForm.get('file').setErrors({ 'FileUploadRequired': null });
+    this.excelCardCreatingForm.get('file').updateValueAndValidity()
+    // this.excelCardCreatingForm.setErrors(null);
     this.UploadFileButtonName = 'בחירת קובץ';
     if (event.target.files.length > 0) {
       const file = event.target.files[0];
-
+      debugger
       if (!file.type.includes('excel') && !file.type.includes('sheet')) {
         this.fileUplodadeValid = false;
         this.dialog.open(DialogComponent, {
@@ -360,6 +364,9 @@ export class LoadingVouchersComponent implements OnInit {
             this.dialog.open(DialogComponent, {
               data: { message: result.errdesc }
             })
+            this.excelCardCreatingForm.get('file').setErrors({ 'FileUploadRequired': true });
+            this.uploadDoc.nativeElement.value = '';
+            this.filename = '';
             return false;
           }
 
@@ -396,8 +403,9 @@ export class LoadingVouchersComponent implements OnInit {
             else {
 
               //if have missing data in file
+              //set error for uploaded file
+              this.excelCardCreatingForm.get('file').setErrors({ 'FileUploadRequired': true });
 
-              // debugger
               if (result.obj != null && result.obj.length > 0) {
                 let dataOBJ = {};
                 let data_Source = new MatTableDataSource([]);
@@ -574,7 +582,7 @@ export class LoadingVouchersComponent implements OnInit {
 
   goToExcelView() {
     ///public/excelView
-
+    debugger
     if (this.excelCardCreatingForm.valid) {
 
       this.router.navigate(['/public/excelView']);

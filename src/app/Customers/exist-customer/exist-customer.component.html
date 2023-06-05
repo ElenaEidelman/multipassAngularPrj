@@ -231,8 +231,8 @@
                                             <mat-label>תפקיד</mat-label>
                                             <!-- <input matInput placeholder="תפקיד" formControlName="Permission" tabindex="7" pattern="^([^0-9]*)$"> -->
                                             <mat-select formControlName="Role" tabindex="7">
-                                                <mat-option *ngFor="let role of rolesList" [value]="role">
-                                                    {{role}}
+                                                <mat-option *ngFor="let role of roleList" [value]="role.RoleDesc">
+                                                    {{role.RoleDesc}}
                                                 </mat-option>
                                             </mat-select>
                                             <!-- <button class="clearButton" *ngIf="this.CustomerForm.get('Permission').value != ''" mat-button  matPrefix mat-icon-button aria-label="Clear" (click)="this.CustomerForm.get('Permission').setValue('')">

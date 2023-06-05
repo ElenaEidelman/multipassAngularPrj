@@ -75,6 +75,7 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
   faFileExcel = faFileExcel;
   customers = [];
   customersSpare = [];
+  UploadFileButtonName: string = 'בחירת קובץ';
 
   cardsData = [];
   fileUploadButtonDisabled: boolean = true;
@@ -326,131 +327,129 @@ export class OrderCardsComponent implements OnInit, OnDestroy {
   fileOptionChange(event) {
     //&& this.excelCardCreatingForm.get('policySelectExcel').valid
     //debugger
-    if (
-      this.excelCardCreatingForm.get('customer').valid &&
-      this.excelCardCreatingForm.get('orderDescription').valid) {
-      if (event.target.files.length > 0) {
-        const file = event.target.files[0];
 
-        if (!file.type.includes('excel') && !file.type.includes('sheet')) {
-          this.fileUplodadeValid = false;
-          this.dialog.open(DialogComponent, {
-            data: {
-              title: '',
-              subTitle: '',
-              message: 'נא להעלות רק קבצי אקסל'
-            }
-          });
-          this.uploadDoc.nativeElement.value = '';
-        }
-        else {
-          this.fileUploading = true;
+    this.excelCardCreatingForm.get('file').setErrors({ 'FileUploadRequired': null });
+    this.excelCardCreatingForm.get('file').updateValueAndValidity()
+    this.UploadFileButtonName = 'בחירת קובץ';
 
-          const formData = new FormData();
-          formData.append('Token', this.userToken);
-          formData.append('UserId', this.excelCardCreatingForm.get('customer').value.id);
-          formData.append('OpCode', 'upload');
-          formData.append('OrderName', this.excelCardCreatingForm.get('orderDescription').value);
-          // formData.append('Description', this.excelCardCreatingForm.get('orderDescription').value);
-          formData.append('ExcelFile', file);
-          // formData.append('Policy', this.excelCardCreatingForm.get('policySelectExcel').value);
+    if (event.target.files.length > 0) {
+      const file = event.target.files[0];
+
+      if (!file.type.includes('excel') && !file.type.includes('sheet')) {
+        this.fileUplodadeValid = false;
+        this.dialog.open(DialogComponent, {
+          data: {
+            title: '',
+            subTitle: '',
+            message: 'נא להעלות רק קבצי אקסל'
+          }
+        });
+        this.uploadDoc.nativeElement.value = '';
+      }
+      else {
+        this.fileUploading = true;
+
+        const formData = new FormData();
+        formData.append('Token', this.userToken);
+        formData.append('UserId', this.excelCardCreatingForm.get('customer').value.id);
+        formData.append('OpCode', 'upload');
+        formData.append('OrderName', this.excelCardCreatingForm.get('orderDescription').value);
+        // formData.append('Description', this.excelCardCreatingForm.get('orderDescription').value);
+        formData.append('ExcelFile', file);
+        // formData.append('Policy', this.excelCardCreatingForm.get('policySelectExcel').value);
 
 
+        //debugger
+        this.dataService.InsertUpdateOrderByExcel(formData).subscribe(result => {
           //debugger
-          this.dataService.InsertUpdateOrderByExcel(formData).subscribe(result => {
-            //debugger
 
 
-            this.fileUploading = false;
-            this.fileUplodadeValid = false;
-            if (result['Token'] != undefined || result['Token'] != null) {
+          this.fileUploading = false;
+          this.fileUplodadeValid = false;
+          if (result['Token'] != undefined || result['Token'] != null) {
 
-              //set new token
-              let tempObjUser = JSON.parse(localStorage.getItem('user'));
-              tempObjUser['Token'] = result['Token'];
-              localStorage.setItem('user', JSON.stringify(tempObjUser));
-              this.userToken = result['Token'];
+            //set new token
+            let tempObjUser = JSON.parse(localStorage.getItem('user'));
+            tempObjUser['Token'] = result['Token'];
+            localStorage.setItem('user', JSON.stringify(tempObjUser));
+            this.userToken = result['Token'];
 
-              if (result.err >= 0) {
-                this.fileUplodadeValid = true;
-                this.filename = result.obj[1][0].NewFileName;
+            if (result.err >= 0) {
+              this.UploadFileButtonName = 'החלף קובץ';
+              this.fileUplodadeValid = true;
+              this.filename = result.obj[1][0].NewFileName;
 
-                let objGetFile = {
-                  excelName: this.filename,
-                  customerId: this.excelCardCreatingForm.get('customer').value.id,
-                  fileData: JSON.stringify(result),
-                  // fileDescription: this.excelCardCreatingForm.get('orderDescription').value
-                  OrderName: this.excelCardCreatingForm.get('orderDescription').value
-                  // Policy: this.excelCardCreatingForm.get('policySelectExcel').value
-
-                }
-                localStorage.setItem('excelFileData', JSON.stringify(objGetFile));
-                localStorage.setItem('OrderType', OrderType.OrderByExcel);
-                this.uploadDoc.nativeElement.value = '';
+              let objGetFile = {
+                excelName: this.filename,
+                customerId: this.excelCardCreatingForm.get('customer').value.id,
+                fileData: JSON.stringify(result),
+                // fileDescription: this.excelCardCreatingForm.get('orderDescription').value
+                OrderName: this.excelCardCreatingForm.get('orderDescription').value
+                // Policy: this.excelCardCreatingForm.get('policySelectExcel').value
 
               }
-              else {
+              localStorage.setItem('excelFileData', JSON.stringify(objGetFile));
+              localStorage.setItem('OrderType', OrderType.OrderByExcel);
+              this.uploadDoc.nativeElement.value = '';
 
-                //if have missing data in file
-                if (result.obj != null && result.obj.length > 0) {
-                  let dataOBJ = {};
-                  let data_Source = new MatTableDataSource([]);
-                  let data = [];
-                  let dataLabelsList = ['FirstName', 'LastName', 'Cellular', 'Amount'];
-
-                  //debugger
-                  result.obj[0].forEach(element => {
-                    dataLabelsList.forEach(labels => {
-                      dataOBJ[labels] = element[labels]
-                    })
-                    data.push(dataOBJ);
-                  });
-
-                  data_Source.data = data;
-                  this.dialog.open(DialogWithTableDataComponent, {
-                    maxHeight: '200px',
-                    data: {
-                      subTitle: result.errdesc,
-                      data_Source: data,
-                      dataLabelsList: dataLabelsList
-                    }
-                  });
-                }
-                else {
-                  this.dialog.open(DialogComponent, {
-                    data: {
-                      title: '',
-                      subTitle: '',
-                      message: 'קובץ אינו תקין'
-                    }
-                  })
-                }
-
-
-                this.uploadDoc.nativeElement.value = '';
-                this.filename = '';
-              }
-            }
-            else if (typeof result == 'string') {
-
-              // this.excelFileError = result;
             }
             else {
-              this.sharedService.exitSystemEvent();
-            }
-          });
-        }
 
+              //if have missing data in file
+              this.excelCardCreatingForm.get('file').setErrors({ 'FileUploadRequired': true });
+              this.uploadDoc.nativeElement.value = '';
+              this.filename = '';
+              if (result.obj != null && result.obj.length > 0) {
+                let dataOBJ = {};
+                let data_Source = new MatTableDataSource([]);
+                let data = [];
+                let dataLabelsList = ['FirstName', 'LastName', 'Cellular', 'Amount'];
+
+                //debugger
+                result.obj[0].forEach(element => {
+                  dataLabelsList.forEach(labels => {
+                    dataOBJ[labels] = element[labels]
+                  })
+                  data.push(dataOBJ);
+                });
+
+                data_Source.data = data;
+                this.dialog.open(DialogWithTableDataComponent, {
+                  maxHeight: '200px',
+                  data: {
+                    subTitle: result.errdesc,
+                    data_Source: data,
+                    dataLabelsList: dataLabelsList
+                  }
+                });
+              }
+              else {
+                this.dialog.open(DialogComponent, {
+                  data: {
+                    title: '',
+                    subTitle: '',
+                    message: 'קובץ אינו תקין'
+                  }
+                })
+              }
+
+
+              this.uploadDoc.nativeElement.value = '';
+              this.filename = '';
+            }
+          }
+          else if (typeof result == 'string') {
+
+            // this.excelFileError = result;
+          }
+          else {
+            this.sharedService.exitSystemEvent();
+          }
+        });
       }
+
     }
-    else {
-      this.excelCardCreatingForm.get('file').setValue('');
-      // this.excelCustomerError = 'נא לבחור לקוח';
-      // this.uploadDoc.nativeElement.value = '';
-      // setTimeout(()=>{
-      //   this.excelCustomerError = '';
-      // }, 2000);
-    }
+
   }
 
 

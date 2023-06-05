@@ -3,7 +3,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { Router } from '@angular/router';
 
 
-export interface DialogData{
+export interface DialogData {
   title: any,
   subTitle: any,
   message: any
@@ -19,23 +19,23 @@ export class DialogComponent implements OnInit {
 
   constructor(
     public dialog: MatDialog,
-              public dialogRef: MatDialogRef<DialogComponent>, 
-              @Inject(MAT_DIALOG_DATA) public data: DialogData, 
-              private route: Router
+    public dialogRef: MatDialogRef<DialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: DialogData,
+    private route: Router
   ) { }
 
   ngOnInit(): void {
-    
+    debugger
   }
 
-  dialogClose(){
+  dialogClose() {
     this.dialogRef.close();
   }
-  yes(){
-    this.dialogRef.close({result: 'yes'}); 
+  yes() {
+    this.dialogRef.close({ result: 'yes' });
   }
-  no(){
-    this.dialogRef.close({result: 'no'});
+  no() {
+    this.dialogRef.close({ result: 'no' });
   }
 
 }

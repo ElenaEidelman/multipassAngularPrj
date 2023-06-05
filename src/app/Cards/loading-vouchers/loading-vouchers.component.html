@@ -76,13 +76,17 @@
 
                               <!--alignRight-->
                               <div class="formRowChild">
+                                 <!-- <mat-form-field> -->
                                  <input [hidden]="true" id="file-upload" name="uploadDoc" #uploadDoc
                                     (change)="fileOptionChange($event)" type="file" formControlName="file">
 
+
+                                 <!-- </mat-form-field> -->
                                  <div class="wrapUserButton">
                                     <!-- [class.addButton]="!fileUploadButtonDisabled" [disabled]="fileUploadButtonDisabled" -->
                                     <div>
                                        <div>בדיקה וטעינה של הקובץ</div>
+
                                        <button
                                           [disabled]="this.excelCardCreatingForm.get('orderDescription').errors?.required || this.excelCardCreatingForm.get('customer').errors?.required"
                                           mat-button class="sendButton marginRight" (click)="uploadDoc.click()">
@@ -91,6 +95,10 @@
                                           <mat-icon>attach_file</mat-icon>
                                           <mat-spinner *ngIf="fileUploading"></mat-spinner>
                                        </button>
+                                       <mat-error
+                                          *ngIf="excelCardCreatingForm.get('file').errors != undefined && excelCardCreatingForm.get('file').errors.FileUploadRequired">
+                                          נא להעלות קובץ אקסל תקין*
+                                       </mat-error>
                                     </div>
 
                                     <div>

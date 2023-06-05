@@ -47,7 +47,7 @@ export class ExistUserComponent implements OnInit {
   userDataForm = this.fb.group({
     FName: ['', [Validators.required, this.noWhitespaceValidator]], // new  V ---------FName
     LName: ['', [Validators.required, this.noWhitespaceValidator]], // new  V ---------LName
-    Email: ['', [Validators.required, Validators.email]],// -----------Email
+    Email: ['', [Validators.required, Validators.email]],// -----------Email  , [Validators.required, Validators.email]
     StatusId: (''), // -------------StatusDescription
     // Tz: (''),//מספר משתמש של המערכת -------------Tz
     // Id: (''),//מספר עובד -----------id
@@ -111,9 +111,8 @@ export class ExistUserComponent implements OnInit {
     }
 
 
-    //debugger
+    debugger
     this.dataService.GetUsersByFilter(objToApi).subscribe(result => {
-      //debugger
       if (typeof result == 'string') {
         this.dialog.open(DialogComponent, {
           data: { message: result }
@@ -132,7 +131,7 @@ export class ExistUserComponent implements OnInit {
 
       // if (result.obj != null && result.obj != undefined && Object.keys(result.obj[0]).length > 0) {
       this.userData = result.obj[0];
-
+      debugger
       setTimeout(() => this.fillFormOfUserData(this.userData))
       // }
       // else {
@@ -267,8 +266,12 @@ export class ExistUserComponent implements OnInit {
       this.userToken = result['Token'];
 
       // if (result.err != -1) {
+      this.roleList = result.obj.filter(role => role.type == 1).sort(function (a, b) {
 
-      this.roleList = result.obj;
+        if (a.RoleDesc < b.RoleDesc) { return -1; }
+        if (a.RoleDesc > b.RoleDesc) { return 1; }
+        return 0;
+      });
 
       // }
       // else {
@@ -304,8 +307,8 @@ export class ExistUserComponent implements OnInit {
       if (control == 'Permission') {
 
         let t = this.roleList;
-
-        this.userDataForm.get(control).setValue(this.roleList.filter(role => role.Id == user.Permission)[0]['Id']);
+        debugger
+        this.userDataForm.get(control).setValue(this.roleList.filter(role => role.RoleDesc == user.SEO_Description)[0]['RoleDesc']);
       }
       else {
         //debugger
@@ -322,7 +325,9 @@ export class ExistUserComponent implements OnInit {
     if (this.userDataForm.valid) {
       this.saveFormSpinner = true;
       let objToApi = {
-        Token: this.userToken
+        Token: this.userToken,
+        // Email: this.userDataForm.get('Email').value == '' ? new Date().getTime() + '@currentDateTime.com' : this.userDataForm.get('Email').value
+
       }
 
       Object.keys(this.userDataForm.controls).forEach(control => {
@@ -343,8 +348,10 @@ export class ExistUserComponent implements OnInit {
 
 
 
-      this.dataService.InsertUpdateBackOfficeUsers(objToApi).subscribe(result => {
 
+      debugger
+      this.dataService.InsertUpdateBackOfficeUsers(objToApi).subscribe(result => {
+        debugger
         this.saveFormSpinner = false;
 
         if (typeof result == 'string') {
@@ -365,14 +372,15 @@ export class ExistUserComponent implements OnInit {
 
         // if (result.obj != null && result.obj != undefined && Object.keys(result.obj[0]).length > 0) {
         this.userData = result.obj[0];
-
+        debugger
 
         Object.keys(this.userDataForm.controls).forEach(control => {
           this.userDataForm.get(control).setValue(this.userData[control])
         })
 
+        debugger
         this.userDataForm.get('Permission').setValue(this.userData['role'])
-
+        debugger
         this.msgActionButtons = 'נשמר בהצלחה';
         setTimeout(() => {
           this.msgActionButtons = '';

@@ -148,6 +148,7 @@ $ git merge new-branch
         // this.dialog.open(DialogComponent, {
         //   data: { message: result['errdesc'] }
         // })
+        debugger
         this.sharedService.exitSystemEvent(result['errdesc']);
       }
     }
@@ -684,7 +685,6 @@ $ git merge new-branch
   GetMenuPages(objToApi) {
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/Credential/GetMenuPages`, objToApi).pipe(
       map(result => {
-        debugger
         return this.checkResult(result);
       }),
       catchError(error => {
@@ -774,6 +774,20 @@ $ git merge new-branch
       })
     );
   }
+  GetCardValidationDate(objToApi) {
+    return this.http.post(`${localStorage.getItem('baseUrl')}/api/AllCards/GetCardValidationDate`, objToApi).pipe(
+      map(result => {
+        //
+        //debugger
+        return this.checkResult(result);
+      }),
+      catchError(error => {
+        //
+        return of(error.message);
+      })
+    );
+  }
+
 
   LoadVouchersByExcelFile(objToApi) {
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/UploadFile/LoadVouchersByExcelFile`, objToApi).pipe(

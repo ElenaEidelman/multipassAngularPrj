@@ -86,7 +86,7 @@ export class NewCustomerComponent implements OnInit {
     { updateOn: "blur" }
   );
 
-  rolesList = ['מנהל באק אופיס', 'מפעיל באק אופיס'];
+  roleList = [];
 
 
 
@@ -100,6 +100,7 @@ export class NewCustomerComponent implements OnInit {
     }
     //debugger
     this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
+    this.GetRoles();
     this.getUserStatus();
   }
 
@@ -148,6 +149,40 @@ export class NewCustomerComponent implements OnInit {
     })
   }
 
+  GetRoles() {
+
+    let objToApi = {
+      Token: this.userToken
+    }
+
+    this.dataService.GetRoles(objToApi).subscribe(result => {
+
+      debugger
+      if (typeof result == 'string') {
+        // this.dialog.open(DialogComponent, {
+        //   data: { message: result }
+        // })
+
+        // this.sharedService.exitSystemEvent();
+        return false;
+      }
+      // if (result['Token'] != undefined || result['Token'] != null) {
+
+      //set new token
+      let tempObjUser = JSON.parse(localStorage.getItem('user'));
+      tempObjUser['Token'] = result['Token'];
+      localStorage.setItem('user', JSON.stringify(tempObjUser));
+      this.userToken = result['Token'];
+
+      //role type 2 for customers
+      this.roleList = result.obj.filter(role => role.type == 2).sort(function (a, b) {
+
+        if (a.RoleDesc < b.RoleDesc) { return -1; }
+        if (a.RoleDesc > b.RoleDesc) { return 1; }
+        return 0;
+      });
+    })
+  }
 
   saveForm() {
     if (this.newCustomerForm.valid) {

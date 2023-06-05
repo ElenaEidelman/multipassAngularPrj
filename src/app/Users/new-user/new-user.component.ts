@@ -73,7 +73,7 @@ export class NewUserComponent implements OnInit {
   userDataForm = this.fb.group({
     FName: ['', [Validators.required, this.noWhitespaceValidator]], // new  V ---------FName
     LName: ['', [Validators.required, this.noWhitespaceValidator]], // new  V ---------LName
-    Email: [this.getCurrentDateTimeInMillisec() + '@gmail.com', { validators: [Validators.required, Validators.email], updateOn: "blur" }],// -----------Email
+    Email: ['', { validators: [Validators.required, Validators.email], updateOn: "blur" }],// -----------Email , { validators: [Validators.required,Validators.email], updateOn: "blur" },
     StatusId: (''), // -------------StatusDescription
     // Tz: (''),//מספר משתמש של המערכת -------------Tz
     Id: (''),//מספר עובד -----------id
@@ -107,27 +107,32 @@ export class NewUserComponent implements OnInit {
     if (this.userDataForm.valid) {
       this.saveFormSpinner = true;
       let objToApi = {
-        Token: this.userToken
+        Token: this.userToken,
+        // Email: this.userDataForm.get('Email').value == '' ? this.getCurrentDateTimeInMillisec() + '@currentDateTime.com' : this.userDataForm.get('Email').value
+
       }
 
 
 
       Object.keys(this.userDataForm.controls).forEach(control => {
+        debugger
         if (this.userDataForm.get(control).value != '') {
-
           if (typeof this.userDataForm.get(control).value != 'object') {
             objToApi[control] = this.userDataForm.get(control).value.toString().trim();
           }
           else {
             ////debugger
             objToApi[control] = (this.userDataForm.get(control).value)['value'];
+
           }
         }
       });
       objToApi['OrganizationName'] = '';
       objToApi['BusinessFile'] = '';
 
+      debugger
       this.dataService.InsertUpdateBackOfficeUsers(objToApi).subscribe(result => {
+        debugger
         this.saveFormSpinner = false;
         if (typeof result == 'string') {
           this.dialog.open(DialogComponent, {
@@ -236,6 +241,7 @@ export class NewUserComponent implements OnInit {
 
     this.dataService.GetRoles(objToApi).subscribe(result => {
 
+      debugger
       if (typeof result == 'string') {
         // this.dialog.open(DialogComponent, {
         //   data: { message: result }
@@ -252,9 +258,9 @@ export class NewUserComponent implements OnInit {
       localStorage.setItem('user', JSON.stringify(tempObjUser));
       this.userToken = result['Token'];
 
-      // if (result.err != -1) {
+      //role type 1 for users
+      this.roleList = result.obj.filter(role => role.type == 1).sort(function (a, b) {
 
-      this.roleList = result.obj.sort(function (a, b) {
         if (a.RoleDesc < b.RoleDesc) { return -1; }
         if (a.RoleDesc > b.RoleDesc) { return 1; }
         return 0;
@@ -302,7 +308,6 @@ export class NewUserComponent implements OnInit {
     let hours = date.getHours();
     let minutes = date.getMinutes();
     let seconds = date.getSeconds();
-    debugger
     return day + '/' + month + '/' + year + '-' + hours + ':' + minutes + ':'
       + seconds;
   }

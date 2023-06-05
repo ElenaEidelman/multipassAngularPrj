@@ -116,7 +116,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
     ////debugger
     this.dataService.GetHomeData(objToApi).subscribe(result => {
-      ////debugger
+
       this.homeSpinner = false;
 
       if (typeof result == 'string') {
@@ -205,7 +205,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
               // this.dialog.open(DialogComponent, {
               //   data: { message: 'This company is blocked' }
               // });
-              this.sharedService.exitSystemEvent('This company is blocked');
+              this.sharedService.exitSystemEvent(MsgList.blockedCompany);
             }
           }
         }

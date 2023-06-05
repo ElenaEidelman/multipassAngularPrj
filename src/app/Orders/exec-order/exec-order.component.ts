@@ -122,6 +122,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   errorSendSms: string = '';
   infoMsg: string = '';
   descriptionStatusInjected: string = '';
+  validationDate;
 
   TotalForOrderLine: number = 0;
   CardsCountForOrderLine: number = 0;
@@ -238,10 +239,11 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
 
   //for additional empty row foraddToExecOrderForm
+  //this.getLastDateOfCurrentMonthAnd5Years()
   addToExecOrderForm = this.fb.group({
     ticketCount: ['', [Validators.required, Validators.min(1)]],
-    chargeAmount: ['', [Validators.required]],
-    validity: [this.getLastDateOfCurrentMonthAnd5Years(), Validators.required],
+    chargeAmount: ['', [Validators.required, Validators.min(1)]],
+    validity: ['', Validators.required],
     TotalForItem: [{ value: '', disabled: true }]
   });
 
@@ -249,8 +251,8 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
   manuallyVouchersForm = this.fb.group({
     FromCard: ['', [Validators.required]],
     ToCard: [''],
-    LoadSum: ['', [Validators.required]],
-    ValidationDate: [this.getLastDateOfCurrentMonthAnd5Years(), Validators.required],
+    LoadSum: ['', [Validators.required, Validators.min(1)]],
+    ValidationDate: ['', Validators.required],
     TotalForItem: [{ value: '', disabled: true }],
     CardsCount: [{ value: '', disabled: true }]
   },
@@ -355,6 +357,10 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         this.orderStatus.description = 'הזמנה חדשה';
         this.customerId = JSON.parse(urlParams)['customerId'];
 
+        //here
+
+        this.GetCardValidationDate();
+        debugger
         // this.policySelectControl.setValue(JSON.parse(urlParams)['policy']);
         this.newOrder = true;
         ////
@@ -440,6 +446,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
 
       // this.RefControl.setValue(this.orderId);
+      debugger
       this.totalData();
     }
   }
@@ -510,6 +517,55 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
 
   // }
+
+
+  GetCardValidationDate() {
+    let objToApi = {
+      Token: this.userToken
+    }
+    debugger
+    this.dataService.GetCardValidationDate(objToApi).subscribe(result => {
+      debugger
+      if (typeof result == 'string' || result == undefined) {
+
+        this.sharedService.exitSystemEvent(result);
+        return false;
+      }
+
+      try {
+        //set new token
+        let tempObjUser = JSON.parse(localStorage.getItem('user'));
+        tempObjUser['Token'] = result['Token'];
+        localStorage.setItem('user', JSON.stringify(tempObjUser));
+        this.userToken = result['Token'];
+
+        this.validationDate = result.obj[0].DefaulValidDate;
+        this.addToExecOrderForm.get('validity').setValue(this.setValidationDateToTheCalendar());
+        this.manuallyVouchersForm.get('ValidationDate').setValue(this.setValidationDateToTheCalendar());
+
+
+
+      }
+      catch (e) {
+
+      }
+    })
+  }
+
+  setValidationDateToTheCalendar() {
+    debugger
+
+    try {
+      let responseDate = this.validationDate.split('/');
+      let responseYear = (responseDate[1] == '1' || responseDate[1] == '01') ? responseDate[2] - 1 : responseDate[2];
+      let responseMonth = (responseDate[1] == '1' || responseDate[1] == '01') ? 12 : responseDate[1] - 1;
+      let responseDay = responseDate[0];
+      return new Date(responseYear, responseMonth, responseDay);
+    }
+    catch (e) { }
+
+    // this.IssuanceVouchersForm.get('ValidDate').setValue(new Date(responseYear, responseMonth, responseDay));
+  }
 
   checkCardValidityFronSide(element, value) {
 
@@ -891,11 +947,11 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
   }
 
-  getLastDateOfCurrentMonthAnd5Years() {
-    let date = new Date();
-    let lastDay = new Date(date.getFullYear() + 5, date.getMonth() + 1, 0, 23, 59, 59);
-    return lastDay;
-  }
+  // getLastDateOfCurrentMonthAnd5Years() {
+  //   let date = new Date();
+  //   let lastDay = new Date(date.getFullYear() + 5, date.getMonth() + 1, 0, 23, 59, 59);
+  //   return lastDay;
+  // }
 
   getStatusList() {
     //api/Orders/GetOrdersStatus
@@ -1030,8 +1086,6 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         localStorage.setItem('user', JSON.stringify(tempObjUser));
         this.userToken = result['Token'];
 
-
-        //here111
         if (this.orderType == this.OrderType.LoadingVouchersManually) {
 
           this.orderDetailsVoucherManually = [
@@ -1116,7 +1170,8 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
 
             // 
             this.insertOrderLineSpinner = false;
-            this.addToExecOrderForm.get('validity').setValue(this.getLastDateOfCurrentMonthAnd5Years());
+            this.addToExecOrderForm.get('validity').setValue(this.setValidationDateToTheCalendar());
+
             // 
             // if (result['Token'] != undefined || result['Token'] != null) {
 
@@ -1165,7 +1220,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
             }
 
             //
-            this.addToExecOrderForm.get('validity').setValue(this.getLastDateOfCurrentMonthAnd5Years());
+            this.addToExecOrderForm.get('validity').setValue(this.setValidationDateToTheCalendar());
             // if (result['Token'] != undefined || result['Token'] != null) {
             this.insertOrderLineSpinner = false;
 
@@ -1254,10 +1309,6 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
             return false;
           }
           if (result.err < 0 && result.obj != null && result.obj.length > 0) {
-
-            //here
-
-
             //translate table label
             let newDataArr = [];
             result.obj.forEach(data => {
@@ -1328,7 +1379,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
           }
           this.insertOrderLineSpinner2 = false;
 
-          this.manuallyVouchersForm.get('ValidationDate').setValue(this.getLastDateOfCurrentMonthAnd5Years());
+          this.manuallyVouchersForm.get('ValidationDate').setValue(this.setValidationDateToTheCalendar());
           // 
           // if (result['Token'] != undefined || result['Token'] != null) {
 
@@ -1374,7 +1425,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         this.manuallyVouchersForm.markAsUntouched();
         this.CardsCountForOrderLine = 0;
         this.TotalForOrderLine = 0;
-        this.manuallyVouchersForm.get('ValidationDate').setValue(this.getLastDateOfCurrentMonthAnd5Years());
+        this.manuallyVouchersForm.get('ValidationDate').setValue(this.setValidationDateToTheCalendar());
         this.viewAddToExecOrderForm2 = true;
 
       }, 0);
@@ -2203,11 +2254,6 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
         tableLabels.splice(3, 0, { value: 'DSendName', viewValue: 'שם נמען' });
         tableLabels.splice(4, 0, { value: 'DSendPhone', viewValue: 'מספר נייד נמען' });
       }
-
-
-
-      //here
-
       //add another column to file if order created from excel file
       if ((this.DigitalBatch != '' && this.DigitalBatch != undefined) && (this.orderType != this.OrderType.LoadingVoucherByExcel && this.orderType != this.OrderType.LoadingVouchersManually)) {
         tableLabels.push({ value: 'ValidationField', viewValue: 'שדה אימות' })

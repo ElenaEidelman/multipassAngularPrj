@@ -93,13 +93,14 @@ export class ExistCustomerComponent implements OnInit {
 
   idUnsubscribe;
 
-  rolesList = ['מנהל באק אופיס', 'מפעיל באק אופיס'];
+  roleList = [];
 
 
   ngOnInit() {
     window.scroll(0, 0);
     this.userToken = JSON.parse(localStorage.getItem('user'))['Token'];
     this.getUserStatus();
+    this.GetRoles();
 
     this.pagePermissionAccessLevel = this.sharedService.pagesAccessLevel.value.length > 0 ? JSON.parse(this.sharedService.pagesAccessLevel.value) : JSON.parse(JSON.stringify(this.pagePermissionAccessLevel));
 
@@ -127,8 +128,9 @@ export class ExistCustomerComponent implements OnInit {
       CustomerId: this.userId
     }
 
-    this.dataService.GetCustomersByFilter(objToApi).subscribe(result => {
 
+    this.dataService.GetCustomersByFilter(objToApi).subscribe(result => {
+      debugger
       // if (result['Token'] != undefined || result['Token'] != null) {
       if (typeof result == 'string') {
         // this.dialog.open(DialogComponent, {
@@ -141,6 +143,7 @@ export class ExistCustomerComponent implements OnInit {
 
       if (typeof result == 'object' && result.obj != null) {
         this.customerData = result.obj[0];
+        debugger
 
         Object.keys(result.obj[0]).forEach(el => {
           if (this.CustomerForm.get(el) != null && el != 'SEO_Description') {
@@ -148,7 +151,7 @@ export class ExistCustomerComponent implements OnInit {
           }
 
           if (el == 'SEO_Description') {
-            this.CustomerForm.get('Notes').setValue(result.obj[0][el]);
+            this.CustomerForm.get('Role').setValue(result.obj[0][el]);
           }
 
           if (el == 'StatusId') {
@@ -181,6 +184,41 @@ export class ExistCustomerComponent implements OnInit {
 
   }
 
+
+  GetRoles() {
+
+    let objToApi = {
+      Token: this.userToken
+    }
+
+    this.dataService.GetRoles(objToApi).subscribe(result => {
+
+      debugger
+      if (typeof result == 'string') {
+        // this.dialog.open(DialogComponent, {
+        //   data: { message: result }
+        // })
+
+        // this.sharedService.exitSystemEvent();
+        return false;
+      }
+      // if (result['Token'] != undefined || result['Token'] != null) {
+
+      //set new token
+      let tempObjUser = JSON.parse(localStorage.getItem('user'));
+      tempObjUser['Token'] = result['Token'];
+      localStorage.setItem('user', JSON.stringify(tempObjUser));
+      this.userToken = result['Token'];
+
+      //role type 2 for customers
+      this.roleList = result.obj.filter(role => role.type == 2).sort(function (a, b) {
+
+        if (a.RoleDesc < b.RoleDesc) { return -1; }
+        if (a.RoleDesc > b.RoleDesc) { return 1; }
+        return 0;
+      });
+    })
+  }
 
   ngOnChanges(changes: SimpleChanges) {
 
@@ -345,6 +383,7 @@ export class ExistCustomerComponent implements OnInit {
         }, 3000);
 
         this.customerData = result.obj[0];
+        debugger
 
         this.customerData.ValidateDate = result.obj[0]['businessValidDate'];
 
