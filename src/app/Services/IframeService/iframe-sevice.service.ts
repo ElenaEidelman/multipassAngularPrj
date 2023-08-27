@@ -81,7 +81,7 @@ export class IframeSeviceService {
   }
 
 
-  //moved from dataService
+  //moved from dataService 
   GetIFrameCompanyInfo(objToApi) {
 
     return this.http.post(`${localStorage.getItem('baseUrlIframe')}/api/B2CIFrame/GetIFrameCompanyInfo`, objToApi).pipe(
