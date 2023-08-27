@@ -8,9 +8,9 @@
             </div>
 
             <!-- main title -->
-            <div class="InfoTitle hr" id="InfoTitle">
+            <div class="InfoTitle BreakWord hr" id="InfoTitle" [innerHTML]="infoData.CompanyName | safe:'html'">
                 <!-- גיפט קארד -->
-                {{infoData.CompanyName}}
+                <!-- {{infoData.CompanyName}} -->
             </div>
 
             <!-- texts -->
@@ -30,8 +30,8 @@
                             <span class="openMoreLess" *ngIf="previewLongDescription">הצג פחות</span>
                         </div>
                     </div>
-                    <div class="hr">
-                        {{infoData.Instructions}}
+                    <div class="hr BreakWord" [innerHTML]="infoData.Instructions | safe:'html'">
+                        <!-- {{infoData.Instructions}} -->
                     </div>
                     <!-- <div *ngIf="infoData.ShortDescription == ''" [id]="'allText-' + i">
                         <div [innerHTML]="(infoData.LongDescription)"></div>
@@ -52,21 +52,25 @@
                 <div class="contactDataChild" *ngIf="infoData.LinktoBranches != '' && infoData.LinktoBranches != null">
                     <div>
                         <!--'https://' + -->
-                        <a [href]="infoData.LinktoBranches" target="_blank">קישור לרשימת הסניפים</a>
+                        <a [href]="infoData.LinktoBranches" target="_blank">איפה ניתן לממש</a>
                     </div>
                     <mat-icon>list_alt</mat-icon>
                 </div>
                 <div class="contactDataChild" *ngIf="infoData.Phone != ''">
                     <div>
                         <div class="dirLTR">
-                            <a [href]="'tel:' + infoData.Phone">{{addHyphenToPhoneNumber(infoData.Phone)}}</a>
+                            <a [href]="'tel:' + infoData.Phone">
+                                <div [innerHTML]="addHyphenToPhoneNumber(infoData.Phone) | safe:'html'"></div>
+                            </a>
                         </div>
                     </div>
                     <mat-icon>phone</mat-icon>
                 </div>
                 <div class="contactDataChild">
                     <div>
-                        <a [href]="'mailto:' + infoData.Mail">{{infoData.Mail}}</a>
+                        <a [href]="'mailto:' + infoData.Mail">
+                            <div [innerHTML]="infoData.Mail | safe:'html'"></div>
+                        </a>
                     </div>
                     <mat-icon *ngIf="infoData.Mail != ''">mail_outline</mat-icon>
                 </div>

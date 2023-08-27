@@ -104,8 +104,8 @@
 
                                 <div>
                                     <div class="formFieldTitle mobileTitle">
-                                        <span> תמונה אישית לברכה</span>
-                                        <span class="lighterText"> (עד MB {{picSizeInMega}}) </span>
+                                        <span class="Assistant"> תמונה אישית לברכה</span>
+                                        <span class="lighterText Assistant"> (עד MB {{picSizeInMega}}) </span>
                                     </div>
 
                                     <div class="addSrcWrap">
@@ -475,9 +475,14 @@
                         <mat-card-header>
                             <!-- <div mat-card-avatar class="example-header-image"></div> -->
                             <!-- <mat-card-title>₪{{selectedSum}}</mat-card-title> -->
-                            <mat-card-subtitle>תו כספי בסך <span style="font-weight: 500;">₪{{selectedSum}}</span>
+                            <!-- <mat-card-subtitle>תו כספי בסך <span style="font-weight: 500;">₪{{selectedSum}}</span>
                                 למימוש ב{{companyName}}
+                            </mat-card-subtitle> -->
+                            <mat-card-subtitle class="BreakWord">תו כספי בסך <span style="font-weight: 500;">₪ <span
+                                        [innerHTML]="selectedSum | safe:'html'"></span></span>
+                                למימוש ב<span [innerHTML]="companyName | safe:'html'"></span>
                             </mat-card-subtitle>
+
                         </mat-card-header>
                         <mat-card-content *ngIf="viewChangeSum">
 

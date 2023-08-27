@@ -250,7 +250,7 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
       }
 
       //orderHaveCards
-      debugger
+
 
 
       // if (result['Token'] != undefined || result['Token'] != null) {
@@ -269,47 +269,23 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
 
       //get order status by first card
       this.orderStatus = result.obj[0][0]['Status'];
-      debugger
-
-      //debugger
-      // if (this.orderType == this.OrderType.LoadingVoucherByExcel) {
-      //   //add additional column for loaded vouchers
-      //   this.tabelLabels.join();
-      //   this.tabelLabels.splice(2, 0, { value: 'Track', viewValue: "קידוד כרטיס" });
-      //   this.tabelLabels.join();
-
-
-      //   this.tabelLabelsList.join();
-      //   this.tabelLabelsList.splice(2, 0, "קידוד כרטיס");
-      // }
 
       this.dataTable.data = result['obj'][0];
-      debugger
-
-      //DigitalBatch number, only if order created from excel
       if (this.orderType != this.OrderType.LoadingVoucherByExcel && this.orderType != this.OrderType.LoadingVouchersManually) {
         this.OrderCreatedFromExcel = result['obj'][1] != '' ? true : false;
 
       }
-
-      //OrderCreatedFromExcel
       debugger
 
       this.DigitalBatch = result['obj'][1];
 
-      // }
-      // else {
-      //   this.dialog.open(DialogComponent, {
-      //     data: { message: result }
-      //   })
-      // }
-      // }
-      // else {
-      //   // this.dialog.open(DialogComponent, {
-      //   //   data: {message: MsgList.exitSystemAlert}
-      //   // })
-      //   this.sharedService.exitSystemEvent();
-      // }
+      if ((this.OrderCreatedFromExcel && this.orderHaveCards) || this.LoadingVoucherByExcelHavePhoneNumber) {
+        this.tabelLabels.splice(3, 0, { value: 'DSendName', viewValue: 'שם נמען' });
+        this.tabelLabels.splice(4, 0, { value: 'DSendPhone', viewValue: 'מספר נייד' });
+
+        this.tabelLabelsList.splice(3, 0, 'DSendName');
+        this.tabelLabelsList.splice(4, 0, 'DSendPhone');
+      }
     });
   }
 
@@ -583,8 +559,10 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
   excelFileExport() {
 
     if (this.pagePermissionAccessLevel.AccessLevel != this.MockData.accessLevelReadOnly) {
-      let tableLabels = this.tabelLabels;
+      let tableLabels = JSON.parse(JSON.stringify(this.tabelLabels));
+      //let tableLabels = this.tabelLabels;
       let tableData = JSON.parse(JSON.stringify(this.dataTable.data));
+      debugger
 
 
       //add another column to file if order created from excel file
@@ -595,12 +573,13 @@ export class OrderLinesComponent implements OnInit, OnDestroy, AfterViewInit {
       debugger
       if ((this.OrderCreatedFromExcel && this.orderHaveCards) || this.LoadingVoucherByExcelHavePhoneNumber) {
         tableLabels.splice(tableLabels.length, 0, { value: 'DSendLastSent', viewValue: 'נשלח לאחרונה' });
-        tableLabels.splice(3, 0, { value: 'DSendName', viewValue: 'שם נמען' });
-        tableLabels.splice(4, 0, { value: 'DSendPhone', viewValue: 'מספר נייד נמען' });
+        // tableLabels.splice(3, 0, { value: 'DSendName', viewValue: 'שם נמען' });
+        // tableLabels.splice(4, 0, { value: 'DSendPhone', viewValue: 'מספר נייד נמען' });
+        //here
 
-        this.tabelLabelsList.splice(this.tabelLabelsList.length, 0, 'DSendLastSent');
-        this.tabelLabelsList.splice(3, 0, 'DSendName');
-        this.tabelLabelsList.splice(4, 0, 'DSendPhone');
+        // this.tabelLabelsList.splice(this.tabelLabelsList.length, 0, 'DSendLastSent');
+        // this.tabelLabelsList.splice(3, 0, 'DSendName');
+        // this.tabelLabelsList.splice(4, 0, 'DSendPhone');
 
 
 

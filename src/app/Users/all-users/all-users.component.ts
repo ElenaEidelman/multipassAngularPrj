@@ -75,7 +75,7 @@ export class AllUsersComponent implements OnInit {
     { value: 'FName', viewValue: 'שם' },
     { value: 'LName', viewValue: 'שם משפחה' },
     // { value: 'Tz', viewValue: 'מספר משתמש' },
-    { value: 'role', viewValue: 'רמת הרשאה' },
+    { value: 'Role', viewValue: 'רמת הרשאה' },
     { value: 'Email', viewValue: 'דוא"ל' },
     { value: 'Phone', viewValue: 'טלפון' },
     { value: 'StatusDescription', viewValue: 'סטטוס' },
@@ -119,6 +119,7 @@ export class AllUsersComponent implements OnInit {
       localStorage.setItem('user', JSON.stringify(tempObjUser));
       this.userToken = result['Token'];
 
+      debugger
       this.dataSource.data = result.obj;
       // }
       // else {

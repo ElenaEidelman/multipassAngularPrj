@@ -48,7 +48,7 @@ export class MainMenuComponent implements OnInit {
 
 
         this.dataService.GetMenuPages(objToApi).subscribe(result => {
-          debugger
+
           if (typeof result == 'string') {
             // this.dialog.open(DialogComponent, {
             //   data: { message: result }

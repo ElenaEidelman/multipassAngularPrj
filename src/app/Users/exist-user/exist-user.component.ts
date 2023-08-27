@@ -111,7 +111,7 @@ export class ExistUserComponent implements OnInit {
     }
 
 
-    debugger
+
     this.dataService.GetUsersByFilter(objToApi).subscribe(result => {
       if (typeof result == 'string') {
         this.dialog.open(DialogComponent, {
@@ -131,7 +131,7 @@ export class ExistUserComponent implements OnInit {
 
       // if (result.obj != null && result.obj != undefined && Object.keys(result.obj[0]).length > 0) {
       this.userData = result.obj[0];
-      debugger
+
       setTimeout(() => this.fillFormOfUserData(this.userData))
       // }
       // else {
@@ -268,8 +268,8 @@ export class ExistUserComponent implements OnInit {
       // if (result.err != -1) {
       this.roleList = result.obj.filter(role => role.type == 1).sort(function (a, b) {
 
-        if (a.RoleDesc < b.RoleDesc) { return -1; }
-        if (a.RoleDesc > b.RoleDesc) { return 1; }
+        if (a.Role < b.Role) { return -1; }
+        if (a.Role > b.Role) { return 1; }
         return 0;
       });
 
@@ -295,9 +295,9 @@ export class ExistUserComponent implements OnInit {
   }
 
   fillFormOfUserData(user) {
-    //debugger
+
     Object.keys(this.userDataForm.controls).forEach(control => {
-      //debugger
+      //
       if (control == 'StatusId') {
         let statusDesc = this.statusList.filter(status => status.StatusId == user.StatusId);
 
@@ -307,11 +307,12 @@ export class ExistUserComponent implements OnInit {
       if (control == 'Permission') {
 
         let t = this.roleList;
-        debugger
-        this.userDataForm.get(control).setValue(this.roleList.filter(role => role.RoleDesc == user.SEO_Description)[0]['RoleDesc']);
+
+        this.userDataForm.get(control).setValue(this.roleList.filter(role => role.RoleDesc == user.Role)[0]['Id']);
+
       }
       else {
-        //debugger
+        //
         this.userDataForm.get(control).setValue(user[control]);
       }
     });
@@ -349,9 +350,9 @@ export class ExistUserComponent implements OnInit {
 
 
 
-      debugger
+
       this.dataService.InsertUpdateBackOfficeUsers(objToApi).subscribe(result => {
-        debugger
+
         this.saveFormSpinner = false;
 
         if (typeof result == 'string') {
@@ -372,15 +373,15 @@ export class ExistUserComponent implements OnInit {
 
         // if (result.obj != null && result.obj != undefined && Object.keys(result.obj[0]).length > 0) {
         this.userData = result.obj[0];
-        debugger
+
 
         Object.keys(this.userDataForm.controls).forEach(control => {
           this.userDataForm.get(control).setValue(this.userData[control])
         })
 
-        debugger
-        this.userDataForm.get('Permission').setValue(this.userData['role'])
-        debugger
+
+        this.userDataForm.get('Permission').setValue(this.userData['PermissionId'])
+
         this.msgActionButtons = 'נשמר בהצלחה';
         setTimeout(() => {
           this.msgActionButtons = '';

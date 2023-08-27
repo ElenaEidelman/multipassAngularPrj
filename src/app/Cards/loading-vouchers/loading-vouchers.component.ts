@@ -326,7 +326,6 @@ export class LoadingVouchersComponent implements OnInit {
     this.UploadFileButtonName = 'בחירת קובץ';
     if (event.target.files.length > 0) {
       const file = event.target.files[0];
-      debugger
       if (!file.type.includes('excel') && !file.type.includes('sheet')) {
         this.fileUplodadeValid = false;
         this.dialog.open(DialogComponent, {

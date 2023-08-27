@@ -1,3 +1,22 @@
+.Assistant,
+input,
+textarea,
+mat-error,
+button,
+.openMoreLess,
+.contactDataChild a,
+.fieldTitleMargin,
+.fieldTitle,
+.fieldTitle span,
+.buttonTitle,
+.mat-card-title,
+.mat-card-subtitle,
+.mat-select-value,
+.underTALeftElement,
+.textWrap {
+  font-family: Assistant !important;
+}
+
 .mat-stepper-horizontal {
   direction: rtl;
 }

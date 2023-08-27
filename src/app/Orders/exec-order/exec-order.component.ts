@@ -2102,7 +2102,7 @@ export class ExecOrderComponent implements OnInit, OnDestroy, OnChanges {
               CoreOrderId: this.orderId,
               From: this.smsTemplatesData.filter(el => el.Id == this.sendSmsGroup.get('smsTemplates').value)[0]['SenderName']
             }
-
+            debugger
             this.dataService.SendSMSByOrderLine(objToApi).subscribe(result => {
 
               if (typeof result == 'string') {

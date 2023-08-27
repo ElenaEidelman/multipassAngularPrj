@@ -56,7 +56,7 @@ export class IframeComponent implements OnInit, OnChanges {
     BackGround: [''],
     Logo: [''],
     Phone: [''],//, Validators.pattern('[0]{1}[0-9]{1,2}[0-9]{7}|[*]{1}[0-9]{3,5}')
-    Mail: ['', Validators.email],
+    Mail: [''],//, Validators.email
     // Website: [''],
     LinktoBranches: [''],
     ShortDescription: [''],
@@ -141,6 +141,12 @@ export class IframeComponent implements OnInit, OnChanges {
 
   formChanges() {
     this.previewForm.valueChanges.subscribe(result => {
+
+      // var regExpForFontFamily = /font-family:([^";]+)/g;
+      // for (const element in result) {
+      //   result[element] = result[element].replace(regExpForFontFamily, "font-family: Assistant !important;")
+      // }
+
       this.iframeSharingServiceService.setPreviwIframeInfo(result);
     })
   }
@@ -202,22 +208,28 @@ export class IframeComponent implements OnInit, OnChanges {
   saveDataForIframe() {
     if (this.previewForm.valid) {
       this.setupSpinner = true;
+
+      //var regExpForFontFamily = /font-family:([^";]+)/g;
+      //str.replace(regExpForFontFamily, "font-family: Assistant !important;")
+
       this.iframePicsFormData.append('CompanyIdEnc', this.companyId)
-      this.iframePicsFormData.append('CompanyName', this.previewForm.get('CompanyName').value)
-      this.iframePicsFormData.append('ExternalLink', this.previewForm.get('ExternalLink').value)
-      this.iframePicsFormData.append('Phone', this.previewForm.get('Phone').value)
-      this.iframePicsFormData.append('Mail', this.previewForm.get('Mail').value)
+      this.iframePicsFormData.append('CompanyName', encodeURIComponent(this.previewForm.get('CompanyName').value.toString()))
+      this.iframePicsFormData.append('ExternalLink', this.previewForm.get('ExternalLink').value.toString())//
+      this.iframePicsFormData.append('Phone', encodeURIComponent(this.previewForm.get('Phone').value.toString()))
+      this.iframePicsFormData.append('Mail', encodeURIComponent(this.previewForm.get('Mail').value.toString()))
       this.iframePicsFormData.append('LinktoBranches', this.previewForm.get('LinktoBranches').value)
       this.iframePicsFormData.append('ShortDescription', encodeURIComponent(this.previewForm.get('ShortDescription').value.toString()))
       this.iframePicsFormData.append('LongDescription', encodeURIComponent(this.previewForm.get('LongDescription').value.toString()))
       this.iframePicsFormData.append('Marketing', this.previewForm.get('Marketing').value)
-      this.iframePicsFormData.append('Instructions', this.previewForm.get('Instructions').value)
+      this.iframePicsFormData.append('Instructions', encodeURIComponent(this.previewForm.get('Instructions').value.toString()))
 
       let t = this.iframePicsFormData.getAll('ShortDescription');
       let t2 = this.iframePicsFormData.getAll('LongDescription');
       let t3 = this.iframePicsFormData.getAll('CompanyIdEnc');
+      let t4 = this.iframePicsFormData.getAll('CompanyName');
 
 
+      debugger
       this.dataServiceIframe.InsertUpdateIFrame(this.iframePicsFormData).subscribe(result => {
         debugger
 

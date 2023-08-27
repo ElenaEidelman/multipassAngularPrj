@@ -5,8 +5,20 @@
     background-attachment: fixed;
 }
 
+
+input,
+mat-error,
+button,
+.openMoreLess,
+.contactDataChild a,
+.preWrap,
+.textWrap,
 .InfoTitle {
-    font-size: 1.4vw;
+    font-family: Assistant !important;
+}
+
+.InfoTitle {
+    font-size: 1.4em;
     color: #847A6C;
     text-align: right;
     padding: 15px 0;

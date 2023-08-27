@@ -24,6 +24,7 @@ export class LogInComponent implements OnInit {
   validateOtpErrorAlert: string = '';
   validKind: string = 'SendOtp';
 
+  currentYear;
   loginSpinner: boolean = false;
 
   constructor(
@@ -36,6 +37,8 @@ export class LogInComponent implements OnInit {
   ngOnInit(): void {
     window.scroll(0, 0);
     // localStorage.removeItem('user');
+    debugger
+    this.currentYear = new Date().getFullYear();
     localStorage.removeItem('excelFileData');
 
 

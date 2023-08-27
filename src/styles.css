@@ -3,6 +3,16 @@
   box-sizing: border-box;
 }
 
+@font-face {
+  font-family: Assistant;
+  src: url(assets/fonts/Assistant-VariableFont_wght.ttf);
+}
+
+.mat-step-header,
+.mat-option-text {
+  font-family: Assistant !important;
+}
+
 .not-active {
   pointer-events: none;
   cursor: default;
@@ -1646,6 +1656,10 @@ td.mat-footer-cell:first-of-type {
 .mat-paginator-range-actions :nth-child(3) {
   order: 2;
   rotate: 180deg;
+}
+
+.BreakWord {
+  word-wrap: break-word;
 }
 
 /* mobile */

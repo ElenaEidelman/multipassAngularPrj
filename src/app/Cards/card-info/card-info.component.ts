@@ -95,6 +95,7 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
   CardInfo;
   OrderDetails;
   orderLine;
+  orderLineObj;
   History;
 
   spinnerActiveVoidCard: boolean = false;
@@ -248,7 +249,8 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
     //
     this.dataService.GetCardInfoById(objToApi).subscribe(result => {
       // 
-      debugger
+
+
       this.mainSpinner = false;
       if (typeof result == 'string') {
         // this.dialog.open(DialogComponent, {
@@ -270,28 +272,46 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
       this.CardInfo = result.obj[1][0];
       this.orderLine = result.obj[9] != null ? result.obj[9]['Id'] : [];
       this.OrderDetails = result.obj[3];
+      this.orderLineObj = result.obj[9];
+
       debugger
       // this.isIframeOrder = this.OrderDetails['B2CThoWho'] != '' && this.OrderDetails['B2C_DateTimeToSend'] != null && this.OrderDetails['B2C_Notes'] != '' ? true : false;
 
       //insert iframe data
       if (this.isIframeOrder) {
 
-        //get blessing list
-        this.getBlessingList();
-        this.sendSms.get('previewSmsTemplate').setValue(this.OrderDetails['B2C_Notes']);
-        this.sendSms.get('previewSmsTemplate').enable();
+        try {
+          //get blessing list
+          this.getBlessingList();
+          this.sendSms.get('previewSmsTemplate').setValue(this.OrderDetails['B2C_Notes']);
+          this.sendSms.get('previewSmsTemplate').enable();
 
-        this.userDetailsForm.get('B2CEmail').setValue(this.OrderDetails['B2C_Email']);
-        this.userDetailsForm.get('B2CPhoneNumber').setValue(this.OrderDetails['B2C_Mobile']);
-        this.userDetailsForm.get('B2CThoWho').setValue(this.OrderDetails['B2CThoWho']);
 
+          this.userDetailsForm.get('B2CEmail').setValue(this.OrderDetails['B2C_Email']);
+          this.userDetailsForm.get('B2CPhoneNumber').setValue(this.OrderDetails['B2C_Mobile']);
+          this.userDetailsForm.get('B2CThoWho').setValue(this.OrderDetails['B2CThoWho']);//
+
+          this.userDetailsForm.get('FullName').setValue(this.OrderDetails.Payer.FirstName);//
+          this.userDetailsForm.get('PhoneNumber').setValue(this.OrderDetails.Phone);//
+        } catch (error) {
+
+        }
+      }
+      else {
+        try {
+          this.userDetailsForm.get('FullName').setValue(this.orderLineObj.DSendName);//
+          this.userDetailsForm.get('PhoneNumber').setValue(this.orderLineObj.DSendPhone);//
+        }
+        catch (error) { }
       }
 
-      this.userDetailsForm.get('FullName').setValue(this.CardInfo.FullName);
-      this.userDetailsForm.get('PhoneNumber').setValue(this.CardInfo.PhoneNumber);
 
+
+
+      debugger
       // this.Note.setValue(result.obj[1][0]['RemarkNotes']);
       let historyData = result.obj[7]['lstHistoryTranInfoField'];
+      debugger
       this.historyDataSource.data = historyData;
       this.historyDataSource.paginator = this.paginator;
       this.historyDataSource.sort = this.sort;
@@ -343,6 +363,7 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
         }
 
 
+        debugger
         this.dataService.UpdateCards(objToApi).subscribe(result => {
 
 
@@ -721,16 +742,16 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
               let objToApi = {
                 Token: this.userToken,
                 TemplateId: this.isIframeOrder ? 0 : this.sendSms.get('smsTemplates').value,
-                BlessingText: this.isIframeOrder ? this.sendSms.get('smsTemplates').value : '',
+                BlessingText: this.isIframeOrder ? this.sendSms.get('previewSmsTemplate').value : '',
                 UserId: +this.userId,
                 OrderLineIds: Array.of(this.orderLine),
                 CoreOrderId: (this.OrderDetails != undefined && this.OrderDetails != null) ? this.OrderDetails.Id : 0,
                 From: (this.OrderDetails != undefined && this.OrderDetails != null) ? this.OrderDetails.PrimaryUser.OrganizationName : ""
               }
 
-              debugger
+
               this.dataService.SendSMSByOrderLine(objToApi).subscribe(result => {
-                debugger
+
                 if (typeof result == 'string') {
                   // this.dialog.open(DialogComponent, {
                   //   data: { message: result }
@@ -801,10 +822,10 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
 
 
     let objToApi = {
-      TenantId: this.OrderDetails.PrimaryUser.OrganizationName
+      TenantId: this.OrderDetails.PrimaryUser.TenantId
     }
 
-
+    debugger
     this.dataServiceIframe.GetBlessings(objToApi).subscribe(result => {
 
       if (typeof result == 'object') {
@@ -813,7 +834,7 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
           // get type of blessing
           this.blessingList.forEach(id => {
             let objToApi = {
-              TenantId: this.OrderDetails.PrimaryUser.OrganizationName,
+              TenantId: this.OrderDetails.PrimaryUser.TenantId,
               SubjectId: id.typeBlessingId
             }
             this.dataServiceIframe.GetBlessings(objToApi).subscribe(result => {
@@ -873,7 +894,7 @@ export class CardInfoComponent implements OnInit, AfterViewInit {
     this.blessingTextCurrentStep = 1;
 
     let objToApi = {
-      TenantId: this.OrderDetails.PrimaryUser.OrganizationName,
+      TenantId: this.OrderDetails.PrimaryUser.TenantId,
       SubjectId: event.value
     }
 

@@ -115,7 +115,7 @@ export class NewUserComponent implements OnInit {
 
 
       Object.keys(this.userDataForm.controls).forEach(control => {
-        debugger
+        // debugger
         if (this.userDataForm.get(control).value != '') {
           if (typeof this.userDataForm.get(control).value != 'object') {
             objToApi[control] = this.userDataForm.get(control).value.toString().trim();
@@ -130,9 +130,9 @@ export class NewUserComponent implements OnInit {
       objToApi['OrganizationName'] = '';
       objToApi['BusinessFile'] = '';
 
-      debugger
+      //debugger
       this.dataService.InsertUpdateBackOfficeUsers(objToApi).subscribe(result => {
-        debugger
+        //debugger
         this.saveFormSpinner = false;
         if (typeof result == 'string') {
           this.dialog.open(DialogComponent, {
@@ -241,7 +241,7 @@ export class NewUserComponent implements OnInit {
 
     this.dataService.GetRoles(objToApi).subscribe(result => {
 
-      debugger
+      //debugger
       if (typeof result == 'string') {
         // this.dialog.open(DialogComponent, {
         //   data: { message: result }
