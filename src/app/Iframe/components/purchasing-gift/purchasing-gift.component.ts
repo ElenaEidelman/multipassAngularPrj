@@ -125,6 +125,7 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
   printOption: boolean = false;
 
   companyId;
+  Discount: number = null;
 
 
   // presentSum;
@@ -233,6 +234,8 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
         this.giftCardImgSpare = result.obj[0]['GiftCardPic'];
         this.giftCardImg = result.obj[0]['GiftCardPic'];
         this.companyName = result.obj[0]['CompanyName'];
+
+        this.Discount = result.obj[0]['Discount'] != null ? result.obj[0]['Discount'] : null;
       }
     })
   }
@@ -673,7 +676,8 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
       NotesInOrder: this.FormsArray.get('FirstFormGroup').get('blessingText').value,
       Phone: this.FormsArray.get('SecondFormGroup').get('phoneSender').value,
       Media: this.FormsArray.get('FirstFormGroup').get('imgsSrc').value != '' ? '/assets/images/B2COrderImage/' + this.FormsArray.get('FirstFormGroup').get('imgsSrc').value : '',
-      Email: this.FormsArray.get('SecondFormGroup').get('mailSender').value
+      Email: this.FormsArray.get('SecondFormGroup').get('mailSender').value,
+      DiscountAmount: this.Discount != null ? this.presentSumControl.value - (this.presentSumControl.value / this.Discount) : 0
     }
 
     let radioValDateSend = this.FormsArray.get('SecondFormGroup').get('dateOptionOfSend').value;
@@ -711,8 +715,10 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
     this.spinner = true;
 
 
+    debugger
     this.dataService.InsertUpdateB2COrder(objToApi).subscribe(result => {
       //
+      debugger
       if (result.obj != undefined && result.obj != null) {
         // this.GetPaymentToken(result.obj[0]['orderid']);
 

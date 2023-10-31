@@ -305,6 +305,7 @@ $ git merge new-branch
   InsertUpdateOrder(objToApi) {
     //api/InsertUpdateOrder/InsertUpdateOrder
     // 
+    debugger
     return this.http.post(`${localStorage.getItem('baseUrl')}/api/InsertUpdateOrder/InsertUpdateOrder`, objToApi).pipe(
       map(result => {
         return this.checkResult(result);

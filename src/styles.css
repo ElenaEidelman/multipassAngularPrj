@@ -13,6 +13,15 @@
   font-family: Assistant !important;
 }
 
+.underInputInfo {
+  width: 100%;
+  direction: rtl;
+  text-align: right;
+  display: flex;
+  font-size: 1.1em;
+  margin-top: 0.5em;
+}
+
 .not-active {
   pointer-events: none;
   cursor: default;

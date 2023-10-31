@@ -120,9 +120,6 @@ export class LogInIframeComponent implements OnInit {
 
   GetIFrameCompanyId() {
     this.domain.queryParamMap.subscribe(param => {
-
-
-
       //if company id get by url parameters
 
 
@@ -195,7 +192,6 @@ export class LogInIframeComponent implements OnInit {
     this.dataServiceIframe.GetIFrameCompanyInfo(objToApi).subscribe(result => {
       //
 
-
       if (typeof result == 'string') {
         this.dialog.open(DialogComponent, {
           data: { message: result }
@@ -206,6 +202,9 @@ export class LogInIframeComponent implements OnInit {
         if (result.obj != undefined && result.obj != null && Object.keys(result.obj).length > 0) {
           this.sharingIframeService.companyInfoService.next(JSON.stringify(result));
           this.infoData = result.obj[0];
+
+          //temp
+          this.infoData.Discount = result.obj[0]['Discount'] != null ? result.obj[0]['Discount'] : null;;
           //
           this.spareData = JSON.parse(JSON.stringify(this.infoData))
 

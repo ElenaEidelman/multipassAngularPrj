@@ -109,10 +109,23 @@
                         </mat-form-field>
                         <div class="wrap-button-login">
                             <button mat-button type="submit" class="bigButton">בואו נתחיל</button>
+
                             <!-- <span *ngIf="true">
                                           <mat-spinner></mat-spinner>
                                         </span> -->
                         </div>
+
+                        <div class="underInputInfo"
+                            *ngIf="infoData.Discount != null && sumForm.get('cardSumControl').value != ''">הסכום
+                            לתשלום לאחר הנחה של
+                            <!-- <span class="material-icons">percent</span> -->
+                            <span style="margin-right: 3px;"> &#37; </span>
+                            {{infoData.Discount}}
+                            הינו {{sumForm.get('cardSumControl').value - (sumForm.get('cardSumControl').value /
+                            infoData.Discount)}}
+                            <span style="margin-right: 3px;"> &#8362; </span>
+                        </div>
+
                     </form>
                     <!-- </p> -->
 

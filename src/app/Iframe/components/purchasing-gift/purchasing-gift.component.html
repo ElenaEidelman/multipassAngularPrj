@@ -498,7 +498,15 @@
                                 <span matPrefix class="inputIcon">&#8362;</span>
 
                             </mat-form-field>
-
+                            <div class="underInputInfo" style="margin: 0 16px; padding: 5px 0;"
+                                *ngIf="Discount != null && presentSumControl.value != ''">הסכום
+                                לתשלום לאחר הנחה של
+                                <!-- <span class="material-icons">percent</span> -->
+                                <span style="margin-right: 3px;"> &#37; </span>
+                                {{Discount}}
+                                הינו {{presentSumControl.value - (presentSumControl.value / Discount)}}
+                                <span style="margin-right: 3px;"> &#8362; </span>
+                            </div>
                             <mat-error *ngIf="saveSumError != ''">{{saveSumError}}</mat-error>
                             <div class="wrapFormButtons">
                                 <button mat-button class="primaryButton" (mousedown)="saveChangedSum()">שמור</button>
@@ -508,6 +516,17 @@
                         <mat-card-actions *ngIf="!viewChangeSum">
                             <button mat-button class="purpleBorderButton" (mousedown)="changeSum()">שינוי סכום
                                 המתנה</button>
+
+                            <div class="underInputInfo" style="margin: 0 16px; padding: 5px;"
+                                *ngIf="Discount != null && presentSumControl.value != ''">הסכום
+                                לתשלום לאחר הנחה של
+                                <!-- <span class="material-icons">percent</span> -->
+                                <span style="margin-right: 3px;"> &#37; </span>
+                                {{Discount}}
+                                הינו {{presentSumControl.value - (presentSumControl.value / Discount)}}
+                                <span style="margin-right: 3px;"> &#8362; </span>
+                            </div>
+
                         </mat-card-actions>
                     </mat-card>
                 </div>
