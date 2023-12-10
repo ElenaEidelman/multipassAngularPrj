@@ -426,6 +426,30 @@
                                                 <mat-icon matPrefix>mail_outline</mat-icon>
                                             </mat-form-field>
                                         </div>
+
+                                        <div class="takanonCheckB" *ngIf="TakanonUrl != null">
+                                            <!-- <mat-form-field> -->
+                                            <!-- <section class="check-box-flex"> -->
+                                            <div style="color: #686568 !important; display:flex;">
+                                                <mat-checkbox class="example-margin"
+                                                    formControlName="TakanonCheckBoxCtrl">אני
+                                                    מאשר/ת
+                                                </mat-checkbox>
+
+                                                <div style="text-decoration: underline;" (click)="OpenTakanonPopUp()"
+                                                    style="margin-right: 2px; cursor:pointer; text-decoration: underline;;">
+                                                    תקנון האתר
+                                                </div>
+
+                                            </div>
+                                            <mat-error
+                                                *ngIf=" FormsArray.get('SecondFormGroup').get('TakanonCheckBoxCtrl').hasError('required')"
+                                                style="margin-top: -10px;">
+                                                'נא לאשר תקנון'
+                                            </mat-error>
+                                            <!-- </section> -->
+                                            <!-- </mat-form-field> -->
+                                        </div>
                                     </div>
                                 </div>
 
@@ -504,7 +528,7 @@
                                 <!-- <span class="material-icons">percent</span> -->
                                 <span style="margin-right: 3px;"> &#37; </span>
                                 {{Discount}}
-                                הינו {{presentSumControl.value - (presentSumControl.value / Discount)}}
+                                הינו {{presentSumControl.value - (presentSumControl.value * Discount/100)}}
                                 <span style="margin-right: 3px;"> &#8362; </span>
                             </div>
                             <mat-error *ngIf="saveSumError != ''">{{saveSumError}}</mat-error>
@@ -523,7 +547,7 @@
                                 <!-- <span class="material-icons">percent</span> -->
                                 <span style="margin-right: 3px;"> &#37; </span>
                                 {{Discount}}
-                                הינו {{presentSumControl.value - (presentSumControl.value / Discount)}}
+                                הינו {{presentSumControl.value - (presentSumControl.value *Discount/100)}}
                                 <span style="margin-right: 3px;"> &#8362; </span>
                             </div>
 

@@ -59,7 +59,7 @@ mat-form-field {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    max-width: 600px;
+    max-width: 1000px;
     /* margin-top:10vh; */
 }
 
@@ -153,7 +153,11 @@ mat-icon {
     direction: rtl;
     text-align: center;
     overflow-wrap: anywhere;
-    padding: 0 25px;
+}
+
+.dialogMessage.iframe {
+    padding: 0 !important;
+    overflow: hidden;
 }
 
 .title {

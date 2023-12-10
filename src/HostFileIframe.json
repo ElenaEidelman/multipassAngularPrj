@@ -1,8 +1,8 @@
 {
-    "baseUrl": "https://multitavtest.mltp.co.il/",
+    "baseUrl": "https://multitavderbi.mltp.co.il",
     "DevMode": "true",
     "minAmount": "100",
     "picSizeInMega": "1",
     "http://localhost:45036": "https://multitavtest.mltp.co.il/",
-    "https://multitav.co.il": ""
+    "https://multitav.co.il": "https://multitavderbi.mltp.co.il"
 }

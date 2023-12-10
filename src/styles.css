@@ -987,11 +987,11 @@ button.additionalColButton {
 
 .mat-dialog-container {
   overflow: unset !important;
-  max-width: 600px;
+  max-width: 1000px;
 }
 
 .mat-error {
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .mat-error.formError {

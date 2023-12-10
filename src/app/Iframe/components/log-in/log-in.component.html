@@ -121,8 +121,8 @@
                             <!-- <span class="material-icons">percent</span> -->
                             <span style="margin-right: 3px;"> &#37; </span>
                             {{infoData.Discount}}
-                            הינו {{sumForm.get('cardSumControl').value - (sumForm.get('cardSumControl').value /
-                            infoData.Discount)}}
+                            הינו {{sumForm.get('cardSumControl').value - (sumForm.get('cardSumControl').value *
+                            infoData.Discount/100)}}
                             <span style="margin-right: 3px;"> &#8362; </span>
                         </div>
 

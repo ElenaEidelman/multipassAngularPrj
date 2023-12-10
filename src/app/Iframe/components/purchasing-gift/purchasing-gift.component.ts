@@ -98,6 +98,7 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
   viewChangeSum: boolean = false;
   navigateToPayment: boolean = false;
   orderId;
+  TakanonUrl: string = null;
 
 
 
@@ -127,6 +128,7 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
   companyId;
   Discount: number = null;
 
+  //TakanonCheckBox = new FormControl('');
 
   // presentSum;
   // firstForm = 'FirstFormGroup';
@@ -165,7 +167,8 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
       dateTimeData: this.fb.group({
         date: [new Date(), Validators.required],
         time: [new Date().getHours() + ':' + new Date().getMinutes(), Validators.required]
-      })
+      }),
+      TakanonCheckBoxCtrl: ['']
     })
   },
     { updateOn: "blur" });
@@ -234,27 +237,30 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
         this.giftCardImgSpare = result.obj[0]['GiftCardPic'];
         this.giftCardImg = result.obj[0]['GiftCardPic'];
         this.companyName = result.obj[0]['CompanyName'];
-
         this.Discount = result.obj[0]['Discount'] != null ? result.obj[0]['Discount'] : null;
+
+
+        debugger
+        if (result.obj[0]['TakanonUrl'] != null) {
+          this.TakanonUrl = result.obj[0]['TakanonUrl'];
+
+          // const formGr = this.FormsArray.get('SecondFormGroup') as FormGroup;
+          // formGr.addControl('TakanonCheckBoxCtrl', new FormControl('', Validators.required));
+
+          // let test = this.FormsArray.get('SecondFormGroup').get('TakanonCheckBoxCtrl');
+          //this.FormsArray.get('SecondFormGroup').get('TakanonCheckBoxCtrl').setValidators(Validators.required);
+          debugger
+
+        }
       }
     })
   }
 
   getBlessingList() {
-
-
-
     let objToApi = {
       TenantId: this.companyInfo['obj'][0]['CompanyId']
     }
-
-
-
-
-
     this.dataService.GetBlessings(objToApi).subscribe(result => {
-
-
       if (typeof result == 'object') {
         if (result.err != -1) {
           this.blessingList = result.obj;
@@ -599,6 +605,13 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
             this.formError = '';
           }, 2000)
         }
+        else if (this.TakanonUrl != null) {
+          this.FormsArray.get('SecondFormGroup').get('TakanonCheckBoxCtrl').setValidators(Validators.required)
+          if (!this.FormsArray.get('SecondFormGroup').get('TakanonCheckBoxCtrl').value) {
+            this.FormsArray.get('SecondFormGroup').get('TakanonCheckBoxCtrl').setErrors({ 'required': true });
+          }
+        }
+        //here
         else if (!this.FormsArray.get('SecondFormGroup').valid) {
           this.formError = 'נא למלא את כל שדות חובה';
 
@@ -606,6 +619,7 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
             this.formError = '';
           }, 2000)
         }
+
 
         else {
           if (this.sharingIframeService.iframeCalledFromMultitav.value == 'false') {
@@ -677,7 +691,7 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
       Phone: this.FormsArray.get('SecondFormGroup').get('phoneSender').value,
       Media: this.FormsArray.get('FirstFormGroup').get('imgsSrc').value != '' ? '/assets/images/B2COrderImage/' + this.FormsArray.get('FirstFormGroup').get('imgsSrc').value : '',
       Email: this.FormsArray.get('SecondFormGroup').get('mailSender').value,
-      DiscountAmount: this.Discount != null ? this.presentSumControl.value - (this.presentSumControl.value / this.Discount) : 0
+      PaymetAmount: this.Discount != null ? this.presentSumControl.value - (this.presentSumControl.value * this.Discount / 100) : 0
     }
 
     let radioValDateSend = this.FormsArray.get('SecondFormGroup').get('dateOptionOfSend').value;
@@ -713,12 +727,8 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
     }
 
     this.spinner = true;
-
-
-    debugger
     this.dataService.InsertUpdateB2COrder(objToApi).subscribe(result => {
       //
-      debugger
       if (result.obj != undefined && result.obj != null) {
         // this.GetPaymentToken(result.obj[0]['orderid']);
 
@@ -835,6 +845,16 @@ export class PurchasingGiftComponent implements OnInit, OnDestroy, AfterViewInit
 
   }
 
+
+  OpenTakanonPopUp() {
+
+    let takanon = `<iframe src="${this.TakanonUrl}" width="1000px" height="400" name="iframe" title="takanon"></iframe>`;
+
+    this.dialog.open(DialogComponent, {
+      data: { message: takanon }
+    })
+
+  }
 
 }
 
